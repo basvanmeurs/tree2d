@@ -1,5 +1,5 @@
-import HtmlTreeBuilder from "./HtmlTreeBuilder.mjs";
-import MismatchCollector from "./MismatchCollector.mjs";
+import HtmlTreeBuilder from "./HtmlTreeBuilder.js";
+import MismatchCollector from "./MismatchCollector.js";
 
 export default class Comparer {
 

@@ -1,5 +1,5 @@
-import Utils from "../../../src/tree/Utils.mjs";
-import FlexTestUtils from "./FlexTestUtils.mjs";
+import Utils from "../../../src/tree/Utils.js";
+import FlexTestUtils from "./FlexTestUtils.js";
 
 export default class FlexHtmlTester {
 

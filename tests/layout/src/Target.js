@@ -1,6 +1,6 @@
-import Utils from "../../../src/tree/Utils.mjs";
-import Base from "../../../src/tree/Base.mjs";
-import FlexTarget from "../../../src/flex/FlexTarget.mjs"
+const Utils = lng.Utils;
+const Base = lng.Base;
+const FlexTarget = lng.FlexTarget;
 
 export default class Target {
     

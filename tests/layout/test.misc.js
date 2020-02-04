@@ -1,4 +1,4 @@
-import FlexTestUtils from "./src/FlexTestUtils.mjs";
+import FlexTestUtils from "./src/FlexTestUtils.js";
 
 const flexTestUtils = new FlexTestUtils();
 
@@ -85,17 +85,16 @@ describe('layout', () => {
     });
 
     describe('get layout', () => {
-        let app, stage;
+        let stage, root;
         before(() => {
-            class TestApplication extends lng.Application {}
-            app = new TestApplication({stage: {w: 500, h: 500, clearColor: 0xFFFF0000, autostart: false}});
-            stage = app.stage;
+            stage = new lng.Stage({stage: {w: 500, h: 500, clearColor: 0xFFFF0000, autostart: false}});
+            root = stage.root;
             document.body.appendChild(stage.getCanvas());
         });
 
         describe('getting final coords', () => {
             before(() => {
-                const element = app.stage.createElement({
+                const element = stage.createElement({
                     Item: {
                         w: 300, flex: {padding: 5},
                         children: [
@@ -106,23 +105,23 @@ describe('layout', () => {
                         ]
                     }
                 });
-                app.children = [element];
+                root.children = [element];
             });
 
             it('should not update coords yet', () => {
-                const child = app.tag("Item").children[3];
+                const child = root.tag("Item").children[3];
                 chai.assert(child.finalX === 0, "final X not updated until update");
             });
 
             it('should update after update', () => {
                 stage.update();
-                const child = app.tag("Item").children[3];
+                const child = root.tag("Item").children[3];
                 chai.assert(child.finalX === 255, "final X updated");
                 chai.assert(child.finalY === 5, "final Y updated");
                 chai.assert(child.finalW === 100, "final W updated");
                 chai.assert(child.finalH === 100, "final H updated");
 
-                const item = app.tag("Item");
+                const item = root.tag("Item");
                 chai.assert(item.finalH === 110, "final H updated");
             });
         });

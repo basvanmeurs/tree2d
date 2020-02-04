@@ -1,6 +1,7 @@
-import Target from "./Target.mjs";
-import FlexHtmlComparer from "./flexToHtml/Comparer.mjs";
-import FlexLayout from "../../../src/flex/layout/FlexLayout.mjs";
+import Target from "./Target.js";
+import FlexHtmlComparer from "./flexToHtml/Comparer.js";
+
+const FlexLayout = lng.FlexLayout;
 
 export default class FlexTestUtils {
 

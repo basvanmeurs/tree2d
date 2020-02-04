@@ -1,5 +1,4 @@
-import FlexTestUtils from "./src/FlexTestUtils.mjs";
-import FlexLayout from "../../src/flex/layout/FlexLayout.mjs";
+import FlexTestUtils from "./src/FlexTestUtils.js";
 
 const flexTestUtils = new FlexTestUtils();
 

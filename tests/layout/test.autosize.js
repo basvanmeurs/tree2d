@@ -1,4 +1,4 @@
-import FlexTestUtils from "./src/FlexTestUtils.mjs";
+import FlexTestUtils from "./src/FlexTestUtils.js";
 
 const flexTestUtils = new FlexTestUtils();
 

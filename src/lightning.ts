@@ -44,6 +44,9 @@ import C2dBlurShader from "./renderer/c2d/shaders/BlurShader";
 
 import Stage from "./tree/Stage";
 
+import FlexTarget from "./flex/FlexTarget";
+import FlexLayout from "./flex/layout/FlexLayout";
+
 const lightning = {
     Base,
     Utils,
@@ -55,6 +58,8 @@ const lightning = {
     ElementTexturizer,
     Texture,
     EventEmitter,
+    FlexTarget,
+    FlexLayout,
     shaders: {
         Grayscale: WebGLGrayscaleShader,
         BoxBlur: BoxBlurShader,
