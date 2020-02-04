@@ -10,7 +10,7 @@ const TERSER_CONFIG = {
 
 export default [{
     /** lightning.js */
-    input: './src/lightning.mjs',
+    input: './src/lightning.js',
     plugins: [
 
         /* Add version number to bundle */
@@ -21,12 +21,13 @@ export default [{
     output: {
         file: './dist/lightning.js',
         format: 'umd',
-        name: 'lng'
+        name: 'lng',
+        sourcemap: true,
     }
 },
 {
     /** lightning.min.js */
-    input: './src/lightning.mjs',
+    input: './src/lightning.js',
     plugins: [
         terser(TERSER_CONFIG),
 
@@ -45,7 +46,7 @@ export default [{
 },
 {
     /** lightning.es5.js */
-    input: './src/lightning.mjs',
+    input: './src/lightning.js',
     plugins: [
 
         /* Add version number to bundle */
@@ -76,7 +77,7 @@ export default [{
 },
 {
     /** lightning.es5.min.js */
-    input: './src/lightning.mjs',
+    input: './src/lightning.js',
     plugins: [
         terser(TERSER_CONFIG),
 

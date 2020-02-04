@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Webpack App</title>
+    <script src="../dist/lightning.js"></script>
+    <script src="../devtools/lightning-inspect.js"></script>
+</head>
+<body>
+    <script>
+        window.onload = () => {
+            const options = {w: 900, h: 900, clearColor: 0xFF000000};
+            const stage = new lng.Stage(options);
+            stage.root.add({texture: {type: lng.textures.TextTexture, text: "hello world", fontSize: 46, fontStyle: 'bold'}, color: 0xFFFF0000});
+            document.body.appendChild(stage.getCanvas());
+        };
+    </script>
+</body>
+</html>

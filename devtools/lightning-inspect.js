@@ -1,4 +1,4 @@
-window.attachInspector = function({Element, ElementCore, Stage, Component, ElementTexturizer, Texture}) {
+window.attachInspector = function({Element, ElementCore, Stage, ElementTexturizer, Texture}) {
 
     const isAlreadyAttached = window.hasOwnProperty('mutationCounter');
     if (isAlreadyAttached) {
@@ -265,22 +265,6 @@ window.attachInspector = function({Element, ElementCore, Stage, Component, Eleme
         this.__ignore_attrib_changes = window.mutationCounter;
         this.dhtml().setAttribute.apply(this.dhtml(), arguments);
     };
-
-    if (typeof Component !== "undefined") {
-        Object.defineProperty(Component.prototype, '_state', {
-            get: function() {
-                return this.__state;
-            },
-            set: function(v) {
-                if (this.__state !== v) {
-                    if (this.__state !== null) { // Ignore initial.
-                        val(this, 'state', v ? v.__path : "", "");
-                    }
-                    this.__state = v;
-                }
-            }
-        });
-    }
 
     Element.prototype.$ref = Element.prototype.__ref;
     Object.defineProperty(Element.prototype, '__ref', {

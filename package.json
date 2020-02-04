@@ -34,5 +34,8 @@
     "rollup-plugin-license": "^0.10.0",
     "rollup-plugin-terser": "^5.1.2",
     "sinon": "^7.5.0"
+  },
+  "dependencies": {
+    "require.js": "^1.0.0"
   }
 }

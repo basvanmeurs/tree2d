@@ -1,2 +1,2 @@
-import lng from './src/lightning.mjs';
+import lng from './dist/lightning.js';
 export default lng;
