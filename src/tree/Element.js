@@ -1091,22 +1091,6 @@ class Element {
         return settings;
     }
     ;
-    static getGetter(propertyPath) {
-        let getter = Element.PROP_GETTERS.get(propertyPath);
-        if (!getter) {
-            getter = new Function('obj', 'return obj.' + propertyPath);
-            Element.PROP_GETTERS.set(propertyPath, getter);
-        }
-        return getter;
-    }
-    static getSetter(propertyPath) {
-        let setter = Element.PROP_SETTERS.get(propertyPath);
-        if (!setter) {
-            setter = new Function('obj', 'v', 'obj.' + propertyPath + ' = v');
-            Element.PROP_SETTERS.set(propertyPath, setter);
-        }
-        return setter;
-    }
     get withinBoundsMargin() {
         return this.__core._withinBoundsMargin;
     }
@@ -1579,107 +1563,6 @@ class Element {
     _throwError(message) {
         throw new Error(this.constructor.name + " (" + this.getLocationString() + "): " + message);
     }
-    animation(settings) {
-        return this.stage.animations.createAnimation(this, settings);
-    }
-    transition(property, settings = undefined) {
-        if (settings) {
-            return this._getTransition(property);
-        }
-        else {
-            this._setTransition(property, settings);
-            // We do not create/return the transition, because it would undo the 'lazy transition creation' optimization.
-            return undefined;
-        }
-    }
-    set transitions(object) {
-        let keys = Object.keys(object);
-        keys.forEach(property => {
-            this.transition(property, object[property]);
-        });
-    }
-    set smooth(object) {
-        let keys = Object.keys(object);
-        keys.forEach(property => {
-            let value = object[property];
-            if (Array.isArray(value)) {
-                this.setSmooth(property, value[0], value[1]);
-            }
-            else {
-                this.setSmooth(property, value);
-            }
-        });
-    }
-    fastForward(property) {
-        if (this._transitions) {
-            let t = this._transitions[property];
-            if (t && t.isTransition) {
-                t.finish();
-            }
-        }
-    }
-    _getTransition(property) {
-        if (!this._transitions) {
-            this._transitions = {};
-        }
-        let t = this._transitions[property];
-        if (!t) {
-            // Create default transition.
-            t = new Transition(this.stage.transitions, this.stage.transitions.defaultTransitionSettings, this, property);
-        }
-        else if (t instanceof TransitionSettings) {
-            // Upgrade to 'real' transition.
-            t = new Transition(this.stage.transitions, t, this, property);
-        }
-        this._transitions[property] = t;
-        return t;
-    }
-    _setTransition(property, settings) {
-        if (!settings) {
-            this._removeTransition(property);
-        }
-        else {
-            if (Utils.isObjectLiteral(settings)) {
-                // Convert plain object to proper settings object.
-                settings = this.stage.transitions.createSettings(settings);
-            }
-            if (!this._transitions) {
-                this._transitions = {};
-            }
-            let current = this._transitions[property];
-            if (current && current.isTransition) {
-                // Runtime settings change.
-                current.settings = settings;
-                return current;
-            }
-            else {
-                // Initially, only set the settings and upgrade to a 'real' transition when it is used.
-                this._transitions[property] = settings;
-            }
-        }
-    }
-    _removeTransition(property) {
-        if (this._transitions) {
-            delete this._transitions[property];
-        }
-    }
-    getSmooth(property) {
-        let t = this._getTransition(property);
-        if (t && t.isAttached()) {
-            return t.targetValue;
-        }
-        else {
-            return undefined;
-        }
-    }
-    setSmooth(property, v, settings = undefined) {
-        if (settings) {
-            this._setTransition(property, settings);
-        }
-        let t = this._getTransition(property);
-        t.start(v);
-        return t;
-    }
     get flex() {
         return this.__core.flex;
     }
@@ -1705,16 +1588,10 @@ class Element {
     }
 }
 Element.id = 1;
-// Getters reused when referencing element (subobject) properties by a property path, as used in a transition or animation ('x', 'texture.x', etc).
-Element.PROP_GETTERS = new Map();
-// Setters reused when referencing element (subobject) properties by a property path, as used in a transition or animation ('x', 'texture.x', etc).
-Element.PROP_SETTERS = new Map();
 EventEmitter.mixin(Element);
 import ImageTexture from "../textures/ImageTexture";
 import TextTexture from "../textures/TextTexture";
 import SourceTexture from "../textures/SourceTexture";
-import Transition from "../animation/Transition";
 import ElementChildList from "./ElementChildList";
-import TransitionSettings from "../animation/TransitionSettings";
 export default Element;
 //# sourceMappingURL=Element.js.map

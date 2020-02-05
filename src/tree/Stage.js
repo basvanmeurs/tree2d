@@ -73,9 +73,6 @@ export default class Stage extends EventEmitter {
 
         this.frameCounter = 0;
 
-        this.transitions = new TransitionManager(this);
-        this.animations = new AnimationManager(this);
-
         this.textureManager = new TextureManager(this);
         this.textureThrottler = new TextureThrottler(this);
 
@@ -409,6 +406,4 @@ import StageUtils from "./StageUtils";
 import TextureManager from "./TextureManager";
 import TextureThrottler from "./TextureThrottler";
 import CoreContext from "./core/CoreContext";
-import TransitionManager from "../animation/TransitionManager";
-import AnimationManager from "../animation/AnimationManager";
 import RectangleTexture from "../textures/RectangleTexture";

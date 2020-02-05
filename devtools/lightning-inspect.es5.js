@@ -1,7 +1,7 @@
 (function (factory) {
   typeof define === 'function' && define.amd ? define(factory) :
   factory();
-}((function () { 'use strict';
+}(function () { 'use strict';
 
   function _newArrowCheck(innerThis, boundThis) {
     if (innerThis !== boundThis) {
@@ -166,8 +166,6 @@
                     if (isNaN(pv)) throw "e";
                 }
               }
-
-              var fv;
 
               switch (rn) {
                 case "color":
@@ -804,4 +802,4 @@
     attachInspector(lng);
   }
 
-})));
+}));
