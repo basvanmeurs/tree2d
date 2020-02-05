@@ -46,6 +46,7 @@ import Stage from "./tree/Stage";
 
 import FlexTarget from "./flex/FlexTarget";
 import FlexLayout from "./flex/layout/FlexLayout";
+import FlexContainer from "./flex/FlexContainer";
 
 const lightning = {
     Base,
@@ -60,6 +61,7 @@ const lightning = {
     EventEmitter,
     FlexTarget,
     FlexLayout,
+    FlexContainer,
     shaders: {
         Grayscale: WebGLGrayscaleShader,
         BoxBlur: BoxBlurShader,

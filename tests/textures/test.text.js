@@ -1,3 +1,5 @@
+const EXAMPLE_SHORT_TEXT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi.'
+
 const EXAMPLE_TEXT =
 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, \
 suscipit a, scelerisque sed, lacinia in, mi. Cras vel lorem. Etiam pellentesque \
@@ -90,7 +92,7 @@ describe('text', function() {
     });
 
     describe('wordWrap - false', function() {
-       
+
         it('should not apply textOverflow (by default)', function() {
             const element = stage.createElement({
                 Item: {
@@ -98,7 +100,7 @@ describe('text', function() {
                         type: TestTexture,
                         wordWrap: false,
                         wordWrapWidth: 900,
-                        text: EXAMPLE_TEXT,
+                        text: EXAMPLE_SHORT_TEXT,
                         async: false
                     }, visible: true},
             });
@@ -106,7 +108,7 @@ describe('text', function() {
             const texture = root.tag("Item").texture;
             stage.drawFrame();
             chai.assert(texture.source.renderInfo.lines.length === 1);
-            chai.assert(texture.source.renderInfo.lines[0].substr(-5) == 'erat.');
+            chai.assert(texture.source.renderInfo.lines[0].substr(-5) == ', mi.');
         });
 
         it('should ignore textOverflow when wordWrap is enabled (by default)', function() {

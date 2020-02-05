@@ -1,6 +1,6 @@
 import FlexHtmlTester from "./src/FlexHtmlTester.js";
 import Utils from "../../src/tree/Utils.js";
-import FlexContainer from "../../src/flex/FlexContainer.js";
+const FlexContainer = lng.FlexContainer;
 
 const createMainSizeAspect = function(name = 'mainSize', select) {
     return FlexHtmlTester.createAspect(name, function(structure) {
