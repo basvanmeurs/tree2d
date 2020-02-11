@@ -217,11 +217,11 @@ class Element {
     }
 
     private _isAttached(): boolean {
-        return (this.__parent ? this.__parent.__attached : (this.stage.root === this));
+        return (this.__parent ? this.__parent.__attached : this.isRoot);
     };
 
     private _isEnabled(): boolean {
-        return this.__core.visible && (this.__core.alpha > 0) && (this.__parent ? this.__parent.__enabled : (this.stage.root === this));
+        return this.__core.visible && (this.__core.alpha > 0) && (this.__parent ? this.__parent.__enabled : this.isRoot);
     };
 
     private _isActive(): boolean {

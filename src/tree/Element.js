@@ -151,11 +151,11 @@ class Element {
         return this.__active;
     }
     _isAttached() {
-        return (this.__parent ? this.__parent.__attached : (this.stage.root === this));
+        return (this.__parent ? this.__parent.__attached : this.isRoot);
     }
     ;
     _isEnabled() {
-        return this.__core.visible && (this.__core.alpha > 0) && (this.__parent ? this.__parent.__enabled : (this.stage.root === this));
+        return this.__core.visible && (this.__core.alpha > 0) && (this.__parent ? this.__parent.__enabled : this.isRoot);
     }
     ;
     _isActive() {
