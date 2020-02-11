@@ -58,6 +58,10 @@ class Element {
     // Fixed height of this element.
     private _h: number;
 
+    public onActive?: Function = undefined;
+
+    public onInactive?: Function = undefined;
+
     constructor(stage: Stage) {
         this.stage = stage;
 
@@ -347,35 +351,39 @@ class Element {
     }
 
     protected _onSetup(): void {
-        this.emit('setup')
+
     }
 
     protected _onAttach(): void {
-        this.emit('attach')
+
     }
 
     protected _onDetach(): void {
-        this.emit('detach')
+
     }
 
     protected _onEnabled(): void {
-        this.emit('enabled')
+
     }
 
     protected _onDisabled(): void {
-        this.emit('disabled')
+
     }
 
     protected _onActive(): void {
-        this.emit('active')
+        if (this.onActive) {
+            this.onActive(this);
+        }
     }
 
     protected _onInactive(): void {
-        this.emit('inactive')
+        if (this.onInactive) {
+            this.onInactive(this);
+        }
     }
 
     protected _onResize(): void {
-        this.emit('resize')
+
     }
 
     private _getRenderWidth(): number {

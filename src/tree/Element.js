@@ -19,6 +19,8 @@ class Element {
         this.__active = false;
         // Tagged elements in this branch will not be reachable from ancestors of this element.
         this.__tagRoot = false;
+        this.onActive = undefined;
+        this.onInactive = undefined;
         this.stage = stage;
         this.__core = new ElementCore(this);
         this._w = 0;
@@ -262,28 +264,26 @@ class Element {
         this._onInactive();
     }
     _onSetup() {
-        this.emit('setup');
     }
     _onAttach() {
-        this.emit('attach');
     }
     _onDetach() {
-        this.emit('detach');
     }
     _onEnabled() {
-        this.emit('enabled');
     }
     _onDisabled() {
-        this.emit('disabled');
     }
     _onActive() {
-        this.emit('active');
+        if (this.onActive) {
+            this.onActive(this);
+        }
     }
     _onInactive() {
-        this.emit('inactive');
+        if (this.onInactive) {
+            this.onInactive(this);
+        }
     }
     _onResize() {
-        this.emit('resize');
     }
     _getRenderWidth() {
         if (this._w) {
