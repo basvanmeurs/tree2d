@@ -21,18 +21,21 @@ export default class ObjectList {
         return this._items.length ? this._items[this._items.length - 1] : undefined;
     }
 
-    add(item) {
-        this.addAt(item, this._items.length);
+    add(item, ensureNew = false) {
+        this.addAt(item, this._items.length, ensureNew);
     }
 
-    addAt(item, index) {
+    addAt(item, index, ensureNew = false) {
         if (index >= 0 && index <= this._items.length) {
-            let currentIndex = this._items.indexOf(item);
-            if (currentIndex === index) {
-                return item;
+            let currentIndex = -1;
+            if (!ensureNew) {
+                currentIndex = this._items.indexOf(item);
+                if (currentIndex === index) {
+                    return item;
+                }
             }
 
-            if (currentIndex != -1) {
+            if (currentIndex !== -1) {
                 this.setAt(item, index);
             } else {
                 if (item.ref) {

@@ -262,20 +262,28 @@ class Element {
         this._onInactive();
     }
     _onSetup() {
+        this.emit('setup');
     }
     _onAttach() {
+        this.emit('attach');
     }
     _onDetach() {
+        this.emit('detach');
     }
     _onEnabled() {
+        this.emit('enabled');
     }
     _onDisabled() {
+        this.emit('disabled');
     }
     _onActive() {
+        this.emit('active');
     }
     _onInactive() {
+        this.emit('inactive');
     }
     _onResize() {
+        this.emit('resize');
     }
     _getRenderWidth() {
         if (this._w) {

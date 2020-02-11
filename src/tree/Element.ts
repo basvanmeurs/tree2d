@@ -347,27 +347,35 @@ class Element {
     }
 
     protected _onSetup(): void {
+        this.emit('setup')
     }
 
     protected _onAttach(): void {
+        this.emit('attach')
     }
 
     protected _onDetach(): void {
+        this.emit('detach')
     }
 
     protected _onEnabled(): void {
+        this.emit('enabled')
     }
 
     protected _onDisabled(): void {
+        this.emit('disabled')
     }
 
     protected _onActive(): void {
+        this.emit('active')
     }
 
     protected _onInactive(): void {
+        this.emit('inactive')
     }
 
     protected _onResize(): void {
+        this.emit('resize')
     }
 
     private _getRenderWidth(): number {
