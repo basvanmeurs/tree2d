@@ -6,7 +6,6 @@ import StageUtils from "./StageUtils";
 import ElementCore from "./core/ElementCore";
 import Base from "./Base";
 import Utils from "./Utils";
-import EventEmitter from "../EventEmitter";
 import Shader from "./Shader";
 class Element {
     constructor(stage) {
@@ -19,16 +18,19 @@ class Element {
         this.__active = false;
         // Tagged elements in this branch will not be reachable from ancestors of this element.
         this.__tagRoot = false;
-        this.onActive = undefined;
-        this.onInactive = undefined;
         this.stage = stage;
         this.__core = new ElementCore(this);
         this._w = 0;
         this._h = 0;
         this.__start();
-        EventEmitter.construct(this);
     }
     __start() {
+    }
+    getListeners() {
+        if (!this.listeners) {
+            this.listeners = new ElementListeners();
+        }
+        return this.listeners;
     }
     get id() {
         return this.__id;
@@ -263,27 +265,93 @@ class Element {
         }
         this._onInactive();
     }
+    set onSetup(v) {
+        this.getListeners().onSetup = v;
+    }
     _onSetup() {
+        if (this.listeners && this.listeners.onSetup) {
+            this.listeners.onSetup(this);
+        }
+    }
+    set onAttach(v) {
+        this.getListeners().onAttach = v;
     }
     _onAttach() {
+        if (this.listeners && this.listeners.onAttach) {
+            this.listeners.onAttach(this);
+        }
+    }
+    set onDetach(v) {
+        this.getListeners().onDetach = v;
     }
     _onDetach() {
+        if (this.listeners && this.listeners.onDetach) {
+            this.listeners.onDetach(this);
+        }
+    }
+    set onEnabled(v) {
+        this.getListeners().onEnabled = v;
     }
     _onEnabled() {
+        if (this.listeners && this.listeners.onEnabled) {
+            this.listeners.onEnabled(this);
+        }
+    }
+    set onDisabled(v) {
+        this.getListeners().onDisabled = v;
     }
     _onDisabled() {
+        if (this.listeners && this.listeners.onDisabled) {
+            this.listeners.onDisabled(this);
+        }
+    }
+    set onActive(v) {
+        this.getListeners().onActive = v;
     }
     _onActive() {
-        if (this.onActive) {
-            this.onActive(this);
+        if (this.listeners && this.listeners.onActive) {
+            this.listeners.onActive(this);
         }
+    }
+    set onInactive(v) {
+        this.getListeners().onInactive = v;
     }
     _onInactive() {
-        if (this.onInactive) {
-            this.onInactive(this);
+        if (this.listeners && this.listeners.onInactive) {
+            this.listeners.onInactive(this);
         }
     }
+    set onResize(v) {
+        this.getListeners().onResize = v;
+    }
     _onResize() {
+        if (this.listeners && this.listeners.onResize) {
+            this.listeners.onResize(this);
+        }
+    }
+    set onTextureError(v) {
+        this.getListeners().onTextureError = v;
+    }
+    _onTextureError(loadError, source) {
+        if (this.listeners && this.listeners.onTextureError) {
+            this.listeners.onTextureError(this, loadError, source);
+        }
+    }
+    set onTextureLoaded(v) {
+        this.getListeners().onTextureLoaded = v;
+    }
+    _onTextureLoaded(texture) {
+        if (this.listeners && this.listeners.onTextureLoaded) {
+            this.listeners.onTextureLoaded(this, texture);
+        }
+    }
+    set onTextureUnloaded(v) {
+        this.getListeners().onTextureUnloaded = v;
+    }
+    _onTextureUnloaded(texture) {
+        if (this.listeners && this.listeners.onTextureUnloaded) {
+            this.listeners.onTextureUnloaded(this, texture);
+        }
     }
     _getRenderWidth() {
         if (this._w) {
@@ -364,7 +432,7 @@ class Element {
         // txError event should automatically be re-triggered when a element becomes active.
         const loadError = this.__texture.loadError;
         if (loadError) {
-            this.emit('txError', loadError, this.__texture._source);
+            this._onTextureError(loadError, this.__texture._source);
         }
     }
     _enableTexture() {
@@ -467,10 +535,10 @@ class Element {
         }
         if (sourceChanged) {
             if (this.__displayedTexture) {
-                this.emit('txLoaded', this.__displayedTexture);
+                this._onTextureLoaded(this.__displayedTexture);
             }
             else {
-                this.emit('txUnloaded', this.__displayedTexture);
+                this._onTextureUnloaded(this.__displayedTexture);
             }
         }
     }
@@ -482,8 +550,8 @@ class Element {
         }
     }
     ;
-    onTextureSourceLoadError(e) {
-        this.emit('txError', e, this.__texture._source);
+    onTextureSourceLoadError(loadError) {
+        this._onTextureError(loadError, this.__texture._source);
     }
     ;
     forceRenderUpdate() {
@@ -1596,10 +1664,10 @@ class Element {
     }
 }
 Element.id = 1;
-EventEmitter.mixin(Element);
 import ImageTexture from "../textures/ImageTexture";
 import TextTexture from "../textures/TextTexture";
 import SourceTexture from "../textures/SourceTexture";
 import ElementChildList from "./ElementChildList";
+import ElementListeners from "./ElementListeners";
 export default Element;
 //# sourceMappingURL=Element.js.map

@@ -279,7 +279,7 @@ describe('textures', function() {
                 return new Promise( resolve => {
 
                     const Item1TxLoaded = () => {
-                        root.tag('Item').off("txLoaded", Item1TxLoaded);
+                        root.tag('Item').onTextureLoaded = undefined;
 
                         setTimeout(() => {
                             // Patch Item2 with same texture as Item
@@ -290,7 +290,7 @@ describe('textures', function() {
                     };
 
                     const Item2TxLoaded = () => {
-                        container.off("txLoaded", Item2TxLoaded);
+                        container.onTextureLoaded = undefined;
                         chai.assert(texture.isValid);
                         chai.assert(texture._applyResizeMode.called, "_applyResizeMode was never called");
                         resolve();
@@ -298,9 +298,9 @@ describe('textures', function() {
                     };
 
                     // Wait for first texture loading
-                    root.tag('Item').on("txLoaded", Item1TxLoaded);
+                    root.tag('Item').onTextureLoaded = Item1TxLoaded;
                     // Wait for second texture loading
-                    container.on("txLoaded", Item2TxLoaded);
+                    container.onTextureLoaded = Item2TxLoaded;
 
                     stage.drawFrame();
 

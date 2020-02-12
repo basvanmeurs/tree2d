@@ -8,7 +8,6 @@ import ElementCore from "./core/ElementCore";
 import Base from "./Base";
 
 import Utils from "./Utils";
-import EventEmitter from "../EventEmitter";
 import Shader from "./Shader";
 
 class Element {
@@ -58,9 +57,7 @@ class Element {
     // Fixed height of this element.
     private _h: number;
 
-    public onActive?: Function = undefined;
-
-    public onInactive?: Function = undefined;
+    private listeners? : ElementListeners;
 
     constructor(stage: Stage) {
         this.stage = stage;
@@ -72,11 +69,16 @@ class Element {
         this._h = 0;
 
         this.__start();
-
-        EventEmitter.construct(this);
     }
 
     __start() {
+    }
+
+    private getListeners() : ElementListeners {
+        if (!this.listeners) {
+            this.listeners = new ElementListeners();
+        }
+        return this.listeners;
     }
 
     get id(): number {
@@ -350,42 +352,115 @@ class Element {
         this._onInactive();
     }
 
-    protected _onSetup(): void {
+    public set onSetup(v: Function|undefined) {
+        this.getListeners().onSetup = v;
+    }
 
+    protected _onSetup(): void {
+        if (this.listeners && this.listeners.onSetup) {
+            this.listeners.onSetup(this);
+        }
+    }
+
+    public set onAttach(v: Function|undefined) {
+        this.getListeners().onAttach = v;
     }
 
     protected _onAttach(): void {
+        if (this.listeners && this.listeners.onAttach) {
+            this.listeners.onAttach(this);
+        }
+    }
 
+    public set onDetach(v: Function|undefined) {
+        this.getListeners().onDetach = v;
     }
 
     protected _onDetach(): void {
+        if (this.listeners && this.listeners.onDetach) {
+            this.listeners.onDetach(this);
+        }
+    }
 
+    public set onEnabled(v: Function|undefined) {
+        this.getListeners().onEnabled = v;
     }
 
     protected _onEnabled(): void {
+        if (this.listeners && this.listeners.onEnabled) {
+            this.listeners.onEnabled(this);
+        }
+    }
 
+    public set onDisabled(v: Function|undefined) {
+        this.getListeners().onDisabled = v;
     }
 
     protected _onDisabled(): void {
+        if (this.listeners && this.listeners.onDisabled) {
+            this.listeners.onDisabled(this);
+        }
+    }
 
+    public set onActive(v: Function|undefined) {
+        this.getListeners().onActive = v;
     }
 
     protected _onActive(): void {
-        if (this.onActive) {
-            this.onActive(this);
+        if (this.listeners && this.listeners.onActive) {
+            this.listeners.onActive(this);
         }
+    }
+
+    public set onInactive(v: Function|undefined) {
+        this.getListeners().onInactive = v;
     }
 
     protected _onInactive(): void {
-        if (this.onInactive) {
-            this.onInactive(this);
+        if (this.listeners && this.listeners.onInactive) {
+            this.listeners.onInactive(this);
         }
     }
 
-    protected _onResize(): void {
-
+    public set onResize(v: Function|undefined) {
+        this.getListeners().onResize = v;
     }
 
+    protected _onResize(): void {
+        if (this.listeners && this.listeners.onResize) {
+            this.listeners.onResize(this);
+        }
+    }
+
+    public set onTextureError(v: Function|undefined) {
+        this.getListeners().onTextureError = v;
+    }
+
+    protected _onTextureError(loadError: any, source: any): void {
+        if (this.listeners && this.listeners.onTextureError) {
+            this.listeners.onTextureError(this, loadError, source);
+        }
+    }
+
+    public set onTextureLoaded(v: Function|undefined) {
+        this.getListeners().onTextureLoaded = v;
+    }
+
+    protected _onTextureLoaded(texture: Texture): void {
+        if (this.listeners && this.listeners.onTextureLoaded) {
+            this.listeners.onTextureLoaded(this, texture);
+        }
+    }
+
+    public set onTextureUnloaded(v: Function|undefined) {
+        this.getListeners().onTextureUnloaded = v;
+    }
+
+    protected _onTextureUnloaded(texture: Texture): void {
+        if (this.listeners && this.listeners.onTextureUnloaded) {
+            this.listeners.onTextureUnloaded(this, texture);
+        }
+    }
     private _getRenderWidth(): number {
         if (this._w) {
             return this._w;
@@ -466,7 +541,7 @@ class Element {
         // txError event should automatically be re-triggered when a element becomes active.
         const loadError = this.__texture.loadError;
         if (loadError) {
-            this.emit('txError', loadError, this.__texture._source);
+            this._onTextureError(loadError, this.__texture._source)
         }
     }
 
@@ -578,9 +653,9 @@ class Element {
 
         if (sourceChanged) {
             if (this.__displayedTexture) {
-                this.emit('txLoaded', this.__displayedTexture);
+                this._onTextureLoaded(this.__displayedTexture);
             } else {
-                this.emit('txUnloaded', this.__displayedTexture);
+                this._onTextureUnloaded(this.__displayedTexture);
             }
         }
     }
@@ -593,8 +668,8 @@ class Element {
         }
     };
 
-    onTextureSourceLoadError(e: any): void {
-        this.emit('txError', e, this.__texture._source);
+    onTextureSourceLoadError(loadError: any): void {
+        this._onTextureError(loadError, this.__texture._source);
     };
 
     forceRenderUpdate(): void {
@@ -1848,10 +1923,6 @@ class Element {
     }
 }
 
-// This gives a slight performance benefit compared to extending EventEmitter.
-interface Element extends EventEmitter {}
-EventEmitter.mixin(Element);
-
 import Texture from "./Texture";
 import ImageTexture from "../textures/ImageTexture";
 import TextTexture from "../textures/TextTexture";
@@ -1859,6 +1930,7 @@ import SourceTexture from "../textures/SourceTexture";
 import ElementChildList from "./ElementChildList";
 import Stage from "./Stage";
 import ElementTexturizer from "./core/ElementTexturizer";
+import ElementListeners from "./ElementListeners";
 
 export default Element;
 
