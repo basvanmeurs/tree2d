@@ -45,7 +45,7 @@ export default class FlexLayout {
     }
 
     layoutTree() {
-        const isSubTree = (this.item.flexParent !== null);
+        const isSubTree = this.item.flexParent !== null;
         if (isSubTree) {
             // Use the dimensions set by the parent flex tree.
             this._updateSubTreeLayout();
@@ -75,7 +75,7 @@ export default class FlexLayout {
     }
 
     _performUpdateLayoutTreeFromCache() {
-        const sizeMightHaveChanged = (this.item.funcW || this.item.funcH);
+        const sizeMightHaveChanged = this.item.funcW || this.item.funcH;
         if (sizeMightHaveChanged) {
             // Update after all.
             this.item.enableLocalRecalcFlag();
@@ -221,7 +221,7 @@ export default class FlexLayout {
     }
 
     _checkValidCacheMainAxisResize(size: number) {
-        const isFinalMainAxisSize = (size === this.targetMainAxisSize);
+        const isFinalMainAxisSize = size === this.targetMainAxisSize;
         if (isFinalMainAxisSize) {
             return true;
         }
@@ -235,7 +235,7 @@ export default class FlexLayout {
     }
 
     performResizeMainAxis(size: number) {
-        this._shrunk = (size < this.mainAxisSize);
+        this._shrunk = size < this.mainAxisSize;
 
         this.mainAxisSize = size;
 
@@ -341,5 +341,4 @@ export default class FlexLayout {
     set crossAxisSize(v) {
         FlexUtils.setAxisLayoutSize(this.item, !this._horizontal, v);
     }
-
 }

@@ -2,7 +2,6 @@ import WebGLShaderProgram from "./WebGLShaderProgram";
 import Shader from "../../tree/Shader";
 
 export default class WebGLShader extends Shader {
-
     constructor(ctx) {
         super(ctx);
 
@@ -10,7 +9,10 @@ export default class WebGLShader extends Shader {
 
         this._program = stage.renderer.shaderPrograms.get(this.constructor);
         if (!this._program) {
-            this._program = new WebGLShaderProgram(this.constructor.vertexShaderSource, this.constructor.fragmentShaderSource);
+            this._program = new WebGLShaderProgram(
+                this.constructor.vertexShaderSource,
+                this.constructor.fragmentShaderSource
+            );
 
             // Let the vbo context perform garbage collection.
             stage.renderer.shaderPrograms.set(this.constructor, this._program);
@@ -64,7 +66,7 @@ export default class WebGLShader extends Shader {
 
     hasSameProgram(other) {
         // For performance reasons, we first check for identical references.
-        return (other && ((other === this) || (other._program === this._program)));
+        return other && (other === this || other._program === this._program);
     }
 
     beforeUsage() {
@@ -75,13 +77,9 @@ export default class WebGLShader extends Shader {
         // All settings changed in beforeUsage should be reset here.
     }
 
-    enableAttribs() {
+    enableAttribs() {}
 
-    }
-
-    disableAttribs() {
-
-    }
+    disableAttribs() {}
 
     getExtraAttribBytesPerVertex() {
         return 0;
@@ -110,18 +108,14 @@ export default class WebGLShader extends Shader {
         return this._getProjection(operation)[1] < 0;
     }
 
-    beforeDraw(operation) {
-    }
+    beforeDraw(operation) {}
 
-    draw(operation) {
-    }
+    draw(operation) {}
 
-    afterDraw(operation) {
-    }
+    afterDraw(operation) {}
 
     cleanup() {
         this._initialized = false;
         // Program takes little resources, so it is only destroyed when the full stage is destroyed.
     }
-
 }

@@ -3,7 +3,6 @@ const Base = lng.Base;
 const FlexTarget = lng.FlexTarget;
 
 export default class Target {
-    
     constructor() {
         this._children = [];
 
@@ -74,7 +73,7 @@ export default class Target {
     }
 
     hasFlexLayout() {
-        return (this._layout && this._layout.isEnabled());
+        return this._layout && this._layout.isEnabled();
     }
 
     triggerLayout() {
@@ -92,7 +91,7 @@ export default class Target {
 
     _setHasUpdates() {
         let p = this;
-        while(p && !p._hasUpdates) {
+        while (p && !p._hasUpdates) {
             p._hasUpdates = true;
             p = p._parent;
         }
@@ -164,7 +163,7 @@ export default class Target {
         } else {
             this._disableFuncX();
             if (this.hasFlexLayout()) {
-                this._x += (v - this._layout.originalX);
+                this._x += v - this._layout.originalX;
                 this._triggerRecalcTranslate();
                 this._layout.setOriginalXWithoutUpdatingLayout(v);
             } else {
@@ -185,7 +184,7 @@ export default class Target {
     }
 
     get funcX() {
-        return (this._optFlags & 1 ? this._funcX : null);
+        return this._optFlags & 1 ? this._funcX : null;
     }
 
     set funcX(v) {
@@ -203,7 +202,7 @@ export default class Target {
     }
 
     _disableFuncX() {
-        this._optFlags = this._optFlags & (0xFFFF - 1);
+        this._optFlags = this._optFlags & (0xffff - 1);
         this._funcX = null;
     }
 
@@ -225,7 +224,7 @@ export default class Target {
         } else {
             this._disableFuncY();
             if (this.hasFlexLayout()) {
-                this._y += (v - this._layout.originalY);
+                this._y += v - this._layout.originalY;
                 this._triggerRecalcTranslate();
                 this._layout.setOriginalYWithoutUpdatingLayout(v);
             } else {
@@ -246,7 +245,7 @@ export default class Target {
     }
 
     get funcY() {
-        return (this._optFlags & 2 ? this._funcY : null);
+        return this._optFlags & 2 ? this._funcY : null;
     }
 
     set funcY(v) {
@@ -264,7 +263,7 @@ export default class Target {
     }
 
     _disableFuncY() {
-        this._optFlags = this._optFlags & (0xFFFF - 2);
+        this._optFlags = this._optFlags & (0xffff - 2);
         this._funcY = null;
     }
 
@@ -322,7 +321,7 @@ export default class Target {
     }
 
     get funcW() {
-        return (this._optFlags & 4 ? this._funcW : null);
+        return this._optFlags & 4 ? this._funcW : null;
     }
 
     set funcW(v) {
@@ -340,12 +339,12 @@ export default class Target {
     }
 
     disableFuncW() {
-        this._optFlags = this._optFlags & (0xFFFF - 4);
+        this._optFlags = this._optFlags & (0xffff - 4);
         this._funcW = null;
     }
 
     get funcH() {
-        return (this._optFlags & 8 ? this._funcH : null);
+        return this._optFlags & 8 ? this._funcH : null;
     }
 
     set funcH(v) {
@@ -363,7 +362,7 @@ export default class Target {
     }
 
     disableFuncH() {
-        this._optFlags = this._optFlags & (0xFFFF - 8);
+        this._optFlags = this._optFlags & (0xffff - 8);
         this._funcH = null;
     }
 
@@ -414,10 +413,10 @@ export default class Target {
         if (!this._children) this._children = [];
         this._children.splice(index, 0, child);
         child.setParent(this);
-    };
+    }
 
     removeChildAt(index) {
-        let child = this._children[index];
+        const child = this._children[index];
         this._children.splice(index, 1);
         child.setParent(null);
     }
@@ -451,15 +450,15 @@ export default class Target {
 
     toJson() {
         const json = {
-            w:this.w,
-            h:this.h,
-            x:this.x,
-            y:this.y,
+            w: this.w,
+            h: this.h,
+            x: this.x,
+            y: this.y,
             layout: [this._x, this._y, this._w, this._h].join(" "),
             r: this.r ? this.r.join(" ") : undefined,
-            flex: this._layout && this._layout.flex ? Target.flexToJson(this._layout.flex):false,
-            flexItem: this._layout && this._layout.flexItem ? Target.flexToJson(this._layout.flexItem):false,
-            children:this._children.map(c => c.toJson())
+            flex: this._layout && this._layout.flex ? Target.flexToJson(this._layout.flex) : false,
+            flexItem: this._layout && this._layout.flexItem ? Target.flexToJson(this._layout.flexItem) : false,
+            children: this._children.map(c => c.toJson())
         };
         if (!json.r) {
             delete json.r;
@@ -492,9 +491,8 @@ export default class Target {
     getLocationString() {
         let i;
         i = this._parent ? this._parent._children.indexOf(this) : "R";
-        let str = this._parent ? this._parent.getLocationString(): "";
+        let str = this._parent ? this._parent.getLocationString() : "";
         str += "[" + i + "]";
         return str;
     }
-
 }

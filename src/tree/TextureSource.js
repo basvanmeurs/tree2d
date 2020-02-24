@@ -1,5 +1,4 @@
 export default class TextureSource {
-
     constructor(manager, loader = null) {
         this.id = TextureSource.id++;
 
@@ -82,7 +81,6 @@ export default class TextureSource {
          * @private
          */
         this._imageRef = null;
-
     }
 
     get loadError() {
@@ -179,7 +177,7 @@ export default class TextureSource {
     }
 
     isLoading() {
-        return (this.loadingSince > 0);
+        return this.loadingSince > 0;
     }
 
     isError() {
@@ -201,7 +199,7 @@ export default class TextureSource {
         }
 
         if (!this._nativeTexture && !this.isLoading()) {
-            this.loadingSince = (new Date()).getTime();
+            this.loadingSince = new Date().getTime();
             this._cancelCb = this.loader((err, options) => {
                 // Ignore loads that come in after a cancel.
                 if (this.isLoading()) {
@@ -216,7 +214,7 @@ export default class TextureSource {
                         // Emit txError.
                         this.onError(err);
                     } else if (options && options.source) {
-                        if (!this.stage.isUpdatingFrame() && !forceSync && (options.throttle !== false)) {
+                        if (!this.stage.isUpdatingFrame() && !forceSync && options.throttle !== false) {
                             const textureThrottler = this.stage.textureThrottler;
                             this._cancelCb = textureThrottler.genericCancelCb;
                             textureThrottler.add(this, options);
@@ -247,8 +245,7 @@ export default class TextureSource {
 
         this.permanent = !!options.permanent;
 
-        if (options && options.imageRef)
-            this._imageRef = options.imageRef;
+        if (options && options.imageRef) this._imageRef = options.imageRef;
 
         if (this._isNativeTexture(source)) {
             // Texture managed by caller.
@@ -258,7 +255,7 @@ export default class TextureSource {
             this.h = this.h || source.h;
 
             // WebGLTexture objects are by default;
-            this.permanent = options.hasOwnProperty('permanent') ? options.permanent : true;
+            this.permanent = options.hasOwnProperty("permanent") ? options.permanent : true;
         } else {
             this.manager.uploadTextureSource(this, options);
         }
@@ -290,14 +287,13 @@ export default class TextureSource {
             this._nativeTexture.update = this.stage.frameCounter;
         }
 
-        this.forEachActiveElement(function (element) {
+        this.forEachActiveElement(function(element) {
             element.forceRenderUpdate();
         });
-
     }
 
     forceUpdateRenderCoords() {
-        this.forEachActiveElement(function (element) {
+        this.forEachActiveElement(function(element) {
             element._updateTextureCoords();
         });
     }
@@ -316,7 +312,7 @@ export default class TextureSource {
      * Used for result textures.
      */
     replaceNativeTexture(newNativeTexture, w, h) {
-        let prevNativeTexture = this._nativeTexture;
+        const prevNativeTexture = this._nativeTexture;
         // Loaded by core.
         this._nativeTexture = newNativeTexture;
         this.w = w;
@@ -339,7 +335,7 @@ export default class TextureSource {
     onError(e) {
         this._loadError = e;
         this.loadingSince = 0;
-        console.error('texture load error', e, this.lookupId);
+        console.error("texture load error", e, this.lookupId);
         this.forEachActiveElement(element => element.onTextureSourceLoadError(e));
     }
 
@@ -350,9 +346,8 @@ export default class TextureSource {
     }
 
     _isNativeTexture(source) {
-        return ((Utils.isNode ? source.constructor.name === "WebGLTexture" : source instanceof WebGLTexture));
+        return Utils.isNode ? source.constructor.name === "WebGLTexture" : source instanceof WebGLTexture;
     }
-
 }
 
 TextureSource.prototype.isTextureSource = true;

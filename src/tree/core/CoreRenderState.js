@@ -1,5 +1,4 @@
 export default class CoreRenderState {
-
     constructor(ctx) {
         this.ctx = ctx;
 
@@ -10,7 +9,6 @@ export default class CoreRenderState {
         this.renderer = ctx.stage.renderer;
 
         this.quads = this.renderer.createCoreQuadList(ctx);
-
     }
 
     reset() {
@@ -37,9 +35,8 @@ export default class CoreRenderState {
         this.quads.reset();
 
         this._temporaryTexturizers = [];
-        
-        this._isCachingTexturizer = false;
 
+        this._isCachingTexturizer = false;
     }
 
     get length() {
@@ -148,7 +145,7 @@ export default class CoreRenderState {
 
         this._quadOperation.length++;
 
-        this.renderer.addQuad(this, this.quads, this.length - 1)
+        this.renderer.addQuad(this, this.quads, this.length - 1);
     }
 
     finishedRenderTexture() {
@@ -164,18 +161,25 @@ export default class CoreRenderState {
 
     _isRenderTextureReusable() {
         const offset = this._renderTextureInfo.offset;
-        return (this.quads.quadTextures[offset].w === this._renderTextureInfo.w) &&
-            (this.quads.quadTextures[offset].h === this._renderTextureInfo.h) &&
+        return (
+            this.quads.quadTextures[offset].w === this._renderTextureInfo.w &&
+            this.quads.quadTextures[offset].h === this._renderTextureInfo.h &&
             this.renderer.isRenderTextureReusable(this, this._renderTextureInfo)
+        );
     }
 
     _hasChanges() {
-        let q = this._quadOperation;
+        const q = this._quadOperation;
         if (this._shader !== q.shader) return true;
         if (this._shaderOwner !== q.shaderOwner) return true;
         if (this._renderTextureInfo !== q.renderTextureInfo) return true;
         if (this._scissor !== q.scissor) {
-            if ((this._scissor[0] !== q.scissor[0]) || (this._scissor[1] !== q.scissor[1]) || (this._scissor[2] !== q.scissor[2]) || (this._scissor[3] !== q.scissor[3])) {
+            if (
+                this._scissor[0] !== q.scissor[0] ||
+                this._scissor[1] !== q.scissor[1] ||
+                this._scissor[2] !== q.scissor[2] ||
+                this._scissor[3] !== q.scissor[3]
+            ) {
                 return true;
             }
         }
@@ -186,7 +190,10 @@ export default class CoreRenderState {
     _finishQuadOperation(create = true) {
         if (this._quadOperation) {
             if (this._quadOperation.length || this._shader.addEmpty()) {
-                if (!this._quadOperation.scissor || ((this._quadOperation.scissor[2] > 0) && (this._quadOperation.scissor[3] > 0))) {
+                if (
+                    !this._quadOperation.scissor ||
+                    (this._quadOperation.scissor[2] > 0 && this._quadOperation.scissor[3] > 0)
+                ) {
                     // Ignore empty clipping regions.
                     this.quadOperations.push(this._quadOperation);
                 }
@@ -229,6 +236,4 @@ export default class CoreRenderState {
 
         this.renderer.finishRenderState(this);
     }
-
 }
-

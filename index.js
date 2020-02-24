@@ -1,2 +1,2 @@
-import lng from './dist/lightning.js';
+import lng from "./dist/lightning.js";
 export default lng;

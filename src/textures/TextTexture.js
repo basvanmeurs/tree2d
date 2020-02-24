@@ -1,12 +1,11 @@
 import Texture from "../tree/Texture";
 
 export default class TextTexture extends Texture {
-
     constructor(stage) {
         super(stage);
 
         // We use the stage precision as the default precision in case of a text texture.
-        this._precision = this.stage.getOption('precision');
+        this._precision = this.stage.getOption("precision");
     }
 
     get text() {
@@ -389,13 +388,14 @@ export default class TextTexture extends Texture {
     }
 
     _getLookupId() {
-        let parts = [];
+        const parts = [];
 
         if (this.w !== 0) parts.push("w " + this.w);
         if (this.h !== 0) parts.push("h " + this.h);
         if (this.fontStyle !== "normal") parts.push("fS" + this.fontStyle);
         if (this.fontSize !== 40) parts.push("fs" + this.fontSize);
-        if (this.fontFace !== null) parts.push("ff" + (Array.isArray(this.fontFace) ? this.fontFace.join(",") : this.fontFace));
+        if (this.fontFace !== null)
+            parts.push("ff" + (Array.isArray(this.fontFace) ? this.fontFace.join(",") : this.fontFace));
         if (this.wordWrap !== true) parts.push("wr" + (this.wordWrap ? 1 : 0));
         if (this.wordWrapWidth !== 0) parts.push("ww" + this.wordWrapWidth);
         if (this.textOverflow != "") parts.push("to" + this.textOverflow);
@@ -426,7 +426,7 @@ export default class TextTexture extends Texture {
         if (this.cutSy) parts.push("csy" + this.cutSy);
         if (this.cutEy) parts.push("cey" + this.cutEy);
 
-        let id = "TX$" + parts.join("|") + ":" + this.text;
+        const id = "TX$" + parts.join("|") + ":" + this.text;
         return id;
     }
 
@@ -435,7 +435,7 @@ export default class TextTexture extends Texture {
 
         // Inherit font face from stage.
         if (args.fontFace === null) {
-            args.fontFace = this.stage.getOption('defaultFontFace');
+            args.fontFace = this.stage.getOption("defaultFontFace");
         }
 
         return function(cb) {
@@ -446,22 +446,34 @@ export default class TextTexture extends Texture {
             if (p) {
                 p.then(() => {
                     /* FIXME: on some platforms (e.g. RPI), throttling text textures cause artifacts */
-                    cb(null, Object.assign({renderInfo: renderer.renderInfo, throttle: false}, this.stage.platform.getTextureOptionsForDrawingCanvas(canvas)));
-                }).catch((err) => {
+                    cb(
+                        null,
+                        Object.assign(
+                            { renderInfo: renderer.renderInfo, throttle: false },
+                            this.stage.platform.getTextureOptionsForDrawingCanvas(canvas)
+                        )
+                    );
+                }).catch(err => {
                     cb(err);
                 });
             } else {
-                cb(null, Object.assign({renderInfo: renderer.renderInfo, throttle: false}, this.stage.platform.getTextureOptionsForDrawingCanvas(canvas)));
+                cb(
+                    null,
+                    Object.assign(
+                        { renderInfo: renderer.renderInfo, throttle: false },
+                        this.stage.platform.getTextureOptionsForDrawingCanvas(canvas)
+                    )
+                );
             }
-        }
+        };
     }
 
     getNonDefaults() {
         const nonDefaults = super.getNonDefaults();
-        if (this.text !== "") nonDefaults['text'] = this.text;
-        if (this.w !== 0) nonDefaults['w'] = this.w;
-        if (this.h !== 0) nonDefaults['h'] = this.h;
-        if (this.fontStyle !== "normal") nonDefaults['fontStyle'] = this.fontStyle;
+        if (this.text !== "") nonDefaults["text"] = this.text;
+        if (this.w !== 0) nonDefaults["w"] = this.w;
+        if (this.h !== 0) nonDefaults["h"] = this.h;
+        if (this.fontStyle !== "normal") nonDefaults["fontStyle"] = this.fontStyle;
         if (this.fontSize !== 40) nonDefaults["fontSize"] = this.fontSize;
         if (this.fontFace !== null) nonDefaults["fontFace"] = this.fontFace;
         if (this.wordWrap !== true) nonDefaults["wordWrap"] = this.wordWrap;
@@ -473,7 +485,7 @@ export default class TextTexture extends Texture {
         if (this.offsetY !== null) nonDefaults["offsetY"] = this.offsetY;
         if (this.maxLines !== 0) nonDefaults["maxLines"] = this.maxLines;
         if (this.maxLinesSuffix !== "..") nonDefaults["maxLinesSuffix"] = this.maxLinesSuffix;
-        if (this.precision !== this.stage.getOption('precision')) nonDefaults["precision"] = this.precision;
+        if (this.precision !== this.stage.getOption("precision")) nonDefaults["precision"] = this.precision;
         if (this.textColor !== 0xffffffff) nonDefaults["textColor"] = this.textColor;
         if (this.paddingLeft !== 0) nonDefaults["paddingLeft"] = this.paddingLeft;
         if (this.paddingRight !== 0) nonDefaults["paddingRight"] = this.paddingRight;
@@ -497,7 +509,7 @@ export default class TextTexture extends Texture {
     }
 
     cloneArgs() {
-        let obj = {};
+        const obj = {};
         obj.text = this._text;
         obj.w = this._w;
         obj.h = this._h;
@@ -534,13 +546,11 @@ export default class TextTexture extends Texture {
         obj.cutEy = this._cutEy;
         return obj;
     }
-
-
 }
 
 // Because there are so many properties, we prefer to use the prototype for default values.
 // This causes a decrease in performance, but also a decrease in memory usage.
-let proto = TextTexture.prototype;
+const proto = TextTexture.prototype;
 proto._text = "";
 proto._w = 0;
 proto._h = 0;
@@ -556,17 +566,17 @@ proto._textAlign = "left";
 proto._offsetY = null;
 proto._maxLines = 0;
 proto._maxLinesSuffix = "..";
-proto._textColor = 0xFFFFFFFF;
+proto._textColor = 0xffffffff;
 proto._paddingLeft = 0;
 proto._paddingRight = 0;
 proto._shadow = false;
-proto._shadowColor = 0xFF000000;
+proto._shadowColor = 0xff000000;
 proto._shadowOffsetX = 0;
 proto._shadowOffsetY = 0;
 proto._shadowBlur = 5;
 proto._highlight = false;
 proto._highlightHeight = 0;
-proto._highlightColor = 0xFF000000;
+proto._highlightColor = 0xff000000;
 proto._highlightOffset = 0;
 proto._highlightPaddingLeft = 0;
 proto._highlightPaddingRight = 0;
@@ -574,6 +584,5 @@ proto._cutSx = 0;
 proto._cutEx = 0;
 proto._cutSy = 0;
 proto._cutEy = 0;
-
 
 import TextTextureRenderer from "./TextTextureRenderer";

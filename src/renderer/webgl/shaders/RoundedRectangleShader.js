@@ -19,8 +19,12 @@ export default class RoundedRectangleShader extends DefaultShader {
         const owner = operation.shaderOwner;
 
         const renderPrecision = this.ctx.stage.getRenderPrecision();
-        this._setUniform('radius',  (this._radius + .5) * renderPrecision, this.gl.uniform1f);
-        this._setUniform('resolution', new Float32Array([owner._w * renderPrecision, owner._h * renderPrecision]), this.gl.uniform2fv);
+        this._setUniform("radius", (this._radius + 0.5) * renderPrecision, this.gl.uniform1f);
+        this._setUniform(
+            "resolution",
+            new Float32Array([owner._w * renderPrecision, owner._h * renderPrecision]),
+            this.gl.uniform2fv
+        );
     }
 }
 

@@ -1,29 +1,29 @@
-import fs from 'fs'
-import path from 'path'
-import ts from 'rollup-plugin-typescript2'
-import replace from '@rollup/plugin-replace'
-import json from '@rollup/plugin-json'
+import fs from "fs";
+import path from "path";
+import ts from "rollup-plugin-typescript2";
+import replace from "@rollup/plugin-replace";
+import json from "@rollup/plugin-json";
 
 if (!process.env.TARGET) {
-    throw new Error('TARGET package must be specified via --environment flag.')
+    throw new Error("TARGET package must be specified via --environment flag.");
 }
 
-const masterVersion = require('./package.json').version
-const packageDir = path.resolve(`./`)
-const name = path.basename(packageDir)
-const resolve = p => path.resolve(packageDir, p)
-const pkg = require(resolve(`package.json`))
-const packageOptions = pkg.buildOptions || {}
+const masterVersion = require("./package.json").version;
+const packageDir = path.resolve(`./`);
+const name = path.basename(packageDir);
+const resolve = p => path.resolve(packageDir, p);
+const pkg = require(resolve(`package.json`));
+const packageOptions = pkg.buildOptions || {};
 
 // ensure TS checks only once for each build
-let hasTSChecked = false
+let hasTSChecked = false;
 
 const outputConfigs = {
-    'esm-bundler': {
+    "esm-bundler": {
         file: resolve(`dist/${name}.esm-bundler.js`),
         format: `es`
     },
-    'esm-bundler-runtime': {
+    "esm-bundler-runtime": {
         file: resolve(`dist/${name}.runtime.esm-bundler.js`),
         format: `es`
     },
@@ -39,75 +39,70 @@ const outputConfigs = {
         file: resolve(`dist/${name}.esm.js`),
         format: `es`
     }
-}
+};
 
-const defaultFormats = ['esm-bundler', 'cjs']
-const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(',')
-const packageFormats = inlineFormats || packageOptions.formats || defaultFormats
+const defaultFormats = ["esm-bundler", "cjs"];
+const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(",");
+const packageFormats = inlineFormats || packageOptions.formats || defaultFormats;
 const packageConfigs = process.env.PROD_ONLY
     ? []
-    : packageFormats.map(format => createConfig(format, outputConfigs[format]))
+    : packageFormats.map(format => createConfig(format, outputConfigs[format]));
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
     packageFormats.forEach(format => {
-        if (format === 'cjs' && packageOptions.prod !== false) {
-            packageConfigs.push(createProductionConfig(format))
+        if (format === "cjs" && packageOptions.prod !== false) {
+            packageConfigs.push(createProductionConfig(format));
         }
-        if (format === 'global' || format === 'esm') {
-            packageConfigs.push(createMinifiedConfig(format))
+        if (format === "global" || format === "esm") {
+            packageConfigs.push(createMinifiedConfig(format));
         }
-    })
+    });
 }
 
-export default packageConfigs
+export default packageConfigs;
 
 function createConfig(format, output, plugins = []) {
     if (!output) {
-        console.log(require('chalk').yellow(`invalid format: "${format}"`))
-        process.exit(1)
+        console.log(require("chalk").yellow(`invalid format: "${format}"`));
+        process.exit(1);
     }
 
-    output.sourcemap = !!process.env.SOURCE_MAP
-    output.externalLiveBindings = false
+    output.sourcemap = !!process.env.SOURCE_MAP;
+    output.externalLiveBindings = false;
 
-    const isProductionBuild =
-        process.env.__DEV__ === 'false' || /\.prod\.js$/.test(output.file)
-    const isGlobalBuild = format === 'global'
-    const isRawESMBuild = format === 'esm'
-    const isNodeBuild = format === 'cjs'
-    const isBundlerESMBuild = /esm-bundler/.test(format)
+    const isProductionBuild = process.env.__DEV__ === "false" || /\.prod\.js$/.test(output.file);
+    const isGlobalBuild = format === "global";
+    const isRawESMBuild = format === "esm";
+    const isNodeBuild = format === "cjs";
+    const isBundlerESMBuild = /esm-bundler/.test(format);
 
     if (isGlobalBuild) {
-        output.name = packageOptions.name
+        output.name = packageOptions.name;
     }
 
-    const shouldEmitDeclarations = process.env.TYPES != null && !hasTSChecked
+    const shouldEmitDeclarations = process.env.TYPES != null && !hasTSChecked;
 
     const tsPlugin = ts({
-        check: process.env.NODE_ENV === 'production' && !hasTSChecked,
-        tsconfig: path.resolve(__dirname, 'tsconfig.json'),
-        cacheRoot: path.resolve(__dirname, 'node_modules/.rts2_cache'),
+        check: process.env.NODE_ENV === "production" && !hasTSChecked,
+        tsconfig: path.resolve(__dirname, "tsconfig.json"),
+        cacheRoot: path.resolve(__dirname, "node_modules/.rts2_cache"),
         tsconfigOverride: {
             compilerOptions: {
                 sourceMap: output.sourcemap,
                 declaration: shouldEmitDeclarations,
                 declarationMap: shouldEmitDeclarations
             },
-            exclude: ['**/__tests__', 'test-dts']
+            exclude: ["**/__tests__", "test-dts"]
         }
-    })
+    });
     // we only need to check TS and generate declarations once for each build.
     // it also seems to run into weird issues when checking multiple times
     // during a single build.
-    hasTSChecked = true
+    hasTSChecked = true;
 
-    const entryFile =
-        format === 'esm-bundler-runtime' ? `src/runtime.ts` : `src/index.ts`
+    const entryFile = format === "esm-bundler-runtime" ? `src/runtime.ts` : `src/index.ts`;
 
-    const external =
-        isGlobalBuild || isRawESMBuild
-            ? []
-            : Object.keys(pkg.dependencies || [])
+    const external = isGlobalBuild || isRawESMBuild ? [] : Object.keys(pkg.dependencies || []);
 
     return {
         input: resolve(entryFile),
@@ -123,8 +118,7 @@ function createConfig(format, output, plugins = []) {
                 isProductionBuild,
                 isBundlerESMBuild,
                 // isBrowserBuild?
-                (isGlobalBuild || isRawESMBuild || isBundlerESMBuild) &&
-                !packageOptions.enableNonBrowserBranches,
+                (isGlobalBuild || isRawESMBuild || isBundlerESMBuild) && !packageOptions.enableNonBrowserBranches,
                 isGlobalBuild,
                 isNodeBuild
             ),
@@ -133,27 +127,21 @@ function createConfig(format, output, plugins = []) {
         output,
         onwarn: (msg, warn) => {
             if (!/Circular/.test(msg)) {
-                warn(msg)
+                warn(msg);
             }
         }
-    }
+    };
 }
 
-function createReplacePlugin(
-    isProduction,
-    isBundlerESMBuild,
-    isBrowserBuild,
-    isGlobalBuild,
-    isNodeBuild
-) {
+function createReplacePlugin(isProduction, isBundlerESMBuild, isBrowserBuild, isGlobalBuild, isNodeBuild) {
     const replacements = {
         __COMMIT__: `"${process.env.COMMIT}"`,
         __VERSION__: `"${masterVersion}"`,
         __DEV__: isBundlerESMBuild
             ? // preserve to be handled by bundlers
-            `(process.env.NODE_ENV !== 'production')`
+              `(process.env.NODE_ENV !== 'production')`
             : // hard coded dev/prod builds
-            !isProduction,
+              !isProduction,
         // this is only used during tests
         __TEST__: isBundlerESMBuild ? `(process.env.NODE_ENV === 'test')` : false,
         // If the build is expected to run directly in the browser (global / esm builds)
@@ -163,27 +151,27 @@ function createReplacePlugin(
         __GLOBAL__: isGlobalBuild,
         // is targeting Node (SSR)?
         __NODE_JS__: isNodeBuild
-    }
+    };
 
     // allow inline overrides like
     //__RUNTIME_COMPILE__=true yarn build runtime-core
     Object.keys(replacements).forEach(key => {
         if (key in process.env) {
-            replacements[key] = process.env[key]
+            replacements[key] = process.env[key];
         }
-    })
-    return replace(replacements)
+    });
+    return replace(replacements);
 }
 
 function createProductionConfig(format) {
     return createConfig(format, {
         file: resolve(`dist/${name}.${format}.prod.js`),
         format: outputConfigs[format].format
-    })
+    });
 }
 
 function createMinifiedConfig(format) {
-    const { terser } = require('rollup-plugin-terser')
+    const { terser } = require("rollup-plugin-terser");
     return createConfig(
         format,
         {
@@ -199,5 +187,5 @@ function createMinifiedConfig(format) {
                 }
             })
         ]
-    )
+    );
 }

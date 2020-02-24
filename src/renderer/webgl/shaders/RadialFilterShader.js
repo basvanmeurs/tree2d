@@ -24,7 +24,7 @@ export default class RadialFilterShader extends DefaultShader {
     get cutoff() {
         return this._cutoff;
     }
-    
+
     useDefault() {
         return this._radius === 0;
     }
@@ -32,10 +32,9 @@ export default class RadialFilterShader extends DefaultShader {
     setupUniforms(operation) {
         super.setupUniforms(operation);
         // We substract half a pixel to get a better cutoff effect.
-        this._setUniform("radius", 2 * (this._radius - 0.5) / operation.getRenderWidth(), this.gl.uniform1f);
-        this._setUniform("cutoff", 0.5 * operation.getRenderWidth() / this._cutoff, this.gl.uniform1f);
+        this._setUniform("radius", (2 * (this._radius - 0.5)) / operation.getRenderWidth(), this.gl.uniform1f);
+        this._setUniform("cutoff", (0.5 * operation.getRenderWidth()) / this._cutoff, this.gl.uniform1f);
     }
-
 }
 
 RadialFilterShader.vertexShaderSource = `
@@ -74,4 +73,3 @@ RadialFilterShader.fragmentShaderSource = `
         gl_FragColor = texture2D(uSampler, vTextureCoord) * vColor * f;
     }
 `;
-

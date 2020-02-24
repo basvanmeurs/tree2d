@@ -3,10 +3,24 @@ import Layout from "./layout/FlexLayout";
 import FlexTarget from "./FlexTarget";
 
 export default class FlexContainer {
-
     public static readonly ALIGN_ITEMS = ["flex-start", "flex-end", "center", "stretch"];
-    public static readonly ALIGN_CONTENT = ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly", "stretch"];
-    public static readonly JUSTIFY_CONTENT = ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly"];
+    public static readonly ALIGN_CONTENT = [
+        "flex-start",
+        "flex-end",
+        "center",
+        "space-between",
+        "space-around",
+        "space-evenly",
+        "stretch"
+    ];
+    public static readonly JUSTIFY_CONTENT = [
+        "flex-start",
+        "flex-end",
+        "center",
+        "space-between",
+        "space-around",
+        "space-evenly"
+    ];
 
     public horizontal: boolean;
     public reverse: boolean;
@@ -27,9 +41,9 @@ export default class FlexContainer {
         this.horizontal = true;
         this.reverse = false;
         this._wrap = false;
-        this._alignItems = 'stretch';
-        this._justifyContent = 'flex-start';
-        this._alignContent = 'flex-start';
+        this._alignItems = "stretch";
+        this._justifyContent = "flex-start";
+        this._alignContent = "flex-start";
 
         this._paddingLeft = 0;
         this._paddingTop = 0;
@@ -52,8 +66,8 @@ export default class FlexContainer {
     set direction(f) {
         if (this.direction === f) return;
 
-        this.horizontal = (f === 'row' || f === 'row-reverse');
-        this.reverse = (f === 'row-reverse' || f === 'column-reverse');
+        this.horizontal = f === "row" || f === "row-reverse";
+        this.reverse = f === "row-reverse" || f === "column-reverse";
 
         this._changedContents();
     }
@@ -160,5 +174,4 @@ export default class FlexContainer {
     patch(settings) {
         Base.patchObject(this, settings);
     }
-
 }

@@ -4,7 +4,6 @@
  * Only if there are multiple listeners, they are combined in an array.
  */
 export default class EventEmitter {
-
     private hasEventListeners: boolean;
     private eventFunction?: { [name: string]: Function } = {};
     private eventListeners?: { [name: string]: Function[] } = {};
@@ -50,8 +49,8 @@ export default class EventEmitter {
             if (current) {
                 if (current === EventEmitter.combiner) {
                     const listeners = eventListeners[name];
-                    let index = listeners.indexOf(listener);
-                    return (index >= 0);
+                    const index = listeners.indexOf(listener);
+                    return index >= 0;
                 } else if (eventFunction[name] === listener) {
                     return true;
                 }
@@ -69,7 +68,7 @@ export default class EventEmitter {
             if (current) {
                 if (current === EventEmitter.combiner) {
                     const listeners = eventListeners[name];
-                    let index = listeners.indexOf(listener);
+                    const index = listeners.indexOf(listener);
                     if (index >= 0) {
                         listeners.splice(index, 1);
                     }
@@ -116,7 +115,7 @@ export default class EventEmitter {
         }
     }
 
-    removeAllListeners(name : string) {
+    removeAllListeners(name: string) {
         if (this.hasEventListeners) {
             delete this.eventFunction![name];
             delete this.eventListeners![name];
@@ -127,13 +126,13 @@ export default class EventEmitter {
         const listeners = object.eventListeners![name];
         if (listeners) {
             // Because listener may detach itself while being invoked, we use a forEach instead of for loop.
-            listeners.forEach((listener) => {
+            listeners.forEach(listener => {
                 listener(arg1, arg2, arg3);
             });
         }
     }
 
-    public static mixin(base: (new (...args : any) => any)) {
+    public static mixin(base: new (...args: any) => any) {
         base.prototype.on = EventEmitter.prototype.on;
         base.prototype.has = EventEmitter.prototype.has;
         base.prototype.off = EventEmitter.prototype.off;
@@ -142,5 +141,4 @@ export default class EventEmitter {
         base.prototype.listenerCount = EventEmitter.prototype.listenerCount;
         base.prototype.removeAllListeners = EventEmitter.prototype.removeAllListeners;
     }
-
 }

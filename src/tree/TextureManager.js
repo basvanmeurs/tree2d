@@ -1,7 +1,6 @@
 import TextureSource from "./TextureSource";
 
 export default class TextureManager {
-
     constructor(stage) {
         this.stage = stage;
 
@@ -22,7 +21,6 @@ export default class TextureManager {
          * @type {Map<String, TextureSource>}
          */
         this.textureSourceHashmap = new Map();
-
     }
 
     get usedMemory() {
@@ -33,7 +31,7 @@ export default class TextureManager {
         for (let i = 0, n = this._uploadedTextureSources.length; i < n; i++) {
             this._nativeFreeTextureSource(this._uploadedTextureSources[i]);
         }
-        
+
         this.textureSourceHashmap.clear();
         this._usedMemory = 0;
     }
@@ -75,7 +73,7 @@ export default class TextureManager {
         nativeTexture.update = this.stage.frameCounter;
 
         this._uploadedTextureSources.push(textureSource);
-        
+
         this.addToLookupMap(textureSource);
     }
 
@@ -83,7 +81,7 @@ export default class TextureManager {
         this._usedMemory += delta;
         this.stage.addMemoryUsage(delta);
     }
-    
+
     addToLookupMap(textureSource) {
         const lookupId = textureSource.lookupId;
         if (lookupId) {
@@ -97,11 +95,11 @@ export default class TextureManager {
         this.freeUnusedTextureSources();
         this._cleanupLookupMap();
     }
-    
+
     freeUnusedTextureSources() {
-        let remainingTextureSources = [];
+        const remainingTextureSources = [];
         for (let i = 0, n = this._uploadedTextureSources.length; i < n; i++) {
-            let ts = this._uploadedTextureSources[i];
+            const ts = this._uploadedTextureSources[i];
             if (ts.allowCleanup()) {
                 this._freeManagedTextureSource(ts);
             } else {
@@ -139,7 +137,7 @@ export default class TextureManager {
      */
     freeTextureSource(textureSource) {
         const index = this._uploadedTextureSources.indexOf(textureSource);
-        const managed = (index !== -1);
+        const managed = index !== -1;
 
         if (textureSource.isLoaded()) {
             if (managed) {
@@ -161,5 +159,4 @@ export default class TextureManager {
         this.stage.renderer.freeTextureSource(textureSource);
         textureSource.clearNativeTexture();
     }
-
 }

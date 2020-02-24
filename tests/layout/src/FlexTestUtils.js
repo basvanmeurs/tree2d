@@ -4,7 +4,6 @@ import FlexHtmlComparer from "./flexToHtml/Comparer.js";
 const FlexLayout = lng.FlexLayout;
 
 export default class FlexTestUtils {
-
     constructor() {
         this.flexHtmlComparer = new FlexHtmlComparer();
 
@@ -12,16 +11,16 @@ export default class FlexTestUtils {
     }
 
     _createVisibleTestResultsContainer() {
-        this._visibleTestResultsContainer = document.createElement('div');
-        this._visibleTestResultsContainer.style.display = 'block';
-        this._visibleTestResultsContainer.style.position = 'relative';
+        this._visibleTestResultsContainer = document.createElement("div");
+        this._visibleTestResultsContainer.style.display = "block";
+        this._visibleTestResultsContainer.style.position = "relative";
         document.body.appendChild(this._visibleTestResultsContainer);
     }
 
     layoutFlexAndValidate(structure, options = {}) {
         const root = this._convertToFlex(structure);
         return this.validateLayout(root, options);
-    };
+    }
 
     validateLayout(item, options = {}) {
         return this.getLayoutMismatchesBetweenItemAndHtml(item).then(mismatches => {
@@ -34,7 +33,7 @@ export default class FlexTestUtils {
                 return this._addVisibleTestResult(item);
             }
         });
-    };
+    }
 
     _convertToFlex(structure) {
         const root = this.buildFlexFromStructure(structure);
@@ -51,15 +50,15 @@ export default class FlexTestUtils {
     _addVisibleTestResult(item) {
         return this._getFlexTestInfoHtml(item).then(div => {
             this._visibleTestResultsContainer.appendChild(div);
-        })
+        });
     }
 
     _getFlexTestInfoHtml(item) {
-        const container = document.createElement('div');
-        container.style.display = 'block';
+        const container = document.createElement("div");
+        container.style.display = "block";
         return this.flexHtmlComparer.transformItemToHtmlWithMismatchInfo(item).then(div => {
             container.appendChild(div);
-            const structure = document.createElement('pre');
+            const structure = document.createElement("pre");
             structure.innerText = item.toString();
             container.appendChild(structure);
             return container;
@@ -70,10 +69,9 @@ export default class FlexTestUtils {
         return this.flexHtmlComparer.getLayoutMismatchesBetweenItemAndHtml(item);
     }
 
-
     addMochaTestForAnnotatedStructure(name, structure, showHtml) {
         describe(name, () => {
-            it('layouts', done => {
+            it("layouts", done => {
                 const root = this._convertToFlex(structure);
                 const collector = new AnnotatedStructureMismatchCollector(root);
                 const mismatches = collector.getMismatches();
@@ -83,10 +81,10 @@ export default class FlexTestUtils {
                 if (!mismatches.length) {
                     done();
                 } else {
-                    done(new Error("Mismatches:\n" + mismatches.join("\n") + "\n\n" + root.toString()))
+                    done(new Error("Mismatches:\n" + mismatches.join("\n") + "\n\n" + root.toString()));
                 }
             });
-        })
+        });
     }
 
     validateAnnotatedFlex(root, options) {
@@ -101,78 +99,93 @@ export default class FlexTestUtils {
             } else {
                 resolve();
             }
-        })
+        });
     }
 
     checkUpdatedTargets(updatedTargets, expectedTargets) {
         const updatedSet = new Set(updatedTargets);
         const expectedSet = new Set(expectedTargets);
         const missing = [...expectedSet].filter(x => !updatedSet.has(x));
-        chai.assert(!missing.length, "has missing updated targets: " + missing.map(target => target._target.getLocationString()));
+        chai.assert(
+            !missing.length,
+            "has missing updated targets: " + missing.map(target => target._target.getLocationString())
+        );
         const unexpected = [...updatedSet].filter(x => !expectedSet.has(x));
-        chai.assert(!unexpected.length, "has unexpected updated targets: " + unexpected.map(target => target._target.getLocationString()));
+        chai.assert(
+            !unexpected.length,
+            "has unexpected updated targets: " + unexpected.map(target => target._target.getLocationString())
+        );
 
         const sameLength = expectedTargets.length === updatedTargets.length;
-        chai.assert(sameLength, "the number of target updates mismatches: " + updatedTargets.length + " while we expected " + expectedTargets.length);
+        chai.assert(
+            sameLength,
+            "the number of target updates mismatches: " +
+                updatedTargets.length +
+                " while we expected " +
+                expectedTargets.length
+        );
     }
 
     addUpdateTest(getRoot, name, setup, show = false) {
         describe(name, () => {
-            it('layouts', () => {
+            it("layouts", () => {
                 const root = getRoot();
                 const tests = setup(root);
 
                 let layoutSpy;
                 if (tests && tests.layouts) {
-                    layoutSpy = sinon.spy(FlexLayout.prototype, '_layoutMainAxis');
+                    layoutSpy = sinon.spy(FlexLayout.prototype, "_layoutMainAxis");
                 }
 
                 root.update();
-                return this.validateLayout(root, {resultVisible: show}).then(() => {
-                    if (tests && tests.layouts) {
-                        const updatedTargets = layoutSpy.thisValues.map(flexLayout => flexLayout.item);
-                        const expectedTargets = tests.layouts.map(target => target._layout);
-                        this.checkUpdatedTargets(updatedTargets, expectedTargets);
-                    }
-                }).finally(() => {
-                    if (tests && tests.layouts) {
-                        FlexLayout.prototype._layoutMainAxis.restore();
-                    }
-                });
+                return this.validateLayout(root, { resultVisible: show })
+                    .then(() => {
+                        if (tests && tests.layouts) {
+                            const updatedTargets = layoutSpy.thisValues.map(flexLayout => flexLayout.item);
+                            const expectedTargets = tests.layouts.map(target => target._layout);
+                            this.checkUpdatedTargets(updatedTargets, expectedTargets);
+                        }
+                    })
+                    .finally(() => {
+                        if (tests && tests.layouts) {
+                            FlexLayout.prototype._layoutMainAxis.restore();
+                        }
+                    });
             });
         });
     }
 
     addAnnotatedUpdateTest(getRoot, name, setup, show = false) {
         describe(name, () => {
-            it('layouts', () => {
+            it("layouts", () => {
                 const root = getRoot();
                 const tests = setup(root);
 
                 let layoutSpy;
                 if (tests && tests.layouts) {
-                    layoutSpy = sinon.spy(FlexLayout.prototype, '_layoutMainAxis');
+                    layoutSpy = sinon.spy(FlexLayout.prototype, "_layoutMainAxis");
                 }
 
                 root.update();
-                return this.validateAnnotatedFlex(root, {resultVisible: show}).then(() => {
-                    if (tests && tests.layouts) {
-                       const updatedTargets = layoutSpy.thisValues.map(flexLayout => flexLayout.item);
-                       const expectedTargets = tests.layouts.map(target => target._layout);
-                       this.checkUpdatedTargets(updatedTargets, expectedTargets);
-                    }
-                }).finally(() => {
-                    if (tests && tests.layouts) {
-                        FlexLayout.prototype._layoutMainAxis.restore();
-                    }
-                });
+                return this.validateAnnotatedFlex(root, { resultVisible: show })
+                    .then(() => {
+                        if (tests && tests.layouts) {
+                            const updatedTargets = layoutSpy.thisValues.map(flexLayout => flexLayout.item);
+                            const expectedTargets = tests.layouts.map(target => target._layout);
+                            this.checkUpdatedTargets(updatedTargets, expectedTargets);
+                        }
+                    })
+                    .finally(() => {
+                        if (tests && tests.layouts) {
+                            FlexLayout.prototype._layoutMainAxis.restore();
+                        }
+                    });
             });
         });
     }
 }
 
 class AnnotatedStructureMismatchCollector {
-
     constructor(item) {
         this._item = item;
         this._results = null;
@@ -183,7 +196,8 @@ class AnnotatedStructureMismatchCollector {
     }
 
     _checkLayoutsEqual(layout, otherLayout) {
-        const equal = this._compareFloats(layout.x, otherLayout.x) &&
+        const equal =
+            this._compareFloats(layout.x, otherLayout.x) &&
             this._compareFloats(layout.y, otherLayout.y) &&
             this._compareFloats(layout.w, otherLayout.w) &&
             this._compareFloats(layout.h, otherLayout.h);
@@ -193,7 +207,7 @@ class AnnotatedStructureMismatchCollector {
     _compareFloats(f1, f2) {
         // Account for rounding errors.
         const delta = Math.abs(f1 - f2);
-        return (delta < 0.1);
+        return delta < 0.1;
     }
 
     _collectMismatches() {
@@ -205,9 +219,11 @@ class AnnotatedStructureMismatchCollector {
     }
 
     _collectRecursive(item, location) {
-        if (!this._checkLayoutsEqual(
-            {x: item.x, y: item.y, w: item.w, h: item.h},
-            item.r ? {x: item.r[0], y: item.r[1], w: item.r[2], h: item.r[3]} : {x: 0, y: 0, w: 0, h: 0})
+        if (
+            !this._checkLayoutsEqual(
+                { x: item.x, y: item.y, w: item.w, h: item.h },
+                item.r ? { x: item.r[0], y: item.r[1], w: item.r[2], h: item.r[3] } : { x: 0, y: 0, w: 0, h: 0 }
+            )
         ) {
             this._results.push(location.join("."));
         }
@@ -216,5 +232,4 @@ class AnnotatedStructureMismatchCollector {
             this._collectRecursive(subItem, subLocation);
         });
     }
-
 }

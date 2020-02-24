@@ -1,8 +1,7 @@
 import FlexTarget from "../../flex/FlexTarget";
-import Element from "../Element"
+import Element from "../Element";
 
 export default class ElementCore {
-
     private _element: Element;
 
     private ctx: CoreContext;
@@ -63,15 +62,15 @@ export default class ElementCore {
 
     // The ancestor ElementCore that defined the inherited shader. Undefined if none is active (default shader).
     private _shaderOwner?: ElementCore;
-    
+
     // Counter while updating the tree order.
     private _updateTreeOrder: number = 0;
-    
+
     // Texture corner point colors.
-    private _colorUl: number = 0xFFFFFFFF;
-    private _colorUr: number = 0xFFFFFFFF;
-    private _colorBl: number = 0xFFFFFFFF;
-    private _colorBr: number = 0xFFFFFFFF;
+    private _colorUl: number = 0xffffffff;
+    private _colorUr: number = 0xffffffff;
+    private _colorBl: number = 0xffffffff;
+    private _colorBr: number = 0xffffffff;
 
     // Internal coords.
     private _x: number = 0;
@@ -162,7 +161,7 @@ export default class ElementCore {
         this.ctx = element.stage.ctx;
     }
 
-    get offsetX() : number|FunctionX {
+    get offsetX(): number | FunctionX {
         if (this._funcX) {
             return this._funcX;
         } else {
@@ -174,14 +173,14 @@ export default class ElementCore {
         }
     }
 
-    set offsetX(v: number|FunctionX) {
+    set offsetX(v: number | FunctionX) {
         if (Utils.isFunction(v)) {
             this.funcX = v as FunctionX;
         } else {
             this._disableFuncX();
             let dx;
             if (this.hasFlexLayout()) {
-                dx = ((v as number) - this.layout.originalX);
+                dx = (v as number) - this.layout.originalX;
                 this.layout.originalX = v;
             } else {
                 dx = (v as number) - this._x;
@@ -195,7 +194,7 @@ export default class ElementCore {
     }
 
     get funcX() {
-        return (this._relFuncFlags & 1 ? this._funcX : undefined);
+        return this._relFuncFlags & 1 ? this._funcX : undefined;
     }
 
     set funcX(v) {
@@ -213,11 +212,11 @@ export default class ElementCore {
     }
 
     _disableFuncX() {
-        this._relFuncFlags = this._relFuncFlags & (0xFFFF - 1);
+        this._relFuncFlags = this._relFuncFlags & (0xffff - 1);
         this._funcX = undefined;
     }
 
-    get offsetY(): number|FunctionY {
+    get offsetY(): number | FunctionY {
         if (this._funcY) {
             return this._funcY;
         } else {
@@ -229,14 +228,14 @@ export default class ElementCore {
         }
     }
 
-    set offsetY(v: number|FunctionY) {
+    set offsetY(v: number | FunctionY) {
         if (Utils.isFunction(v)) {
-            this.funcY = (v as FunctionY);
+            this.funcY = v as FunctionY;
         } else {
             this._disableFuncY();
             let dy;
             if (this.hasFlexLayout()) {
-                dy = ((v as number) - this.layout.originalY);
+                dy = (v as number) - this.layout.originalY;
                 this.layout.originalY = v;
             } else {
                 dy = (v as number) - this._y;
@@ -250,7 +249,7 @@ export default class ElementCore {
     }
 
     get funcY() {
-        return (this._relFuncFlags & 2 ? this._funcY : undefined);
+        return this._relFuncFlags & 2 ? this._funcY : undefined;
     }
 
     set funcY(v) {
@@ -268,11 +267,11 @@ export default class ElementCore {
     }
 
     _disableFuncY() {
-        this._relFuncFlags = this._relFuncFlags & (0xFFFF - 2);
+        this._relFuncFlags = this._relFuncFlags & (0xffff - 2);
         this._funcY = undefined;
     }
 
-    get offsetW() : number|FunctionW {
+    get offsetW(): number | FunctionW {
         if (this._funcW) {
             return this._funcW;
         } else {
@@ -280,7 +279,7 @@ export default class ElementCore {
         }
     }
 
-    set offsetW(v: number|FunctionW) {
+    set offsetW(v: number | FunctionW) {
         if (Utils.isFunction(v)) {
             this.funcW = v as FunctionW;
         } else {
@@ -304,7 +303,7 @@ export default class ElementCore {
     }
 
     _disableFuncW() {
-        this._relFuncFlags = this._relFuncFlags & (0xFFFF - 4);
+        this._relFuncFlags = this._relFuncFlags & (0xffff - 4);
         this._funcW = undefined;
     }
 
@@ -312,7 +311,7 @@ export default class ElementCore {
         return this._w;
     }
 
-    get offsetH() : number|FunctionH {
+    get offsetH(): number | FunctionH {
         if (this._funcH) {
             return this._funcH;
         } else {
@@ -320,7 +319,7 @@ export default class ElementCore {
         }
     }
 
-    set offsetH(v: number|FunctionH) {
+    set offsetH(v: number | FunctionH) {
         if (Utils.isFunction(v)) {
             this.funcH = v as FunctionH;
         } else {
@@ -344,7 +343,7 @@ export default class ElementCore {
     }
 
     _disableFuncH() {
-        this._relFuncFlags = this._relFuncFlags & (0xFFFF - 8);
+        this._relFuncFlags = this._relFuncFlags & (0xffff - 8);
         this._funcH = undefined;
     }
 
@@ -471,9 +470,9 @@ export default class ElementCore {
 
     set alpha(v) {
         // Account for rounding errors.
-        v = (v > 1 ? 1 : (v < 1e-14 ? 0 : v));
+        v = v > 1 ? 1 : v < 1e-14 ? 0 : v;
         if (this._alpha !== v) {
-            let prev = this._alpha;
+            const prev = this._alpha;
             this._alpha = v;
             this._updateLocalAlpha();
             if ((prev === 0) !== (v === 0)) {
@@ -501,34 +500,24 @@ export default class ElementCore {
     _updateLocalTransform() {
         if (this._rotation !== 0 && this._rotation % (2 * Math.PI)) {
             // check to see if the rotation is the same as the previous render. This means we only need to use sin and cos when rotation actually changes
-            let _sr = Math.sin(this._rotation);
-            let _cr = Math.cos(this._rotation);
+            const _sr = Math.sin(this._rotation);
+            const _cr = Math.cos(this._rotation);
 
-            this._setLocalTransform(
-                _cr * this._scaleX,
-                -_sr * this._scaleY,
-                _sr * this._scaleX,
-                _cr * this._scaleY
-            );
+            this._setLocalTransform(_cr * this._scaleX, -_sr * this._scaleY, _sr * this._scaleX, _cr * this._scaleY);
         } else {
-            this._setLocalTransform(
-                this._scaleX,
-                0,
-                0,
-                this._scaleY
-            );
+            this._setLocalTransform(this._scaleX, 0, 0, this._scaleY);
         }
         this._updateLocalTranslate();
-    };
+    }
 
     _updateLocalTranslate() {
         this._recalcLocalTranslate();
         this._triggerRecalcTranslate();
-    };
+    }
 
     _recalcLocalTranslate() {
-        let pivotXMul = this._pivotX * this._w;
-        let pivotYMul = this._pivotY * this._h;
+        const pivotXMul = this._pivotX * this._w;
+        const pivotYMul = this._pivotY * this._h;
         let px = this._x - (pivotXMul * this._localTa + pivotYMul * this._localTb) + pivotXMul;
         let py = this._y - (pivotXMul * this._localTc + pivotYMul * this._localTd) + pivotYMul;
         px -= this._mountX * this._w;
@@ -539,11 +528,11 @@ export default class ElementCore {
 
     _updateLocalTranslateDelta(dx: number, dy: number) {
         this._addLocalTranslate(dx, dy);
-    };
+    }
 
     _updateLocalAlpha() {
         this._setLocalAlpha(this._visible ? this._alpha : 0);
-    };
+    }
 
     /**
      * @param {number} type
@@ -554,9 +543,9 @@ export default class ElementCore {
     setHasRenderUpdates(type: number) {
         if (this._worldContext.alpha) {
             // Ignore if 'world invisible'. Render updates will be reset to 3 for every element that becomes visible.
-            let p : ElementCore|undefined = this;
+            let p: ElementCore | undefined = this;
             p._hasRenderUpdates = Math.max(type, p._hasRenderUpdates);
-            while ((p = p._parent) && (p._hasRenderUpdates !== 3)) {
+            while ((p = p._parent) && p._hasRenderUpdates !== 3) {
                 p._hasRenderUpdates = 3;
             }
         }
@@ -583,8 +572,8 @@ export default class ElementCore {
     }
 
     _setHasUpdates() {
-        let p : ElementCore|undefined = this;
-        while(p && !p._hasUpdates) {
+        let p: ElementCore | undefined = this;
+        while (p && !p._hasUpdates) {
             p._hasUpdates = true;
             p = p._parent;
         }
@@ -596,8 +585,8 @@ export default class ElementCore {
 
     private setParent(parent?: ElementCore) {
         if (parent !== this._parent) {
-            let prevIsZContext = this.isZContext();
-            let prevParent = this._parent;
+            const prevIsZContext = this.isZContext();
+            const prevParent = this._parent;
             this._parent = parent;
 
             // Notify flex layout engine.
@@ -639,14 +628,14 @@ export default class ElementCore {
             }
 
             if (!this._shader) {
-                let newShaderOwner = parent && !parent._renderToTextureEnabled ? parent._shaderOwner : undefined;
+                const newShaderOwner = parent && !parent._renderToTextureEnabled ? parent._shaderOwner : undefined;
                 if (newShaderOwner !== this._shaderOwner) {
                     this.setHasRenderUpdates(1);
                     this._setShaderOwnerRecursive(newShaderOwner);
                 }
             }
         }
-    };
+    }
 
     private enableZSort(force = false) {
         if (!this._zSort && this._zContextUsage > 0) {
@@ -663,7 +652,7 @@ export default class ElementCore {
         if (!this._children) this._children = [];
         this._children.splice(index, 0, child);
         child.setParent(this);
-    };
+    }
 
     setChildAt(index: number, child: ElementCore) {
         if (!this._children) this._children = [];
@@ -674,11 +663,11 @@ export default class ElementCore {
 
     removeChildAt(index: number) {
         if (this._children) {
-            let child = this._children[index];
+            const child = this._children[index];
             this._children.splice(index, 1);
             child.setParent(undefined);
         }
-    };
+    }
 
     removeChildren() {
         if (this._children) {
@@ -692,7 +681,7 @@ export default class ElementCore {
                 this._zIndexedChildren.splice(0);
             }
         }
-    };
+    }
 
     syncChildren(removed: ElementCore[], added: ElementCore[], order: ElementCore[]) {
         this._children = order;
@@ -706,7 +695,7 @@ export default class ElementCore {
 
     moveChild(fromIndex: number, toIndex: number) {
         if (this._children) {
-            let c = this._children[fromIndex];
+            const c = this._children[fromIndex];
             this._children.splice(fromIndex, 1);
             this._children.splice(toIndex, 0, c);
         }
@@ -724,10 +713,10 @@ export default class ElementCore {
         this._localTb = b;
         this._localTc = c;
         this._localTd = d;
-        
+
         // We also regard negative scaling as a complex case, so that we can optimize the non-complex case better.
-        this._isComplex = (b !== 0) || (c !== 0) || (a < 0) || (d < 0);
-    };
+        this._isComplex = b !== 0 || c !== 0 || a < 0 || d < 0;
+    }
 
     private _addLocalTranslate(dx: number, dy: number) {
         this._localPx += dx;
@@ -736,7 +725,7 @@ export default class ElementCore {
     }
 
     private _setLocalAlpha(a: number) {
-        if (!this._worldContext.alpha && ((this._parent && this._parent._worldContext.alpha) && a)) {
+        if (!this._worldContext.alpha && this._parent && this._parent._worldContext.alpha && a) {
             // Element is becoming visible. We need to force update.
             this._setRecalc(1 + 128);
         } else {
@@ -749,7 +738,7 @@ export default class ElementCore {
         }
 
         this._localAlpha = a;
-    };
+    }
 
     setTextureDimensions(w: number, h: number, isEstimate: boolean = this._dimsUnknown) {
         // In case of an estimation, the update loop should perform different bound checks.
@@ -758,7 +747,7 @@ export default class ElementCore {
         this._dimsUnknown = isEstimate;
 
         this._updateBaseDimensions();
-    };
+    }
 
     private _updateBaseDimensions() {
         if (this._funcW || this._funcH) {
@@ -805,18 +794,18 @@ export default class ElementCore {
         this._uly = uly;
         this._brx = brx;
         this._bry = bry;
-    };
+    }
 
-    get displayedTextureSource() : TextureSource|undefined {
+    get displayedTextureSource(): TextureSource | undefined {
         return this._displayedTextureSource;
     }
 
-    setDisplayedTextureSource(textureSource: TextureSource|undefined) {
+    setDisplayedTextureSource(textureSource: TextureSource | undefined) {
         this.setHasRenderUpdates(3);
         this._displayedTextureSource = textureSource;
-    };
+    }
 
-    get isRoot() : boolean {
+    get isRoot(): boolean {
         return this._isRoot;
     }
 
@@ -841,29 +830,35 @@ export default class ElementCore {
         this._parent._recBoundsMargin = undefined;
 
         this._setRecalc(1 + 2 + 4);
-    };
+    }
 
     private isAncestorOf(c: ElementCore) {
-        let p : ElementCore|undefined = c;
+        let p: ElementCore | undefined = c;
         while ((p = p._parent)) {
             if (this === p) {
                 return true;
             }
         }
         return false;
-    };
+    }
 
-    private isZContext() : boolean {
-        return (this._forceZIndexContext || this._renderToTextureEnabled || this._zIndex !== 0 || this._isRoot || !this._parent);
-    };
+    private isZContext(): boolean {
+        return (
+            this._forceZIndexContext ||
+            this._renderToTextureEnabled ||
+            this._zIndex !== 0 ||
+            this._isRoot ||
+            !this._parent
+        );
+    }
 
-    private findZContext() : ElementCore {
+    private findZContext(): ElementCore {
         if (this.isZContext()) {
             return this;
         } else {
             return this._parent!.findZContext();
         }
-    };
+    }
 
     private setZParent(newZParent?: ElementCore) {
         if (this._zParent !== newZParent) {
@@ -877,7 +872,7 @@ export default class ElementCore {
             }
 
             if (newZParent !== undefined) {
-                let hadZContextUsage = (newZParent._zContextUsage > 0);
+                const hadZContextUsage = newZParent._zContextUsage > 0;
 
                 // @pre: new parent's children array has already been modified.
                 if (this._zIndex !== 0) {
@@ -885,7 +880,7 @@ export default class ElementCore {
                 }
 
                 if (newZParent._zContextUsage > 0) {
-                    if (!hadZContextUsage && (this._parent === newZParent)) {
+                    if (!hadZContextUsage && this._parent === newZParent) {
                         // This child was already in the children list.
                         // Do not add double.
                     } else {
@@ -903,7 +898,7 @@ export default class ElementCore {
             // Newly added element must be marked for resort.
             this._zIndexResort = true;
         }
-    };
+    }
 
     private incZContextUsage() {
         this._zContextUsage++;
@@ -920,7 +915,7 @@ export default class ElementCore {
                 this._zSort = false;
             }
         }
-    };
+    }
 
     private decZContextUsage() {
         this._zContextUsage--;
@@ -928,9 +923,9 @@ export default class ElementCore {
             this._zSort = false;
             this._zIndexedChildren!.splice(0);
         }
-    };
+    }
 
-    get zIndex() : number {
+    get zIndex(): number {
         return this._zIndex;
     }
 
@@ -940,7 +935,7 @@ export default class ElementCore {
 
             let newZParent = this._zParent;
 
-            let prevIsZContext = this.isZContext();
+            const prevIsZContext = this.isZContext();
             if (zIndex === 0 && this._zIndex !== 0) {
                 if (this._parent === this._zParent) {
                     if (this._zParent) {
@@ -988,7 +983,7 @@ export default class ElementCore {
                 this._zParent.enableZSort();
             }
         }
-    };
+    }
 
     get forceZIndexContext() {
         return this._forceZIndexContext;
@@ -997,7 +992,7 @@ export default class ElementCore {
     set forceZIndexContext(v) {
         this.setHasRenderUpdates(1);
 
-        let prevIsZContext = this.isZContext();
+        const prevIsZContext = this.isZContext();
         this._forceZIndexContext = v;
 
         if (prevIsZContext !== this.isZContext()) {
@@ -1008,13 +1003,13 @@ export default class ElementCore {
                 this.enableZContext(prevZContext);
             }
         }
-    };
+    }
 
     private enableZContext(prevZContext?: ElementCore) {
         if (prevZContext && prevZContext._zContextUsage > 0) {
             // Transfer from upper z context to this z context.
             const results = this._getZIndexedDescs();
-            results.forEach((c) => {
+            results.forEach(c => {
                 if (this.isAncestorOf(c) && c._zIndex !== 0) {
                     c.setZParent(this);
                 }
@@ -1023,7 +1018,7 @@ export default class ElementCore {
     }
 
     private _getZIndexedDescs() {
-        const results : ElementCore[] = [];
+        const results: ElementCore[] = [];
         if (this._children) {
             for (let i = 0, n = this._children.length; i < n; i++) {
                 this._children[i]._getZIndexedDescsRec(results);
@@ -1045,20 +1040,20 @@ export default class ElementCore {
     private disableZContext() {
         // Transfer from this z context to upper z context.
         if (this._zContextUsage > 0) {
-            let newZParent = this._parent ? this._parent.findZContext() : undefined;
+            const newZParent = this._parent ? this._parent.findZContext() : undefined;
 
             // Make sure that z-indexed children are up to date (old ones removed).
             if (this._zSort) {
                 this.sortZIndexedChildren();
             }
 
-            this._zIndexedChildren!.slice().forEach(function (c) {
+            this._zIndexedChildren!.slice().forEach(function(c) {
                 if (c._zIndex !== 0) {
                     c.setZParent(newZParent);
                 }
             });
         }
-    };
+    }
 
     get colorUl() {
         return this._colorUl;
@@ -1080,7 +1075,7 @@ export default class ElementCore {
             this.setHasRenderUpdates(this._displayedTextureSource ? 3 : 1);
             this._colorUr = color;
         }
-    };
+    }
 
     get colorBl() {
         return this._colorBl;
@@ -1091,7 +1086,7 @@ export default class ElementCore {
             this.setHasRenderUpdates(this._displayedTextureSource ? 3 : 1);
             this._colorBl = color;
         }
-    };
+    }
 
     get colorBr() {
         return this._colorBr;
@@ -1102,8 +1097,7 @@ export default class ElementCore {
             this.setHasRenderUpdates(this._displayedTextureSource ? 3 : 1);
             this._colorBr = color;
         }
-    };
-
+    }
 
     set onUpdate(f: Function) {
         this._onUpdate = f;
@@ -1127,11 +1121,12 @@ export default class ElementCore {
     set shader(v) {
         this.setHasRenderUpdates(1);
 
-        let prevShader = this._shader;
+        const prevShader = this._shader;
         this._shader = v;
         if (!v && prevShader) {
             // Disabled shader.
-            let newShaderOwner = (this._parent && !this._parent._renderToTextureEnabled ? this._parent._shaderOwner : undefined);
+            const newShaderOwner =
+                this._parent && !this._parent._renderToTextureEnabled ? this._parent._shaderOwner : undefined;
             this._setShaderOwnerRecursive(newShaderOwner);
         } else if (v) {
             // Enabled shader.
@@ -1177,26 +1172,26 @@ export default class ElementCore {
 
         if (this._children && !this._renderToTextureEnabled) {
             for (let i = 0, n = this._children.length; i < n; i++) {
-                let c = this._children[i];
+                const c = this._children[i];
                 if (!c._shader) {
                     c._setShaderOwnerRecursive(elementCore);
                     c._hasRenderUpdates = 3;
                 }
             }
         }
-    };
+    }
 
     private _setShaderOwnerChildrenRecursive(elementCore?: ElementCore) {
         if (this._children) {
             for (let i = 0, n = this._children.length; i < n; i++) {
-                let c = this._children[i];
+                const c = this._children[i];
                 if (!c._shader) {
                     c._setShaderOwnerRecursive(elementCore);
                     c._hasRenderUpdates = 3;
                 }
             }
         }
-    };
+    }
 
     private _hasRenderContext() {
         return this._renderContext !== this._worldContext;
@@ -1209,7 +1204,7 @@ export default class ElementCore {
     public updateRenderToTextureEnabled() {
         // Enforce texturizer initialisation.
         const texturizer = this.texturizer;
-        let v = texturizer._enabled;
+        const v = texturizer._enabled;
 
         if (v) {
             this._enableRenderToTexture();
@@ -1221,7 +1216,7 @@ export default class ElementCore {
 
     private _enableRenderToTexture() {
         if (!this._renderToTextureEnabled) {
-            let prevIsZContext = this.isZContext();
+            const prevIsZContext = this.isZContext();
 
             this._renderToTextureEnabled = true;
 
@@ -1266,11 +1261,16 @@ export default class ElementCore {
     }
 
     private isWhite() {
-        return (this._colorUl === 0xFFFFFFFF) && (this._colorUr === 0xFFFFFFFF) && (this._colorBl === 0xFFFFFFFF) && (this._colorBr === 0xFFFFFFFF);
+        return (
+            this._colorUl === 0xffffffff &&
+            this._colorUr === 0xffffffff &&
+            this._colorBl === 0xffffffff &&
+            this._colorBr === 0xffffffff
+        );
     }
 
     private hasSimpleTexCoords() {
-        return (this._ulx === 0) && (this._uly === 0) && (this._brx === 1) && (this._bry === 1);
+        return this._ulx === 0 && this._uly === 0 && this._brx === 1 && this._bry === 1;
     }
 
     private _stashTexCoords() {
@@ -1291,10 +1291,10 @@ export default class ElementCore {
 
     private _stashColors() {
         this._stashedColors = [this._colorUl, this._colorUr, this._colorBr, this._colorBl];
-        this._colorUl = 0xFFFFFFFF;
-        this._colorUr = 0xFFFFFFFF;
-        this._colorBr = 0xFFFFFFFF;
-        this._colorBl = 0xFFFFFFFF;
+        this._colorUl = 0xffffffff;
+        this._colorUr = 0xffffffff;
+        this._colorBr = 0xffffffff;
+        this._colorBl = 0xffffffff;
     }
 
     private _unstashColors() {
@@ -1306,15 +1306,14 @@ export default class ElementCore {
     }
 
     isVisible() {
-        return (this._localAlpha > 1e-14);
-    };
+        return this._localAlpha > 1e-14;
+    }
 
     get outOfBounds() {
         return this._outOfBounds;
     }
 
     set boundsMargin(v) {
-
         /**
          *  undefined: inherit from parent.
          *  number[4]: specific margins: left, top, right, bottom.
@@ -1336,7 +1335,7 @@ export default class ElementCore {
             if (this._recalc & 256) {
                 this._layout.layoutFlexTree();
             }
-        } else if ((this._recalc & 2) && this._relFuncFlags) {
+        } else if (this._recalc & 2 && this._relFuncFlags) {
             this._applyRelativeDimFuncs();
         }
 
@@ -1347,8 +1346,8 @@ export default class ElementCore {
         }
 
         const pw = this._parent!._worldContext;
-        let w = this._worldContext;
-        const visible = (pw.alpha && this._localAlpha);
+        const w = this._worldContext;
+        const visible = pw.alpha && this._localAlpha;
 
         /**
          * We must update if:
@@ -1407,7 +1406,7 @@ export default class ElementCore {
                 const r = this._renderContext;
 
                 // Update world coords/alpha.
-                if (init || (recalc & 1)) {
+                if (init || recalc & 1) {
                     r.alpha = pr.alpha * this._localAlpha;
 
                     if (r.alpha < 1e-14) {
@@ -1415,7 +1414,7 @@ export default class ElementCore {
                     }
                 }
 
-                if (init || (recalc & 6)) {
+                if (init || recalc & 6) {
                     r.px = pr.px + this._localPx * pr.ta;
                     r.py = pr.py + this._localPy * pr.td;
                     if (pr.tb !== 0) r.px += this._localPy * pr.tb;
@@ -1427,7 +1426,7 @@ export default class ElementCore {
                     recalc |= 2;
                 }
 
-                if (init || (recalc & 4)) {
+                if (init || recalc & 4) {
                     r.ta = this._localTa * pr.ta;
                     r.tb = this._localTd * pr.tb;
                     r.tc = this._localTa * pr.tc;
@@ -1467,13 +1466,13 @@ export default class ElementCore {
             this._useRenderToTexture = useRenderToTexture;
 
             const r = this._renderContext;
-            
+
             const bboxW = this._dimsUnknown ? 2048 : this._w;
             const bboxH = this._dimsUnknown ? 2048 : this._h;
-            
+
             // Calculate a bbox for this element.
             let sx, sy, ex, ey;
-            const rComplex = (r.tb !== 0) || (r.tc !== 0) || (r.ta < 0) || (r.td < 0);
+            const rComplex = r.tb !== 0 || r.tc !== 0 || r.ta < 0 || r.td < 0;
             if (rComplex) {
                 sx = Math.min(0, bboxW * r.ta, bboxW * r.ta + bboxH * r.tb, bboxH * r.tb) + r.px;
                 ex = Math.max(0, bboxW * r.ta, bboxW * r.ta + bboxH * r.tb, bboxH * r.tb) + r.px;
@@ -1517,7 +1516,9 @@ export default class ElementCore {
                     }
                 } else {
                     // No clipping: reuse parent scissor.
-                    this._scissor = this._parent!._useRenderToTexture ? this._parent!._viewport : this._parent!._scissor;
+                    this._scissor = this._parent!._useRenderToTexture
+                        ? this._parent!._viewport
+                        : this._parent!._scissor;
                 }
             }
 
@@ -1577,34 +1578,39 @@ export default class ElementCore {
                             this._outOfBounds = 2;
                         } else {
                             // Use bbox to check out-of-boundness.
-                            if ((scissor[0] > ex) ||
-                                (scissor[1] > ey) ||
-                                (sx > (scissor[0] + scissor[2])) ||
-                                (sy > (scissor[1] + scissor[3]))
+                            if (
+                                scissor[0] > ex ||
+                                scissor[1] > ey ||
+                                sx > scissor[0] + scissor[2] ||
+                                sy > scissor[1] + scissor[3]
                             ) {
                                 this._outOfBounds = 1;
                             }
 
                             if (this._outOfBounds) {
-                                if (this._clipping || this._useRenderToTexture || (this._clipbox && (bboxW && bboxH))) {
+                                if (this._clipping || this._useRenderToTexture || (this._clipbox && bboxW && bboxH)) {
                                     this._outOfBounds = 2;
                                 }
                             }
                         }
 
-                        withinMargin = (this._outOfBounds === 0);
+                        withinMargin = this._outOfBounds === 0;
                         if (!withinMargin) {
                             // Re-test, now with margins.
                             if (this._recBoundsMargin) {
-                                withinMargin = !((ex < scissor[0] - this._recBoundsMargin[2]) ||
-                                    (ey < scissor[1] - this._recBoundsMargin[3]) ||
-                                    (sx > scissor[0] + scissor[2] + this._recBoundsMargin[0]) ||
-                                    (sy > scissor[1] + scissor[3] + this._recBoundsMargin[1]))
+                                withinMargin = !(
+                                    ex < scissor[0] - this._recBoundsMargin[2] ||
+                                    ey < scissor[1] - this._recBoundsMargin[3] ||
+                                    sx > scissor[0] + scissor[2] + this._recBoundsMargin[0] ||
+                                    sy > scissor[1] + scissor[3] + this._recBoundsMargin[1]
+                                );
                             } else {
-                                withinMargin = !((ex < scissor[0] - 100) ||
-                                    (ey < scissor[1] - 100) ||
-                                    (sx > scissor[0] + scissor[2] + 100) ||
-                                    (sy > scissor[1] + scissor[3] + 100))
+                                withinMargin = !(
+                                    ex < scissor[0] - 100 ||
+                                    ey < scissor[1] - 100 ||
+                                    sx > scissor[0] + scissor[2] + 100 ||
+                                    sy > scissor[1] + scissor[3] + 100
+                                );
                             }
                             if (withinMargin && this._outOfBounds === 2) {
                                 // Children must be visited because they may contain elements that are within margin, so must be visible.
@@ -1657,7 +1663,7 @@ export default class ElementCore {
             }
 
             // Filter out bits that should not be copied to the children (currently all are).
-            this._pRecalc = (this._recalc & 135);
+            this._pRecalc = this._recalc & 135;
 
             // Clear flags so that future updates are properly detected.
             this._recalc = 0;
@@ -1669,7 +1675,7 @@ export default class ElementCore {
                         // Optimization.
                         // The world context is already identity: use the world context as render context to prevents the
                         // ancestors from having to update the render context.
-                        this._renderContext = this._worldContext
+                        this._renderContext = this._worldContext;
                     } else {
                         // Temporarily replace the render coord attribs by the identity matrix.
                         // This allows the children to calculate the render context.
@@ -1717,14 +1723,14 @@ export default class ElementCore {
         if (this._relFuncFlags & 1) {
             const x = this._funcX!(this._parent!._w);
             if (x !== this._x) {
-                this._localPx += (x - this._x);
+                this._localPx += x - this._x;
                 this._x = x;
             }
         }
         if (this._relFuncFlags & 2) {
             const y = this._funcY!(this._parent!._h);
             if (y !== this._y) {
-                this._localPy += (y - this._y);
+                this._localPy += y - this._y;
                 this._y = y;
             }
         }
@@ -1756,7 +1762,6 @@ export default class ElementCore {
         // Propagate outOfBounds flag to descendants (necessary because of z-indexing).
         // Invisible elements are not drawn anyway. When alpha is updated, so will _outOfBounds.
         if (this._outOfBounds !== 2 && this._renderContext.alpha > 0) {
-
             // Inherit parent out of boundsness.
             this._outOfBounds = 2;
 
@@ -1774,7 +1779,7 @@ export default class ElementCore {
     }
 
     updateTreeOrder() {
-        if (this._localAlpha && (this._outOfBounds !== 2)) {
+        if (this._localAlpha && this._outOfBounds !== 2) {
             this._updateTreeOrder = this.ctx.updateTreeOrder++;
 
             if (this._children) {
@@ -1793,9 +1798,9 @@ export default class ElementCore {
         }
 
         if (this._outOfBounds < 2 && this._renderContext.alpha) {
-            let renderState = this.renderState;
+            const renderState = this.renderState;
 
-            if ((this._outOfBounds === 0) && this._displayedTextureSource) {
+            if (this._outOfBounds === 0 && this._displayedTextureSource) {
                 renderState.setShader(this.activeShader, this._shaderOwner);
                 renderState.setScissor(this._scissor);
                 this.renderState.addQuad(this);
@@ -1813,7 +1818,6 @@ export default class ElementCore {
                             // If zIndex is set, this item already belongs to a zIndexedChildren array in one of the ancestors.
                             this._children[i].render();
                         }
-
                     }
                 }
             }
@@ -1833,7 +1837,7 @@ export default class ElementCore {
         }
 
         if (this._outOfBounds < 2 && this._renderContext.alpha) {
-            let renderState = this.renderState;
+            const renderState = this.renderState;
 
             let mustRenderChildren = true;
             let renderTextureInfo: any;
@@ -1842,7 +1846,7 @@ export default class ElementCore {
                 if (this._w === 0 || this._h === 0) {
                     // Ignore this branch and don't draw anything.
                     return;
-                } else if (!this._texturizer!.hasRenderTexture() || (hasRenderUpdates >= 3)) {
+                } else if (!this._texturizer!.hasRenderTexture() || hasRenderUpdates >= 3) {
                     // Switch to default shader for building up the render texture.
                     renderState.setShader(renderState.defaultShader, this);
 
@@ -1850,7 +1854,7 @@ export default class ElementCore {
 
                     renderTextureInfo = {
                         nativeTexture: undefined,
-                        offset: 0,  // Set by CoreRenderState.
+                        offset: 0, // Set by CoreRenderState.
                         w: this._w,
                         h: this._h,
                         empty: true,
@@ -1859,7 +1863,10 @@ export default class ElementCore {
                         cache: false
                     };
 
-                    if (this._texturizer!.hasResultTexture() || (!renderState.isCachingTexturizer && (hasRenderUpdates < 3))) {
+                    if (
+                        this._texturizer!.hasResultTexture() ||
+                        (!renderState.isCachingTexturizer && hasRenderUpdates < 3)
+                    ) {
                         /**
                          * We don't always cache render textures.
                          *
@@ -1893,7 +1900,7 @@ export default class ElementCore {
                     renderState.setScissor(null);
 
                     if (this._displayedTextureSource) {
-                        let r = this._renderContext;
+                        const r = this._renderContext;
 
                         // Use an identity context for drawing the displayed texture to the render texture.
                         this._renderContext = ElementCoreContext.IDENTITY;
@@ -1907,7 +1914,7 @@ export default class ElementCore {
                     mustRenderChildren = false;
                 }
             } else {
-                if ((this._outOfBounds === 0) && this._displayedTextureSource) {
+                if (this._outOfBounds === 0 && this._displayedTextureSource) {
                     renderState.setShader(this.activeShader, this._shaderOwner);
                     renderState.setScissor(this._scissor);
                     this.renderState.addQuad(this);
@@ -1966,7 +1973,7 @@ export default class ElementCore {
                 }
 
                 if (!this._texturizer!.empty) {
-                    let resultTexture = this._texturizer!.getResultTexture();
+                    const resultTexture = this._texturizer!.getResultTexture();
                     if (updateResultTexture) {
                         if (resultTexture) {
                             // Logging the update frame can be handy for userland.
@@ -2047,7 +2054,7 @@ export default class ElementCore {
                 let j = 0;
                 do {
                     a[ptr++] = b[j++];
-                } while(j < m);
+                } while (j < m);
 
                 if (a.length > ptr) {
                     // Slice old (unnecessary) part off array.
@@ -2058,34 +2065,37 @@ export default class ElementCore {
                 ptr = 0;
                 let i = 0;
                 let j = 0;
-                const mergeResult : ElementCore[] = [];
+                const mergeResult: ElementCore[] = [];
                 do {
-                    const v = (a[i]._zIndex === b[j]._zIndex ? a[i]._updateTreeOrder - b[j]._updateTreeOrder : a[i]._zIndex - b[j]._zIndex);
+                    const v =
+                        a[i]._zIndex === b[j]._zIndex
+                            ? a[i]._updateTreeOrder - b[j]._updateTreeOrder
+                            : a[i]._zIndex - b[j]._zIndex;
 
                     const add = v > 0 ? b[j++] : a[i++];
 
-                    if (ptr === 0 || (mergeResult[ptr - 1] !== add)) {
+                    if (ptr === 0 || mergeResult[ptr - 1] !== add) {
                         mergeResult[ptr++] = add;
                     }
 
                     if (i >= n) {
                         do {
                             const add = b[j++];
-                            if (ptr === 0 || (mergeResult[ptr - 1] !== add)) {
+                            if (ptr === 0 || mergeResult[ptr - 1] !== add) {
                                 mergeResult[ptr++] = add;
                             }
-                        } while(j < m);
+                        } while (j < m);
                         break;
                     } else if (j >= m) {
                         do {
                             const add = a[i++];
-                            if (ptr === 0 || (mergeResult[ptr - 1] !== add)) {
+                            if (ptr === 0 || mergeResult[ptr - 1] !== add) {
                                 mergeResult[ptr++] = add;
                             }
-                        } while(i < n);
+                        } while (i < n);
                         break;
                     }
-                } while(true);
+                } while (true);
 
                 this._zIndexedChildren = mergeResult;
             }
@@ -2097,23 +2107,23 @@ export default class ElementCore {
         }
 
         this._zSort = false;
-    };
+    }
 
     get localTa() {
         return this._localTa;
-    };
+    }
 
     get localTb() {
         return this._localTb;
-    };
+    }
 
     get localTc() {
         return this._localTc;
-    };
+    }
 
     get localTd() {
         return this._localTd;
-    };
+    }
 
     get element() {
         return this._element;
@@ -2131,7 +2141,7 @@ export default class ElementCore {
     }
 
     getCornerPoints() {
-        let w = this._worldContext;
+        const w = this._worldContext;
 
         return [
             w.px,
@@ -2142,25 +2152,18 @@ export default class ElementCore {
             w.py + this._w * w.tc + this._h * w.td,
             w.px + this._h * w.tb,
             w.py + this._h * w.td
-        ]
-    };
+        ];
+    }
 
     getRenderTextureCoords(relX: number, relY: number) {
-        let r = this._renderContext;
-        return [
-            r.px + r.ta * relX + r.tb * relY,
-            r.py + r.tc * relX + r.td * relY
-        ]
+        const r = this._renderContext;
+        return [r.px + r.ta * relX + r.tb * relY, r.py + r.tc * relX + r.td * relY];
     }
 
     getAbsoluteCoords(relX: number, relY: number) {
-        let w = this._renderContext;
-        return [
-            w.px + w.ta * relX + w.tb * relY,
-            w.py + w.tc * relX + w.td * relY
-        ]
+        const w = this._renderContext;
+        return [w.px + w.ta * relX + w.tb * relY, w.py + w.tc * relX + w.td * relY];
     }
-
 
     private get layout(): FlexTarget {
         this._ensureLayout();
@@ -2192,15 +2195,15 @@ export default class ElementCore {
     }
 
     hasFlexLayout() {
-        return (this._layout && this._layout.isEnabled());
+        return this._layout && this._layout.isEnabled();
     }
 
-    getFlexContainer() : FlexContainer {
-        return this.layout.flex as any
+    getFlexContainer(): FlexContainer {
+        return this.layout.flex as any;
     }
 
     getFlexItem(): FlexItem {
-        return this.layout.flexItem as any
+        return this.layout.flexItem as any;
     }
 
     setLayout(x: number, y: number, w: number, h: number) {
@@ -2211,8 +2214,6 @@ export default class ElementCore {
         }
         this._setInternalDimensions(w, h);
     }
-
-
 
     triggerLayout() {
         this._setRecalc(256);
@@ -2239,9 +2240,8 @@ export default class ElementCore {
     }
 
     static sortZIndexedChildren(a: ElementCore, b: ElementCore) {
-        return (a._zIndex === b._zIndex ? a._updateTreeOrder - b._updateTreeOrder : a._zIndex - b._zIndex);
+        return a._zIndex === b._zIndex ? a._updateTreeOrder - b._updateTreeOrder : a._zIndex - b._zIndex;
     }
-
 }
 
 export type FunctionX = (parentW: number) => number;

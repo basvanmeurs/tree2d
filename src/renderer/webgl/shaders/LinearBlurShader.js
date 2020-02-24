@@ -1,7 +1,6 @@
 import DefaultShader from "./DefaultShader";
 
 export default class LinearBlurShader extends DefaultShader {
-
     constructor(context) {
         super(context);
 
@@ -36,9 +35,8 @@ export default class LinearBlurShader extends DefaultShader {
         this.redraw();
     }
 
-
     useDefault() {
-        return (this._kernelRadius === 0);
+        return this._kernelRadius === 0;
     }
 
     setupUniforms(operation) {

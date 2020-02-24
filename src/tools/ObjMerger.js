@@ -1,7 +1,6 @@
 import Utils from "../tree/Utils";
 
 export default class ObjMerger {
-
     static isMf(f) {
         return Utils.isFunction(f) && f.__mf;
     }
@@ -45,7 +44,7 @@ export default class ObjMerger {
             // Prepend all items in a that are not in b - before the now added b attribute.
             const aIndex = ai[key];
             let curIndex = aIndex;
-            while(--curIndex >= 0) {
+            while (--curIndex >= 0) {
                 const akey = aks[curIndex];
                 if (bi[akey] !== -1) {
                     // Already found? Stop processing.
@@ -53,7 +52,7 @@ export default class ObjMerger {
                     break;
                 }
             }
-            while(++curIndex < aIndex) {
+            while (++curIndex < aIndex) {
                 const akey = aks[curIndex];
                 result[akey] = a[akey];
             }
@@ -79,18 +78,17 @@ export default class ObjMerger {
 
         // Append remaining final items in a.
         let curIndex = aksl;
-        while(--curIndex >= 0) {
+        while (--curIndex >= 0) {
             const akey = aks[curIndex];
             if (bi[akey] !== -1) {
                 break;
             }
         }
-        while(++curIndex < aksl) {
+        while (++curIndex < aksl) {
             const akey = aks[curIndex];
             result[akey] = a[akey];
         }
 
         return result;
     }
-
 }

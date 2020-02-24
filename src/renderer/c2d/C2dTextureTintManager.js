@@ -1,5 +1,4 @@
 export default class C2dTextureTintManager {
-
     constructor(stage) {
         this.stage = stage;
         this._usedMemory = 0;
@@ -40,7 +39,7 @@ export default class C2dTextureTintManager {
         if (item.tx) {
             if (nativeTexture.update > item.u) {
                 // Native texture was updated in the mean time: renew.
-                this._tintTexture(item.tx, nativeTexture, color)
+                this._tintTexture(item.tx, nativeTexture, color);
             }
 
             return item.tx;
@@ -53,10 +52,10 @@ export default class C2dTextureTintManager {
                 target.ctx.clearRect(0, 0, target.width, target.height);
             } else {
                 // Allocate new.
-                target = document.createElement('canvas');
+                target = document.createElement("canvas");
                 target.width = nativeTexture.w;
                 target.height = nativeTexture.h;
-                target.ctx = target.getContext('2d');
+                target.ctx = target.getContext("2d");
             }
 
             this._tintTexture(target, nativeTexture, color);
@@ -77,14 +76,14 @@ export default class C2dTextureTintManager {
         while (col.length < 6) {
             col = "0" + col;
         }
-        target.ctx.fillStyle = '#' + col;
-        target.ctx.globalCompositeOperation = 'copy';
+        target.ctx.fillStyle = "#" + col;
+        target.ctx.globalCompositeOperation = "copy";
         target.ctx.fillRect(0, 0, source.w, source.h);
-        target.ctx.globalCompositeOperation = 'multiply';
+        target.ctx.globalCompositeOperation = "multiply";
         target.ctx.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.width, target.height);
 
         // Alpha-mix the texture.
-        target.ctx.globalCompositeOperation = 'destination-in';
+        target.ctx.globalCompositeOperation = "destination-in";
         target.ctx.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.width, target.height);
     }
 
@@ -111,7 +110,7 @@ export default class C2dTextureTintManager {
                 const before = cache.memoryUsage;
                 cache.cleanup(frame);
                 cache.releaseBlancoTextures();
-                delta += (cache.memoryUsage - before);
+                delta += cache.memoryUsage - before;
             }
         });
 
@@ -123,11 +122,9 @@ export default class C2dTextureTintManager {
             this._addMemoryUsage(delta);
         }
     }
-
 }
 
 class C2dTintCache {
-
     constructor(nativeTexture) {
         this._tx = nativeTexture;
         this._colors = new Map();
@@ -155,7 +152,7 @@ class C2dTintCache {
     get(color) {
         let item = this._colors.get(color);
         if (!item) {
-            item = {lf: -1, tx: undefined, u: -1};
+            item = { lf: -1, tx: undefined, u: -1 };
             this._colors.set(color, item);
         }
         return item;
@@ -172,7 +169,6 @@ class C2dTintCache {
     cleanup(frame) {
         // We only need to clean up once per frame.
         if (this._lastCleanupFrame !== frame) {
-
             // We limit blanco textures reuse to one frame only to prevent memory usage growth.
             this._blancoTextures = [];
 
@@ -199,6 +195,4 @@ class C2dTintCache {
             return this._blancoTextures.pop();
         }
     }
-
 }
-

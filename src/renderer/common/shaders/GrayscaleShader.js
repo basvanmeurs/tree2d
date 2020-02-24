@@ -2,7 +2,6 @@ import C2dDefaultShader from "../../c2d/shaders/DefaultShader";
 import WebGLDefaultShader from "../../webgl/shaders/DefaultShader";
 
 export class WebGLGrayscaleShader extends WebGLDefaultShader {
-
     constructor(context) {
         super(context);
         this._amount = 1;
@@ -11,7 +10,6 @@ export class WebGLGrayscaleShader extends WebGLDefaultShader {
     static getC2d() {
         return C2dGrayscaleShader;
     }
-
 
     set amount(v) {
         this._amount = v;
@@ -30,7 +28,6 @@ export class WebGLGrayscaleShader extends WebGLDefaultShader {
         super.setupUniforms(operation);
         this._setUniform("amount", this._amount, this.gl.uniform1f);
     }
-
 }
 
 WebGLGrayscaleShader.fragmentShaderSource = `
@@ -49,7 +46,6 @@ WebGLGrayscaleShader.fragmentShaderSource = `
 `;
 
 export class C2dGrayscaleShader extends C2dDefaultShader {
-
     constructor(context) {
         super(context);
         this._amount = 1;
@@ -58,7 +54,6 @@ export class C2dGrayscaleShader extends C2dDefaultShader {
     static getWebGL() {
         return WebGLGrayscaleShader;
     }
-
 
     set amount(v) {
         this._amount = v;
@@ -73,12 +68,11 @@ export class C2dGrayscaleShader extends C2dDefaultShader {
         return this._amount === 0;
     }
 
-    _beforeDrawEl({target}) {
+    _beforeDrawEl({ target }) {
         target.ctx.filter = "grayscale(" + this._amount + ")";
     }
 
-    _afterDrawEl({target}) {
+    _afterDrawEl({ target }) {
         target.ctx.filter = "none";
     }
-
 }

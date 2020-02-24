@@ -1,5 +1,4 @@
 export default class Base {
-
     static defaultSetter(obj, name, value) {
         obj[name] = value;
     }
@@ -8,9 +7,9 @@ export default class Base {
         if (!Utils.isObjectLiteral(settings)) {
             console.error("Settings must be object literal");
         } else {
-            let names = Object.keys(settings);
+            const names = Object.keys(settings);
             for (let i = 0, n = names.length; i < n; i++) {
-                let name = names[i];
+                const name = names[i];
 
                 this.patchObjectProperty(obj, name, settings[name]);
             }
@@ -18,7 +17,7 @@ export default class Base {
     }
 
     static patchObjectProperty(obj, name, value) {
-        let setter = obj.setSetting || Base.defaultSetter;
+        const setter = obj.setSetting || Base.defaultSetter;
 
         if (name.charAt(0) === "_") {
             // Disallow patching private variables.
@@ -40,9 +39,6 @@ export default class Base {
         // This function can be used as an object setting, which is called with the target object.
         func.__local = true;
     }
-
-
 }
 
 import Utils from "./Utils";
-

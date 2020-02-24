@@ -1,15 +1,14 @@
 class Utils {
-
     static isFunction(value) {
-        return typeof value === 'function';
+        return typeof value === "function";
     }
 
     static isNumber(value) {
-        return typeof value === 'number';
+        return typeof value === "number";
     }
 
     static isInteger(value) {
-        return (typeof value === 'number' && (value % 1) === 0);
+        return typeof value === "number" && value % 1 === 0;
     }
 
     static isBoolean(value) {
@@ -17,21 +16,21 @@ class Utils {
     }
 
     static isString(value) {
-        return typeof value == 'string';
+        return typeof value == "string";
     }
 
     static isObject(value) {
-        let type = typeof value;
-        return !!value && (type == 'object' || type == 'function');
+        const type = typeof value;
+        return !!value && (type == "object" || type == "function");
     }
 
     static isPlainObject(value) {
-        let type = typeof value;
-        return !!value && (type == 'object');
+        const type = typeof value;
+        return !!value && type == "object";
     }
 
-    static isObjectLiteral(value){
-        return typeof value === 'object' && value && value.constructor === Object
+    static isObjectLiteral(value) {
+        return typeof value === "object" && value && value.constructor === Object;
     }
 
     static getArrayIndex(index, arr) {
@@ -39,35 +38,35 @@ class Utils {
     }
 
     static equalValues(v1, v2) {
-        if ((typeof v1) !== (typeof v2)) return false
+        if (typeof v1 !== typeof v2) return false;
         if (Utils.isObjectLiteral(v1)) {
-            return Utils.isObjectLiteral(v2) && Utils.equalObjectLiterals(v1, v2)
+            return Utils.isObjectLiteral(v2) && Utils.equalObjectLiterals(v1, v2);
         } else if (Array.isArray(v1)) {
-            return Array.isArray(v2) && Utils.equalArrays(v1, v2)
+            return Array.isArray(v2) && Utils.equalArrays(v1, v2);
         } else {
-            return v1 === v2
+            return v1 === v2;
         }
     }
 
     static equalObjectLiterals(obj1, obj2) {
-        let keys1 = Object.keys(obj1);
-        let keys2 = Object.keys(obj2);
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
         if (keys1.length !== keys2.length) {
-            return false
+            return false;
         }
 
         for (let i = 0, n = keys1.length; i < n; i++) {
             const k1 = keys1[i];
             const k2 = keys2[i];
             if (k1 !== k2) {
-                return false
+                return false;
             }
 
             const v1 = obj1[k1];
             const v2 = obj2[k2];
 
             if (!Utils.equalValues(v1, v2)) {
-                return false
+                return false;
             }
         }
 
@@ -76,24 +75,22 @@ class Utils {
 
     static equalArrays(v1, v2) {
         if (v1.length !== v2.length) {
-            return false
+            return false;
         }
         for (let i = 0, n = v1.length; i < n; i++) {
             if (!this.equalValues(v1[i], v2[i])) {
-                return false
+                return false;
             }
         }
 
-        return true
+        return true;
     }
-
 }
 
 /**
  * Maintains the state of a WebGLRenderingContext.
  */
 class WebGLState {
-
     constructor(id, gl) {
         this._id = id;
         this._gl = gl;
@@ -113,7 +110,7 @@ class WebGLState {
     }
 
     _getDefaultFlag(cap) {
-        return (cap === this._gl.DITHER);
+        return cap === this._gl.DITHER;
     }
 
     setFlag(cap, v) {
@@ -134,7 +131,7 @@ class WebGLState {
         const change = this._buffers.get(target) !== buffer;
         this._buffers.set(target, buffer);
 
-        if (change && (target === this._gl.ARRAY_BUFFER)) {
+        if (change && target === this._gl.ARRAY_BUFFER) {
             // When the array buffer is changed all attributes are cleared.
             this._vertexAttribs = [];
         }
@@ -157,14 +154,14 @@ class WebGLState {
     setProgram(program) {
         const change = this._program !== program;
         this._program = program;
-        return change
+        return change;
     }
 
     setSetting(func, v) {
         const s = this._settings.get(func);
         const change = !s || !Utils.equalValues(s, v);
         this._settings.set(func, v);
-        return change
+        return change;
     }
 
     disableVertexAttribArray(index) {
@@ -191,10 +188,11 @@ class WebGLState {
     }
 
     vertexAttribPointer(index, props) {
-        let va = this._vertexAttribs[index];
+        const va = this._vertexAttribs[index];
         let equal = false;
         if (va) {
-            equal = va[0] === props[0] &&
+            equal =
+                va[0] === props[0] &&
                 va[1] === props[1] &&
                 va[2] === props[2] &&
                 va[3] === props[3] &&
@@ -230,9 +228,9 @@ class WebGLState {
             if (texture) {
                 this._textures[activeIndex] = [];
                 this._textures[activeIndex][targetIndex] = texture;
-                return true
+                return true;
             } else {
-                return false
+                return false;
             }
         }
     }
@@ -267,15 +265,15 @@ class WebGLState {
         this._migrateSettings(t, s);
 
         this._migratePixelStorei(t, s);
-        
+
         this._migrateTextures(t, s);
-        
     }
 
     _migratePixelStorei(t, s) {
         for (let i = 0, n = t._pixelStorei.length; i < n; i++) {
             if (t._pixelStorei[i] !== s._pixelStorei[i]) {
-                const value = s._pixelStorei[i] !== undefined ? s._pixelStorei[i] : WebGLState._getDefaultPixelStoreiByIndex(i);
+                const value =
+                    s._pixelStorei[i] !== undefined ? s._pixelStorei[i] : WebGLState._getDefaultPixelStoreiByIndex(i);
                 this._gl._pixelStorei(WebGLState._getPixelStoreiByIndex(i), value);
             }
         }
@@ -322,7 +320,7 @@ class WebGLState {
                 this._gl._bindBuffer(target, null);
             }
         });
-        return (s._buffers.get(this._gl.ARRAY_BUFFER) !== t._buffers.get(this._gl.ARRAY_BUFFER))
+        return s._buffers.get(this._gl.ARRAY_BUFFER) !== t._buffers.get(this._gl.ARRAY_BUFFER);
     }
 
     _migrateFramebuffers(t, s) {
@@ -356,7 +354,6 @@ class WebGLState {
     }
 
     _migrateAttributes(t, s, buffersChanged) {
-
         if (!buffersChanged) {
             t._vertexAttribs.forEach((attrib, index) => {
                 if (!s._vertexAttribs[index]) {
@@ -435,8 +432,12 @@ class WebGLState {
             this._defaultSettings = new Map();
             const d = this._defaultSettings;
             const g = WebGLRenderingContext.prototype;
-            d.set("viewport", function(gl) {return [0,0,gl.canvas.width, gl.canvas.height]});
-            d.set("scissor", function(gl) {return [0,0,gl.canvas.width, gl.canvas.height]});
+            d.set("viewport", function(gl) {
+                return [0, 0, gl.canvas.width, gl.canvas.height];
+            });
+            d.set("scissor", function(gl) {
+                return [0, 0, gl.canvas.width, gl.canvas.height];
+            });
             d.set("blendColor", [0, 0, 0, 0]);
             d.set("blendEquation", [g.FUNC_ADD]);
             d.set("blendEquationSeparate", [g.FUNC_ADD, g.FUNC_ADD]);
@@ -475,12 +476,12 @@ class WebGLState {
             d.set("vertexAttrib4f", []);
             d.set("vertexAttrib4fv", []);
         }
-        return this._defaultSettings
+        return this._defaultSettings;
     }
 
     static _getTextureTargetIndex(target) {
-        switch(target) {
-            case 0x0DE1:
+        switch (target) {
+            case 0x0de1:
                 /* TEXTURE_2D */
                 return 0;
             case 0x8513:
@@ -488,31 +489,31 @@ class WebGLState {
                 return 1;
             default:
                 // Shouldn't happen.
-                throw new Error('Unknown texture target: ' + target);
+                throw new Error("Unknown texture target: " + target);
         }
     }
 
     static _getTextureTargetByIndex(index) {
         if (!this._textureTargetIndices) {
-            this._textureTargetIndices = [0x0DE1, 0x8513];
+            this._textureTargetIndices = [0x0de1, 0x8513];
         }
-        return this._textureTargetIndices[index]
+        return this._textureTargetIndices[index];
     }
 
     static _getTextureIndex(index) {
-        return index - 0x84C0 /* GL_TEXTURE0 */;
+        return index - 0x84c0 /* GL_TEXTURE0 */;
     }
 
     static _getTextureByIndex(index) {
-        return index + 0x84C0;
+        return index + 0x84c0;
     }
 
     static _getPixelStoreiIndex(pname) {
-        switch(pname) {
-            case 0x0D05:
+        switch (pname) {
+            case 0x0d05:
                 /* PACK_ALIGNMENT */
                 return 0;
-            case 0x0CF5:
+            case 0x0cf5:
                 /* UNPACK_ALIGNMENT */
                 return 1;
             case 0x9240:
@@ -524,33 +525,32 @@ class WebGLState {
             case 0x9243:
                 /* UNPACK_COLORSPACE_CONVERSION_WEBGL */
                 return 4;
-                //@todo: support WebGL2 properties, see https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/pixelStorei
+            //@todo: support WebGL2 properties, see https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/pixelStorei
             case 0x9245:
                 /* UNPACK_FLIP_BLUE_RED */
                 return 5;
             default:
                 // Shouldn't happen.
-                throw new Error('Unknown pixelstorei: ' + pname);
+                throw new Error("Unknown pixelstorei: " + pname);
         }
     }
 
     static _getPixelStoreiByIndex(index) {
         if (!this._pixelStoreiIndices) {
-            this._pixelStoreiIndices = [0x0D05, 0x0CF5, 0x9240, 0x9241, 0x9243];
+            this._pixelStoreiIndices = [0x0d05, 0x0cf5, 0x9240, 0x9241, 0x9243];
         }
-        return this._pixelStoreiIndices[index]
+        return this._pixelStoreiIndices[index];
     }
 
     static _getDefaultPixelStoreiByIndex(index) {
         if (!this._pixelStoreiDefaults) {
             this._pixelStoreiDefaults = [4, 4, false, false, WebGLRenderingContext.prototype.BROWSER_DEFAULT_WEBGL];
         }
-        return this._pixelStoreiDefaults[index]
+        return this._pixelStoreiDefaults[index];
     }
 }
 
 class WebGLStateManager {
-
     _initStateManager(id = "default") {
         this._states = {};
         this._state = this._getState(id);
@@ -572,53 +572,43 @@ class WebGLStateManager {
     }
 
     $useProgram(program) {
-        if (this._state.setProgram(program))
-            this._useProgram(program);
+        if (this._state.setProgram(program)) this._useProgram(program);
     }
 
     $bindBuffer(target, fb) {
-        if (this._state.setBuffer(target, fb))
-            this._bindBuffer(target, fb);
+        if (this._state.setBuffer(target, fb)) this._bindBuffer(target, fb);
     }
 
     $bindFramebuffer(target, fb) {
-        if (this._state.setFramebuffer(target, fb))
-            this._bindFramebuffer(target, fb);
+        if (this._state.setFramebuffer(target, fb)) this._bindFramebuffer(target, fb);
     }
 
     $bindRenderbuffer(target, fb) {
-        if (this._state.setRenderbuffer(target, fb))
-            this._bindRenderbuffer(target, fb);
+        if (this._state.setRenderbuffer(target, fb)) this._bindRenderbuffer(target, fb);
     }
 
     $enable(cap) {
-        if (this._state.setFlag(cap, true))
-            this._enable(cap);
+        if (this._state.setFlag(cap, true)) this._enable(cap);
     }
 
     $disable(cap) {
-        if (this._state.setFlag(cap, false))
-            this._disable(cap);
+        if (this._state.setFlag(cap, false)) this._disable(cap);
     }
 
     $viewport(x, y, w, h) {
-        if (this._state.setSetting(this._viewport, [x, y, w, h]))
-            this._viewport(x, y, w, h);
+        if (this._state.setSetting(this._viewport, [x, y, w, h])) this._viewport(x, y, w, h);
     }
 
     $scissor(x, y, w, h) {
-        if (this._state.setSetting(this._scissor, [x, y, w, h]))
-            this._scissor(x, y, w, h);
+        if (this._state.setSetting(this._scissor, [x, y, w, h])) this._scissor(x, y, w, h);
     }
 
     $disableVertexAttribArray(index) {
-        if (this._state.disableVertexAttribArray(index))
-            this._disableVertexAttribArray(index);
+        if (this._state.disableVertexAttribArray(index)) this._disableVertexAttribArray(index);
     }
 
     $enableVertexAttribArray(index) {
-        if (this._state.enableVertexAttribArray(index))
-            this._enableVertexAttribArray(index);
+        if (this._state.enableVertexAttribArray(index)) this._enableVertexAttribArray(index);
     }
 
     $vertexAttribPointer(index, size, type, normalized, stride, offset) {
@@ -627,13 +617,11 @@ class WebGLStateManager {
     }
 
     $activeTexture(texture) {
-        if (this._state.setActiveTexture(texture))
-            this._activeTexture(texture);
+        if (this._state.setActiveTexture(texture)) this._activeTexture(texture);
     }
 
     $bindTexture(target, texture) {
-        if (this._state.bindTexture(target, texture))
-            this._bindTexture(target, texture);
+        if (this._state.bindTexture(target, texture)) this._bindTexture(target, texture);
     }
 
     $pixelStorei(pname, param) {
@@ -644,7 +632,7 @@ class WebGLStateManager {
 
     $stencilFuncSeparate(face, func, ref, mask) {
         let f;
-        switch(face) {
+        switch (face) {
             case this.FRONT:
                 f = this._stencilFuncSeparateFront;
                 break;
@@ -656,8 +644,7 @@ class WebGLStateManager {
                 break;
         }
 
-        if (this._state.setSetting(f, [func, ref, mask]))
-            f.apply(this, [func, ref, mask]);
+        if (this._state.setSetting(f, [func, ref, mask])) f.apply(this, [func, ref, mask]);
     }
 
     _stencilFuncSeparateFront(func, ref, mask) {
@@ -674,7 +661,7 @@ class WebGLStateManager {
 
     $stencilMaskSeparate(face, mask) {
         let f;
-        switch(face) {
+        switch (face) {
             case this.FRONT:
                 f = this._stencilMaskSeparateFront;
                 break;
@@ -686,8 +673,7 @@ class WebGLStateManager {
                 break;
         }
 
-        if (this._state.setSetting(f, [mask]))
-            f.apply(this, [mask]);
+        if (this._state.setSetting(f, [mask])) f.apply(this, [mask]);
     }
 
     _stencilMaskSeparateFront(mask) {
@@ -704,7 +690,7 @@ class WebGLStateManager {
 
     $stencilOpSeparate(face, fail, zfail, zpass) {
         let f;
-        switch(face) {
+        switch (face) {
             case this.FRONT:
                 f = this._stencilOpSeparateFront;
                 break;
@@ -716,8 +702,7 @@ class WebGLStateManager {
                 break;
         }
 
-        if (this._state.setSetting(f, [fail, zfail, zpass]))
-            f.apply(this, [fail, zfail, zpass]);
+        if (this._state.setSetting(f, [fail, zfail, zpass])) f.apply(this, [fail, zfail, zpass]);
     }
 
     _stencilOpSeparateFront(fail, zfail, zpass) {
@@ -738,8 +723,7 @@ class WebGLStateManager {
     }
 
     $blendEquation(mode) {
-        if (this._state.setSetting(this._blendEquation, [mode]))
-            this._blendEquation(mode);
+        if (this._state.setSetting(this._blendEquation, [mode])) this._blendEquation(mode);
     }
 
     $blendEquationSeparate(modeRGB, modeAlpha) {
@@ -748,8 +732,7 @@ class WebGLStateManager {
     }
 
     $blendFunc(sfactor, dfactor) {
-        if (this._state.setSetting(this._blendFunc, [sfactor, dfactor]))
-            this._blendFunc(sfactor, dfactor);
+        if (this._state.setSetting(this._blendFunc, [sfactor, dfactor])) this._blendFunc(sfactor, dfactor);
     }
 
     $blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha) {
@@ -763,13 +746,11 @@ class WebGLStateManager {
     }
 
     $clearDepth(depth) {
-        if (this._state.setSetting(this._clearDepth, [depth]))
-            this._clearDepth(depth);
+        if (this._state.setSetting(this._clearDepth, [depth])) this._clearDepth(depth);
     }
 
     $clearStencil(s) {
-        if (this._state.setSetting(this._clearStencil, [s]))
-            this._clearStencil(s);
+        if (this._state.setSetting(this._clearStencil, [s])) this._clearStencil(s);
     }
 
     $colorMask(red, green, blue, alpha) {
@@ -778,98 +759,79 @@ class WebGLStateManager {
     }
 
     $cullFace(mode) {
-        if (this._state.setSetting(this._cullFace, [mode]))
-            this._cullFace(mode);
+        if (this._state.setSetting(this._cullFace, [mode])) this._cullFace(mode);
     }
 
     $depthFunc(func) {
-        if (this._state.setSetting(this._depthFunc, [func]))
-            this._depthFunc(func);
+        if (this._state.setSetting(this._depthFunc, [func])) this._depthFunc(func);
     }
 
     $depthMask(flag) {
-        if (this._state.setSetting(this._depthMask, [flag]))
-            this._depthMask(flag);
+        if (this._state.setSetting(this._depthMask, [flag])) this._depthMask(flag);
     }
 
     $depthRange(zNear, zFar) {
-        if (this._state.setSetting(this._depthRange, [zNear, zFar]))
-            this._depthRange(zNear, zFar);
+        if (this._state.setSetting(this._depthRange, [zNear, zFar])) this._depthRange(zNear, zFar);
     }
 
     $frontFace(mode) {
-        if (this._state.setSetting(this._frontFace, [mode]))
-            this._frontFace(mode);
+        if (this._state.setSetting(this._frontFace, [mode])) this._frontFace(mode);
     }
 
     $lineWidth(width) {
-        if (this._state.setSetting(this._lineWidth, [width]))
-            this._lineWidth(width);
+        if (this._state.setSetting(this._lineWidth, [width])) this._lineWidth(width);
     }
 
     $polygonOffset(factor, units) {
-        if (this._state.setSetting(this._polygonOffset, [factor, units]))
-            this._polygonOffset(factor, units);
+        if (this._state.setSetting(this._polygonOffset, [factor, units])) this._polygonOffset(factor, units);
     }
 
     $sampleCoverage(value, invert) {
-        if (this._state.setSetting(this._sampleCoverage, [value, invert]))
-            this._sampleCoverage(value, invert);
+        if (this._state.setSetting(this._sampleCoverage, [value, invert])) this._sampleCoverage(value, invert);
     }
 
     $stencilFunc(func, ref, mask) {
-        if (this._state.setSetting(this._stencilFunc, [func, ref, mask]))
-            this._stencilFunc(func, ref, mask);
+        if (this._state.setSetting(this._stencilFunc, [func, ref, mask])) this._stencilFunc(func, ref, mask);
     }
 
     $stencilMask(mask) {
-        if (this._state.setSetting(this._stencilMask, [mask]))
-            this._stencilMask(mask);
+        if (this._state.setSetting(this._stencilMask, [mask])) this._stencilMask(mask);
     }
 
     $stencilOp(fail, zfail, zpass) {
-        if (this._state.setSetting(this._stencilOp, [fail, zfail, zpass]))
-            this._stencilOp(fail, zfail, zpass);
+        if (this._state.setSetting(this._stencilOp, [fail, zfail, zpass])) this._stencilOp(fail, zfail, zpass);
     }
 
     $vertexAttrib1f(indx, x) {
-        if (this._state.setSetting(this._vertexAttrib1f, [indx, x]))
-            this._vertexAttrib1f(indx, x);
+        if (this._state.setSetting(this._vertexAttrib1f, [indx, x])) this._vertexAttrib1f(indx, x);
     }
 
     $vertexAttrib1fv(indx, values) {
-        if (this._state.setSetting(this._vertexAttrib1fv, [indx, values]))
-            this._vertexAttrib1fv(indx, values);
+        if (this._state.setSetting(this._vertexAttrib1fv, [indx, values])) this._vertexAttrib1fv(indx, values);
     }
 
     $vertexAttrib2f(indx, x, y) {
-        if (this._state.setSetting(this._vertexAttrib2f, [indx, x, y]))
-            this._vertexAttrib2f(indx, x, y);
+        if (this._state.setSetting(this._vertexAttrib2f, [indx, x, y])) this._vertexAttrib2f(indx, x, y);
     }
 
     $vertexAttrib2fv(indx, values) {
-        if (this._state.setSetting(this._vertexAttrib2fv, [indx, values]))
-            this._vertexAttrib2fv(indx, values);
+        if (this._state.setSetting(this._vertexAttrib2fv, [indx, values])) this._vertexAttrib2fv(indx, values);
     }
 
     $vertexAttrib3f(indx, x, y, z) {
-        if (this._state.setSetting(this._vertexAttrib3f, [indx, x, y, z]))
-            this._vertexAttrib3f(indx, x, y, z);
+        if (this._state.setSetting(this._vertexAttrib3f, [indx, x, y, z])) this._vertexAttrib3f(indx, x, y, z);
     }
 
     $vertexAttrib3fv(indx, values) {
-        if (this._state.setSetting(this._vertexAttrib3fv, [indx, values]))
-            this._vertexAttrib3fv(indx, values);
+        if (this._state.setSetting(this._vertexAttrib3fv, [indx, values])) this._vertexAttrib3fv(indx, values);
     }
 
     $vertexAttrib4f(indx, x, y, z, w) {
-        if (this._state.setSetting(this._vertexAttrib4f, [indx, x, y, z, w]))
-            this._vertexAttrib4f(indx, x, y, z, w);
+        if (this._state.setSetting(this._vertexAttrib4f, [indx, x, y, z, w])) this._vertexAttrib4f(indx, x, y, z, w);
     }
 
     $vertexAttrib4fv(indx, values) {
-        if (this._state.setSetting(this._vertexAttrib4fv, [indx, values]))
-            this._vertexAttrib4fv(indx, values);
+        if (this._state.setSetting(this._vertexAttrib4fv, [indx, values])) this._vertexAttrib4fv(indx, values);
     }
 
     /**
@@ -891,7 +853,7 @@ class WebGLStateManager {
                         // We do this for compatibility with the Chrome WebGL Inspector plugin.
                         gl[name].xname = name;
                     }
-                    gl['_' + name] = gl[name];
+                    gl["_" + name] = gl[name];
                 }
                 gl[name] = method;
             }
@@ -901,7 +863,6 @@ class WebGLStateManager {
 
         return gl;
     }
-
 }
 
 export default WebGLStateManager;

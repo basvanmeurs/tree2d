@@ -1,5 +1,4 @@
 export default class ElementListeners {
-
     public onSetup?: Function;
     public onAttach?: Function;
     public onDetach?: Function;
@@ -11,5 +10,4 @@ export default class ElementListeners {
     public onTextureError?: Function;
     public onTextureLoaded?: Function;
     public onTextureUnloaded?: Function;
-
 }

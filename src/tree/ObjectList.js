@@ -3,10 +3,9 @@
  * Objects may be patched. Then, they can be referenced using the 'ref' (string) property.
  */
 export default class ObjectList {
-
     constructor() {
         this._items = [];
-        this._refs = {}
+        this._refs = {};
     }
 
     get() {
@@ -45,7 +44,7 @@ export default class ObjectList {
                 this.onAdd(item, index);
             }
         } else {
-            throw new Error('addAt: The index ' + index + ' is out of bounds ' + this._items.length);
+            throw new Error("addAt: The index " + index + " is out of bounds " + this._items.length);
         }
     }
 
@@ -53,27 +52,26 @@ export default class ObjectList {
         if (item.ref) {
             const existingItem = this.getByRef(item.ref);
             if (!existingItem) {
-                throw new Error('replaceByRef: no item found with reference: ' + item.ref);
+                throw new Error("replaceByRef: no item found with reference: " + item.ref);
             }
             this.replace(item, existingItem);
         } else {
-            throw new Error('replaceByRef: no ref specified in item');
+            throw new Error("replaceByRef: no ref specified in item");
         }
         this.addAt(item, this._items.length);
-
     }
 
     replace(item, prevItem) {
         const index = this.getIndex(prevItem);
         if (index === -1) {
-            throw new Error('replace: The previous item does not exist');
+            throw new Error("replace: The previous item does not exist");
         }
         this.setAt(item, index);
     }
 
     setAt(item, index) {
         if (index >= 0 && index <= this._items.length) {
-            let currentIndex = this._items.indexOf(item);
+            const currentIndex = this._items.indexOf(item);
             if (currentIndex !== -1) {
                 if (currentIndex !== index) {
                     const fromIndex = currentIndex;
@@ -102,7 +100,7 @@ export default class ObjectList {
                 this.onSet(item, index, prevItem);
             }
         } else {
-            throw new Error('setAt: The index ' + index + ' is out of bounds ' + this._items.length);
+            throw new Error("setAt: The index " + index + " is out of bounds " + this._items.length);
         }
     }
 
@@ -115,15 +113,15 @@ export default class ObjectList {
     }
 
     remove(item) {
-        let index = this._items.indexOf(item);
+        const index = this._items.indexOf(item);
 
         if (index !== -1) {
             this.removeAt(index);
         }
-    };
+    }
 
     removeAt(index) {
-        let item = this._items[index];
+        const item = this._items[index];
 
         if (item.ref) {
             this._refs[item.ref] = undefined;
@@ -134,21 +132,21 @@ export default class ObjectList {
         this.onRemove(item, index);
 
         return item;
-    };
+    }
 
     clear() {
-        let n = this._items.length;
+        const n = this._items.length;
         if (n) {
-            let prev = this._items;
+            const prev = this._items;
             this._items = [];
-            this._refs = {}
+            this._refs = {};
             this.onSync(prev, [], []);
         }
-    };
+    }
 
     a(o) {
         if (Utils.isObjectLiteral(o)) {
-            let c = this.createItem(o);
+            const c = this.createItem(o);
             c.patch(o);
             this.add(c);
             return c;
@@ -161,7 +159,7 @@ export default class ObjectList {
             this.add(o);
             return o;
         }
-    };
+    }
 
     get length() {
         return this._items.length;
@@ -193,11 +191,11 @@ export default class ObjectList {
 
     _setByObject(settings) {
         // Overrule settings of known referenced items.
-        let refs = this._getRefs();
-        let crefs = Object.keys(settings);
+        const refs = this._getRefs();
+        const crefs = Object.keys(settings);
         for (let i = 0, n = crefs.length; i < n; i++) {
-            let cref = crefs[i];
-            let s = settings[cref];
+            const cref = crefs[i];
+            const s = settings[cref];
 
             let c = refs[cref];
             if (!c) {
@@ -216,7 +214,7 @@ export default class ObjectList {
                 if (this.isItem(s)) {
                     if (c !== s) {
                         // Replace previous item;
-                        let idx = this.getIndex(c);
+                        const idx = this.getIndex(c);
                         s.ref = cref;
                         this.setAt(s, idx);
                     }
@@ -230,8 +228,8 @@ export default class ObjectList {
     _equalsArray(array) {
         let same = true;
         if (array.length === this._items.length) {
-            for (let i = 0, n = this._items.length; (i < n) && same; i++) {
-                same = same && (this._items[i] === array[i]);
+            for (let i = 0, n = this._items.length; i < n && same; i++) {
+                same = same && this._items[i] === array[i];
             }
         } else {
             same = false;
@@ -250,14 +248,14 @@ export default class ObjectList {
         }
 
         let refs;
-        let newItems = [];
+        const newItems = [];
         for (let i = 0, n = array.length; i < n; i++) {
-            let s = array[i];
+            const s = array[i];
             if (this.isItem(s)) {
                 s.marker = false;
                 newItems.push(s);
             } else {
-                let cref = s.ref;
+                const cref = s.ref;
                 let c;
                 if (cref) {
                     if (!refs) refs = this._getRefs();
@@ -283,18 +281,22 @@ export default class ObjectList {
     }
 
     _setItems(newItems) {
-        let prevItems = this._items;
+        const prevItems = this._items;
         this._items = newItems;
 
         // Remove the items.
-        let removed = prevItems.filter(item => {let m = item.marker; delete item.marker; return m});
-        let added = newItems.filter(item => (prevItems.indexOf(item) === -1));
+        const removed = prevItems.filter(item => {
+            const m = item.marker;
+            delete item.marker;
+            return m;
+        });
+        const added = newItems.filter(item => prevItems.indexOf(item) === -1);
 
         if (removed.length || added.length) {
             // Recalculate refs.
-            this._refs = {}
+            this._refs = {};
             for (let i = 0, n = this._items.length; i < n; i++) {
-                let ref = this._items[i].ref;
+                const ref = this._items[i].ref;
                 if (ref) {
                     this._refs[ref] = this._items[i];
                 }
@@ -310,20 +312,15 @@ export default class ObjectList {
         this._setByArray(items);
     }
 
-    onAdd(item, index) {
-    }
+    onAdd(item, index) {}
 
-    onRemove(item, index) {
-    }
+    onRemove(item, index) {}
 
-    onSync(removed, added, order) {
-    }
+    onSync(removed, added, order) {}
 
-    onSet(item, index, prevItem) {
-    }
+    onSet(item, index, prevItem) {}
 
-    onMove(item, fromIndex, toIndex) {
-    }
+    onMove(item, fromIndex, toIndex) {}
 
     createItem(object) {
         throw new Error("ObjectList.createItem must create and return a new object");
@@ -336,9 +333,6 @@ export default class ObjectList {
     forEach(f) {
         this.get().forEach(f);
     }
-
 }
 
 import Utils from "./Utils";
-
-

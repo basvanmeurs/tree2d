@@ -1,10 +1,9 @@
 import WebGLShader from "../WebGLShader";
 
 export default class DefaultShader extends WebGLShader {
-
     enableAttribs() {
         // Enables the attribs in the shader program.
-        let gl = this.gl;
+        const gl = this.gl;
         gl.vertexAttribPointer(this._attrib("aVertexPosition"), 2, gl.FLOAT, false, 20, 0);
         gl.enableVertexAttribArray(this._attrib("aVertexPosition"));
 
@@ -22,7 +21,7 @@ export default class DefaultShader extends WebGLShader {
 
     disableAttribs() {
         // Disables the attribs in the shader program.
-        let gl = this.gl;
+        const gl = this.gl;
         gl.disableVertexAttribArray(this._attrib("aVertexPosition"));
 
         if (this._attrib("aTextureCoord") !== -1) {
@@ -39,15 +38,15 @@ export default class DefaultShader extends WebGLShader {
     }
 
     draw(operation) {
-        let gl = this.gl;
+        const gl = this.gl;
 
-        let length = operation.length;
+        const length = operation.length;
 
         if (length) {
             let glTexture = operation.getTexture(0);
             let pos = 0;
             for (let i = 0; i < length; i++) {
-                let tx = operation.getTexture(i);
+                const tx = operation.getTexture(i);
                 if (glTexture !== tx) {
                     gl.bindTexture(gl.TEXTURE_2D, glTexture);
                     gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
@@ -61,7 +60,6 @@ export default class DefaultShader extends WebGLShader {
             }
         }
     }
-
 }
 
 DefaultShader.vertexShaderSource = `
@@ -93,4 +91,3 @@ DefaultShader.fragmentShaderSource = `
         gl_FragColor = texture2D(uSampler, vTextureCoord) * vColor;
     }
 `;
-

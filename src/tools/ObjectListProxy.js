@@ -5,7 +5,6 @@
 import ObjectList from "../tree/ObjectList";
 
 export default class ObjectListProxy extends ObjectList {
-
     constructor(target) {
         super();
         this._target = target;
@@ -38,7 +37,4 @@ export default class ObjectListProxy extends ObjectList {
     isItem(object) {
         return this._target.isItem(object);
     }
-
 }
-
-

@@ -1,7 +1,6 @@
 import FlexUtils from "../FlexUtils.js";
 
 export default class ItemCoordinatesUpdater {
-
     constructor(layout) {
         this._layout = layout;
         this._isReverse = this._flexContainer._reverse;
@@ -27,8 +26,8 @@ export default class ItemCoordinatesUpdater {
 
     _finalizeRoot() {
         const item = this._flexContainer.item;
-        let x = FlexUtils.getAxisLayoutPos(item, true);
-        let y = FlexUtils.getAxisLayoutPos(item, false);
+        const x = FlexUtils.getAxisLayoutPos(item, true);
+        const y = FlexUtils.getAxisLayoutPos(item, false);
         let w = FlexUtils.getAxisLayoutSize(item, true);
         let h = FlexUtils.getAxisLayoutSize(item, false);
 
@@ -60,7 +59,7 @@ export default class ItemCoordinatesUpdater {
             if (item.isFlexEnabled()) {
                 const layout = item._flex._layout;
 
-                const dimensionsMatchPreviousResult = (item.w === item.target.w && item.h === item.target.h);
+                const dimensionsMatchPreviousResult = item.w === item.target.w && item.h === item.target.h;
                 if (dimensionsMatchPreviousResult) {
                     // Cache is valid.
                     return true;
@@ -117,9 +116,9 @@ export default class ItemCoordinatesUpdater {
     }
 
     _reverseMainAxisLayoutPos(item) {
-        const endPos = (item.flexItem._getMainAxisLayoutPos() + item.flexItem._getMainAxisLayoutSizeWithPaddingAndMargin());
+        const endPos =
+            item.flexItem._getMainAxisLayoutPos() + item.flexItem._getMainAxisLayoutSizeWithPaddingAndMargin();
         const reversedPos = this._layout.mainAxisSize - endPos;
         item.flexItem._setMainAxisLayoutPos(reversedPos);
     }
-
 }

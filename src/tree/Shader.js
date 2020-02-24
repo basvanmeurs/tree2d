@@ -2,7 +2,6 @@ import Utils from "./Utils";
 import Base from "./Base";
 
 export default class Shader {
-
     constructor(coreContext) {
         this._initialized = false;
 
@@ -96,4 +95,3 @@ export default class Shader {
         return true;
     }
 }
-

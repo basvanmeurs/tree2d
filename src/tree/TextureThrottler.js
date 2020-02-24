@@ -2,11 +2,10 @@
  * Allows throttling of loading texture sources, keeping the app responsive.
  */
 export default class TextureThrottler {
-
     constructor(stage) {
         this.stage = stage;
 
-        this.genericCancelCb = (textureSource) => {
+        this.genericCancelCb = textureSource => {
             this._remove(textureSource);
         };
 
@@ -24,7 +23,7 @@ export default class TextureThrottler {
             const start = Date.now();
             do {
                 this._processItem();
-            } while(this._sources.length && (Date.now() - start < TextureThrottler.MAX_UPLOAD_TIME_PER_FRAME));
+            } while (this._sources.length && Date.now() - start < TextureThrottler.MAX_UPLOAD_TIME_PER_FRAME);
         }
     }
 
@@ -48,7 +47,6 @@ export default class TextureThrottler {
             this._data.splice(index, 1);
         }
     }
-
 }
 
 TextureThrottler.MAX_UPLOAD_TIME_PER_FRAME = 10;

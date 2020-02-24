@@ -1,7 +1,6 @@
 import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
 
 export default class WebGLCoreQuadOperation extends CoreQuadOperation {
-
     constructor(ctx, shader, shaderOwner, renderTextureInfo, scissor, index) {
         super(ctx, shader, shaderOwner, renderTextureInfo, scissor, index);
 
@@ -20,7 +19,7 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
      * @return {number[]}
      */
     getNormalRenderTextureCoords(x, y) {
-        let coords = this.shaderOwner.getRenderTextureCoords(x, y);
+        const coords = this.shaderOwner.getRenderTextureCoords(x, y);
         coords[0] /= this.getRenderWidth();
         coords[1] /= this.getRenderHeight();
         coords[0] = coords[0] * 2 - 1;
@@ -35,5 +34,4 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
             return this.renderTextureInfo.nativeTexture.projection;
         }
     }
-
 }

@@ -1,7 +1,6 @@
 import SpacingCalculator from "../SpacingCalculator";
 
 export default class ItemPositioner {
-
     constructor(lineLayout) {
         this._line = lineLayout;
     }
@@ -11,7 +10,7 @@ export default class ItemPositioner {
     }
 
     position() {
-        const {spacingBefore, spacingBetween} = this._getSpacing();
+        const { spacingBefore, spacingBetween } = this._getSpacing();
 
         let currentPos = spacingBefore;
 
@@ -27,10 +26,9 @@ export default class ItemPositioner {
 
     _getSpacing() {
         const remainingSpace = this._line._availableSpace;
-        let mode = this._layout._flexContainer.justifyContent;
+        const mode = this._layout._flexContainer.justifyContent;
         const numberOfItems = this._line.numberOfItems;
 
         return SpacingCalculator.getSpacing(mode, numberOfItems, remainingSpace);
     }
-
 }

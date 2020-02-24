@@ -6,7 +6,6 @@ import ObjectList from "./ObjectList";
 import Element from "./Element";
 
 export default class ElementChildList extends ObjectList {
-
     constructor(element) {
         super();
         this._element = element;
@@ -26,7 +25,6 @@ export default class ElementChildList extends ObjectList {
 
             // Also clean up element core.
             prevParent.core.removeChildAt(index);
-
         }
 
         item._setParent(this._element);
@@ -51,7 +49,7 @@ export default class ElementChildList extends ObjectList {
         for (let i = 0, n = added.length; i < n; i++) {
             this._connectParent(added[i]);
         }
-        let gc = i => i.core;
+        const gc = i => i.core;
         this._element.core.syncChildren(removed.map(gc), added.map(gc), order.map(gc));
     }
 
@@ -77,7 +75,4 @@ export default class ElementChildList extends ObjectList {
     isItem(object) {
         return object instanceof Element;
     }
-
 }
-
-

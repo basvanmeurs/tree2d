@@ -1,5 +1,4 @@
 export default class SizeShrinker {
-
     constructor(line) {
         this._line = line;
         this._amountRemaining = 0;
@@ -14,19 +13,19 @@ export default class SizeShrinker {
         if (totalShrinkAmount) {
             const items = this._line.items;
             do {
-                let amountPerShrink = this._amountRemaining / totalShrinkAmount;
+                const amountPerShrink = this._amountRemaining / totalShrinkAmount;
                 for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
                     const item = items[i];
                     const flexItem = item.flexItem;
                     const shrinkAmount = flexItem.shrink;
-                    const isShrinkableItem = (shrinkAmount > 0);
+                    const isShrinkableItem = shrinkAmount > 0;
                     if (isShrinkableItem) {
                         let shrink = shrinkAmount * amountPerShrink;
                         const minSize = flexItem._getMainAxisMinSize();
                         const size = flexItem._getMainAxisLayoutSize();
                         if (size > minSize) {
                             const maxShrink = size - minSize;
-                            const isFullyShrunk = (shrink >= maxShrink);
+                            const isFullyShrunk = shrink >= maxShrink;
                             if (isFullyShrunk) {
                                 shrink = maxShrink;
 
@@ -46,7 +45,7 @@ export default class SizeShrinker {
                         }
                     }
                 }
-            } while(totalShrinkAmount && (Math.abs(this._amountRemaining) > 10e-6));
+            } while (totalShrinkAmount && Math.abs(this._amountRemaining) > 10e-6);
         }
     }
 
@@ -73,5 +72,4 @@ export default class SizeShrinker {
     getShrunkSize() {
         return this._shrunkSize;
     }
-
 }

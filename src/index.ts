@@ -101,7 +101,7 @@ const index = {
     }
 };
 
-declare const window : any;
+declare const window: any;
 
 if (Utils.isWeb) {
     (window as any).lng = index;

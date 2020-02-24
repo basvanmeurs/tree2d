@@ -1,7 +1,6 @@
 import Utils from "../tree/Utils";
 
 export default class MultiSpline {
-
     constructor() {
         this._clear();
     }
@@ -25,20 +24,20 @@ export default class MultiSpline {
     parse(rgba, def) {
         let i, n;
         if (!Utils.isObjectLiteral(def)) {
-            def = {0: def}
+            def = { 0: def };
         }
 
         let defaultSmoothness = 0.5;
 
         let items = [];
-        for (let key in def) {
+        for (const key in def) {
             if (def.hasOwnProperty(key)) {
                 let obj = def[key];
                 if (!Utils.isObjectLiteral(obj)) {
-                    obj = {v: obj}
+                    obj = { v: obj };
                 }
 
-                let p = parseFloat(key);
+                const p = parseFloat(key);
 
                 if (key === "sm") {
                     defaultSmoothness = obj.v;
@@ -54,13 +53,15 @@ export default class MultiSpline {
         }
 
         // Sort by progress value.
-        items = items.sort(function(a, b) {return a.p - b.p});
+        items = items.sort(function(a, b) {
+            return a.p - b.p;
+        });
 
         n = items.length;
 
         for (i = 0; i < n; i++) {
-            let last = (i === n - 1);
-            if (!items[i].hasOwnProperty('pe')) {
+            const last = i === n - 1;
+            if (!items[i].hasOwnProperty("pe")) {
                 // Progress.
                 items[i].pe = last ? (items[i].p <= 1 ? 1 : 2 /* support onetotwo stop */) : items[i + 1].p;
             } else {
@@ -81,13 +82,13 @@ export default class MultiSpline {
 
         // Calculate bezier helper values.;
         for (i = 0; i < n; i++) {
-            if (!items[i].hasOwnProperty('sm')) {
+            if (!items[i].hasOwnProperty("sm")) {
                 // Smoothness.;
                 items[i].sm = defaultSmoothness;
             }
-            if (!items[i].hasOwnProperty('s')) {
+            if (!items[i].hasOwnProperty("s")) {
                 // Slope.;
-                if (i === 0 || i === n - 1 || (items[i].p === 1 /* for onetotwo */)) {
+                if (i === 0 || i === n - 1 || items[i].p === 1 /* for onetotwo */) {
                     // Horizontal slope at start and end.;
                     items[i].s = rgba ? [0, 0, 0, 0] : 0;
                 } else {
@@ -117,26 +118,43 @@ export default class MultiSpline {
         for (i = 0; i < n - 1; i++) {
             // Calculate value function.;
             if (!items[i].f) {
-
-                let last = (i === n - 1);
-                if (!items[i].hasOwnProperty('ve')) {
+                const last = i === n - 1;
+                if (!items[i].hasOwnProperty("ve")) {
                     items[i].ve = last ? items[i].lv : items[i + 1].lv;
                 }
 
                 // We can only interpolate on numeric values. Non-numeric values are set literally when reached time.
                 if (Utils.isNumber(items[i].v) && Utils.isNumber(items[i].lv)) {
-                    if (!items[i].hasOwnProperty('sme')) {
+                    if (!items[i].hasOwnProperty("sme")) {
                         items[i].sme = last ? defaultSmoothness : items[i + 1].sm;
                     }
-                    if (!items[i].hasOwnProperty('se')) {
+                    if (!items[i].hasOwnProperty("se")) {
                         items[i].se = last ? (rgba ? [0, 0, 0, 0] : 0) : items[i + 1].s;
                     }
 
                     // Generate spline.;
                     if (rgba) {
-                        items[i].v = MultiSpline.getSplineRgbaValueFunction(items[i].v, items[i].ve, items[i].p, items[i].pe, items[i].sm, items[i].sme, items[i].s, items[i].se);
+                        items[i].v = MultiSpline.getSplineRgbaValueFunction(
+                            items[i].v,
+                            items[i].ve,
+                            items[i].p,
+                            items[i].pe,
+                            items[i].sm,
+                            items[i].sme,
+                            items[i].s,
+                            items[i].se
+                        );
                     } else {
-                        items[i].v = MultiSpline.getSplineValueFunction(items[i].v, items[i].ve, items[i].p, items[i].pe, items[i].sm, items[i].sme, items[i].s, items[i].se);
+                        items[i].v = MultiSpline.getSplineValueFunction(
+                            items[i].v,
+                            items[i].ve,
+                            items[i].p,
+                            items[i].pe,
+                            items[i].sm,
+                            items[i].sme,
+                            items[i].s,
+                            items[i].se
+                        );
                     }
 
                     items[i].f = true;
@@ -158,7 +176,7 @@ export default class MultiSpline {
         this._pe.push(item.pe || 0);
         this._idp.push(item.idp || 0);
         this._f.push(item.f || false);
-        this._v.push(item.hasOwnProperty('v') ? item.v : 0 /* v might be false or null */ );
+        this._v.push(item.hasOwnProperty("v") ? item.v : 0 /* v might be false or null */);
         this._lv.push(item.lv || 0);
         this._sm.push(item.sm || 0);
         this._s.push(item.s || 0);
@@ -206,39 +224,39 @@ export default class MultiSpline {
     }
 
     static getRgbaComponents(argb) {
-        let r = ((argb / 65536) | 0) % 256;
-        let g = ((argb / 256) | 0) % 256;
-        let b = argb % 256;
-        let a = ((argb / 16777216) | 0);
+        const r = ((argb / 65536) | 0) % 256;
+        const g = ((argb / 256) | 0) % 256;
+        const b = argb % 256;
+        const a = (argb / 16777216) | 0;
         return [r, g, b, a];
-    };
+    }
 
     static getSplineValueFunction(v1, v2, p1, p2, o1, i2, s1, s2) {
         // Normalize slopes because we use a spline that goes from 0 to 1.
-        let dp = p2 - p1;
+        const dp = p2 - p1;
         s1 *= dp;
         s2 *= dp;
 
-        let helpers = MultiSpline.getSplineHelpers(v1, v2, o1, i2, s1, s2);
+        const helpers = MultiSpline.getSplineHelpers(v1, v2, o1, i2, s1, s2);
         if (!helpers) {
-            return function (p) {
+            return function(p) {
                 if (p === 0) return v1;
                 if (p === 1) return v2;
 
                 return v2 * p + v1 * (1 - p);
             };
         } else {
-            return function (p) {
+            return function(p) {
                 if (p === 0) return v1;
                 if (p === 1) return v2;
                 return MultiSpline.calculateSpline(helpers, p);
             };
         }
-    };
+    }
 
     static getSplineRgbaValueFunction(v1, v2, p1, p2, o1, i2, s1, s2) {
         // Normalize slopes because we use a spline that goes from 0 to 1.
-        let dp = p2 - p1;
+        const dp = p2 - p1;
         s1[0] *= dp;
         s1[1] *= dp;
         s1[2] *= dp;
@@ -248,10 +266,10 @@ export default class MultiSpline {
         s2[2] *= dp;
         s2[3] *= dp;
 
-        let cv1 = MultiSpline.getRgbaComponents(v1);
-        let cv2 = MultiSpline.getRgbaComponents(v2);
+        const cv1 = MultiSpline.getRgbaComponents(v1);
+        const cv2 = MultiSpline.getRgbaComponents(v2);
 
-        let helpers = [
+        const helpers = [
             MultiSpline.getSplineHelpers(cv1[0], cv2[0], o1, i2, s1[0], s2[0]),
             MultiSpline.getSplineHelpers(cv1[1], cv2[1], o1, i2, s1[1], s2[1]),
             MultiSpline.getSplineHelpers(cv1[2], cv2[2], o1, i2, s1[2], s2[2]),
@@ -259,7 +277,7 @@ export default class MultiSpline {
         ];
 
         if (!helpers[0]) {
-            return function (p) {
+            return function(p) {
                 // Linear.
                 if (p === 0) return v1;
                 if (p === 1) return v2;
@@ -267,7 +285,7 @@ export default class MultiSpline {
                 return MultiSpline.mergeColors(v2, v1, p);
             };
         } else {
-            return function (p) {
+            return function(p) {
                 if (p === 0) return v1;
                 if (p === 1) return v2;
 
@@ -279,8 +297,7 @@ export default class MultiSpline {
                 ]);
             };
         }
-
-    };
+    }
 
     /**
      * Creates helpers to be used in the spline function.
@@ -308,22 +325,22 @@ export default class MultiSpline {
 
         // Cubic bezier points.
         // http://cubic-bezier.com/
-        let csx = o1;
-        let csy = v1 + s1 * o1;
-        let cex = 1 - i2;
-        let cey = v2 - s2 * i2;
+        const csx = o1;
+        const csy = v1 + s1 * o1;
+        const cex = 1 - i2;
+        const cey = v2 - s2 * i2;
 
-        let xa = 3 * csx - 3 * cex + 1;
-        let xb = -6 * csx + 3 * cex;
-        let xc = 3 * csx;
+        const xa = 3 * csx - 3 * cex + 1;
+        const xb = -6 * csx + 3 * cex;
+        const xc = 3 * csx;
 
-        let ya = 3 * csy - 3 * cey + v2 - v1;
-        let yb = 3 * (cey + v1) - 6 * csy;
-        let yc = 3 * (csy - v1);
-        let yd = v1;
+        const ya = 3 * csy - 3 * cey + v2 - v1;
+        const yb = 3 * (cey + v1) - 6 * csy;
+        const yc = 3 * (csy - v1);
+        const yd = v1;
 
         return [xa, xb, xc, ya, yb, yc, yd];
-    };
+    }
 
     /**
      * Calculates the intermediate spline value based on the specified helpers.
@@ -333,13 +350,13 @@ export default class MultiSpline {
      * @return {number}
      */
     static calculateSpline(helpers, p) {
-        let xa = helpers[0];
-        let xb = helpers[1];
-        let xc = helpers[2];
-        let ya = helpers[3];
-        let yb = helpers[4];
-        let yc = helpers[5];
-        let yd = helpers[6];
+        const xa = helpers[0];
+        const xb = helpers[1];
+        const xc = helpers[2];
+        const ya = helpers[3];
+        const yb = helpers[4];
+        const yc = helpers[5];
+        const yd = helpers[6];
 
         if (xa === -2 && ya === -2 && xc === 0 && yc === 0) {
             // Linear.
@@ -347,7 +364,9 @@ export default class MultiSpline {
         }
 
         // Find t for p.
-        let t = 0.5, cbx, dx;
+        let t = 0.5,
+            cbx,
+            dx;
 
         for (let it = 0; it < 20; it++) {
             // Cubic bezier function: f(t)=t*(t*(t*a+b)+c).
@@ -360,7 +379,7 @@ export default class MultiSpline {
             }
 
             // Cubic bezier derivative function: f'(t)=t*(t*(3*a)+2*b)+c
-            let cbxd = t * (t * (3 * xa) + 2 * xb) + xc;
+            const cbxd = t * (t * (3 * xa) + 2 * xb) + xc;
 
             if (cbxd > 1e-10 && cbxd < 1e-10) {
                 // Problematic. Fall back to binary search method.
@@ -393,26 +412,26 @@ export default class MultiSpline {
         }
 
         return t;
-    };
+    }
 
     static mergeColors(c1, c2, p) {
-        let r1 = ((c1 / 65536) | 0) % 256;
-        let g1 = ((c1 / 256) | 0) % 256;
-        let b1 = c1 % 256;
-        let a1 = ((c1 / 16777216) | 0);
+        const r1 = ((c1 / 65536) | 0) % 256;
+        const g1 = ((c1 / 256) | 0) % 256;
+        const b1 = c1 % 256;
+        const a1 = (c1 / 16777216) | 0;
 
-        let r2 = ((c2 / 65536) | 0) % 256;
-        let g2 = ((c2 / 256) | 0) % 256;
-        let b2 = c2 % 256;
-        let a2 = ((c2 / 16777216) | 0);
+        const r2 = ((c2 / 65536) | 0) % 256;
+        const g2 = ((c2 / 256) | 0) % 256;
+        const b2 = c2 % 256;
+        const a2 = (c2 / 16777216) | 0;
 
-        let r = r1 * p + r2 * (1 - p);
-        let g = g1 * p + g2 * (1 - p);
-        let b = b1 * p + b2 * (1 - p);
-        let a = a1 * p + a2 * (1 - p);
+        const r = r1 * p + r2 * (1 - p);
+        const g = g1 * p + g2 * (1 - p);
+        const b = b1 * p + b2 * (1 - p);
+        const a = a1 * p + a2 * (1 - p);
 
         return Math.round(a) * 16777216 + Math.round(r) * 65536 + Math.round(g) * 256 + Math.round(b);
-    };
+    }
 
     static getArgbNumber(rgba) {
         rgba[0] = Math.max(0, Math.min(255, rgba[0]));
@@ -421,8 +440,8 @@ export default class MultiSpline {
         rgba[3] = Math.max(0, Math.min(255, rgba[3]));
         let v = ((rgba[3] | 0) << 24) + ((rgba[0] | 0) << 16) + ((rgba[1] | 0) << 8) + (rgba[2] | 0);
         if (v < 0) {
-            v = 0xFFFFFFFF + v + 1;
+            v = 0xffffffff + v + 1;
         }
         return v;
-    };
+    }
 }

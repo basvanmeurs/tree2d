@@ -2,7 +2,6 @@ import Utils from "../../../src/tree/Utils.js";
 import FlexTestUtils from "./FlexTestUtils.js";
 
 export default class FlexHtmlTester {
-
     constructor(structure) {
         this._flexTestUtils = new FlexTestUtils();
 
@@ -26,11 +25,13 @@ export default class FlexHtmlTester {
 
     _addTestsForAspects(remainingAspects, structure, path) {
         if (!remainingAspects.length) {
-            if (!this._specificTests.length || (this._specificTests.indexOf(path) !== -1)) {
-                it('layouts', () => {
-                    return this._flexTestUtils.layoutFlexAndValidate(structure, {resultVisible: this._specificTests.length}).catch(err => {
-                        throw new Error(err.message + "\n" + path + "");
-                    })
+            if (!this._specificTests.length || this._specificTests.indexOf(path) !== -1) {
+                it("layouts", () => {
+                    return this._flexTestUtils
+                        .layoutFlexAndValidate(structure, { resultVisible: this._specificTests.length })
+                        .catch(err => {
+                            throw new Error(err.message + "\n" + path + "");
+                        });
                 });
             }
         } else {
@@ -42,7 +43,7 @@ export default class FlexHtmlTester {
                 const newPath = (path ? path + " " : "") + key;
                 describe(key, () => {
                     this._addTestsForAspects(remainingAspects, tests[testName], newPath);
-                })
+                });
             });
             remainingAspects.push(aspect);
         }
@@ -64,7 +65,6 @@ export default class FlexHtmlTester {
     static createAspectFromFlexProperty(name, options, select) {
         return TestableFlexAspect.createFromFlexProperty(name, options, select);
     }
-
 }
 
 class TestableFlexAspect {

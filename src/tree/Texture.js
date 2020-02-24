@@ -1,5 +1,4 @@
 export default class Texture {
-
     /**
      * @param {Stage} stage
      */
@@ -95,7 +94,6 @@ export default class Texture {
          * @private
          */
         this._mustUpdate = true;
-
     }
 
     get source() {
@@ -183,7 +181,7 @@ export default class Texture {
         const source = this.source;
         if (!source.isLoaded()) {
             const reusable = this._getReusableTextureSource();
-            if (reusable && reusable.isLoaded() && (reusable !== source)) {
+            if (reusable && reusable.isLoaded() && reusable !== source) {
                 this._replaceTextureSource(reusable);
             }
         } else {
@@ -269,7 +267,7 @@ export default class Texture {
         // again.
         if (force || this.isUsed()) {
             this._mustUpdate = false;
-            let source = this._getTextureSource();
+            const source = this._getTextureSource();
             this._replaceTextureSource(source);
         }
     }
@@ -296,7 +294,7 @@ export default class Texture {
     }
 
     _replaceTextureSource(newSource = null) {
-        let oldSource = this._source;
+        const oldSource = this._source;
 
         this._source = newSource;
 
@@ -321,7 +319,6 @@ export default class Texture {
         if (this.isUsed()) {
             if (newSource) {
                 if (newSource.isLoaded()) {
-
                     // Apply resizeMode
                     if (this._resizeMode) {
                         this._applyResizeMode();
@@ -375,8 +372,8 @@ export default class Texture {
         }
     }
 
-    set resizeMode({type = "cover", w = 0, h = 0, clipX = 0.5, clipY = 0.5}) {
-        this._resizeMode = {type, w, h, clipX, clipY};
+    set resizeMode({ type = "cover", w = 0, h = 0, clipX = 0.5, clipY = 0.5 }) {
+        this._resizeMode = { type, w, h, clipX, clipY };
         if (this.isLoaded()) {
             this._applyResizeMode();
         }
@@ -403,9 +400,9 @@ export default class Texture {
     _applyResizeCover() {
         const scaleX = this._resizeMode.w / this._source.w;
         const scaleY = this._resizeMode.h / this._source.h;
-        let scale = Math.max(scaleX, scaleY);
+        const scale = Math.max(scaleX, scaleY);
         if (!scale) return;
-        this._precision = 1/scale;
+        this._precision = 1 / scale;
         if (scaleX && scaleX < scale) {
             const desiredSize = this._precision * this._resizeMode.w;
             const choppedOffPixels = this._source.w - desiredSize;
@@ -428,7 +425,7 @@ export default class Texture {
             scale = scaleY;
         }
         if (!scale) return;
-        this._precision = 1/scale;
+        this._precision = 1 / scale;
     }
 
     enableClipping(x, y, w, h) {
@@ -464,7 +461,7 @@ export default class Texture {
     _updateClipping() {
         this.clipping = !!(this._x || this._y || this._w || this._h);
 
-        let self = this;
+        const self = this;
         this.elements.forEach(function(element) {
             // Ignore if not the currently displayed texture.
             if (element.displayedTexture === self) {
@@ -474,7 +471,7 @@ export default class Texture {
     }
 
     _updatePrecision() {
-        let self = this;
+        const self = this;
         this.elements.forEach(function(element) {
             // Ignore if not the currently displayed texture.
             if (element.displayedTexture === self) {
@@ -484,13 +481,13 @@ export default class Texture {
     }
 
     getNonDefaults() {
-        let nonDefaults = {};
-        nonDefaults['type'] = this.constructor.name;
-        if (this.x !== 0) nonDefaults['x'] = this.x;
-        if (this.y !== 0) nonDefaults['y'] = this.y;
-        if (this.w !== 0) nonDefaults['w'] = this.w;
-        if (this.h !== 0) nonDefaults['h'] = this.h;
-        if (this.precision !== 1) nonDefaults['precision'] = this.precision;
+        const nonDefaults = {};
+        nonDefaults["type"] = this.constructor.name;
+        if (this.x !== 0) nonDefaults["x"] = this.x;
+        if (this.y !== 0) nonDefaults["y"] = this.y;
+        if (this.w !== 0) nonDefaults["w"] = this.w;
+        if (this.h !== 0) nonDefaults["h"] = this.h;
+        if (this.precision !== 1) nonDefaults["precision"] = this.precision;
         return nonDefaults;
     }
 
@@ -598,7 +595,6 @@ export default class Texture {
     patch(settings) {
         Base.patchObject(this, settings);
     }
-
 }
 
 Texture.prototype.isTexture = true;

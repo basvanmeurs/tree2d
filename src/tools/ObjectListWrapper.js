@@ -5,14 +5,13 @@
 import ObjectListProxy from "./ObjectListProxy";
 
 export default class ObjectListWrapper extends ObjectListProxy {
-
     constructor(target, wrap) {
         super(target);
         this._wrap = wrap;
     }
 
     wrap(item) {
-        let wrapper = this._wrap(item);
+        const wrapper = this._wrap(item);
         item._wrapper = wrapper;
         return wrapper;
     }
@@ -40,5 +39,4 @@ export default class ObjectListWrapper extends ObjectListProxy {
     onMove(item, fromIndex, toIndex) {
         super.onMove(item, fromIndex, toIndex);
     }
-
 }

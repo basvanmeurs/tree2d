@@ -1,7 +1,6 @@
 import DefaultShader from "./DefaultShader";
 
 export default class InversionShader extends DefaultShader {
-
     constructor(context) {
         super(context);
         this._amount = 1;
@@ -24,7 +23,6 @@ export default class InversionShader extends DefaultShader {
         super.setupUniforms(operation);
         this._setUniform("amount", this._amount, this.gl.uniform1f);
     }
-
 }
 
 InversionShader.fragmentShaderSource = `
@@ -41,4 +39,3 @@ InversionShader.fragmentShaderSource = `
         gl_FragColor = color * vColor;
     }
 `;
-

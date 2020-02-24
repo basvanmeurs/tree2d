@@ -357,5 +357,4 @@ export default class FlexItem {
     _hasRelCrossAxisSize() {
         return !!(this.ctr.horizontal ? this.item.funcH : this.item.funcW);
     }
-
 }

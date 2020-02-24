@@ -12,7 +12,6 @@ import WebGLStateManager from "../tools/WebGLStateManager";
 import Shader from "./Shader";
 
 export default class Stage extends EventEmitter {
-
     constructor(options = {}) {
         super();
         this._setOptions(options);
@@ -30,7 +29,7 @@ export default class Stage extends EventEmitter {
         this.gl = null;
         this.c2d = null;
 
-        const context = this.getOption('context');
+        const context = this.getOption("context");
         if (context) {
             if (context.useProgram) {
                 this.gl = context;
@@ -38,11 +37,11 @@ export default class Stage extends EventEmitter {
                 this.c2d = context;
             }
         } else {
-            if (Utils.isWeb && (!Stage.isWebglSupported() || this.getOption('canvas2d'))) {
-                console.log('Using canvas2d renderer');
-                this.c2d = this.platform.createCanvasContext(this.getOption('w'), this.getOption('h'));
+            if (Utils.isWeb && (!Stage.isWebglSupported() || this.getOption("canvas2d"))) {
+                console.log("Using canvas2d renderer");
+                this.c2d = this.platform.createCanvasContext(this.getOption("w"), this.getOption("h"));
             } else {
-                this.gl = this.platform.createWebGLContext(this.getOption('w'), this.getOption('h'));
+                this.gl = this.platform.createWebGLContext(this.getOption("w"), this.getOption("h"));
             }
         }
 
@@ -52,7 +51,7 @@ export default class Stage extends EventEmitter {
             // Context switching is necessary when reusing the same context for Three.js.
             // Note that the user must make sure that the WebGL context is untouched before creating the application,
             //  when manually passing over a canvas or context in the options.
-            WebGLStateManager.enable(this.gl, "lightning")
+            WebGLStateManager.enable(this.gl, "lightning");
         }
 
         this._mode = this.gl ? 0 : 1;
@@ -69,7 +68,7 @@ export default class Stage extends EventEmitter {
             this._renderer = new C2dRenderer(this);
         }
 
-        this.setClearColor(this.getOption('clearColor'));
+        this.setClearColor(this.getOption("clearColor"));
 
         this.frameCounter = 0;
 
@@ -105,7 +104,7 @@ export default class Stage extends EventEmitter {
 
         try {
             return !!window.WebGLRenderingContext;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     }
@@ -135,39 +134,39 @@ export default class Stage extends EventEmitter {
     _setOptions(o) {
         this._options = {};
 
-        let opt = (name, def) => {
-            let value = o[name];
+        const opt = (name, def) => {
+            const value = o[name];
 
             if (value === undefined) {
                 this._options[name] = def;
             } else {
                 this._options[name] = value;
             }
-        }
+        };
 
-        opt('canvas', null);
-        opt('context', null);
-        opt('w', 1920);
-        opt('h', 1080);
-        opt('srcBasePath', null);
-        opt('memoryPressure', 24e6);
-        opt('bufferMemory', 2e6);
-        opt('textRenderIssueMargin', 0);
-        opt('clearColor', [0, 0, 0, 0]);
-        opt('defaultFontFace', 'sans-serif');
-        opt('fixedDt', 0);
-        opt('useImageWorker', true);
-        opt('autostart', true);
-        opt('precision', 1);
-        opt('canvas2d', false);
-        opt('platform', null);
-        opt('readPixelsBeforeDraw', false);
+        opt("canvas", null);
+        opt("context", null);
+        opt("w", 1920);
+        opt("h", 1080);
+        opt("srcBasePath", null);
+        opt("memoryPressure", 24e6);
+        opt("bufferMemory", 2e6);
+        opt("textRenderIssueMargin", 0);
+        opt("clearColor", [0, 0, 0, 0]);
+        opt("defaultFontFace", "sans-serif");
+        opt("fixedDt", 0);
+        opt("useImageWorker", true);
+        opt("autostart", true);
+        opt("precision", 1);
+        opt("canvas2d", false);
+        opt("platform", null);
+        opt("readPixelsBeforeDraw", false);
     }
 
     init() {
         this.root = new Element(this);
         this.root.setAsRoot();
-        if (this.getOption('autostart')) {
+        if (this.getOption("autostart")) {
             this.platform.startLoop();
         }
     }
@@ -216,7 +215,7 @@ export default class Stage extends EventEmitter {
     }
 
     hasUpdateSourceTexture(texture) {
-        return (this._updateSourceTextures && this._updateSourceTextures.has(texture));
+        return this._updateSourceTextures && this._updateSourceTextures.has(texture);
     }
 
     drawFrame() {
@@ -226,10 +225,10 @@ export default class Stage extends EventEmitter {
         if (this._options.fixedDt) {
             this.dt = this._options.fixedDt;
         } else {
-            this.dt = (!this.startTime) ? .02 : .001 * (this.currentTime - this.startTime);
+            this.dt = !this.startTime ? 0.02 : 0.001 * (this.currentTime - this.startTime);
         }
 
-        this.emit('frameStart');
+        this.emit("frameStart");
 
         if (this._updateSourceTextures.size) {
             this._updateSourceTextures.forEach(texture => {
@@ -238,7 +237,7 @@ export default class Stage extends EventEmitter {
             this._updateSourceTextures = new Set();
         }
 
-        this.emit('update');
+        this.emit("update");
 
         const changes = this.ctx.hasRenderUpdates();
 
@@ -255,7 +254,7 @@ export default class Stage extends EventEmitter {
 
         this.platform.nextFrame(changes);
 
-        this.emit('frameEnd');
+        this.emit("frameEnd");
 
         this.frameCounter++;
     }
@@ -341,9 +340,9 @@ export default class Stage extends EventEmitter {
     addMemoryUsage(delta) {
         this._usedMemory += delta;
         if (this._lastGcFrame !== this.frameCounter) {
-            if (this._usedMemory > this.getOption('memoryPressure')) {
+            if (this._usedMemory > this.getOption("memoryPressure")) {
                 this.gc(false);
-                if (this._usedMemory > this.getOption('memoryPressure') - 2e6) {
+                if (this._usedMemory > this.getOption("memoryPressure") - 2e6) {
                     // Too few released. Aggressive cleanup.
                     this.gc(true);
                 }
@@ -363,9 +362,18 @@ export default class Stage extends EventEmitter {
             this.gcRenderTextureMemory(aggressive);
             this.renderer.gc(aggressive);
 
-            console.log(`GC${aggressive ? "[aggressive]" : ""}! Frame ${this._lastGcFrame} Freed ${((memoryUsageBefore - this._usedMemory) / 1e6).toFixed(2)}MP from GPU memory. Remaining: ${(this._usedMemory / 1e6).toFixed(2)}MP`);
+            console.log(
+                `GC${aggressive ? "[aggressive]" : ""}! Frame ${this._lastGcFrame} Freed ${(
+                    (memoryUsageBefore - this._usedMemory) /
+                    1e6
+                ).toFixed(2)}MP from GPU memory. Remaining: ${(this._usedMemory / 1e6).toFixed(2)}MP`
+            );
             const other = this._usedMemory - this.textureManager.usedMemory - this.ctx.usedMemory;
-            console.log(` Textures: ${(this.textureManager.usedMemory / 1e6).toFixed(2)}MP, Render Textures: ${(this.ctx.usedMemory / 1e6).toFixed(2)}MP, Renderer caches: ${(other / 1e6).toFixed(2)}MP`);
+            console.log(
+                ` Textures: ${(this.textureManager.usedMemory / 1e6).toFixed(2)}MP, Render Textures: ${(
+                    this.ctx.usedMemory / 1e6
+                ).toFixed(2)}MP, Renderer caches: ${(other / 1e6).toFixed(2)}MP`
+            );
         }
     }
 
@@ -396,9 +404,8 @@ export default class Stage extends EventEmitter {
     }
 
     update() {
-        this.ctx.update()
+        this.ctx.update();
     }
-
 }
 
 import Element from "./Element";

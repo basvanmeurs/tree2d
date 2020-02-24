@@ -1,7 +1,6 @@
 import Texture from "../tree/Texture";
 
 export default class SourceTexture extends Texture {
-
     constructor(stage) {
         super(stage);
 
@@ -26,5 +25,4 @@ export default class SourceTexture extends Texture {
     _getTextureSource() {
         return this._textureSource;
     }
-
 }

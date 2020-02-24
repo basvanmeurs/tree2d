@@ -1,7 +1,6 @@
 import Texture from "../tree/Texture";
 
 export default class StaticTexture extends Texture {
-
     constructor(stage, options) {
         super(stage);
 
@@ -24,8 +23,8 @@ export default class StaticTexture extends Texture {
     }
 
     _getSourceLoader() {
-        return (cb) => {
+        return cb => {
             cb(null, this._options);
-        }
+        };
     }
 }

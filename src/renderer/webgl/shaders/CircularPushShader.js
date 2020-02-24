@@ -2,7 +2,6 @@ import Utils from "../../../tree/Utils";
 import DefaultShader from "./DefaultShader";
 
 export default class CircularPushShader extends DefaultShader {
-
     constructor(ctx) {
         super(ctx);
 
@@ -122,7 +121,10 @@ export default class CircularPushShader extends DefaultShader {
         for (let i = this._buckets - 1; i >= 0; i--) {
             const targetIndex = i - n;
             if (targetIndex < 0) {
-                this._normalizedValue = Math.min(this._normalizedValue + this._maxDerivative, Math.max(this._normalizedValue - this._maxDerivative, this._inputValue));
+                this._normalizedValue = Math.min(
+                    this._normalizedValue + this._maxDerivative,
+                    Math.max(this._normalizedValue - this._maxDerivative, this._inputValue)
+                );
                 this._values[i] = 255 * this._normalizedValue;
             } else {
                 this._values[i] = this._values[targetIndex];
@@ -178,8 +180,6 @@ export default class CircularPushShader extends DefaultShader {
             this.gl.deleteTexture(this._valuesTexture);
         }
     }
-
-
 }
 
 CircularPushShader.vertexShaderSource = `
@@ -229,5 +229,3 @@ CircularPushShader.fragmentShaderSource = `
         gl_FragColor = texture2D(uSampler, vTextureCoord - f * unit) * vColor;
     }
 `;
-
-

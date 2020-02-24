@@ -1,6 +1,4 @@
-
 export default class CoreContext {
-
     constructor(stage) {
         this.stage = stage;
 
@@ -80,7 +78,7 @@ export default class CoreContext {
         // Obtain a sequence of the quad operations.
         this._fillRenderState();
 
-        if (this.stage.getOption('readPixelsBeforeDraw')) {
+        if (this.stage.getOption("readPixelsBeforeDraw")) {
             const pixels = new Uint8Array(4);
             const gl = this.stage.gl;
             gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
@@ -106,16 +104,16 @@ export default class CoreContext {
     }
 
     allocateRenderTexture(w, h) {
-        let prec = this.stage.getRenderPrecision();
-        let pw = Math.max(1, Math.round(w * prec));
-        let ph = Math.max(1, Math.round(h * prec));
+        const prec = this.stage.getRenderPrecision();
+        const pw = Math.max(1, Math.round(w * prec));
+        const ph = Math.max(1, Math.round(h * prec));
 
         // Search last item first, so that last released render texture is preferred (may cause memory cache benefits).
         const n = this._renderTexturePool.length;
         for (let i = n - 1; i >= 0; i--) {
             const texture = this._renderTexturePool[i];
             // We don't want to reuse the same render textures within the same frame because that will create gpu stalls.
-            if (texture.w === pw && texture.h === ph && (texture.update !== this.stage.frameCounter)) {
+            if (texture.w === pw && texture.h === ph && texture.update !== this.stage.frameCounter) {
                 texture.f = this.stage.frameCounter;
                 this._renderTexturePool.splice(i, 1);
                 return texture;
@@ -135,7 +133,7 @@ export default class CoreContext {
         // Clean up all textures that are no longer used.
         // This cache is short-lived because it is really just meant to supply running shaders that are
         // updated during a number of frames.
-        let limit = this.stage.frameCounter - maxAge;
+        const limit = this.stage.frameCounter - maxAge;
 
         this._renderTexturePool = this._renderTexturePool.filter(texture => {
             if (texture.f <= limit) {
@@ -172,5 +170,4 @@ export default class CoreContext {
     forceZSort(elementCore) {
         this._zSorts.push(elementCore);
     }
-
 }

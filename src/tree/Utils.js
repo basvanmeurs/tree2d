@@ -1,15 +1,14 @@
 export default class Utils {
-
     static isFunction(value) {
-        return typeof value === 'function';
+        return typeof value === "function";
     }
 
     static isNumber(value) {
-        return typeof value === 'number';
+        return typeof value === "number";
     }
 
     static isInteger(value) {
-        return (typeof value === 'number' && (value % 1) === 0);
+        return typeof value === "number" && value % 1 === 0;
     }
 
     static isBoolean(value) {
@@ -17,7 +16,7 @@ export default class Utils {
     }
 
     static isString(value) {
-        return typeof value === 'string';
+        return typeof value === "string";
     }
 
     static clone(v) {
@@ -30,8 +29,8 @@ export default class Utils {
     }
 
     static cloneObjShallow(obj) {
-        let keys = Object.keys(obj);
-        let clone = {}
+        const keys = Object.keys(obj);
+        const clone = {};
         for (let i = 0; i < keys.length; i++) {
             clone[keys[i]] = obj[keys[i]];
         }
@@ -39,7 +38,7 @@ export default class Utils {
     }
 
     static merge(obj1, obj2) {
-        let keys = Object.keys(obj2);
+        const keys = Object.keys(obj2);
         for (let i = 0; i < keys.length; i++) {
             obj1[keys[i]] = obj2[keys[i]];
         }
@@ -47,17 +46,17 @@ export default class Utils {
     }
 
     static isObject(value) {
-        let type = typeof value;
-        return !!value && (type === 'object' || type === 'function');
+        const type = typeof value;
+        return !!value && (type === "object" || type === "function");
     }
 
     static isPlainObject(value) {
-        let type = typeof value;
-        return !!value && (type === 'object');
+        const type = typeof value;
+        return !!value && type === "object";
     }
 
-    static isObjectLiteral(value){
-        return typeof value === 'object' && value && value.constructor === Object;
+    static isObjectLiteral(value) {
+        return typeof value === "object" && value && value.constructor === Object;
     }
 
     static getArrayIndex(index, arr) {
@@ -81,14 +80,14 @@ export default class Utils {
         }
         if (Array.isArray(obj)) {
             c = [];
-            let keys = Object.keys(obj);
+            const keys = Object.keys(obj);
             for (i = 0; i < keys.length; i++) {
                 c[keys[i]] = Utils.getDeepClone(obj[keys[i]]);
             }
             return c;
         } else if (Utils.isObject(obj)) {
-            c = {}
-            let keys = Object.keys(obj);
+            c = {};
+            const keys = Object.keys(obj);
             for (i = 0; i < keys.length; i++) {
                 c[keys[i]] = Utils.getDeepClone(obj[keys[i]]);
             }
@@ -99,7 +98,7 @@ export default class Utils {
     }
 
     static equalValues(v1, v2) {
-        if ((typeof v1) !== (typeof v2)) return false;
+        if (typeof v1 !== typeof v2) return false;
         if (Utils.isObjectLiteral(v1)) {
             return Utils.isObjectLiteral(v2) && Utils.equalObjectLiterals(v1, v2);
         } else if (Array.isArray(v1)) {
@@ -110,8 +109,8 @@ export default class Utils {
     }
 
     static equalObjectLiterals(obj1, obj2) {
-        let keys1 = Object.keys(obj1);
-        let keys2 = Object.keys(obj2);
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
         if (keys1.length !== keys2.length) {
             return false;
         }
@@ -148,15 +147,15 @@ export default class Utils {
     }
 
     static setToArray(s) {
-        let result = [];
-        s.forEach(function (value) {
+        const result = [];
+        s.forEach(function(value) {
             result.push(value);
         });
         return result;
     }
 
     static iteratorToArray(iterator) {
-        let result = [];
+        const result = [];
         let iteratorResult = iterator.next();
         while (!iteratorResult.done) {
             result.push(iteratorResult.value);
@@ -168,9 +167,8 @@ export default class Utils {
     static isUcChar(charcode) {
         return charcode >= 65 && charcode <= 90;
     }
-
 }
 
-Utils.isNode = (typeof window === "undefined");
-Utils.isWeb = (typeof window !== "undefined");
-Utils.isWPE = Utils.isWeb && (navigator.userAgent.indexOf("WPE") !== -1);
+Utils.isNode = typeof window === "undefined";
+Utils.isWeb = typeof window !== "undefined";
+Utils.isWPE = Utils.isWeb && navigator.userAgent.indexOf("WPE") !== -1;

@@ -2,14 +2,13 @@ import DefaultShader from "./DefaultShader";
 import StageUtils from "../../../tree/StageUtils";
 
 export default class RadialGradientShader extends DefaultShader {
-    
     constructor(context) {
         super(context);
-        
+
         this._x = 0;
         this._y = 0;
 
-        this.color = 0xFFFF0000;
+        this.color = 0xffff0000;
 
         this._radiusX = 100;
         this._radiusY = 100;
@@ -73,16 +72,18 @@ export default class RadialGradientShader extends DefaultShader {
         const rtc = operation.getNormalRenderTextureCoords(this._x, this._y);
         this._setUniform("center", new Float32Array(rtc), this.gl.uniform2fv);
 
-        this._setUniform("radius", 2 * this._radiusX / operation.getRenderWidth(), this.gl.uniform1f);
-
+        this._setUniform("radius", (2 * this._radiusX) / operation.getRenderWidth(), this.gl.uniform1f);
 
         // Radial gradient shader is expected to be used on a single element. That element's alpha is used.
         this._setUniform("alpha", operation.getElementCore(0).renderContext.alpha, this.gl.uniform1f);
 
         this._setUniform("color", this._rawColor, this.gl.uniform4fv);
-        this._setUniform("aspectRatio", (this._radiusX/this._radiusY) * operation.getRenderHeight()/operation.getRenderWidth(), this.gl.uniform1f);
+        this._setUniform(
+            "aspectRatio",
+            ((this._radiusX / this._radiusY) * operation.getRenderHeight()) / operation.getRenderWidth(),
+            this.gl.uniform1f
+        );
     }
-
 }
 
 RadialGradientShader.vertexShaderSource = `
@@ -124,4 +125,3 @@ RadialGradientShader.fragmentShaderSource = `
         gl_FragColor = mix(color * alpha, texture2D(uSampler, vTextureCoord) * vColor, min(1.0, dist / radius));
     }
 `;
-

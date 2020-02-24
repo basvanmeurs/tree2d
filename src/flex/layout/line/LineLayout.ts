@@ -4,7 +4,6 @@ import ItemPositioner from "./ItemPositioner";
 import ItemAligner from "./ItemAligner";
 
 export default class LineLayout {
-
     constructor(layout, startIndex, endIndex, availableSpace) {
         this._layout = layout;
         this.items = layout.items;
@@ -60,14 +59,14 @@ export default class LineLayout {
         }
         return mainAxisMinSize;
     }
-    
+
     get numberOfItems() {
         return this.endIndex - this.startIndex + 1;
     }
 
     get crossAxisLayoutSize() {
-        const noSpecifiedCrossAxisSize = (this._layout.isCrossAxisFitToContents() && !this._layout.resizingCrossAxis);
-        const shouldFitToContents = (this._layout.isWrapping() || noSpecifiedCrossAxisSize);
+        const noSpecifiedCrossAxisSize = this._layout.isCrossAxisFitToContents() && !this._layout.resizingCrossAxis;
+        const shouldFitToContents = this._layout.isWrapping() || noSpecifiedCrossAxisSize;
         if (shouldFitToContents) {
             return this._crossAxisMaxLayoutSize;
         } else {
@@ -87,6 +86,4 @@ export default class LineLayout {
         }
         return crossAxisMaxSize;
     }
-
-
 }

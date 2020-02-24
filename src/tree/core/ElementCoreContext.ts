@@ -1,5 +1,4 @@
 export default class ElementCoreContext {
-
     public alpha: number = 1;
     public px: number = 0;
     public py: number = 0;
@@ -9,13 +8,15 @@ export default class ElementCoreContext {
     public td: number = 1;
 
     isIdentity() {
-        return this.alpha === 1 &&
+        return (
+            this.alpha === 1 &&
             this.px === 0 &&
             this.py === 0 &&
             this.ta === 1 &&
             this.tb === 0 &&
             this.tc === 0 &&
-            this.td === 1;
+            this.td === 1
+        );
     }
 
     isSquare() {

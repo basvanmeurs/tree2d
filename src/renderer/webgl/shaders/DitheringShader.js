@@ -5,13 +5,12 @@ import DefaultShader from "./DefaultShader";
  * This shader can be used to fix a problem that is known as 'gradient banding'.
  */
 export default class DitheringShader extends DefaultShader {
-
     constructor(ctx) {
         super(ctx);
 
         this._noiseTexture = new NoiseTexture(ctx.stage);
 
-        this._graining = 1/256;
+        this._graining = 1 / 256;
 
         this._random = false;
     }
@@ -31,12 +30,11 @@ export default class DitheringShader extends DefaultShader {
         this._noiseTexture.load();
 
         let offset = operation.extraAttribsDataByteOffset / 4;
-        let floats = operation.quads.floats;
+        const floats = operation.quads.floats;
 
-        let length = operation.length;
+        const length = operation.length;
 
         for (let i = 0; i < length; i++) {
-
             // Calculate noise texture coordinates so that it spans the full element.
             let brx = operation.getElementWidth(i) / this._noiseTexture.getRenderWidth();
             let bry = operation.getElementHeight(i) / this._noiseTexture.getRenderHeight();
@@ -83,10 +81,17 @@ export default class DitheringShader extends DefaultShader {
     }
 
     beforeDraw(operation) {
-        let gl = this.gl;
-        gl.vertexAttribPointer(this._attrib("aNoiseTextureCoord"), 2, gl.FLOAT, false, 8, this.getVertexAttribPointerOffset(operation));
+        const gl = this.gl;
+        gl.vertexAttribPointer(
+            this._attrib("aNoiseTextureCoord"),
+            2,
+            gl.FLOAT,
+            false,
+            8,
+            this.getVertexAttribPointerOffset(operation)
+        );
 
-        let glTexture = this._noiseTexture.source.nativeTexture;
+        const glTexture = this._noiseTexture.source.nativeTexture;
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
         gl.activeTexture(gl.TEXTURE0);
@@ -104,13 +109,13 @@ export default class DitheringShader extends DefaultShader {
 
     enableAttribs() {
         super.enableAttribs();
-        let gl = this.gl;
+        const gl = this.gl;
         gl.enableVertexAttribArray(this._attrib("aNoiseTextureCoord"));
     }
 
     disableAttribs() {
         super.disableAttribs();
-        let gl = this.gl;
+        const gl = this.gl;
         gl.disableVertexAttribArray(this._attrib("aNoiseTextureCoord"));
     }
 
@@ -123,7 +128,6 @@ export default class DitheringShader extends DefaultShader {
             this.redraw();
         }
     }
-
 }
 
 DitheringShader.vertexShaderSource = `

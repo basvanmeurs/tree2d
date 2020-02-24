@@ -1,7 +1,6 @@
 import DefaultShader from "./DefaultShader";
 
 export default class Light3dShader extends DefaultShader {
-
     constructor(ctx) {
         super(ctx);
 
@@ -24,18 +23,18 @@ export default class Light3dShader extends DefaultShader {
     setupUniforms(operation) {
         super.setupUniforms(operation);
 
-        let vr = operation.shaderOwner;
-        let element = vr.element;
+        const vr = operation.shaderOwner;
+        const element = vr.element;
 
-        let pivotX = isNaN(this._pivotX) ? element.pivotX * vr.w : this._pivotX;
-        let pivotY = isNaN(this._pivotY) ? element.pivotY * vr.h : this._pivotY;
-        let coords = vr.getRenderTextureCoords(pivotX, pivotY);
+        const pivotX = isNaN(this._pivotX) ? element.pivotX * vr.w : this._pivotX;
+        const pivotY = isNaN(this._pivotY) ? element.pivotY * vr.h : this._pivotY;
+        const coords = vr.getRenderTextureCoords(pivotX, pivotY);
 
         // Counter normal rotation.
 
-        let rz = -Math.atan2(vr._renderContext.tc, vr._renderContext.ta);
+        const rz = -Math.atan2(vr._renderContext.tc, vr._renderContext.ta);
 
-        let gl = this.gl;
+        const gl = this.gl;
         this._setUniform("pivot", new Float32Array([coords[0], coords[1], this._pivotZ]), gl.uniform3fv);
         this._setUniform("rot", new Float32Array([this._rx, this._ry, rz]), gl.uniform3fv);
 
@@ -147,9 +146,8 @@ export default class Light3dShader extends DefaultShader {
     }
 
     useDefault() {
-        return (this._rx === 0 && this._ry === 0 && this._z === 0 && this._strength === 0 && this._ambient === 1);
+        return this._rx === 0 && this._ry === 0 && this._z === 0 && this._strength === 0 && this._ambient === 1;
     }
-
 }
 
 Light3dShader.vertexShaderSource = `
@@ -239,4 +237,3 @@ Light3dShader.fragmentShaderSource = `
         gl_FragColor = rgba * vColor;
     }
 `;
-

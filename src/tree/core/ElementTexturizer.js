@@ -1,9 +1,7 @@
 import TextureSource from "../TextureSource";
 
 export default class ElementTexturizer {
-
     constructor(elementCore) {
-
         this._element = elementCore.element;
         this._core = elementCore;
 
@@ -75,11 +73,11 @@ export default class ElementTexturizer {
     }
 
     updateResultTexture() {
-        let resultTexture = this.getResultTexture();
+        const resultTexture = this.getResultTexture();
         if (this._resultTextureSource) {
             if (this._resultTextureSource.nativeTexture !== resultTexture) {
-                let w = resultTexture ? resultTexture.w : 0;
-                let h = resultTexture ? resultTexture.h : 0;
+                const w = resultTexture ? resultTexture.w : 0;
+                const h = resultTexture ? resultTexture.h : 0;
                 this._resultTextureSource.replaceNativeTexture(resultTexture, w, h);
             }
 
@@ -149,6 +147,4 @@ export default class ElementTexturizer {
     getResultTexture() {
         return this._renderTexture;
     }
-
 }
-

@@ -8,7 +8,6 @@ import Renderer from "../Renderer";
 import TextureTintManager from "./C2dTextureTintManager";
 
 export default class C2dRenderer extends Renderer {
-
     constructor(stage) {
         super(stage);
 
@@ -26,7 +25,7 @@ export default class C2dRenderer extends Renderer {
     }
 
     _getShaderBaseType() {
-        return C2dShader
+        return C2dShader;
     }
 
     _getShaderAlternative(shaderType) {
@@ -44,19 +43,19 @@ export default class C2dRenderer extends Renderer {
     createCoreRenderExecutor(ctx) {
         return new C2dCoreRenderExecutor(ctx);
     }
-    
+
     createCoreRenderState(ctx) {
         return new CoreRenderState(ctx);
     }
 
     createRenderTexture(w, h, pw, ph) {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = pw;
         canvas.height = ph;
         this.setupC2d(canvas);
         return canvas;
     }
-    
+
     freeRenderTexture(nativeTexture) {
         this.tintManager.delete(nativeTexture);
     }
@@ -69,12 +68,12 @@ export default class C2dRenderer extends Renderer {
         // For canvas, we do not need to upload.
         if (options.source.buffer) {
             // Convert RGBA buffer to canvas.
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
             canvas.width = options.w;
             canvas.height = options.h;
 
             const imageData = new ImageData(new Uint8ClampedArray(options.source.buffer), options.w, options.h);
-            canvas.getContext('2d').putImageData(imageData, 0, 0);
+            canvas.getContext("2d").putImageData(imageData, 0, 0);
             return canvas;
         }
 
@@ -98,11 +97,10 @@ export default class C2dRenderer extends Renderer {
         return false;
     }
 
-    finishRenderState(renderState) {
-    }
+    finishRenderState(renderState) {}
 
     setupC2d(canvas) {
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         canvas.ctx = ctx;
 
         ctx._scissor = null;
@@ -110,5 +108,4 @@ export default class C2dRenderer extends Renderer {
         // Save base state so we can restore the defaults later.
         canvas.ctx.save();
     }
-
 }

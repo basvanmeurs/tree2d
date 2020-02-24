@@ -1,6 +1,4 @@
-
 export default class CoreRenderExecutor {
-
     constructor(ctx) {
         this.ctx = ctx;
 
@@ -9,8 +7,7 @@ export default class CoreRenderExecutor {
         this.gl = this.ctx.stage.gl;
     }
 
-    destroy() {
-    }
+    destroy() {}
 
     _reset() {
         this._bindRenderTexture(null);
@@ -21,9 +18,11 @@ export default class CoreRenderExecutor {
     execute() {
         this._reset();
 
-        let qops = this.renderState.quadOperations;
+        const qops = this.renderState.quadOperations;
 
-        let i = 0, j = 0, n = qops.length;
+        let i = 0,
+            j = 0,
+            n = qops.length;
         while (i < n) {
             this._processQuadOperation(qops[i]);
             i++;
@@ -38,15 +37,13 @@ export default class CoreRenderExecutor {
 
         this._setupQuadOperation(quadOperation);
         this._execQuadOperation(quadOperation);
-
     }
 
-    _setupQuadOperation(quadOperation) {
-    }
+    _setupQuadOperation(quadOperation) {}
 
     _execQuadOperation(op) {
         // Set render texture.
-        let nativeTexture = op.renderTextureInfo ? op.renderTextureInfo.nativeTexture : null;
+        const nativeTexture = op.renderTextureInfo ? op.renderTextureInfo.nativeTexture : null;
 
         if (this._renderTexture !== nativeTexture) {
             this._bindRenderTexture(nativeTexture);
@@ -64,18 +61,13 @@ export default class CoreRenderExecutor {
         this._renderQuadOperation(op);
     }
 
-    _renderQuadOperation(op) {
-    }
+    _renderQuadOperation(op) {}
 
     _bindRenderTexture(renderTexture) {
         this._renderTexture = renderTexture;
     }
 
-    _clearRenderTexture(renderTexture) {
-    }
+    _clearRenderTexture(renderTexture) {}
 
-    _setScissor(area) {
-    }
-
+    _setScissor(area) {}
 }
-

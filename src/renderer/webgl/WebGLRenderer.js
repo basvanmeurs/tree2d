@@ -9,7 +9,6 @@ import WebGLShader from "./WebGLShader";
 import Renderer from "../Renderer";
 
 export default class WebGLRenderer extends Renderer {
-
     constructor(stage) {
         super(stage);
         this.shaderPrograms = new Map();
@@ -24,7 +23,7 @@ export default class WebGLRenderer extends Renderer {
     }
 
     _getShaderBaseType() {
-        return WebGLShader
+        return WebGLShader;
     }
 
     _getShaderAlternative(shaderType) {
@@ -42,7 +41,7 @@ export default class WebGLRenderer extends Renderer {
     createCoreRenderExecutor(ctx) {
         return new WebGLCoreRenderExecutor(ctx);
     }
-    
+
     createCoreRenderState(ctx) {
         return new CoreRenderState(ctx);
     }
@@ -64,20 +63,20 @@ export default class WebGLRenderer extends Renderer {
         glTexture.params[gl.TEXTURE_MIN_FILTER] = gl.LINEAR;
         glTexture.params[gl.TEXTURE_WRAP_S] = gl.CLAMP_TO_EDGE;
         glTexture.params[gl.TEXTURE_WRAP_T] = gl.CLAMP_TO_EDGE;
-        glTexture.options = {format: gl.RGBA, internalFormat: gl.RGBA, type: gl.UNSIGNED_BYTE};
+        glTexture.options = { format: gl.RGBA, internalFormat: gl.RGBA, type: gl.UNSIGNED_BYTE };
 
         // We need a specific framebuffer for every render texture.
         glTexture.framebuffer = gl.createFramebuffer();
-        glTexture.projection = new Float32Array([2/w, 2/h]);
+        glTexture.projection = new Float32Array([2 / w, 2 / h]);
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, glTexture.framebuffer);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, glTexture, 0);
 
         return glTexture;
     }
-    
+
     freeRenderTexture(glTexture) {
-        let gl = this.stage.gl;
+        const gl = this.stage.gl;
         gl.deleteFramebuffer(glTexture.framebuffer);
         gl.deleteTexture(glTexture);
     }
@@ -92,15 +91,15 @@ export default class WebGLRenderer extends Renderer {
             hasAlpha: true
         };
 
-        if (options && options.hasOwnProperty('premultiplyAlpha')) {
+        if (options && options.hasOwnProperty("premultiplyAlpha")) {
             format.premultiplyAlpha = options.premultiplyAlpha;
         }
 
-        if (options && options.hasOwnProperty('flipBlueRed')) {
+        if (options && options.hasOwnProperty("flipBlueRed")) {
             format.flipBlueRed = options.flipBlueRed;
         }
 
-        if (options && options.hasOwnProperty('hasAlpha')) {
+        if (options && options.hasOwnProperty("hasAlpha")) {
             format.hasAlpha = options.hasAlpha;
         }
 
@@ -108,10 +107,10 @@ export default class WebGLRenderer extends Renderer {
             format.premultiplyAlpha = false;
         }
 
-        format.texParams = options.texParams || {}
-        format.texOptions = options.texOptions || {}
+        format.texParams = options.texParams || {};
+        format.texOptions = options.texOptions || {};
 
-        let glTexture = gl.createTexture();
+        const glTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, format.premultiplyAlpha);
@@ -149,13 +148,13 @@ export default class WebGLRenderer extends Renderer {
     }
 
     addQuad(renderState, quads, index) {
-        let offset = (index * 20);
+        let offset = index * 20;
         const elementCore = quads.quadElements[index];
 
-        let r = elementCore._renderContext;
+        const r = elementCore._renderContext;
 
-        let floats = renderState.quads.floats;
-        let uints = renderState.quads.uints;
+        const floats = renderState.quads.floats;
+        const uints = renderState.quads.uints;
         const mca = StageUtils.mergeColorAlpha;
 
         if (r.tb !== 0 || r.tc !== 0) {
@@ -181,8 +180,8 @@ export default class WebGLRenderer extends Renderer {
             uints[offset] = mca(elementCore._colorBl, r.alpha);
         } else {
             // Simple.
-            let cx = r.px + elementCore._w * r.ta;
-            let cy = r.py + elementCore._h * r.td;
+            const cx = r.px + elementCore._w * r.ta;
+            const cy = r.py + elementCore._h * r.td;
 
             floats[offset++] = r.px;
             floats[offset++] = r.py;
@@ -208,29 +207,31 @@ export default class WebGLRenderer extends Renderer {
     }
 
     isRenderTextureReusable(renderState, renderTextureInfo) {
-        let offset = (renderState._renderTextureInfo.offset * 80) / 4;
-        let floats = renderState.quads.floats;
-        let uints = renderState.quads.uints;
-        return ((floats[offset] === 0) &&
-            (floats[offset + 1] === 0) &&
-            (floats[offset + 2] === 0) &&
-            (floats[offset + 3] === 0) &&
-            (uints[offset + 4] === 0xFFFFFFFF) &&
-            (floats[offset + 5] === renderTextureInfo.w) &&
-            (floats[offset + 6] === 0) &&
-            (floats[offset + 7] === 1) &&
-            (floats[offset + 8] === 0) &&
-            (uints[offset + 9] === 0xFFFFFFFF) &&
-            (floats[offset + 10] === renderTextureInfo.w) &&
-            (floats[offset + 11] === renderTextureInfo.h) &&
-            (floats[offset + 12] === 1) &&
-            (floats[offset + 13] === 1) &&
-            (uints[offset + 14] === 0xFFFFFFFF) &&
-            (floats[offset + 15] === 0) &&
-            (floats[offset + 16] === renderTextureInfo.h) &&
-            (floats[offset + 17] === 0) &&
-            (floats[offset + 18] === 1) &&
-            (uints[offset + 19] === 0xFFFFFFFF));
+        const offset = (renderState._renderTextureInfo.offset * 80) / 4;
+        const floats = renderState.quads.floats;
+        const uints = renderState.quads.uints;
+        return (
+            floats[offset] === 0 &&
+            floats[offset + 1] === 0 &&
+            floats[offset + 2] === 0 &&
+            floats[offset + 3] === 0 &&
+            uints[offset + 4] === 0xffffffff &&
+            floats[offset + 5] === renderTextureInfo.w &&
+            floats[offset + 6] === 0 &&
+            floats[offset + 7] === 1 &&
+            floats[offset + 8] === 0 &&
+            uints[offset + 9] === 0xffffffff &&
+            floats[offset + 10] === renderTextureInfo.w &&
+            floats[offset + 11] === renderTextureInfo.h &&
+            floats[offset + 12] === 1 &&
+            floats[offset + 13] === 1 &&
+            uints[offset + 14] === 0xffffffff &&
+            floats[offset + 15] === 0 &&
+            floats[offset + 16] === renderTextureInfo.h &&
+            floats[offset + 17] === 0 &&
+            floats[offset + 18] === 1 &&
+            uints[offset + 19] === 0xffffffff
+        );
     }
 
     finishRenderState(renderState) {
@@ -238,10 +239,16 @@ export default class WebGLRenderer extends Renderer {
         let offset = renderState.length * 80;
         for (let i = 0, n = renderState.quadOperations.length; i < n; i++) {
             renderState.quadOperations[i].extraAttribsDataByteOffset = offset;
-            let extra = renderState.quadOperations[i].shader.getExtraAttribBytesPerVertex() * 4 * renderState.quadOperations[i].length;
+            const extra =
+                renderState.quadOperations[i].shader.getExtraAttribBytesPerVertex() *
+                4 *
+                renderState.quadOperations[i].length;
             offset += extra;
             if (extra) {
-                renderState.quadOperations[i].shader.setExtraAttribsInBuffer(renderState.quadOperations[i], renderState.quads);
+                renderState.quadOperations[i].shader.setExtraAttribsInBuffer(
+                    renderState.quadOperations[i],
+                    renderState.quads
+                );
             }
         }
         renderState.quads.dataLength = offset;
@@ -260,7 +267,7 @@ export default class WebGLRenderer extends Renderer {
             precision * (options.x || 0),
             precision * (options.y || 0),
             precision * (options.w || renderTexture.ow),
-            precision * (options.h || renderTexture.oh));
+            precision * (options.h || renderTexture.oh)
+        );
     }
-
 }

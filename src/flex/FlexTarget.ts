@@ -385,9 +385,9 @@ export default class FlexTarget {
         const mainAxisRecalcFlag = layout._horizontal ? 1 : 2;
         const crossAxisRecalcFlag = layout._horizontal ? 2 : 1;
 
-        const crossAxisDimensionsChangedInChild = (childRecalc & crossAxisRecalcFlag);
+        const crossAxisDimensionsChangedInChild = childRecalc & crossAxisRecalcFlag;
         if (!crossAxisDimensionsChangedInChild) {
-            const mainAxisDimensionsChangedInChild = (childRecalc & mainAxisRecalcFlag);
+            const mainAxisDimensionsChangedInChild = childRecalc & mainAxisRecalcFlag;
             if (mainAxisDimensionsChangedInChild) {
                 const mainAxisIsWrapping = layout.isWrapping();
                 if (mainAxisIsWrapping) {

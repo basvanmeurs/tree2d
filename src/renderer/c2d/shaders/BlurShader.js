@@ -1,7 +1,6 @@
 import DefaultShader from "./DefaultShader";
 
 export default class BlurShader extends DefaultShader {
-
     constructor(context) {
         super(context);
         this._kernelRadius = 1;
@@ -20,13 +19,11 @@ export default class BlurShader extends DefaultShader {
         return this._amount === 0;
     }
 
-    _beforeDrawEl({target}) {
+    _beforeDrawEl({ target }) {
         target.ctx.filter = "blur(" + this._kernelRadius + "px)";
     }
 
-    _afterDrawEl({target}) {
+    _afterDrawEl({ target }) {
         target.ctx.filter = "none";
     }
-
 }
-

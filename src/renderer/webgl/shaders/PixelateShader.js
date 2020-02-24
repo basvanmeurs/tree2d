@@ -4,7 +4,6 @@ import DefaultShader from "./DefaultShader";
  * @see https://github.com/pixijs/pixi-filters/tree/master/filters/pixelate/src
  */
 export default class PixelateShader extends DefaultShader {
-
     constructor(ctx) {
         super(ctx);
 
@@ -40,12 +39,12 @@ export default class PixelateShader extends DefaultShader {
     }
 
     useDefault() {
-        return ((this._size[0] === 0) && (this._size[1] === 0));
+        return this._size[0] === 0 && this._size[1] === 0;
     }
 
     setupUniforms(operation) {
         super.setupUniforms(operation);
-        let gl = this.gl;
+        const gl = this.gl;
         this._setUniform("size", new Float32Array(this._size), gl.uniform2fv);
     }
 
@@ -65,12 +64,12 @@ export default class PixelateShader extends DefaultShader {
 
     setExtraAttribsInBuffer(operation) {
         let offset = operation.extraAttribsDataByteOffset / 4;
-        let floats = operation.quads.floats;
+        const floats = operation.quads.floats;
 
-        let length = operation.length;
+        const length = operation.length;
         for (let i = 0; i < length; i++) {
-            let w = operation.quads.getTextureWidth(operation.index + i);
-            let h = operation.quads.getTextureHeight(operation.index + i);
+            const w = operation.quads.getTextureWidth(operation.index + i);
+            const h = operation.quads.getTextureHeight(operation.index + i);
 
             floats[offset] = w;
             floats[offset + 1] = h;
@@ -86,8 +85,15 @@ export default class PixelateShader extends DefaultShader {
     }
 
     beforeDraw(operation) {
-        let gl = this.gl;
-        gl.vertexAttribPointer(this._attrib("aTextureRes"), 2, gl.FLOAT, false, this.getExtraAttribBytesPerVertex(), this.getVertexAttribPointerOffset(operation));
+        const gl = this.gl;
+        gl.vertexAttribPointer(
+            this._attrib("aTextureRes"),
+            2,
+            gl.FLOAT,
+            false,
+            this.getExtraAttribBytesPerVertex(),
+            this.getVertexAttribPointerOffset(operation)
+        );
     }
 }
 
@@ -148,4 +154,3 @@ PixelateShader.fragmentShaderSource = `
         gl_FragColor = texture2D(uSampler, coord) * vColor;
     }
 `;
-

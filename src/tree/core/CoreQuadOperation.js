@@ -1,8 +1,5 @@
-
 export default class CoreQuadOperation {
-
     constructor(ctx, shader, shaderOwner, renderTextureInfo, scissor, index) {
-
         this.ctx = ctx;
         this.shader = shader;
         this.shaderOwner = shaderOwner;
@@ -10,7 +7,6 @@ export default class CoreQuadOperation {
         this.scissor = scissor;
         this.index = index;
         this.length = 0;
-
     }
 
     get quads() {
@@ -60,5 +56,4 @@ export default class CoreQuadOperation {
             return this.ctx.stage.h;
         }
     }
-
 }

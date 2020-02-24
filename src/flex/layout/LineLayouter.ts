@@ -4,7 +4,6 @@ import LineLayout from "./line/LineLayout";
  * Distributes items over layout lines.
  */
 export default class LineLayouter {
-
     constructor(layout) {
         this._layout = layout;
         this._mainAxisMinSize = -1;
@@ -50,8 +49,8 @@ export default class LineLayouter {
             // Get predicted main axis size.
             const itemMainAxisSize = item.flexItem._getMainAxisLayoutSizeWithPaddingAndMargin();
 
-            if (wrap && (i > startIndex)) {
-                const isOverflowing = (this._curMainAxisPos + itemMainAxisSize > this._mainAxisSize);
+            if (wrap && i > startIndex) {
+                const isOverflowing = this._curMainAxisPos + itemMainAxisSize > this._mainAxisSize;
                 if (isOverflowing) {
                     this._layoutLine(startIndex, i - 1);
                     this._curMainAxisPos = 0;
@@ -99,7 +98,7 @@ export default class LineLayouter {
         line.performLayout();
         this._lines.push(line);
 
-        if (this._mainAxisContentSize === 0 || (this._curMainAxisPos > this._mainAxisContentSize)) {
+        if (this._mainAxisContentSize === 0 || this._curMainAxisPos > this._mainAxisContentSize) {
             this._mainAxisContentSize = this._curMainAxisPos;
         }
     }
@@ -131,5 +130,4 @@ export default class LineLayouter {
             return this._layout.mainAxisSize;
         }
     }
-
 }

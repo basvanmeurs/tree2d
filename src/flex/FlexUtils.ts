@@ -1,7 +1,6 @@
 import FlexTarget from "./FlexTarget";
 
 export default class FlexUtils {
-
     static getParentAxisSizeWithPadding(item: FlexTarget, horizontal: boolean) {
         const target = item.target;
         const parent = target.getParent();
@@ -92,7 +91,7 @@ export default class FlexUtils {
             flexItemMinSize = item._flexItem._getMinSizeSetting(horizontal);
         }
 
-        const hasLimitedMinSize = (flexItemMinSize > 0);
+        const hasLimitedMinSize = flexItemMinSize > 0;
         if (hasLimitedMinSize) {
             minSize = Math.max(minSize, flexItemMinSize);
         }
@@ -103,7 +102,7 @@ export default class FlexUtils {
         if (item.isFlexEnabled()) {
             return item._flex._layout.getAxisMinSize(horizontal);
         } else {
-            const isShrinkable = (item.flexItem.shrink !== 0);
+            const isShrinkable = item.flexItem.shrink !== 0;
             if (isShrinkable) {
                 return 0;
             } else {
@@ -114,7 +113,7 @@ export default class FlexUtils {
 
     static resizeAxis(item: FlexTarget, horizontal: boolean, size: number) {
         if (item.isFlexEnabled()) {
-            const isMainAxis = (item._flex._horizontal === horizontal);
+            const isMainAxis = item._flex._horizontal === horizontal;
             if (isMainAxis) {
                 item._flex._layout.resizeMainAxis(size);
             } else {
@@ -124,7 +123,6 @@ export default class FlexUtils {
             this.setAxisLayoutSize(item, horizontal, size);
         }
     }
-
 
     static getPaddingOffset(item: FlexTarget, horizontal: boolean) {
         if (item.isFlexEnabled()) {
@@ -177,5 +175,4 @@ export default class FlexUtils {
             return 0;
         }
     }
-
 }

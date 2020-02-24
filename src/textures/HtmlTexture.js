@@ -1,7 +1,6 @@
 import Texture from "../tree/Texture";
 
 export default class HtmlTexture extends Texture {
-
     constructor(stage) {
         super(stage);
         this._htmlElement = undefined;
@@ -30,7 +29,7 @@ export default class HtmlTexture extends Texture {
         if (!v) {
             this.htmlElement = undefined;
         } else {
-            const d = document.createElement('div');
+            const d = document.createElement("div");
             d.innerHTML = "<div>" + v + "</div>";
             this.htmlElement = d.firstElementChild;
         }
@@ -59,35 +58,36 @@ export default class HtmlTexture extends Texture {
             const area = HtmlTexture.getPreloadArea();
             area.appendChild(htmlElement);
 
-            html2canvas(htmlElement, {backgroundColor: null, scale: scale}).then(function(canvas) {
-                area.removeChild(htmlElement);
-                if (canvas.height === 0) {
-                    return cb(new Error("Canvas height is 0"));
-                }
-                cb(null, {source: canvas, width: canvas.width, height: canvas.height});
-            }).catch(e => {
-                console.error(e);
-            });
-        }
+            html2canvas(htmlElement, { backgroundColor: null, scale: scale })
+                .then(function(canvas) {
+                    area.removeChild(htmlElement);
+                    if (canvas.height === 0) {
+                        return cb(new Error("Canvas height is 0"));
+                    }
+                    cb(null, { source: canvas, width: canvas.width, height: canvas.height });
+                })
+                .catch(e => {
+                    console.error(e);
+                });
+        };
     }
 
     static getPreloadArea() {
         if (!this._preloadArea) {
             // Preload area must be included in document body and must be visible to trigger html element rendering.
-            this._preloadArea = document.createElement('div');
+            this._preloadArea = document.createElement("div");
             if (this._preloadArea.attachShadow) {
                 // Use a shadow DOM if possible to prevent styling from interfering.
-                this._preloadArea.attachShadow({mode: 'closed'});
+                this._preloadArea.attachShadow({ mode: "closed" });
             }
             this._preloadArea.style.opacity = 0;
-            this._preloadArea.style.pointerEvents = 'none';
-            this._preloadArea.style.position = 'fixed';
-            this._preloadArea.style.display = 'block';
-            this._preloadArea.style.top = '100vh';
-            this._preloadArea.style.overflow = 'hidden';
+            this._preloadArea.style.pointerEvents = "none";
+            this._preloadArea.style.position = "fixed";
+            this._preloadArea.style.display = "block";
+            this._preloadArea.style.top = "100vh";
+            this._preloadArea.style.overflow = "hidden";
             document.body.appendChild(this._preloadArea);
         }
         return this._preloadArea;
     }
 }
-

@@ -1,14 +1,9 @@
 import Shader from "../../tree/Shader";
 
 export default class C2dShader extends Shader {
+    beforeDraw(operation) {}
 
-    beforeDraw(operation) {
-    }
+    draw(operation) {}
 
-    draw(operation) {
-    }
-
-    afterDraw(operation) {
-    }
-
+    afterDraw(operation) {}
 }

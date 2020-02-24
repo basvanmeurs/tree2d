@@ -1,5 +1,4 @@
 export default class MismatchCollector {
-
     constructor(item, div) {
         this._item = item;
         this._div = div;
@@ -16,22 +15,21 @@ export default class MismatchCollector {
     }
 
     _setLayoutInfoInHtmlAttribsRecursive(target, div) {
-
         const targetLayout = this._getTargetLayout(target);
         const htmlLayout = this._getHtmlLayout(div);
 
-        const htmlIsVisible = (div.offsetParent !== null);
+        const htmlIsVisible = div.offsetParent !== null;
 
         const same = this._checkLayoutsEqual(htmlLayout, targetLayout);
 
-        const parentIsVisible = !div.parentNode || (div.parentNode.getAttribute('data-visible') !== "false");
+        const parentIsVisible = !div.parentNode || div.parentNode.getAttribute("data-visible") !== "false";
         const htmlIsWorldVisible = htmlIsVisible && parentIsVisible;
         const equal = !htmlIsWorldVisible || same;
-        div.setAttribute('data-equal', equal ? "true" : "false");
-        div.setAttribute('data-visible', htmlIsVisible ? "true" : "false");
+        div.setAttribute("data-equal", equal ? "true" : "false");
+        div.setAttribute("data-visible", htmlIsVisible ? "true" : "false");
 
-        div.setAttribute('data-flex-layout', this._getLayoutString(targetLayout));
-        div.setAttribute('data-html-layout', this._getLayoutString(htmlLayout));
+        div.setAttribute("data-flex-layout", this._getLayoutString(targetLayout));
+        div.setAttribute("data-html-layout", this._getLayoutString(htmlLayout));
 
         target.children.forEach((subItem, index) => {
             const subDiv = div.childNodes[index];
@@ -44,7 +42,7 @@ export default class MismatchCollector {
     }
 
     _getTargetLayout(target) {
-        return {x: target.x, y: target.y, w: target.w, h: target.h};
+        return { x: target.x, y: target.y, w: target.w, h: target.h };
     }
 
     _getHtmlLayout(div) {
@@ -54,11 +52,12 @@ export default class MismatchCollector {
         const y = rect.top - parentRect.top;
         const w = rect.width;
         const h = rect.height;
-        return {x, y, w, h};
+        return { x, y, w, h };
     }
 
     _checkLayoutsEqual(layout, otherLayout) {
-        const equal = this._compareFloats(layout.x, otherLayout.x) &&
+        const equal =
+            this._compareFloats(layout.x, otherLayout.x) &&
             this._compareFloats(layout.y, otherLayout.y) &&
             this._compareFloats(layout.w, otherLayout.w) &&
             this._compareFloats(layout.h, otherLayout.h);
@@ -68,7 +67,7 @@ export default class MismatchCollector {
     _compareFloats(f1, f2) {
         // Account for rounding errors.
         const delta = Math.abs(f1 - f2);
-        return (delta < 0.1);
+        return delta < 0.1;
     }
 
     _collectMismatches() {
@@ -80,7 +79,7 @@ export default class MismatchCollector {
     }
 
     _collectRecursive(div, location) {
-        if (div.getAttribute('data-equal') === "false") {
+        if (div.getAttribute("data-equal") === "false") {
             this._results.push(location.join("."));
         }
         div.childNodes.forEach((subDiv, index) => {
@@ -88,5 +87,4 @@ export default class MismatchCollector {
             this._collectRecursive(subDiv, subLocation);
         });
     }
-
 }

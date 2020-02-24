@@ -1,5 +1,4 @@
 export default class SizeGrower {
-
     constructor(line) {
         this._line = line;
         this._amountRemaining = 0;
@@ -14,12 +13,12 @@ export default class SizeGrower {
         if (totalGrowAmount) {
             const items = this._line.items;
             do {
-                let amountPerGrow = this._amountRemaining / totalGrowAmount;
+                const amountPerGrow = this._amountRemaining / totalGrowAmount;
                 for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
                     const item = items[i];
                     const flexItem = item.flexItem;
                     const growAmount = flexItem.grow;
-                    const isGrowableItem = (growAmount > 0);
+                    const isGrowableItem = growAmount > 0;
                     if (isGrowableItem) {
                         let grow = growAmount * amountPerGrow;
                         const maxSize = flexItem._getMainAxisMaxSizeSetting();
@@ -30,7 +29,7 @@ export default class SizeGrower {
                                 grow = 0;
                             } else {
                                 const maxGrow = maxSize - size;
-                                const isFullyGrown = (grow >= maxGrow);
+                                const isFullyGrown = grow >= maxGrow;
                                 if (isFullyGrown) {
                                     grow = maxGrow;
 
@@ -53,7 +52,7 @@ export default class SizeGrower {
                         }
                     }
                 }
-            } while(totalGrowAmount && (Math.abs(this._amountRemaining) > 10e-6));
+            } while (totalGrowAmount && Math.abs(this._amountRemaining) > 10e-6);
         }
     }
 
@@ -80,5 +79,4 @@ export default class SizeGrower {
     getGrownSize() {
         return this._grownSize;
     }
-
 }

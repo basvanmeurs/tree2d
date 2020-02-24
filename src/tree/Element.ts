@@ -3,14 +3,13 @@
  * Copyright Metrological, 2017
  */
 
-import ElementCore, {FunctionH, FunctionW, FunctionX, FunctionY} from "./core/ElementCore";
+import ElementCore, { FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
 import Base from "./Base";
 
 import Utils from "./Utils";
 import Shader from "./Shader";
 
 class Element {
-
     private static id: number = 1;
 
     public readonly stage: Stage;
@@ -41,7 +40,7 @@ class Element {
     // Contains the child elements.
     private __childList?: ElementChildList;
 
-    private listeners? : ElementListeners;
+    private listeners?: ElementListeners;
 
     constructor(stage: Stage) {
         this.stage = stage;
@@ -51,10 +50,9 @@ class Element {
         this.__start();
     }
 
-    __start() {
-    }
+    __start() {}
 
-    private getListeners() : ElementListeners {
+    private getListeners(): ElementListeners {
         if (!this.listeners) {
             this.listeners = new ElementListeners();
         }
@@ -65,7 +63,7 @@ class Element {
         return this.__id;
     }
 
-    set ref(ref: string|undefined) {
+    set ref(ref: string | undefined) {
         if (this.__ref !== ref) {
             if (this.__ref !== undefined) {
                 if (this.__parent !== undefined) {
@@ -83,7 +81,7 @@ class Element {
         }
     }
 
-    get ref(): string|undefined {
+    get ref(): string | undefined {
         return this.__ref;
     }
 
@@ -112,7 +110,7 @@ class Element {
         if (this.isRoot && parent) {
             this._throwError("Root should not be added as a child! Results are unspecified!");
         }
-    };
+    }
 
     get attached(): boolean {
         return this.__attached;
@@ -127,19 +125,19 @@ class Element {
     }
 
     private _isAttached(): boolean {
-        return (this.__parent ? this.__parent.__attached : this.isRoot);
-    };
+        return this.__parent ? this.__parent.__attached : this.isRoot;
+    }
 
     private _isEnabled(): boolean {
-        return this.__core.visible && (this.__core.alpha > 0) && (this.__parent ? this.__parent.__enabled : this.isRoot);
-    };
+        return this.__core.visible && this.__core.alpha > 0 && (this.__parent ? this.__parent.__enabled : this.isRoot);
+    }
 
     private _isActive(): boolean {
         return this._isEnabled() && this.isWithinBoundsMargin();
-    };
+    }
 
     protected _updateAttachedFlag(): void {
-        let newAttached = this._isAttached();
+        const newAttached = this._isAttached();
         if (this.__attached !== newAttached) {
             this.__attached = newAttached;
 
@@ -147,9 +145,9 @@ class Element {
                 this._onSetup();
             }
 
-            let children = this._children.get();
+            const children = this._children.get();
             if (children) {
-                let m = children.length;
+                const m = children.length;
                 if (m > 0) {
                     for (let i = 0; i < m; i++) {
                         children[i]._updateAttachedFlag();
@@ -163,10 +161,10 @@ class Element {
                 this._onDetach();
             }
         }
-    };
+    }
 
     public _updateEnabledFlag(): void {
-        let newEnabled = this._isEnabled();
+        const newEnabled = this._isEnabled();
         if (this.__enabled !== newEnabled) {
             if (newEnabled) {
                 this._onEnabled();
@@ -176,9 +174,9 @@ class Element {
                 this._unsetEnabledFlag();
             }
 
-            let children = this._children.get();
+            const children = this._children.get();
             if (children) {
-                let m = children.length;
+                const m = children.length;
                 if (m > 0) {
                     for (let i = 0; i < m; i++) {
                         children[i]._updateEnabledFlag();
@@ -186,7 +184,7 @@ class Element {
                 }
             }
         }
-    };
+    }
 
     private _setEnabledFlag(): void {
         this.__enabled = true;
@@ -206,7 +204,6 @@ class Element {
         if (this.__core.shader) {
             this.__core.shader.addElement(this.__core);
         }
-
     }
 
     private _unsetEnabledFlag(): void {
@@ -256,7 +253,7 @@ class Element {
         this._onInactive();
     }
 
-    public set onSetup(v: Function|undefined) {
+    public set onSetup(v: Function | undefined) {
         this.getListeners().onSetup = v;
     }
 
@@ -266,7 +263,7 @@ class Element {
         }
     }
 
-    public set onAttach(v: Function|undefined) {
+    public set onAttach(v: Function | undefined) {
         this.getListeners().onAttach = v;
     }
 
@@ -276,7 +273,7 @@ class Element {
         }
     }
 
-    public set onDetach(v: Function|undefined) {
+    public set onDetach(v: Function | undefined) {
         this.getListeners().onDetach = v;
     }
 
@@ -286,7 +283,7 @@ class Element {
         }
     }
 
-    public set onEnabled(v: Function|undefined) {
+    public set onEnabled(v: Function | undefined) {
         this.getListeners().onEnabled = v;
     }
 
@@ -296,7 +293,7 @@ class Element {
         }
     }
 
-    public set onDisabled(v: Function|undefined) {
+    public set onDisabled(v: Function | undefined) {
         this.getListeners().onDisabled = v;
     }
 
@@ -306,7 +303,7 @@ class Element {
         }
     }
 
-    public set onActive(v: Function|undefined) {
+    public set onActive(v: Function | undefined) {
         this.getListeners().onActive = v;
     }
 
@@ -316,7 +313,7 @@ class Element {
         }
     }
 
-    public set onInactive(v: Function|undefined) {
+    public set onInactive(v: Function | undefined) {
         this.getListeners().onInactive = v;
     }
 
@@ -326,7 +323,7 @@ class Element {
         }
     }
 
-    public set onTextureError(v: Function|undefined) {
+    public set onTextureError(v: Function | undefined) {
         this.getListeners().onTextureError = v;
     }
 
@@ -336,7 +333,7 @@ class Element {
         }
     }
 
-    public set onTextureLoaded(v: Function|undefined) {
+    public set onTextureLoaded(v: Function | undefined) {
         this.getListeners().onTextureLoaded = v;
     }
 
@@ -346,7 +343,7 @@ class Element {
         }
     }
 
-    public set onTextureUnloaded(v: Function|undefined) {
+    public set onTextureUnloaded(v: Function | undefined) {
         this.getListeners().onTextureUnloaded = v;
     }
 
@@ -356,7 +353,7 @@ class Element {
         }
     }
 
-    public set onResize(v: Function|undefined) {
+    public set onResize(v: Function | undefined) {
         this.getListeners().onResize = v;
     }
 
@@ -410,7 +407,7 @@ class Element {
         // txError event should automatically be re-triggered when a element becomes active.
         const loadError = this.__texture!.loadError;
         if (loadError) {
-            this._onTextureError(loadError, this.__texture!._source)
+            this._onTextureError(loadError, this.__texture!._source);
         }
     }
 
@@ -431,11 +428,11 @@ class Element {
         this._setDisplayedTexture(undefined);
     }
 
-    get texture(): Texture|any {
+    get texture(): Texture | any {
         return this.__texture;
     }
 
-    set texture(v: Texture|any) {
+    set texture(v: Texture | any) {
         let texture;
         if (Utils.isObjectLiteral(v)) {
             if (v.type) {
@@ -490,14 +487,14 @@ class Element {
         }
     }
 
-    get displayedTexture(): Texture|undefined {
+    get displayedTexture(): Texture | undefined {
         return this.__displayedTexture;
     }
 
-    private _setDisplayedTexture(v: Texture|undefined) {
-        let prevTexture = this.__displayedTexture;
+    private _setDisplayedTexture(v: Texture | undefined) {
+        const prevTexture = this.__displayedTexture;
 
-        if (prevTexture && (v !== prevTexture)) {
+        if (prevTexture && v !== prevTexture) {
             if (this.__texture !== prevTexture) {
                 // The old displayed texture is deprecated.
                 prevTexture.removeElement(this);
@@ -535,11 +532,11 @@ class Element {
             // We may be dealing with a texture reloading, so we must force update.
             this._setDisplayedTexture(this.__texture);
         }
-    };
+    }
 
     onTextureSourceLoadError(loadError: any): void {
         this._onTextureError(loadError, this.__texture!._source);
-    };
+    }
 
     forceRenderUpdate(): void {
         this.__core.setHasRenderUpdates(3);
@@ -548,14 +545,15 @@ class Element {
     onDisplayedTextureClippingChanged(): void {
         this._updateTextureDimensions();
         this._updateTextureCoords();
-    };
+    }
 
     onPrecisionChanged(): void {
         this._updateTextureDimensions();
-    };
+    }
 
     private _updateTextureDimensions(): void {
-        let w = 0, h = 0;
+        let w = 0,
+            h = 0;
         if (this.__displayedTexture) {
             w = this.__displayedTexture.getRenderWidth();
             h = this.__displayedTexture.getRenderHeight();
@@ -584,20 +582,23 @@ class Element {
 
     private _updateTextureCoords(): void {
         if (this.displayedTexture && this.displayedTexture._source) {
-            let displayedTexture = this.displayedTexture;
-            let displayedTextureSource = this.displayedTexture._source;
+            const displayedTexture = this.displayedTexture;
+            const displayedTextureSource = this.displayedTexture._source;
 
-            let tx1 = 0, ty1 = 0, tx2 = 1.0, ty2 = 1.0;
+            let tx1 = 0,
+                ty1 = 0,
+                tx2 = 1.0,
+                ty2 = 1.0;
             if (displayedTexture.clipping) {
                 // Apply texture clipping.
-                let w = displayedTextureSource.getRenderWidth();
-                let h = displayedTextureSource.getRenderHeight();
+                const w = displayedTextureSource.getRenderWidth();
+                const h = displayedTextureSource.getRenderHeight();
                 let iw, ih, rw, rh;
                 iw = 1 / w;
                 ih = 1 / h;
 
                 if (displayedTexture.pw) {
-                    rw = (displayedTexture.pw) * iw;
+                    rw = displayedTexture.pw * iw;
                 } else {
                     rw = (w - displayedTexture.px) * iw;
                 }
@@ -608,8 +609,8 @@ class Element {
                     rh = (h - displayedTexture.py) * ih;
                 }
 
-                iw *= (displayedTexture.px);
-                ih *= (displayedTexture.py);
+                iw *= displayedTexture.px;
+                ih *= displayedTexture.py;
 
                 tx1 = iw;
                 ty1 = ih;
@@ -634,10 +635,10 @@ class Element {
         return this.childList.getByRef(ref);
     }
 
-    getLocationString() : string{
+    getLocationString(): string {
         let i;
         i = this.__parent ? this.__parent._children.getIndex(this) : "R";
-        let str = this.__parent ? this.__parent.getLocationString(): "";
+        let str = this.__parent ? this.__parent.getLocationString() : "";
         if (this.ref) {
             str += ":[" + i + "]" + this.ref;
         } else {
@@ -647,18 +648,17 @@ class Element {
     }
 
     toString() {
-        let obj = this.getSettings();
+        const obj = this.getSettings();
         return Element.getPrettyString(obj, "");
-    };
+    }
 
     static getPrettyString(obj: any, indent: string) {
-        let children = obj.children;
+        const children = obj.children;
         delete obj.children;
 
-
         // Convert singular json settings object.
-        let colorKeys = ["color", "colorUl", "colorUr", "colorBl", "colorBr"];
-        let str = JSON.stringify(obj, function (k, v) {
+        const colorKeys = ["color", "colorUl", "colorUr", "colorBl", "colorBr"];
+        let str = JSON.stringify(obj, function(k, v) {
             if (colorKeys.indexOf(k) !== -1) {
                 return "COLOR[" + v.toString(16) + "]";
             }
@@ -669,37 +669,36 @@ class Element {
         if (children) {
             let childStr = "";
             if (Utils.isObjectLiteral(children)) {
-                let refs = Object.keys(children);
+                const refs = Object.keys(children);
                 childStr = "";
                 for (let i = 0, n = refs.length; i < n; i++) {
                     childStr += `\n${indent}  "${refs[i]}":`;
                     delete children[refs[i]].ref;
                     childStr += Element.getPrettyString(children[refs[i]], indent + "  ") + (i < n - 1 ? "," : "");
                 }
-                let isEmpty = (str === "{}");
+                const isEmpty = str === "{}";
                 str = str.substr(0, str.length - 1) + (isEmpty ? "" : ",") + childStr + "\n" + indent + "}";
             } else {
-                let n = children.length;
+                const n = children.length;
                 childStr = "[";
                 for (let i = 0; i < n; i++) {
                     childStr += Element.getPrettyString(children[i], indent + "  ") + (i < n - 1 ? "," : "") + "\n";
                 }
                 childStr += indent + "]}";
-                let isEmpty = (str === "{}");
-                str = str.substr(0, str.length - 1) + (isEmpty ? "" : ",") + "\"children\":\n" + indent + childStr + "}";
+                const isEmpty = str === "{}";
+                str = str.substr(0, str.length - 1) + (isEmpty ? "" : ",") + '"children":\n' + indent + childStr + "}";
             }
-
         }
 
         return str;
     }
 
     getSettings(): any {
-        let settings = this.getNonDefaults();
+        const settings = this.getNonDefaults();
 
-        let children = this._children.get();
+        const children = this._children.get();
         if (children) {
-            let n = children.length;
+            const n = children.length;
             if (n) {
                 const childArray = [];
                 let missing = false;
@@ -725,7 +724,7 @@ class Element {
     }
 
     getNonDefaults(): any {
-        let settings: any = {};
+        const settings: any = {};
 
         if (this.constructor !== Element) {
             settings.type = this.constructor.name;
@@ -768,12 +767,12 @@ class Element {
         if (this.rotation !== 0) settings.rotation = this.rotation;
 
         if (this.colorUl === this.colorUr && this.colorBl === this.colorBr && this.colorUl === this.colorBl) {
-            if (this.colorUl !== 0xFFFFFFFF) settings.color = this.colorUl.toString(16);
+            if (this.colorUl !== 0xffffffff) settings.color = this.colorUl.toString(16);
         } else {
-            if (this.colorUl !== 0xFFFFFFFF) settings.colorUl = this.colorUl.toString(16);
-            if (this.colorUr !== 0xFFFFFFFF) settings.colorUr = this.colorUr.toString(16);
-            if (this.colorBl !== 0xFFFFFFFF) settings.colorBl = this.colorBl.toString(16);
-            if (this.colorBr !== 0xFFFFFFFF) settings.colorBr = this.colorBr.toString(16);
+            if (this.colorUl !== 0xffffffff) settings.colorUl = this.colorUl.toString(16);
+            if (this.colorUr !== 0xffffffff) settings.colorUr = this.colorUr.toString(16);
+            if (this.colorBl !== 0xffffffff) settings.colorBl = this.colorBl.toString(16);
+            if (this.colorBr !== 0xffffffff) settings.colorBr = this.colorBr.toString(16);
         }
 
         if (this.zIndex) settings.zIndex = this.zIndex;
@@ -785,14 +784,14 @@ class Element {
         if (!this.clipbox) settings.clipbox = this.clipbox;
 
         if (this.__texture) {
-            let tnd = this.__texture.getNonDefaults();
+            const tnd = this.__texture.getNonDefaults();
             if (Object.keys(tnd).length) {
                 settings.texture = tnd;
             }
         }
 
         if (this.shader) {
-            let tnd = this.shader.getNonDefaults();
+            const tnd = this.shader.getNonDefaults();
             if (Object.keys(tnd).length) {
                 settings.shader = tnd;
             }
@@ -814,7 +813,7 @@ class Element {
         }
 
         return settings;
-    };
+    }
 
     isWithinBoundsMargin() {
         return this.__core.isWithinBoundsMargin();
@@ -834,9 +833,11 @@ class Element {
         }
     }
 
-    set boundsMargin(v: number[]|undefined) {
+    set boundsMargin(v: number[] | undefined) {
         if (!Array.isArray(v) && v !== undefined) {
-            throw new Error("boundsMargin should be an array of left-top-right-bottom values or undefined (inherit margin)");
+            throw new Error(
+                "boundsMargin should be an array of left-top-right-bottom values or undefined (inherit margin)"
+            );
         }
         this.__core.boundsMargin = v;
     }
@@ -845,23 +846,23 @@ class Element {
         return this.__core.boundsMargin;
     }
 
-    get x(): number|FunctionX {
+    get x(): number | FunctionX {
         return this.__core.offsetX;
     }
 
-    set x(v: number|FunctionX) {
+    set x(v: number | FunctionX) {
         this.__core.offsetX = v;
     }
 
-    get y(): number|FunctionY {
+    get y(): number | FunctionY {
         return this.__core.offsetY;
     }
 
-    set y(v: number|FunctionY) {
+    set y(v: number | FunctionY) {
         this.__core.offsetY = v;
     }
 
-    get w(): number|FunctionW {
+    get w(): number | FunctionW {
         return this.__core.offsetW;
     }
 
@@ -869,7 +870,7 @@ class Element {
         this.__core.offsetW = v;
     }
 
-    get h(): number|FunctionH {
+    get h(): number | FunctionH {
         return this.__core.offsetH;
     }
 
@@ -972,7 +973,7 @@ class Element {
     set visible(v) {
         this.__core.visible = v;
     }
-    
+
     get colorUl() {
         return this.__core.colorUl;
     }
@@ -1062,22 +1063,30 @@ class Element {
         }
     }
 
-    get zIndex() {return this.__core.zIndex}
+    get zIndex() {
+        return this.__core.zIndex;
+    }
     set zIndex(v) {
         this.__core.zIndex = v;
     }
 
-    get forceZIndexContext() {return this.__core.forceZIndexContext}
+    get forceZIndexContext() {
+        return this.__core.forceZIndexContext;
+    }
     set forceZIndexContext(v) {
         this.__core.forceZIndexContext = v;
     }
 
-    get clipping() {return this.__core.clipping}
+    get clipping() {
+        return this.__core.clipping;
+    }
     set clipping(v) {
         this.__core.clipping = v;
     }
 
-    get clipbox() {return this.__core.clipbox}
+    get clipbox() {
+        return this.__core.clipbox;
+    }
     set clipbox(v) {
         this.__core.clipbox = v;
     }
@@ -1097,7 +1106,7 @@ class Element {
     }
 
     hasChildren() {
-        return this._allowChildrenAccess() && this.__childList && (this.__childList.length > 0);
+        return this._allowChildrenAccess() && this.__childList && this.__childList.length > 0;
     }
 
     _allowChildrenAccess() {
@@ -1134,12 +1143,12 @@ class Element {
         this.texture = texture;
     }
 
-    set mw(v : number) {
+    set mw(v: number) {
         if (this.texture) {
             this.texture.mw = v;
             this._updateTextureDimensions();
         } else {
-            this._throwError('Please set mw after setting a texture.');
+            this._throwError("Please set mw after setting a texture.");
         }
     }
 
@@ -1148,12 +1157,12 @@ class Element {
             this.texture.mh = v;
             this._updateTextureDimensions();
         } else {
-            this._throwError('Please set mh after setting a texture.');
+            this._throwError("Please set mh after setting a texture.");
         }
     }
 
     get rect() {
-        return (this.texture === this.stage.rectangleTexture);
+        return this.texture === this.stage.rectangleTexture;
     }
 
     set rect(v) {
@@ -1179,7 +1188,7 @@ class Element {
     }
 
     get text() {
-        if (this.texture && (this.texture instanceof TextTexture)) {
+        if (this.texture && this.texture instanceof TextTexture) {
             return this.texture;
         } else {
             return undefined;
@@ -1237,11 +1246,11 @@ class Element {
     }
 
     get renderToTexture() {
-        return this.rtt
+        return this.rtt;
     }
 
     set renderToTexture(v) {
-        this.rtt = v
+        this.rtt = v;
     }
 
     get rtt() {
@@ -1289,7 +1298,6 @@ class Element {
     }
 
     // @todo: flexbox stuff.
-
 }
 
 import Texture from "./Texture";
@@ -1302,4 +1310,3 @@ import ElementTexturizer from "./core/ElementTexturizer";
 import ElementListeners from "./ElementListeners";
 
 export default Element;
-

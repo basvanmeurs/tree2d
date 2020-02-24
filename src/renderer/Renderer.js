@@ -1,15 +1,12 @@
 export default class Renderer {
-
     constructor(stage) {
         this.stage = stage;
         this._defaultShader = undefined;
     }
 
-    gc(aggressive) {
-    }
+    gc(aggressive) {}
 
-    destroy() {
-    }
+    destroy() {}
 
     getDefaultShader(ctx = this.stage.ctx) {
         if (!this._defaultShader) {
@@ -18,11 +15,10 @@ export default class Renderer {
         return this._defaultShader;
     }
 
-    _createDefaultShader(ctx) {
-    }
+    _createDefaultShader(ctx) {}
 
     isValidShaderType(shaderType) {
-        return (shaderType.prototype instanceof this._getShaderBaseType());
+        return shaderType.prototype instanceof this._getShaderBaseType();
     }
 
     createShader(ctx, settings) {
@@ -42,15 +38,14 @@ export default class Renderer {
         }
     }
 
-    _getShaderBaseType() {
-    }
+    _getShaderBaseType() {}
 
     _getShaderAlternative(shaderType) {
         return this.getDefaultShader();
     }
 
     copyRenderTexture(renderTexture, nativeTexture, options) {
-        console.warn('copyRenderTexture not supported by renderer');
+        console.warn("copyRenderTexture not supported by renderer");
     }
 }
 

@@ -1,7 +1,6 @@
 import SpacingCalculator from "./SpacingCalculator";
 
 export default class ContentAligner {
-
     constructor(layout) {
         this._layout = layout;
         this._totalCrossAxisSize = 0;
@@ -19,13 +18,13 @@ export default class ContentAligner {
         const crossAxisSize = this._layout.crossAxisSize;
         const remainingSpace = crossAxisSize - this._totalCrossAxisSize;
 
-        const {spacingBefore, spacingBetween} = this._getSpacing(remainingSpace);
+        const { spacingBefore, spacingBetween } = this._getSpacing(remainingSpace);
 
         const lines = this._lines;
 
         const mode = this._layout._flexContainer.alignContent;
         let growSize = 0;
-        if (mode === "stretch" && lines.length && (remainingSpace > 0)) {
+        if (mode === "stretch" && lines.length && remainingSpace > 0) {
             growSize = remainingSpace / lines.length;
         }
 
@@ -34,7 +33,7 @@ export default class ContentAligner {
             const crossAxisLayoutOffset = currentPos;
             const aligner = lines[i].createItemAligner();
 
-            let finalCrossAxisLayoutSize = lines[i].crossAxisLayoutSize + growSize;
+            const finalCrossAxisLayoutSize = lines[i].crossAxisLayoutSize + growSize;
 
             aligner.setCrossAxisLayoutSize(finalCrossAxisLayoutSize);
             aligner.setCrossAxisLayoutOffset(crossAxisLayoutOffset);
@@ -69,5 +68,4 @@ export default class ContentAligner {
         const numberOfItems = this._lines.length;
         return SpacingCalculator.getSpacing(mode, numberOfItems, remainingSpace);
     }
-
 }

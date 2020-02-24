@@ -1,23 +1,22 @@
 import Utils from "../tree/Utils";
 import StageUtils from "../tree/StageUtils";
-import StaticCanvasTexture from "../textures/StaticCanvasTexture"
+import StaticCanvasTexture from "../textures/StaticCanvasTexture";
 
 export default class Tools {
-
     static getCanvasTexture(canvasFactory, lookupId) {
-        return {type: StaticCanvasTexture, content: {factory: canvasFactory, lookupId: lookupId}}
+        return { type: StaticCanvasTexture, content: { factory: canvasFactory, lookupId: lookupId } };
     }
 
     static getRoundRect(w, h, radius, strokeWidth, strokeColor, fill, fillColor) {
-        if (!Array.isArray(radius)){
+        if (!Array.isArray(radius)) {
             // upper-left, upper-right, bottom-right, bottom-left.
             radius = [radius, radius, radius, radius];
         }
 
-        let factory = (cb, stage) => {
+        const factory = (cb, stage) => {
             cb(null, this.createRoundRect(stage, w, h, radius, strokeWidth, strokeColor, fill, fillColor));
         };
-        let id = 'rect' + [w, h, strokeWidth, strokeColor, fill ? 1 : 0, fillColor].concat(radius).join(",");
+        const id = "rect" + [w, h, strokeWidth, strokeColor, fill ? 1 : 0, fillColor].concat(radius).join(",");
         return Tools.getCanvasTexture(factory, id);
     }
 
@@ -25,15 +24,16 @@ export default class Tools {
         if (fill === undefined) fill = true;
         if (strokeWidth === undefined) strokeWidth = 0;
 
-        let canvas = stage.platform.getDrawingCanvas();
-        let ctx = canvas.getContext('2d');
+        const canvas = stage.platform.getDrawingCanvas();
+        const ctx = canvas.getContext("2d");
         ctx.imageSmoothingEnabled = true;
 
         canvas.width = w + strokeWidth + 2;
         canvas.height = h + strokeWidth + 2;
 
         ctx.beginPath();
-        let x = 0.5 * strokeWidth + 1, y = 0.5 * strokeWidth + 1;
+        const x = 0.5 * strokeWidth + 1,
+            y = 0.5 * strokeWidth + 1;
 
         ctx.moveTo(x + radius[0], y);
         ctx.lineTo(x + w - radius[1], y);
@@ -69,21 +69,21 @@ export default class Tools {
     }
 
     static getShadowRect(w, h, radius = 0, blur = 5, margin = blur * 2) {
-        if (!Array.isArray(radius)){
+        if (!Array.isArray(radius)) {
             // upper-left, upper-right, bottom-right, bottom-left.
             radius = [radius, radius, radius, radius];
         }
 
-        let factory = (cb, stage) => {
+        const factory = (cb, stage) => {
             stage.platform.createShadowRect(cb, stage, w, h, radius, blur, margin);
         };
-        let id = 'shadow' + [w, h, blur, margin].concat(radius).join(",");
+        const id = "shadow" + [w, h, blur, margin].concat(radius).join(",");
         return Tools.getCanvasTexture(factory, id);
     }
 
     static createShadowRect(stage, w, h, radius, blur, margin) {
-        let canvas = stage.platform.getDrawingCanvas();
-        let ctx = canvas.getContext('2d');
+        const canvas = stage.platform.getDrawingCanvas();
+        const ctx = canvas.getContext("2d");
         ctx.imageSmoothingEnabled = true;
 
         canvas.width = w + margin * 2;
@@ -94,10 +94,10 @@ export default class Tools {
         ctx.fillRect(0, 0, 0.01, 0.01);
         ctx.globalAlpha = 1.0;
 
-        ctx.shadowColor = StageUtils.getRgbaString(0xFFFFFFFF);
-        ctx.fillStyle = StageUtils.getRgbaString(0xFFFFFFFF);
+        ctx.shadowColor = StageUtils.getRgbaString(0xffffffff);
+        ctx.fillStyle = StageUtils.getRgbaString(0xffffffff);
         ctx.shadowBlur = blur;
-        ctx.shadowOffsetX = (w + 10) + margin;
+        ctx.shadowOffsetX = w + 10 + margin;
         ctx.shadowOffsetY = margin;
 
         ctx.beginPath();
@@ -120,29 +120,28 @@ export default class Tools {
     }
 
     static getSvgTexture(url, w, h) {
-        let factory = (cb, stage) => {
+        const factory = (cb, stage) => {
             stage.platform.createSvg(cb, stage, url, w, h);
         };
-        let id = 'svg' + [w, h, url].join(",");
+        const id = "svg" + [w, h, url].join(",");
         return Tools.getCanvasTexture(factory, id);
     }
 
     static createSvg(cb, stage, url, w, h) {
-        let canvas = stage.platform.getDrawingCanvas();
-        let ctx = canvas.getContext('2d');
+        const canvas = stage.platform.getDrawingCanvas();
+        const ctx = canvas.getContext("2d");
         ctx.imageSmoothingEnabled = true;
 
-        let img = new Image();
+        const img = new Image();
         img.onload = () => {
             canvas.width = w;
             canvas.height = h;
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             cb(null, canvas);
-        }
-        img.onError = (err) => {
+        };
+        img.onError = err => {
             cb(err);
-        }
+        };
         img.src = url;
     }
-
 }

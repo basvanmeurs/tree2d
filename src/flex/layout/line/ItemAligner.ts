@@ -1,5 +1,4 @@
 export default class ItemAligner {
-
     constructor(line) {
         this._line = line;
         this._crossAxisLayoutSize = 0;
@@ -57,7 +56,7 @@ export default class ItemAligner {
             }
         }
 
-        switch(align) {
+        switch (align) {
             case "flex-start":
                 this._alignItemFlexStart(flexItem);
                 break;
@@ -100,7 +99,7 @@ export default class ItemAligner {
         }
 
         const crossAxisMaxSizeSetting = flexItem._getCrossAxisMaxSizeSetting();
-        const crossAxisMaxSizeSettingEnabled = (crossAxisMaxSizeSetting > 0);
+        const crossAxisMaxSizeSettingEnabled = crossAxisMaxSizeSetting > 0;
         if (crossAxisMaxSizeSettingEnabled) {
             size = Math.min(size, crossAxisMaxSizeSetting);
         }
@@ -108,7 +107,7 @@ export default class ItemAligner {
         flexItem._resizeCrossAxis(size);
         const mainAxisLayoutSizeAfterResize = flexItem._getMainAxisLayoutSize();
 
-        const recursiveResize = (mainAxisLayoutSizeAfterResize !== mainAxisLayoutSizeBeforeResize);
+        const recursiveResize = mainAxisLayoutSizeAfterResize !== mainAxisLayoutSizeBeforeResize;
         if (recursiveResize) {
             // Recursive resize can happen when this flex item has the opposite direction than the container
             // and is wrapping and auto-sizing. Due to item/content stretching the main axis size of the flex
@@ -123,8 +122,7 @@ export default class ItemAligner {
 
     _preventStretch(flexItem) {
         const hasFixedCrossAxisSize = flexItem._hasFixedCrossAxisSize();
-        const forceStretch = (flexItem.alignSelf === "stretch");
+        const forceStretch = flexItem.alignSelf === "stretch";
         return hasFixedCrossAxisSize && !forceStretch;
     }
-
 }
