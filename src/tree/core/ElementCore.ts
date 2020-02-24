@@ -48,7 +48,7 @@ export default class ElementCore {
 
     private _zContextUsage: number = 0;
 
-    private _children?: ElementCore[];
+    public _children?: ElementCore[];
 
     private _hasRenderUpdates: number = 0;
 
@@ -181,7 +181,7 @@ export default class ElementCore {
             let dx;
             if (this.hasFlexLayout()) {
                 dx = (v as number) - this.layout.originalX;
-                this.layout.originalX = v;
+                this.layout.originalX = (v as number);
             } else {
                 dx = (v as number) - this._x;
             }
@@ -236,7 +236,7 @@ export default class ElementCore {
             let dy;
             if (this.hasFlexLayout()) {
                 dy = (v as number) - this.layout.originalY;
-                this.layout.originalY = v;
+                this.layout.originalY = (v as number);
             } else {
                 dy = (v as number) - this._y;
             }
@@ -492,7 +492,7 @@ export default class ElementCore {
             this._element._updateEnabledFlag();
 
             if (this.hasFlexLayout()) {
-                this.layout.setVisible(v);
+                this.layout.setVisible();
             }
         }
     }
@@ -761,12 +761,18 @@ export default class ElementCore {
                 this.layout.originalW = w;
                 this.layout.originalH = h;
             } else {
-                this._setInternalDimensions(w, h);
+                this.setInternalDimensions(w, h);
             }
         }
     }
 
-    private _setInternalDimensions(w: number, h: number) {
+    setInternalCoords(x: number, y: number) {
+        this._x = x;
+        this._y = y;
+        this._updateLocalTranslate();
+    }
+
+    setInternalDimensions(w: number, h: number) {
         if (this._w !== w || this._h !== h) {
             this._w = w;
             this._h = h;
@@ -2165,7 +2171,7 @@ export default class ElementCore {
         return [w.px + w.ta * relX + w.tb * relY, w.py + w.tc * relX + w.td * relY];
     }
 
-    private get layout(): FlexTarget {
+    get layout(): FlexTarget {
         this._ensureLayout();
         return this._layout!;
     }
@@ -2212,7 +2218,7 @@ export default class ElementCore {
             this._y = y;
             this._updateLocalTranslate();
         }
-        this._setInternalDimensions(w, h);
+        this.setInternalDimensions(w, h);
     }
 
     triggerLayout() {
@@ -2233,6 +2239,10 @@ export default class ElementCore {
 
     public isWithinBoundsMargin(): boolean {
         return this._withinBoundsMargin;
+    }
+
+    get parent() {
+        return this._parent;
     }
 
     hasTexturizer(): boolean {

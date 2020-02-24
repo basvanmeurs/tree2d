@@ -45,7 +45,7 @@ export default class FlexLayout {
     }
 
     layoutTree() {
-        const isSubTree = this.item.flexParent !== null;
+        const isSubTree = !!(this.item.flexParent);
         if (isSubTree) {
             // Use the dimensions set by the parent flex tree.
             this._updateSubTreeLayout();
@@ -271,7 +271,7 @@ export default class FlexLayout {
     }
 
     getParentFlexContainer() {
-        return this.item.isFlexItemEnabled() ? this.item.flexItem.ctr : null;
+        return this.item.isFlexItemEnabled() ? this.item.flexItem.ctr : undefined;
     }
 
     _getHorizontalPadding() {

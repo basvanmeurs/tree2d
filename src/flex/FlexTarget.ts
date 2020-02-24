@@ -7,64 +7,45 @@ import ElementCore from "../tree/core/ElementCore";
  * This is the connection between the render tree with the layout tree of this flex container/item.
  */
 export default class FlexTarget {
-    _target: ElementCore;
+    private _target: ElementCore;
 
-    _recalc: number;
-    _enabled: boolean;
+    /**
+     * Possible values (only in case of container):
+     * bit 0: has changed or contains items with changes
+     * bit 1: width changed
+     * bit 2: height changed
+     */
+    private _recalc: number = 0;
 
-    x: number;
-    y: number;
-    w: number;
-    h: number;
+    private _enabled: boolean = false;
 
-    _originalX: number;
-    _originalY: number;
-    _originalWidth: number;
-    _originalHeight: number;
+    public x: number = 0;
+    public y: number = 0;
+    public w: number = 0;
+    public h: number = 0;
 
-    _flex: any;
-    _flexItem: any;
-    _flexItemDisabled: boolean;
+    private _originalX: number = 0;
+    private _originalY: number = 0;
+    private _originalW: number = 0;
+    private _originalH: number = 0;
 
-    _items: any;
+    public _flex?: FlexContainer;
+    public _flexItem?: FlexItem = undefined;
+    public _flexItemDisabled: boolean = false;
+
+    public _items?: FlexTarget[] = undefined;
 
     constructor(target: ElementCore) {
         this._target = target;
-
-        /**
-         * Possible values (only in case of container):
-         * bit 0: has changed or contains items with changes
-         * bit 1: width changed
-         * bit 2: height changed
-         */
-        this._recalc = 0;
-
-        this._enabled = false;
-
-        this.x = 0;
-        this.y = 0;
-        this.w = 0;
-        this.h = 0;
-
-        this._originalX = 0;
-        this._originalY = 0;
-        this._originalWidth = 0;
-        this._originalHeight = 0;
-
-        this._flex = null;
-        this._flexItem = null;
-        this._flexItemDisabled = false;
-
-        this._items = null;
     }
 
     get flexLayout() {
-        return this.flex ? this.flex._layout : null;
+        return this.flex ? this.flex._layout : undefined;
     }
 
     layoutFlexTree() {
         if (this.isFlexEnabled() && this.isChanged()) {
-            this.flexLayout.layoutTree();
+            this.flexLayout!.layoutTree();
         }
     }
 
@@ -76,7 +57,11 @@ export default class FlexTarget {
         return this._flex;
     }
 
-    set flex(v) {
+    get flexItem() {
+        return this._flexItem;
+    }
+
+    setEnabled(v: boolean) {
         if (!v) {
             if (this.isFlexEnabled()) {
                 this._disableFlex();
@@ -85,20 +70,11 @@ export default class FlexTarget {
             if (!this.isFlexEnabled()) {
                 this._enableFlex();
             }
-            this._flex.patch(v);
         }
     }
 
-    get flexItem() {
-        if (this._flexItemDisabled) {
-            return false;
-        }
-        this._ensureFlexItem();
-        return this._flexItem;
-    }
-
-    set flexItem(v) {
-        if (v === false) {
+    setItemEnabled(v: boolean) {
+        if (!v) {
             if (!this._flexItemDisabled) {
                 const parent = this.flexParent;
                 this._flexItemDisabled = true;
@@ -110,8 +86,6 @@ export default class FlexTarget {
             }
         } else {
             this._ensureFlexItem();
-
-            this._flexItem.patch(v);
 
             if (this._flexItemDisabled) {
                 this._flexItemDisabled = false;
@@ -128,13 +102,13 @@ export default class FlexTarget {
     _enableFlex() {
         this._flex = new FlexContainer(this);
         this._checkEnabled();
-        this.changedDimensions();
+        this.forceLayout();
         this._enableChildrenAsFlexItems();
     }
 
     _disableFlex() {
-        this.changedDimensions();
-        this._flex = null;
+        this.forceLayout();
+        this._flex = undefined;
         this._checkEnabled();
         this._disableChildrenAsFlexItems();
     }
@@ -161,15 +135,15 @@ export default class FlexTarget {
 
     _enableFlexItem() {
         this._ensureFlexItem();
-        const flexParent = this._target._parent._layout;
-        this._flexItem.ctr = flexParent._flex;
+        const flexParent = this._target!.parent!.layout;
+        this._flexItem!.ctr = flexParent._flex;
         flexParent.changedContents();
         this._checkEnabled();
     }
 
     _disableFlexItem() {
         if (this._flexItem) {
-            this._flexItem.ctr = null;
+            this._flexItem.ctr = undefined;
         }
 
         // We keep the flexItem object because it may contain custom settings.
@@ -226,27 +200,26 @@ export default class FlexTarget {
 
     _restoreTargetToNonFlex() {
         const target = this._target;
-        target.x = this._originalX;
-        target.y = this._originalY;
-        target.setDimensions(this._originalWidth, this._originalHeight);
+        target.setInternalCoords(this._originalX, this._originalY);
+        target.setInternalDimensions(this._originalW, this._originalH);
     }
 
     _setupTargetForFlex() {
         const target = this._target;
-        this._originalX = target._x;
-        this._originalY = target._y;
-        this._originalWidth = target._w;
-        this._originalHeight = target._h;
+        this._originalX = target.x;
+        this._originalY = target.y;
+        this._originalW = target.w;
+        this._originalH = target.h;
     }
 
-    setParent(from: ElementCore, to: ElementCore) {
+    setParent(from?: ElementCore, to?: ElementCore) {
         if (from && from.isFlexContainer()) {
-            from._layout._changedChildren();
+            from.layout._changedChildren();
         }
 
         if (to && to.isFlexContainer()) {
             this._enableFlexItem();
-            to._layout._changedChildren();
+            to.layout._changedChildren();
         }
         this._checkEnabled();
     }
@@ -256,11 +229,11 @@ export default class FlexTarget {
             return null;
         }
 
-        const parent = this._target._parent;
+        const parent = this._target.parent;
         if (parent && parent.isFlexContainer()) {
-            return parent._layout;
+            return parent.layout;
         }
-        return null;
+        return undefined;
     }
 
     setVisible() {
@@ -299,7 +272,7 @@ export default class FlexTarget {
     }
 
     _clearFlexItemsCache() {
-        this._items = null;
+        this._items = undefined;
     }
 
     setLayout(x: number, y: number, w: number, h: number) {
@@ -320,15 +293,11 @@ export default class FlexTarget {
         }
     }
 
-    changedDimensions(changeWidth = true, changeHeight = true) {
+    forceLayout(changeWidth = true, changeHeight = true) {
         this._updateRecalc(changeWidth, changeHeight);
     }
 
     changedContents() {
-        this._updateRecalc();
-    }
-
-    forceLayout() {
         this._updateRecalc();
     }
 
@@ -338,7 +307,7 @@ export default class FlexTarget {
 
     _updateRecalc(changeExternalWidth = false, changeExternalHeight = false) {
         if (this.isFlexEnabled()) {
-            const layout = this._flex._layout;
+            const layout = this._flex!._layout;
 
             // When something internal changes, it can have effect on the external dimensions.
             changeExternalWidth = changeExternalWidth || layout.isAxisFitToContents(true);
@@ -380,7 +349,7 @@ export default class FlexTarget {
     }
 
     _getRecalcFromChangedChildRecalc(childRecalc: number) {
-        const layout = this._flex._layout;
+        const layout = this._flex!._layout;
 
         const mainAxisRecalcFlag = layout._horizontal ? 1 : 2;
         const crossAxisRecalcFlag = layout._horizontal ? 2 : 1;
@@ -435,7 +404,7 @@ export default class FlexTarget {
         return this._originalX;
     }
 
-    setOriginalXWithoutUpdatingLayout(v: number) {
+    set originalX(v) {
         this._originalX = v;
     }
 
@@ -443,29 +412,29 @@ export default class FlexTarget {
         return this._originalY;
     }
 
-    setOriginalYWithoutUpdatingLayout(v: number) {
+    set originalY(v) {
         this._originalY = v;
     }
 
-    get originalWidth() {
-        return this._originalWidth;
+    get originalW() {
+        return this._originalW;
     }
 
-    set originalWidth(v) {
-        if (this._originalWidth !== v) {
-            this._originalWidth = v;
-            this.changedDimensions(true, false);
+    set originalW(v) {
+        if (this._originalW !== v) {
+            this._originalW = v;
+            this.forceLayout(true, false);
         }
     }
 
-    get originalHeight() {
-        return this._originalHeight;
+    get originalH() {
+        return this._originalH;
     }
 
-    set originalHeight(v) {
-        if (this._originalHeight !== v) {
-            this._originalHeight = v;
-            this.changedDimensions(false, true);
+    set originalH(v) {
+        if (this._originalH !== v) {
+            this._originalH = v;
+            this.forceLayout(false, true);
         }
     }
 

@@ -25,7 +25,7 @@ export default class FlexContainer {
     public horizontal: boolean;
     public reverse: boolean;
 
-    private _layout: Layout;
+    public _layout: Layout;
     private _wrap: boolean;
     private _alignItems: string;
     private _justifyContent: string;

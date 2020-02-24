@@ -27,7 +27,7 @@ export default class FlexUtils {
                     return 0;
                 }
             } else {
-                return item.originalWidth;
+                return item.originalW;
             }
         } else {
             if (item.funcH) {
@@ -37,14 +37,14 @@ export default class FlexUtils {
                     return 0;
                 }
             } else {
-                return item.originalHeight;
+                return item.originalH;
             }
         }
     }
 
     static _allowRelAxisSizeFunction(item: FlexTarget, horizontal: boolean) {
         const flexParent = item.flexParent;
-        if (flexParent && flexParent._flex._layout.isAxisFitToContents(horizontal)) {
+        if (flexParent && flexParent._flex!._layout.isAxisFitToContents(horizontal)) {
             // We don't allow relative width on fit-to-contents because it leads to conflicts.
             return false;
         }
@@ -53,9 +53,9 @@ export default class FlexUtils {
 
     static isZeroAxisSize(item: FlexTarget, horizontal: boolean) {
         if (horizontal) {
-            return !item.originalWidth && !item.funcW;
+            return !item.originalW && !item.funcW;
         } else {
-            return !item.originalHeight && !item.funcH;
+            return !item.originalH && !item.funcH;
         }
     }
 
@@ -88,7 +88,7 @@ export default class FlexUtils {
 
         let flexItemMinSize = 0;
         if (item.isFlexItemEnabled()) {
-            flexItemMinSize = item._flexItem._getMinSizeSetting(horizontal);
+            flexItemMinSize = item._flexItem!._getMinSizeSetting(horizontal);
         }
 
         const hasLimitedMinSize = flexItemMinSize > 0;
@@ -100,9 +100,9 @@ export default class FlexUtils {
 
     static getPlainAxisMinSize(item: FlexTarget, horizontal: boolean) {
         if (item.isFlexEnabled()) {
-            return item._flex._layout.getAxisMinSize(horizontal);
+            return item._flex!._layout.getAxisMinSize(horizontal);
         } else {
-            const isShrinkable = item.flexItem.shrink !== 0;
+            const isShrinkable = item._flexItem!.shrink !== 0;
             if (isShrinkable) {
                 return 0;
             } else {
@@ -113,11 +113,11 @@ export default class FlexUtils {
 
     static resizeAxis(item: FlexTarget, horizontal: boolean, size: number) {
         if (item.isFlexEnabled()) {
-            const isMainAxis = item._flex._horizontal === horizontal;
+            const isMainAxis = item._flex!.horizontal === horizontal;
             if (isMainAxis) {
-                item._flex._layout.resizeMainAxis(size);
+                item._flex!._layout.resizeMainAxis(size);
             } else {
-                item._flex._layout.resizeCrossAxis(size);
+                item._flex!._layout.resizeCrossAxis(size);
             }
         } else {
             this.setAxisLayoutSize(item, horizontal, size);
@@ -126,7 +126,7 @@ export default class FlexUtils {
 
     static getPaddingOffset(item: FlexTarget, horizontal: boolean) {
         if (item.isFlexEnabled()) {
-            const flex = item._flex;
+            const flex = item._flex!;
             if (horizontal) {
                 return flex.paddingLeft;
             } else {
@@ -139,7 +139,7 @@ export default class FlexUtils {
 
     static getTotalPadding(item: FlexTarget, horizontal: boolean) {
         if (item.isFlexEnabled()) {
-            const flex = item._flex;
+            const flex = item._flex!;
             if (horizontal) {
                 return flex.paddingRight + flex.paddingLeft;
             } else {
@@ -151,7 +151,7 @@ export default class FlexUtils {
     }
 
     static getMarginOffset(item: FlexTarget, horizontal: boolean) {
-        const flexItem = item.flexItem;
+        const flexItem = item._flexItem!;
         if (flexItem) {
             if (horizontal) {
                 return flexItem.marginLeft;
@@ -164,7 +164,7 @@ export default class FlexUtils {
     }
 
     static getTotalMargin(item: FlexTarget, horizontal: boolean) {
-        const flexItem = item.flexItem;
+        const flexItem = item._flexItem!;
         if (flexItem) {
             if (horizontal) {
                 return flexItem.marginRight + flexItem.marginLeft;
