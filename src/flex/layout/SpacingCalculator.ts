@@ -1,12 +1,18 @@
 export default class SpacingCalculator {
-
-    static getSpacing(mode, numberOfItems, remainingSpace) {
-        const itemGaps = (numberOfItems - 1);
+    static getSpacing(
+        mode: "flex-start" | "flex-end" | "center" | "space-between" | "space-around" | "space-evenly" | "stretch",
+        numberOfItems: number,
+        remainingSpace: number
+    ): {
+        spacingBefore: number;
+        spacingBetween: number;
+    } {
+        const itemGaps = numberOfItems - 1;
         let spacePerGap;
 
         let spacingBefore, spacingBetween;
 
-        switch(mode) {
+        switch (mode) {
             case "flex-start":
                 spacingBefore = 0;
                 spacingBetween = 0;
@@ -49,7 +55,6 @@ export default class SpacingCalculator {
                 throw new Error("Unknown mode: " + mode);
         }
 
-        return {spacingBefore, spacingBetween}
+        return { spacingBefore, spacingBetween };
     }
-
 }

@@ -1,13 +1,34 @@
 import FlexContainer from "./FlexContainer";
 import FlexItem from "./FlexItem";
-import FlexUtils from "./FlexUtils";
+import FlexUtils from "./FlexUtils.js";
+import ElementCore from "../tree/core/ElementCore";
 
 /**
  * This is the connection between the render tree with the layout tree of this flex container/item.
  */
 export default class FlexTarget {
+    _target: ElementCore;
 
-    constructor(target) {
+    _recalc: number;
+    _enabled: boolean;
+
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+
+    _originalX: number;
+    _originalY: number;
+    _originalWidth: number;
+    _originalHeight: number;
+
+    _flex: any;
+    _flexItem: any;
+    _flexItemDisabled: boolean;
+
+    _items: any;
+
+    constructor(target: ElementCore) {
         this._target = target;
 
         /**
@@ -17,7 +38,7 @@ export default class FlexTarget {
          * bit 2: height changed
          */
         this._recalc = 0;
-        
+
         this._enabled = false;
 
         this.x = 0;
@@ -27,8 +48,8 @@ export default class FlexTarget {
 
         this._originalX = 0;
         this._originalY = 0;
-        this._originalW = 0;
-        this._originalH = 0;
+        this._originalWidth = 0;
+        this._originalHeight = 0;
 
         this._flex = null;
         this._flexItem = null;
@@ -107,12 +128,12 @@ export default class FlexTarget {
     _enableFlex() {
         this._flex = new FlexContainer(this);
         this._checkEnabled();
-        this.forceLayout();
+        this.changedDimensions();
         this._enableChildrenAsFlexItems();
     }
 
     _disableFlex() {
-        this.forceLayout();
+        this.changedDimensions();
         this._flex = null;
         this._checkEnabled();
         this._disableChildrenAsFlexItems();
@@ -180,7 +201,7 @@ export default class FlexTarget {
             this._enabled = enabled;
         }
     }
-    
+
     _enable() {
         this._setupTargetForFlex();
         this._target.enableFlexLayout();
@@ -207,18 +228,18 @@ export default class FlexTarget {
         const target = this._target;
         target.x = this._originalX;
         target.y = this._originalY;
-        target.setDimensions(this._originalW, this._originalH);
+        target.setDimensions(this._originalWidth, this._originalHeight);
     }
 
     _setupTargetForFlex() {
         const target = this._target;
         this._originalX = target._x;
         this._originalY = target._y;
-        this._originalW = target._w;
-        this._originalH = target._h;
+        this._originalWidth = target._w;
+        this._originalHeight = target._h;
     }
-    
-    setParent(from, to) {
+
+    setParent(from: ElementCore, to: ElementCore) {
         if (from && from.isFlexContainer()) {
             from._layout._changedChildren();
         }
@@ -242,7 +263,7 @@ export default class FlexTarget {
         return null;
     }
 
-    setVisible(v) {
+    setVisible() {
         const parent = this.flexParent;
         if (parent) {
             parent._changedChildren();
@@ -281,7 +302,7 @@ export default class FlexTarget {
         this._items = null;
     }
 
-    setLayout(x, y, w, h) {
+    setLayout(x: number, y: number, w: number, h: number) {
         let originalX = this._originalX;
         let originalY = this._originalY;
         if (this.funcX) {
@@ -299,12 +320,16 @@ export default class FlexTarget {
         }
     }
 
+    changedDimensions(changeWidth = true, changeHeight = true) {
+        this._updateRecalc(changeWidth, changeHeight);
+    }
+
     changedContents() {
         this._updateRecalc();
     }
 
-    forceLayout(changeWidth = true, changeHeight = true) {
-        this._updateRecalc(changeWidth, changeHeight);
+    forceLayout() {
+        this._updateRecalc();
     }
 
     isChanged() {
@@ -334,11 +359,11 @@ export default class FlexTarget {
         }
     }
 
-    getNewRecalcFlags(flags) {
+    getNewRecalcFlags(flags: number) {
         return (7 - this._recalc) & flags;
     }
 
-    _updateRecalcBottomUp(childRecalc) {
+    _updateRecalcBottomUp(childRecalc: number) {
         const newRecalc = this._getRecalcFromChangedChildRecalc(childRecalc);
         const newRecalcFlags = this.getNewRecalcFlags(newRecalc);
         this._recalc |= newRecalc;
@@ -354,7 +379,7 @@ export default class FlexTarget {
         }
     }
 
-    _getRecalcFromChangedChildRecalc(childRecalc) {
+    _getRecalcFromChangedChildRecalc(childRecalc: number) {
         const layout = this._flex._layout;
 
         const mainAxisRecalcFlag = layout._horizontal ? 1 : 2;
@@ -410,7 +435,7 @@ export default class FlexTarget {
         return this._originalX;
     }
 
-    set originalX(v) {
+    setOriginalXWithoutUpdatingLayout(v: number) {
         this._originalX = v;
     }
 
@@ -418,29 +443,29 @@ export default class FlexTarget {
         return this._originalY;
     }
 
-    set originalY(v) {
+    setOriginalYWithoutUpdatingLayout(v: number) {
         this._originalY = v;
     }
 
-    get originalW() {
-        return this._originalW;
+    get originalWidth() {
+        return this._originalWidth;
     }
 
-    set originalW(v) {
-        if (this._originalW !== v) {
-            this._originalW = v;
-            this.forceLayout(true, false);
+    set originalWidth(v) {
+        if (this._originalWidth !== v) {
+            this._originalWidth = v;
+            this.changedDimensions(true, false);
         }
     }
 
-    get originalH() {
-        return this._originalH;
+    get originalHeight() {
+        return this._originalHeight;
     }
 
-    set originalH(v) {
-        if (this._originalH !== v) {
-            this._originalH = v;
-            this.forceLayout(false, true);
+    set originalHeight(v) {
+        if (this._originalHeight !== v) {
+            this._originalHeight = v;
+            this.changedDimensions(false, true);
         }
     }
 

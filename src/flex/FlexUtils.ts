@@ -1,6 +1,8 @@
+import FlexTarget from "./FlexTarget";
+
 export default class FlexUtils {
 
-    static getParentAxisSizeWithPadding(item, horizontal) {
+    static getParentAxisSizeWithPadding(item: FlexTarget, horizontal: boolean) {
         const target = item.target;
         const parent = target.getParent();
         if (!parent) {
@@ -17,7 +19,7 @@ export default class FlexUtils {
         }
     }
 
-    static getRelAxisSize(item, horizontal) {
+    static getRelAxisSize(item: FlexTarget, horizontal: boolean) {
         if (horizontal) {
             if (item.funcW) {
                 if (this._allowRelAxisSizeFunction(item, true)) {
@@ -41,7 +43,7 @@ export default class FlexUtils {
         }
     }
 
-    static _allowRelAxisSizeFunction(item, horizontal) {
+    static _allowRelAxisSizeFunction(item: FlexTarget, horizontal: boolean) {
         const flexParent = item.flexParent;
         if (flexParent && flexParent._flex._layout.isAxisFitToContents(horizontal)) {
             // We don't allow relative width on fit-to-contents because it leads to conflicts.
@@ -50,7 +52,7 @@ export default class FlexUtils {
         return true;
     }
 
-    static isZeroAxisSize(item, horizontal) {
+    static isZeroAxisSize(item: FlexTarget, horizontal: boolean) {
         if (horizontal) {
             return !item.originalWidth && !item.funcW;
         } else {
@@ -58,15 +60,15 @@ export default class FlexUtils {
         }
     }
 
-    static getAxisLayoutPos(item, horizontal) {
+    static getAxisLayoutPos(item: FlexTarget, horizontal: boolean) {
         return horizontal ? item.x : item.y;
     }
 
-    static getAxisLayoutSize(item, horizontal) {
+    static getAxisLayoutSize(item: FlexTarget, horizontal: boolean) {
         return horizontal ? item.w : item.h;
     }
 
-    static setAxisLayoutPos(item, horizontal, pos) {
+    static setAxisLayoutPos(item: FlexTarget, horizontal: boolean, pos: number) {
         if (horizontal) {
             item.x = pos;
         } else {
@@ -74,7 +76,7 @@ export default class FlexUtils {
         }
     }
 
-    static setAxisLayoutSize(item, horizontal, size) {
+    static setAxisLayoutSize(item: FlexTarget, horizontal: boolean, size: number) {
         if (horizontal) {
             item.w = size;
         } else {
@@ -82,7 +84,7 @@ export default class FlexUtils {
         }
     }
 
-    static getAxisMinSize(item, horizontal) {
+    static getAxisMinSize(item: FlexTarget, horizontal: boolean) {
         let minSize = this.getPlainAxisMinSize(item, horizontal);
 
         let flexItemMinSize = 0;
@@ -97,7 +99,7 @@ export default class FlexUtils {
         return minSize;
     }
 
-    static getPlainAxisMinSize(item, horizontal) {
+    static getPlainAxisMinSize(item: FlexTarget, horizontal: boolean) {
         if (item.isFlexEnabled()) {
             return item._flex._layout.getAxisMinSize(horizontal);
         } else {
@@ -110,7 +112,7 @@ export default class FlexUtils {
         }
     }
 
-    static resizeAxis(item, horizontal, size) {
+    static resizeAxis(item: FlexTarget, horizontal: boolean, size: number) {
         if (item.isFlexEnabled()) {
             const isMainAxis = (item._flex._horizontal === horizontal);
             if (isMainAxis) {
@@ -124,7 +126,7 @@ export default class FlexUtils {
     }
 
 
-    static getPaddingOffset(item, horizontal) {
+    static getPaddingOffset(item: FlexTarget, horizontal: boolean) {
         if (item.isFlexEnabled()) {
             const flex = item._flex;
             if (horizontal) {
@@ -137,7 +139,7 @@ export default class FlexUtils {
         }
     }
 
-    static getTotalPadding(item, horizontal) {
+    static getTotalPadding(item: FlexTarget, horizontal: boolean) {
         if (item.isFlexEnabled()) {
             const flex = item._flex;
             if (horizontal) {
@@ -150,7 +152,7 @@ export default class FlexUtils {
         }
     }
 
-    static getMarginOffset(item, horizontal) {
+    static getMarginOffset(item: FlexTarget, horizontal: boolean) {
         const flexItem = item.flexItem;
         if (flexItem) {
             if (horizontal) {
@@ -163,7 +165,7 @@ export default class FlexUtils {
         }
     }
 
-    static getTotalMargin(item, horizontal) {
+    static getTotalMargin(item: FlexTarget, horizontal: boolean) {
         const flexItem = item.flexItem;
         if (flexItem) {
             if (horizontal) {

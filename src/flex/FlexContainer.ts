@@ -1,15 +1,31 @@
 import Base from "../tree/Base";
 import Layout from "./layout/FlexLayout";
+import FlexTarget from "./FlexTarget";
 
 export default class FlexContainer {
 
+    public static readonly ALIGN_ITEMS = ["flex-start", "flex-end", "center", "stretch"];
+    public static readonly ALIGN_CONTENT = ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly", "stretch"];
+    public static readonly JUSTIFY_CONTENT = ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly"];
 
-    constructor(item) {
-        this._item = item;
+    public horizontal: boolean;
+    public reverse: boolean;
 
+    private _layout: Layout;
+    private _wrap: boolean;
+    private _alignItems: string;
+    private _justifyContent: string;
+    private _alignContent: string;
+
+    private _paddingLeft: number;
+    private _paddingTop: number;
+    private _paddingRight: number;
+    private _paddingBottom: number;
+
+    constructor(public readonly item: FlexTarget) {
         this._layout = new Layout(this);
-        this._horizontal = true;
-        this._reverse = false;
+        this.horizontal = true;
+        this.reverse = false;
         this._wrap = false;
         this._alignItems = 'stretch';
         this._justifyContent = 'flex-start';
@@ -21,27 +37,23 @@ export default class FlexContainer {
         this._paddingBottom = 0;
     }
 
-    get item() {
-        return this._item;
-    }
-
     _changedDimensions() {
-        this._item.changedDimensions();
+        this.item.changedDimensions();
     }
 
     _changedContents() {
-        this._item.changedContents();
+        this.item.changedContents();
     }
 
     get direction() {
-        return (this._horizontal ? "row" : "column") + (this._reverse ? "-reverse" : "");
+        return (this.horizontal ? "row" : "column") + (this.reverse ? "-reverse" : "");
     }
 
     set direction(f) {
         if (this.direction === f) return;
 
-        this._horizontal = (f === 'row' || f === 'row-reverse');
-        this._reverse = (f === 'row-reverse' || f === 'column-reverse');
+        this.horizontal = (f === 'row' || f === 'row-reverse');
+        this.reverse = (f === 'row-reverse' || f === 'column-reverse');
 
         this._changedContents();
     }
@@ -108,12 +120,12 @@ export default class FlexContainer {
     get padding() {
         return this.paddingLeft;
     }
-    
+
     set paddingLeft(v) {
         this._paddingLeft = v;
         this._changedDimensions();
     }
-    
+
     get paddingLeft() {
         return this._paddingLeft;
     }
@@ -150,7 +162,3 @@ export default class FlexContainer {
     }
 
 }
-
-FlexContainer.ALIGN_ITEMS = ["flex-start", "flex-end", "center", "stretch"];
-FlexContainer.ALIGN_CONTENT = ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly", "stretch"];
-FlexContainer.JUSTIFY_CONTENT = ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly"];

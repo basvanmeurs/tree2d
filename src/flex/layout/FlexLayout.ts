@@ -1,14 +1,28 @@
 import ContentAligner from "./ContentAligner";
-import FlexUtils from "../FlexUtils";
+import FlexUtils from "../FlexUtils.js";
 import LineLayouter from "./LineLayouter";
 import ItemCoordinatesUpdater from "./ItemCoordinatesUpdater";
+import FlexContainer from "../FlexContainer";
 
 /**
  * Layouts a flex container (and descendants).
  */
 export default class FlexLayout {
+    _flexContainer: FlexContainer;
 
-    constructor(flexContainer) {
+    _lineLayouter: LineLayouter;
+
+    _resizingMainAxis: boolean;
+    _resizingCrossAxis: boolean;
+
+    _cachedMainAxisSizeAfterLayout: number;
+    _cachedCrossAxisSizeAfterLayout: number;
+
+    _shrunk: boolean;
+
+    _totalCrossAxisSize: any;
+
+    constructor(flexContainer: FlexContainer) {
         this._flexContainer = flexContainer;
 
         this._lineLayouter = new LineLayouter(this);
@@ -149,7 +163,7 @@ export default class FlexLayout {
         return this._flexContainer.wrap;
     }
 
-    isAxisFitToContents(horizontal) {
+    isAxisFitToContents(horizontal: boolean) {
         if (this._horizontal === horizontal) {
             return this.isMainAxisFitToContents();
         } else {
@@ -173,7 +187,7 @@ export default class FlexLayout {
         return !FlexUtils.isZeroAxisSize(this.item, !this._horizontal);
     }
 
-    getAxisMinSize(horizontal) {
+    getAxisMinSize(horizontal: boolean) {
         if (this._horizontal === horizontal) {
             return this._getMainAxisMinSize();
         } else {
@@ -189,12 +203,12 @@ export default class FlexLayout {
         return this._lineLayouter.crossAxisMinSize;
     }
 
-    resizeMainAxis(size) {
+    resizeMainAxis(size: number) {
         if (this.mainAxisSize !== size) {
             if (this.recalc > 0) {
                 this.performResizeMainAxis(size);
             } else {
-                if (this._checkValidCacheMainAxisResize()) {
+                if (this._checkValidCacheMainAxisResize(size)) {
                     this.mainAxisSize = size;
                     this._fitCrossAxisSizeToContents();
                 } else {
@@ -206,7 +220,7 @@ export default class FlexLayout {
         }
     }
 
-    _checkValidCacheMainAxisResize(size) {
+    _checkValidCacheMainAxisResize(size: number) {
         const isFinalMainAxisSize = (size === this.targetMainAxisSize);
         if (isFinalMainAxisSize) {
             return true;
@@ -220,9 +234,8 @@ export default class FlexLayout {
         return false;
     }
 
-    performResizeMainAxis(size) {
-        const isShrinking = (size < this.mainAxisSize);
-        this._shrunk = isShrinking;
+    performResizeMainAxis(size: number) {
+        this._shrunk = (size < this.mainAxisSize);
 
         this.mainAxisSize = size;
 
@@ -231,7 +244,7 @@ export default class FlexLayout {
         this._resizingMainAxis = false;
     }
 
-    resizeCrossAxis(size) {
+    resizeCrossAxis(size: number) {
         if (this.crossAxisSize !== size) {
             if (this.recalc > 0) {
                 this.performResizeCrossAxis(size);
@@ -241,7 +254,7 @@ export default class FlexLayout {
         }
     }
 
-    performResizeCrossAxis(size) {
+    performResizeCrossAxis(size: number) {
         this.crossAxisSize = size;
 
         this._resizingCrossAxis = true;
@@ -286,11 +299,11 @@ export default class FlexLayout {
     }
 
     get _horizontal() {
-        return this._flexContainer._horizontal;
+        return this._flexContainer.horizontal;
     }
 
     get _reverse() {
-        return this._flexContainer._reverse;
+        return this._flexContainer.reverse;
     }
 
     get item() {

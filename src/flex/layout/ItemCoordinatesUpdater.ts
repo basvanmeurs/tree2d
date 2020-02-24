@@ -1,4 +1,4 @@
-import FlexUtils from "../FlexUtils";
+import FlexUtils from "../FlexUtils.js";
 
 export default class ItemCoordinatesUpdater {
 
