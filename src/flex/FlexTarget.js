@@ -27,8 +27,8 @@ export default class FlexTarget {
 
         this._originalX = 0;
         this._originalY = 0;
-        this._originalWidth = 0;
-        this._originalHeight = 0;
+        this._originalW = 0;
+        this._originalH = 0;
 
         this._flex = null;
         this._flexItem = null;
@@ -107,12 +107,12 @@ export default class FlexTarget {
     _enableFlex() {
         this._flex = new FlexContainer(this);
         this._checkEnabled();
-        this.changedDimensions();
+        this.forceLayout();
         this._enableChildrenAsFlexItems();
     }
 
     _disableFlex() {
-        this.changedDimensions();
+        this.forceLayout();
         this._flex = null;
         this._checkEnabled();
         this._disableChildrenAsFlexItems();
@@ -207,15 +207,15 @@ export default class FlexTarget {
         const target = this._target;
         target.x = this._originalX;
         target.y = this._originalY;
-        target.setDimensions(this._originalWidth, this._originalHeight);
+        target.setDimensions(this._originalW, this._originalH);
     }
 
     _setupTargetForFlex() {
         const target = this._target;
         this._originalX = target._x;
         this._originalY = target._y;
-        this._originalWidth = target._w;
-        this._originalHeight = target._h;
+        this._originalW = target._w;
+        this._originalH = target._h;
     }
     
     setParent(from, to) {
@@ -299,16 +299,12 @@ export default class FlexTarget {
         }
     }
 
-    changedDimensions(changeWidth = true, changeHeight = true) {
-        this._updateRecalc(changeWidth, changeHeight);
-    }
-
     changedContents() {
         this._updateRecalc();
     }
 
-    forceLayout() {
-        this._updateRecalc();
+    forceLayout(changeWidth = true, changeHeight = true) {
+        this._updateRecalc(changeWidth, changeHeight);
     }
 
     isChanged() {
@@ -414,7 +410,7 @@ export default class FlexTarget {
         return this._originalX;
     }
 
-    setOriginalXWithoutUpdatingLayout(v) {
+    set originalX(v) {
         this._originalX = v;
     }
 
@@ -422,29 +418,29 @@ export default class FlexTarget {
         return this._originalY;
     }
 
-    setOriginalYWithoutUpdatingLayout(v) {
+    set originalY(v) {
         this._originalY = v;
     }
 
-    get originalWidth() {
-        return this._originalWidth;
+    get originalW() {
+        return this._originalW;
     }
 
-    set originalWidth(v) {
-        if (this._originalWidth !== v) {
-            this._originalWidth = v;
-            this.changedDimensions(true, false);
+    set originalW(v) {
+        if (this._originalW !== v) {
+            this._originalW = v;
+            this.forceLayout(true, false);
         }
     }
 
-    get originalHeight() {
-        return this._originalHeight;
+    get originalH() {
+        return this._originalH;
     }
 
-    set originalHeight(v) {
-        if (this._originalHeight !== v) {
-            this._originalHeight = v;
-            this.changedDimensions(false, true);
+    set originalH(v) {
+        if (this._originalH !== v) {
+            this._originalH = v;
+            this.forceLayout(false, true);
         }
     }
 
