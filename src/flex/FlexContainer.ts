@@ -1,35 +1,22 @@
-import Base from "../tree/Base";
 import Layout from "./layout/FlexLayout";
 import FlexTarget from "./FlexTarget";
+import { SpacingMode } from "./layout/SpacingCalculator";
+
+export type AlignItemsMode = "flex-start" | "flex-end" | "center" | "stretch";
+
+export type JustifyContentMode = SpacingMode;
+
+export type AlignContentMode = "flex-start" | "flex-end" | "center" | "space-between" | "space-around" | "space-evenly";
 
 export default class FlexContainer {
-    public static readonly ALIGN_ITEMS = ["flex-start", "flex-end", "center", "stretch"];
-    public static readonly ALIGN_CONTENT = [
-        "flex-start",
-        "flex-end",
-        "center",
-        "space-between",
-        "space-around",
-        "space-evenly",
-        "stretch"
-    ];
-    public static readonly JUSTIFY_CONTENT = [
-        "flex-start",
-        "flex-end",
-        "center",
-        "space-between",
-        "space-around",
-        "space-evenly"
-    ];
-
     public horizontal: boolean;
     public reverse: boolean;
 
     public _layout: Layout;
     private _wrap: boolean;
-    private _alignItems: string;
-    private _justifyContent: string;
-    private _alignContent: string;
+    private _alignItems: AlignItemsMode;
+    private _justifyContent: JustifyContentMode;
+    private _alignContent: AlignContentMode;
 
     private _paddingLeft: number;
     private _paddingTop: number;
@@ -52,7 +39,7 @@ export default class FlexContainer {
     }
 
     _changedDimensions() {
-        this.item.changedDimensions();
+        this.item.forceLayout();
     }
 
     _changedContents() {
@@ -85,11 +72,9 @@ export default class FlexContainer {
         return this._alignItems;
     }
 
-    set alignItems(v) {
+    set alignItems(v: AlignItemsMode) {
         if (this._alignItems === v) return;
-        if (FlexContainer.ALIGN_ITEMS.indexOf(v) === -1) {
-            throw new Error("Unknown alignItems, options: " + FlexContainer.ALIGN_ITEMS.join(","));
-        }
+
         this._alignItems = v;
 
         this._changedContents();
@@ -99,11 +84,8 @@ export default class FlexContainer {
         return this._alignContent;
     }
 
-    set alignContent(v) {
+    set alignContent(v: AlignContentMode) {
         if (this._alignContent === v) return;
-        if (FlexContainer.ALIGN_CONTENT.indexOf(v) === -1) {
-            throw new Error("Unknown alignContent, options: " + FlexContainer.ALIGN_CONTENT.join(","));
-        }
         this._alignContent = v;
 
         this._changedContents();
@@ -113,12 +95,9 @@ export default class FlexContainer {
         return this._justifyContent;
     }
 
-    set justifyContent(v) {
+    set justifyContent(v: JustifyContentMode) {
         if (this._justifyContent === v) return;
 
-        if (FlexContainer.JUSTIFY_CONTENT.indexOf(v) === -1) {
-            throw new Error("Unknown justifyContent, options: " + FlexContainer.JUSTIFY_CONTENT.join(","));
-        }
         this._justifyContent = v;
 
         this._changedContents();
@@ -169,9 +148,5 @@ export default class FlexContainer {
 
     get paddingBottom() {
         return this._paddingBottom;
-    }
-
-    patch(settings) {
-        Base.patchObject(this, settings);
     }
 }

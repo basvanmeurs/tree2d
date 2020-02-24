@@ -1,6 +1,15 @@
+export type SpacingMode =
+    | "flex-start"
+    | "flex-end"
+    | "center"
+    | "space-between"
+    | "space-around"
+    | "space-evenly"
+    | "stretch";
+
 export default class SpacingCalculator {
     static getSpacing(
-        mode: "flex-start" | "flex-end" | "center" | "space-between" | "space-around" | "space-evenly" | "stretch",
+        mode: SpacingMode,
         numberOfItems: number,
         remainingSpace: number
     ): {

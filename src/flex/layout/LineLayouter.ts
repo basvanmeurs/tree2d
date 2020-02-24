@@ -1,14 +1,22 @@
 import LineLayout from "./line/LineLayout";
+import FlexLayout from "./FlexLayout";
+import FlexTarget from "../FlexTarget";
 
 /**
  * Distributes items over layout lines.
  */
 export default class LineLayouter {
-    constructor(layout) {
+    private _layout: FlexLayout;
+    private _mainAxisMinSize: number = -1;
+    private _crossAxisMinSize: number = -1;
+    private _mainAxisContentSize: number = 0;
+    private _lines?: LineLayout[];
+    private _curMainAxisPos: number = 0;
+    private _mainAxisSize: number = 0;
+    private _maxMainAxisPos: number = 0;
+
+    constructor(layout: FlexLayout) {
         this._layout = layout;
-        this._mainAxisMinSize = -1;
-        this._crossAxisMinSize = -1;
-        this._mainAxisContentSize = 0;
     }
 
     get lines() {
@@ -47,7 +55,7 @@ export default class LineLayouter {
             this._layoutFlexItem(item);
 
             // Get predicted main axis size.
-            const itemMainAxisSize = item.flexItem._getMainAxisLayoutSizeWithPaddingAndMargin();
+            const itemMainAxisSize = item.flexItem!._getMainAxisLayoutSizeWithPaddingAndMargin();
 
             if (wrap && i > startIndex) {
                 const isOverflowing = this._curMainAxisPos + itemMainAxisSize > this._mainAxisSize;
@@ -66,11 +74,11 @@ export default class LineLayouter {
         }
     }
 
-    _layoutFlexItem(item) {
+    _layoutFlexItem(item: FlexTarget) {
         if (item.isFlexEnabled()) {
-            item.flexLayout.updateTreeLayout();
+            item.flexLayout!.updateTreeLayout();
         } else {
-            item.flexItem._resetLayoutSize();
+            item.flexItem!._resetLayoutSize();
         }
     }
 
@@ -85,18 +93,18 @@ export default class LineLayouter {
         this._mainAxisContentSize = 0;
     }
 
-    _addToMainAxisPos(itemMainAxisSize) {
+    _addToMainAxisPos(itemMainAxisSize: number) {
         this._curMainAxisPos += itemMainAxisSize;
         if (this._curMainAxisPos > this._maxMainAxisPos) {
             this._maxMainAxisPos = this._curMainAxisPos;
         }
     }
 
-    _layoutLine(startIndex, endIndex) {
+    _layoutLine(startIndex: number, endIndex: number) {
         const availableSpace = this._getAvailableMainAxisLayoutSpace();
         const line = new LineLayout(this._layout, startIndex, endIndex, availableSpace);
         line.performLayout();
-        this._lines.push(line);
+        this._lines!.push(line);
 
         if (this._mainAxisContentSize === 0 || this._curMainAxisPos > this._mainAxisContentSize) {
             this._mainAxisContentSize = this._curMainAxisPos;
@@ -116,15 +124,16 @@ export default class LineLayouter {
         const items = this._layout.items;
         for (let i = 0, n = items.length; i < n; i++) {
             const item = items[i];
-            const itemCrossAxisMinSize = item.flexItem._getCrossAxisMinSizeWithPaddingAndMargin();
+            const itemCrossAxisMinSize = item.flexItem!._getCrossAxisMinSizeWithPaddingAndMargin();
             crossAxisMinSize = Math.max(crossAxisMinSize, itemCrossAxisMinSize);
         }
         return crossAxisMinSize;
     }
 
     _getMainAxisMinSize() {
-        if (this._lines.length === 1) {
-            return this._lines[0].getMainAxisMinSize();
+        const lines = this._lines!;
+        if (lines.length === 1) {
+            return lines[0].getMainAxisMinSize();
         } else {
             // Wrapping lines: specified width is used as min width (in accordance to W3C flexbox).
             return this._layout.mainAxisSize;

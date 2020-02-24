@@ -3,6 +3,7 @@ import FlexUtils from "../FlexUtils.js";
 import LineLayouter from "./LineLayouter";
 import ItemCoordinatesUpdater from "./ItemCoordinatesUpdater";
 import FlexContainer from "../FlexContainer";
+import FlexTarget from "../FlexTarget";
 
 /**
  * Layouts a flex container (and descendants).
@@ -45,7 +46,7 @@ export default class FlexLayout {
     }
 
     layoutTree() {
-        const isSubTree = !!(this.item.flexParent);
+        const isSubTree = !!this.item.flexParent;
         if (isSubTree) {
             // Use the dimensions set by the parent flex tree.
             this._updateSubTreeLayout();
@@ -101,7 +102,9 @@ export default class FlexLayout {
 
     _setInitialAxisSizes() {
         if (this.item.isFlexItemEnabled()) {
-            this.item.flexItem._resetLayoutSize();
+            if (this.item.flexItem) {
+                this.item.flexItem._resetLayoutSize();
+            }
         } else {
             this.mainAxisSize = this._getMainAxisBasis();
             this.crossAxisSize = this._getCrossAxisBasis();
@@ -271,7 +274,7 @@ export default class FlexLayout {
     }
 
     getParentFlexContainer() {
-        return this.item.isFlexItemEnabled() ? this.item.flexItem.ctr : undefined;
+        return this.item.isFlexItemEnabled() ? this.item.flexItem!.ctr : undefined;
     }
 
     _getHorizontalPadding() {
@@ -310,7 +313,7 @@ export default class FlexLayout {
         return this._flexContainer.item;
     }
 
-    get items() {
+    get items(): FlexTarget[] {
         return this.item.items;
     }
 
@@ -330,12 +333,12 @@ export default class FlexLayout {
         return FlexUtils.getAxisLayoutSize(this.item, this._horizontal);
     }
 
-    get crossAxisSize() {
-        return FlexUtils.getAxisLayoutSize(this.item, !this._horizontal);
-    }
-
     set mainAxisSize(v) {
         FlexUtils.setAxisLayoutSize(this.item, this._horizontal, v);
+    }
+
+    get crossAxisSize() {
+        return FlexUtils.getAxisLayoutSize(this.item, !this._horizontal);
     }
 
     set crossAxisSize(v) {

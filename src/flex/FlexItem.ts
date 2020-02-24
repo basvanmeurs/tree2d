@@ -1,5 +1,5 @@
 import FlexUtils from "./FlexUtils.js";
-import FlexContainer from "./FlexContainer";
+import FlexContainer, { AlignItemsMode } from "./FlexContainer";
 import FlexTarget from "./FlexTarget";
 
 export default class FlexItem {
@@ -8,36 +8,23 @@ export default class FlexItem {
     _ctr?: FlexContainer;
     _item: FlexTarget;
 
-    _grow: number;
-    _shrink: number;
-    _alignSelf?: string;
+    _grow: number = 0;
+    _shrink: number = FlexItem.SHRINK_AUTO;
+    _alignSelf?: AlignItemsMode;
 
-    _minWidth: number;
-    _minHeight: number;
+    _minWidth: number = 0;
+    _minHeight: number = 0;
 
-    _maxWidth: number;
-    _maxHeight: number;
+    _maxWidth: number = 0;
+    _maxHeight: number = 0;
 
-    _marginLeft: number;
-    _marginTop: number;
-    _marginRight: number;
-    _marginBottom: number;
+    _marginLeft: number = 0;
+    _marginTop: number = 0;
+    _marginRight: number = 0;
+    _marginBottom: number = 0;
 
     constructor(item: FlexTarget) {
         this._item = item;
-        this._grow = 0;
-        this._shrink = FlexItem.SHRINK_AUTO;
-
-        this._minWidth = 0;
-        this._minHeight = 0;
-
-        this._maxWidth = 0;
-        this._maxHeight = 0;
-
-        this._marginLeft = 0;
-        this._marginTop = 0;
-        this._marginRight = 0;
-        this._marginBottom = 0;
     }
 
     get item() {
@@ -48,14 +35,18 @@ export default class FlexItem {
         return this._grow;
     }
 
-    set grow(v: number | string) {
+    set grow(v: number) {
         if (this._grow === v) return;
 
-        if (typeof v === "string") {
-            this._grow = parseInt(v) || 0;
-        } else {
-            this._grow = v;
-        }
+        this._grow = v;
+
+        this._changed();
+    }
+
+    set shrink(v: number) {
+        if (this._shrink === v) return;
+
+        this._shrink = v;
 
         this._changed();
     }
@@ -76,31 +67,16 @@ export default class FlexItem {
         }
     }
 
-    set shrink(v: number | string) {
-        if (this._shrink === v) return;
-
-        if (typeof v === "string") {
-            this._shrink = parseInt(v) || 0;
-        } else {
-            this._shrink = v;
-        }
-
-        this._changed();
-    }
-
-    get alignSelf() {
+    get alignSelf(): AlignItemsMode | undefined {
         return this._alignSelf;
     }
 
-    set alignSelf(v) {
+    set alignSelf(v: AlignItemsMode | undefined) {
         if (this._alignSelf === v) return;
 
         if (v === undefined) {
             this._alignSelf = undefined;
         } else {
-            if (FlexContainer.ALIGN_ITEMS.indexOf(v) === -1) {
-                throw new Error("Unknown alignSelf, options: " + FlexContainer.ALIGN_ITEMS.join(","));
-            }
             this._alignSelf = v;
         }
 
@@ -198,11 +174,11 @@ export default class FlexItem {
         if (this.ctr) this.ctr._changedContents();
     }
 
-    set ctr(v: FlexContainer|undefined) {
+    set ctr(v: FlexContainer | undefined) {
         this._ctr = v;
     }
 
-    get ctr(): FlexContainer|undefined {
+    get ctr(): FlexContainer | undefined {
         return this._ctr;
     }
 

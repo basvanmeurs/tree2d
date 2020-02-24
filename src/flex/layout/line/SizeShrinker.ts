@@ -1,11 +1,17 @@
+import LineLayout from "./LineLayout";
+
 export default class SizeShrinker {
-    constructor(line) {
+
+    private _line: LineLayout;
+
+    private _amountRemaining: number = 0;
+    private _shrunkSize: number = 0;
+
+    constructor(line: LineLayout) {
         this._line = line;
-        this._amountRemaining = 0;
-        this._shrunkSize = 0;
     }
 
-    shrink(amount) {
+    shrink(amount: number) {
         this._shrunkSize = 0;
 
         this._amountRemaining = amount;
@@ -16,7 +22,7 @@ export default class SizeShrinker {
                 const amountPerShrink = this._amountRemaining / totalShrinkAmount;
                 for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
                     const item = items[i];
-                    const flexItem = item.flexItem;
+                    const flexItem = item.flexItem!;
                     const shrinkAmount = flexItem.shrink;
                     const isShrinkableItem = shrinkAmount > 0;
                     if (isShrinkableItem) {
@@ -54,7 +60,7 @@ export default class SizeShrinker {
         const items = this._line.items;
         for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
             const item = items[i];
-            const flexItem = item.flexItem;
+            const flexItem = item.flexItem!;
 
             if (flexItem.shrink) {
                 const minSize = flexItem._getMainAxisMinSize();

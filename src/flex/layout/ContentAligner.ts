@@ -1,7 +1,11 @@
 import SpacingCalculator from "./SpacingCalculator";
+import FlexLayout from "./FlexLayout";
 
 export default class ContentAligner {
-    constructor(layout) {
+    private _layout: FlexLayout;
+    private _totalCrossAxisSize: number;
+
+    constructor(layout: FlexLayout) {
         this._layout = layout;
         this._totalCrossAxisSize = 0;
     }
@@ -63,9 +67,9 @@ export default class ContentAligner {
         return total;
     }
 
-    _getSpacing(remainingSpace) {
+    _getSpacing(remainingSpace: number) {
         const mode = this._layout._flexContainer.alignContent;
-        const numberOfItems = this._lines.length;
+        const numberOfItems = this._lines!.length;
         return SpacingCalculator.getSpacing(mode, numberOfItems, remainingSpace);
     }
 }

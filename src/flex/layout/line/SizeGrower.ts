@@ -1,11 +1,15 @@
+import LineLayout from "./LineLayout";
+
 export default class SizeGrower {
-    constructor(line) {
+    private _line: LineLayout;
+    private _amountRemaining: number = 0;
+    private _grownSize: number = 0;
+
+    constructor(line: LineLayout) {
         this._line = line;
-        this._amountRemaining = 0;
-        this._grownSize = 0;
     }
 
-    grow(amount) {
+    grow(amount: number) {
         this._grownSize = 0;
 
         this._amountRemaining = amount;
@@ -16,7 +20,7 @@ export default class SizeGrower {
                 const amountPerGrow = this._amountRemaining / totalGrowAmount;
                 for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
                     const item = items[i];
-                    const flexItem = item.flexItem;
+                    const flexItem = item.flexItem!;
                     const growAmount = flexItem.grow;
                     const isGrowableItem = growAmount > 0;
                     if (isGrowableItem) {
@@ -61,7 +65,7 @@ export default class SizeGrower {
         const items = this._line.items;
         for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
             const item = items[i];
-            const flexItem = item.flexItem;
+            const flexItem = item.flexItem!;
 
             if (flexItem.grow) {
                 const maxSize = flexItem._getMainAxisMaxSizeSetting();

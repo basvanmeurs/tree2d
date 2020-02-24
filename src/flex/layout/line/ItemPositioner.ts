@@ -1,7 +1,11 @@
 import SpacingCalculator from "../SpacingCalculator";
+import LineLayout from "./LineLayout";
 
 export default class ItemPositioner {
-    constructor(lineLayout) {
+
+    private _line: LineLayout;
+
+    constructor(lineLayout: LineLayout) {
         this._line = lineLayout;
     }
 
@@ -18,8 +22,8 @@ export default class ItemPositioner {
         for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
             const item = items[i];
 
-            item.flexItem._setMainAxisLayoutPos(currentPos);
-            currentPos += item.flexItem._getMainAxisLayoutSizeWithPaddingAndMargin();
+            item.flexItem!._setMainAxisLayoutPos(currentPos);
+            currentPos += item.flexItem!._getMainAxisLayoutSizeWithPaddingAndMargin();
             currentPos += spacingBetween;
         }
     }

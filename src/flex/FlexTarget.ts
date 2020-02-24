@@ -250,7 +250,7 @@ export default class FlexTarget {
         return this._items;
     }
 
-    _getFlexItems() {
+    _getFlexItems(): FlexTarget[] {
         const items = [];
         const children = this._target._children;
         if (children) {

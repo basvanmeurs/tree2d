@@ -2,9 +2,19 @@ import SizeShrinker from "./SizeShrinker";
 import SizeGrower from "./SizeGrower";
 import ItemPositioner from "./ItemPositioner";
 import ItemAligner from "./ItemAligner";
+import FlexLayout from "../FlexLayout";
+import FlexTarget from "../../FlexTarget";
 
 export default class LineLayout {
-    constructor(layout, startIndex, endIndex, availableSpace) {
+
+    public _layout: FlexLayout;
+    public items: FlexTarget[];
+    public startIndex: number;
+    public endIndex: number;
+    public _availableSpace: number;
+    private _crossAxisMaxLayoutSize: number;
+
+    constructor(layout: FlexLayout, startIndex: number, endIndex: number, availableSpace: number) {
         this._layout = layout;
         this.items = layout.items;
         this.startIndex = startIndex;
@@ -26,13 +36,13 @@ export default class LineLayout {
         }
     }
 
-    _growItemSizes(amount) {
+    _growItemSizes(amount: number) {
         const grower = new SizeGrower(this);
         grower.grow(amount);
         this._availableSpace -= grower.getGrownSize();
     }
 
-    _shrinkItemSizes(amount) {
+    _shrinkItemSizes(amount: number) {
         const shrinker = new SizeShrinker(this);
         shrinker.shrink(amount);
         this._availableSpace += shrinker.getShrunkSize();
@@ -55,7 +65,7 @@ export default class LineLayout {
         let mainAxisMinSize = 0;
         for (let i = this.startIndex; i <= this.endIndex; i++) {
             const item = this.items[i];
-            mainAxisMinSize += item.flexItem._getMainAxisMinSizeWithPaddingAndMargin();
+            mainAxisMinSize += item.flexItem!._getMainAxisMinSizeWithPaddingAndMargin();
         }
         return mainAxisMinSize;
     }
@@ -82,7 +92,7 @@ export default class LineLayout {
         let crossAxisMaxSize = 0;
         for (let i = this.startIndex; i <= this.endIndex; i++) {
             const item = this.items[i];
-            crossAxisMaxSize = Math.max(crossAxisMaxSize, item.flexItem._getCrossAxisLayoutSizeWithPaddingAndMargin());
+            crossAxisMaxSize = Math.max(crossAxisMaxSize, item.flexItem!._getCrossAxisLayoutSizeWithPaddingAndMargin());
         }
         return crossAxisMaxSize;
     }

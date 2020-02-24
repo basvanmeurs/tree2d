@@ -1,9 +1,16 @@
 import FlexUtils from "../FlexUtils.js";
+import FlexLayout from "./FlexLayout";
+import FlexTarget from "../FlexTarget";
 
 export default class ItemCoordinatesUpdater {
-    constructor(layout) {
+    private _layout: FlexLayout;
+    private _isReverse: boolean;
+    private _horizontalPaddingOffset: number;
+    private _verticalPaddingOffset: number;
+
+    constructor(layout: FlexLayout) {
         this._layout = layout;
-        this._isReverse = this._flexContainer._reverse;
+        this._isReverse = this._flexContainer.reverse;
         this._horizontalPaddingOffset = this._layout._getHorizontalPaddingOffset();
         this._verticalPaddingOffset = this._layout._getVerticalPaddingOffset();
     }
@@ -54,10 +61,10 @@ export default class ItemCoordinatesUpdater {
         }
     }
 
-    _validateItemCache(item) {
+    _validateItemCache(item: FlexTarget) {
         if (item.recalc === 0) {
             if (item.isFlexEnabled()) {
-                const layout = item._flex._layout;
+                const layout = item._flex!._layout;
 
                 const dimensionsMatchPreviousResult = item.w === item.target.w && item.h === item.target.h;
                 if (dimensionsMatchPreviousResult) {
@@ -73,12 +80,12 @@ export default class ItemCoordinatesUpdater {
         return false;
     }
 
-    _finalizeItemAndChildren(item) {
+    _finalizeItemAndChildren(item: FlexTarget) {
         this._finalizeItem(item);
         this._finalizeItemChildren(item);
     }
 
-    _finalizeItem(item) {
+    _finalizeItem(item: FlexTarget) {
         if (this._isReverse) {
             this._reverseMainAxisLayoutPos(item);
         }
@@ -93,8 +100,8 @@ export default class ItemCoordinatesUpdater {
 
         const flex = item.flex;
         if (flex) {
-            w += item._flex._layout._getHorizontalPadding();
-            h += item._flex._layout._getVerticalPadding();
+            w += flex._layout._getHorizontalPadding();
+            h += flex._layout._getVerticalPadding();
         }
 
         const flexItem = item.flexItem;
@@ -107,7 +114,7 @@ export default class ItemCoordinatesUpdater {
         item.setLayout(x, y, w, h);
     }
 
-    _finalizeItemChildren(item) {
+    _finalizeItemChildren(item: FlexTarget) {
         const flex = item._flex;
         if (flex) {
             const updater = new ItemCoordinatesUpdater(flex._layout);
@@ -115,10 +122,10 @@ export default class ItemCoordinatesUpdater {
         }
     }
 
-    _reverseMainAxisLayoutPos(item) {
+    _reverseMainAxisLayoutPos(item: FlexTarget) {
         const endPos =
-            item.flexItem._getMainAxisLayoutPos() + item.flexItem._getMainAxisLayoutSizeWithPaddingAndMargin();
+            item.flexItem!._getMainAxisLayoutPos() + item.flexItem!._getMainAxisLayoutSizeWithPaddingAndMargin();
         const reversedPos = this._layout.mainAxisSize - endPos;
-        item.flexItem._setMainAxisLayoutPos(reversedPos);
+        item.flexItem!._setMainAxisLayoutPos(reversedPos);
     }
 }
