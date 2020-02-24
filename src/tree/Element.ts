@@ -3,8 +3,7 @@
  * Copyright Metrological, 2017
  */
 
-import StageUtils from "./StageUtils";
-import ElementCore from "./core/ElementCore";
+import ElementCore, {FunctionH, FunctionW, FunctionX, FunctionY} from "./core/ElementCore";
 import Base from "./Base";
 
 import Utils from "./Utils";
@@ -39,23 +38,8 @@ class Element {
     // The currently displayed texture. May differ from this.texture while loading.
     private __displayedTexture?: Texture;
 
-    // Tags that can be used to identify/search for a specific element.
-    private __tags?: string[];
-
-    // The tree's tags mapping. This contains all known tags with all elements in the branch.
-    private __treeTags?: Map<string, Set<Element>>;
-
-    // Tagged elements in this branch will not be reachable from ancestors of this element.
-    private __tagRoot: boolean = false;
-
     // Contains the child elements.
     private __childList?: ElementChildList;
-
-    // Fixed width of this element.
-    private _w: number;
-
-    // Fixed height of this element.
-    private _h: number;
 
     private listeners? : ElementListeners;
 
@@ -63,10 +47,6 @@ class Element {
         this.stage = stage;
 
         this.__core = new ElementCore(this);
-
-        this._w = 0;
-
-        this._h = 0;
 
         this.__start();
     }
@@ -87,29 +67,23 @@ class Element {
 
     set ref(ref: string|undefined) {
         if (this.__ref !== ref) {
-            const charcode = ref.charCodeAt(0);
-            if (!Utils.isUcChar(charcode)) {
-                this._throwError("Ref must start with an upper case character: " + ref);
-            }
             if (this.__ref !== undefined) {
-                this.removeTag(this.__ref);
-                if (this.__parent) {
-                    this.__parent.__childList.clearRef(this.__ref);
+                if (this.__parent !== undefined) {
+                    this.__parent._children.clearRef(this.__ref);
                 }
             }
 
             this.__ref = ref;
 
             if (this.__ref) {
-                this._addTag(this.__ref);
                 if (this.__parent) {
-                    this.__parent.__childList.setRef(this.__ref, this);
+                    this.__parent._children.setRef(this.__ref, this);
                 }
             }
         }
     }
 
-    get ref(): string {
+    get ref(): string|undefined {
         return this.__ref;
     }
 
@@ -130,15 +104,7 @@ class Element {
     _setParent(parent: Element) {
         if (this.__parent === parent) return;
 
-        if (this.__parent) {
-            this._unsetTagsParent();
-        }
-
         this.__parent = parent;
-
-        if (parent) {
-            this._setTagsParent();
-        }
 
         this._updateAttachedFlag();
         this._updateEnabledFlag();
@@ -146,68 +112,6 @@ class Element {
         if (this.isRoot && parent) {
             this._throwError("Root should not be added as a child! Results are unspecified!");
         }
-    };
-
-    getDepth(): number {
-        let depth = 0;
-
-        let p = this.__parent;
-        while(p) {
-            depth++;
-            p = p.__parent;
-        }
-
-        return depth;
-    };
-
-    getAncestor(l: number): Element {
-        let p : Element = this;
-        while (l > 0 && p.__parent) {
-            p = p.__parent;
-            l--;
-        }
-        return p;
-    };
-
-    getAncestorAtDepth(depth: number): Element|undefined {
-        let levels = this.getDepth() - depth;
-        if (levels < 0) {
-            return undefined;
-        }
-        return this.getAncestor(levels);
-    };
-
-    isAncestorOf(c : Element): boolean {
-        let p = c;
-        while((p = p.parent)) {
-            if (this === p) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    getSharedAncestor(c: Element) : Element|undefined {
-        let o1: Element = this;
-        let o2: Element = c;
-        let l1 = o1.getDepth();
-        let l2 = o2.getDepth();
-        if (l1 > l2) {
-            o1 = o1.getAncestor(l1 - l2);
-        } else if (l2 > l1) {
-            o2 = o2.getAncestor(l2 - l1);
-        }
-
-        do {
-            if (o1 === o2) {
-                return o1;
-            }
-
-            o1 = o1.__parent;
-            o2 = o2.__parent;
-        } while (o1 && o2);
-
-        return undefined;
     };
 
     get attached(): boolean {
@@ -231,7 +135,7 @@ class Element {
     };
 
     private _isActive(): boolean {
-        return this._isEnabled() && this.withinBoundsMargin;
+        return this._isEnabled() && this.isWithinBoundsMargin();
     };
 
     protected _updateAttachedFlag(): void {
@@ -261,7 +165,7 @@ class Element {
         }
     };
 
-    protected _updateEnabledFlag(): void {
+    public _updateEnabledFlag(): void {
         let newEnabled = this._isEnabled();
         if (this.__enabled !== newEnabled) {
             if (newEnabled) {
@@ -288,14 +192,14 @@ class Element {
         this.__enabled = true;
 
         // Force re-check of texture because dimensions might have changed (cutting).
-        this._updateDimensions();
+        this._updateTextureDimensions();
         this._updateTextureCoords();
 
         if (this.__texture) {
             this.__texture.addElement(this);
         }
 
-        if (this.withinBoundsMargin) {
+        if (this.isWithinBoundsMargin()) {
             this._setActiveFlag();
         }
 
@@ -422,16 +326,6 @@ class Element {
         }
     }
 
-    public set onResize(v: Function|undefined) {
-        this.getListeners().onResize = v;
-    }
-
-    protected _onResize(): void {
-        if (this.listeners && this.listeners.onResize) {
-            this.listeners.onResize(this);
-        }
-    }
-
     public set onTextureError(v: Function|undefined) {
         this.getListeners().onTextureError = v;
     }
@@ -461,48 +355,23 @@ class Element {
             this.listeners.onTextureUnloaded(this, texture);
         }
     }
-    private _getRenderWidth(): number {
-        if (this._w) {
-            return this._w;
-        } else if (this.__displayedTexture) {
-            return this.__displayedTexture.getRenderWidth();
-        } else if (this.__texture) {
-            // Texture already loaded, but not yet updated (probably because this element is not active).
-            return this.__texture.getRenderWidth();
-        } else {
-            return 0;
-        }
-    };
 
-    private _getRenderHeight(): number {
-        if (this._h) {
-            return this._h;
-        } else if (this.__displayedTexture) {
-            return this.__displayedTexture.getRenderHeight();
-        } else if (this.__texture) {
-            // Texture already loaded, but not yet updated (probably because this element is not active).
-            return this.__texture.getRenderHeight();
-        } else {
-            return 0;
-        }
-    };
+    public set onResize(v: Function|undefined) {
+        this.getListeners().onResize = v;
+    }
 
-    get renderWidth(): number {
-        if (this.__enabled) {
-            // Layouted width is only maintained while element is visible.
-            return this.__core.getRenderWidth();
-        } else {
-            // Fallback: return fixed or texture's width.
-            return this._getRenderWidth();
+    public _onResize(w: number, h: number): void {
+        if (this.listeners && this.listeners.onResize) {
+            this.listeners.onResize(this, w, h);
         }
     }
 
+    get renderWidth(): number {
+        return this.__core.getRenderWidth();
+    }
+
     get renderHeight(): number {
-        if (this.__enabled) {
-            return this.__core.getRenderHeight();
-        } else {
-            return this._getRenderHeight();
-        }
+        return this.__core.getRenderHeight();
     }
 
     get finalX(): number {
@@ -532,21 +401,21 @@ class Element {
             if (!this.__texture.isUsed() || !this._isEnabled()) {
                 // As this element is invisible, loading the texture will have no effect on the dimensions of this element.
                 // To help the developers, automatically update the dimensions.
-                this._updateDimensions();
+                this._updateTextureDimensions();
             }
         }
     }
 
     private _enableTextureError(): void {
         // txError event should automatically be re-triggered when a element becomes active.
-        const loadError = this.__texture.loadError;
+        const loadError = this.__texture!.loadError;
         if (loadError) {
-            this._onTextureError(loadError, this.__texture._source)
+            this._onTextureError(loadError, this.__texture!._source)
         }
     }
 
     private _enableTexture(): void {
-        if (this.__texture.isLoaded()) {
+        if (this.__texture!.isLoaded()) {
             this._setDisplayedTexture(this.__texture);
         } else {
             // We don't want to retain the old image as it wasn't visible anyway.
@@ -600,7 +469,7 @@ class Element {
                 if (this.__enabled) {
                     this.__texture.addElement(this);
 
-                    if (this.withinBoundsMargin) {
+                    if (this.isWithinBoundsMargin()) {
                         if (this.__texture.isLoaded()) {
                             this._setDisplayedTexture(this.__texture);
                         } else {
@@ -617,7 +486,7 @@ class Element {
                 prevTexture.removeElement(this);
             }
 
-            this._updateDimensions();
+            this._updateTextureDimensions();
         }
     }
 
@@ -635,11 +504,11 @@ class Element {
             }
         }
 
-        const prevSource = this.__core.displayedTextureSource ? this.__core.displayedTextureSource._source : undefined;
+        const prevSource = this.__core.displayedTextureSource ? this.__core.displayedTextureSource : undefined;
         const sourceChanged = (v ? v._source : undefined) !== prevSource;
 
         this.__displayedTexture = v;
-        this._updateDimensions();
+        this._updateTextureDimensions();
 
         if (this.__displayedTexture) {
             if (sourceChanged) {
@@ -654,8 +523,8 @@ class Element {
         if (sourceChanged) {
             if (this.__displayedTexture) {
                 this._onTextureLoaded(this.__displayedTexture);
-            } else {
-                this._onTextureUnloaded(this.__displayedTexture);
+            } else if (prevTexture) {
+                this._onTextureUnloaded(prevTexture);
             }
         }
     }
@@ -669,7 +538,7 @@ class Element {
     };
 
     onTextureSourceLoadError(loadError: any): void {
-        this._onTextureError(loadError, this.__texture._source);
+        this._onTextureError(loadError, this.__texture!._source);
     };
 
     forceRenderUpdate(): void {
@@ -677,26 +546,24 @@ class Element {
     }
 
     onDisplayedTextureClippingChanged(): void {
-        this._updateDimensions();
+        this._updateTextureDimensions();
         this._updateTextureCoords();
     };
 
     onPrecisionChanged(): void {
-        this._updateDimensions();
+        this._updateTextureDimensions();
     };
 
-    onDimensionsChanged(w: number, h: number): void {
-        if (this.texture instanceof TextTexture) {
-            this.texture.w = w;
-            this.texture.h = h;
-            this.w = w;
-            this.h = h;
+    private _updateTextureDimensions(): void {
+        let w = 0, h = 0;
+        if (this.__displayedTexture) {
+            w = this.__displayedTexture.getRenderWidth();
+            h = this.__displayedTexture.getRenderHeight();
+        } else if (this.__texture) {
+            // Texture already loaded, but not yet updated (probably because this element is not active).
+            w = this.__texture.getRenderWidth();
+            h = this.__texture.getRenderWidth();
         }
-    }
-
-    private _updateDimensions(): void {
-        let w = this._getRenderWidth();
-        let h = this._getRenderHeight();
 
         let unknownSize = false;
         if (!w || !h) {
@@ -712,9 +579,7 @@ class Element {
             }
         }
 
-        if (this.__core.setDimensions(w, h, unknownSize)) {
-            this._onResize();
-        }
+        this.__core.setTextureDimensions(w, h, unknownSize);
     }
 
     private _updateTextureCoords(): void {
@@ -765,391 +630,16 @@ class Element {
         return this.__core.getCornerPoints();
     }
 
-    private _unsetTagsParent(): void {
-        if (this.__tags) {
-            this.__tags.forEach((tag: string) => {
-                // Remove from treeTags.
-                let p : Element = this;
-                while ((p = p.__parent)) {
-                    let parentTreeTags = p.__treeTags.get(tag);
-                    parentTreeTags.delete(this);
-
-                    if (p.__tagRoot) {
-                        break;
-                    }
-                }
-            });
-        }
-
-        let tags = undefined;
-        let n = 0;
-        if (this.__treeTags) {
-            if (!this.__tagRoot) {
-                tags = Utils.iteratorToArray(this.__treeTags.keys());
-                n = tags.length;
-
-                if (n > 0) {
-                    for (let i = 0; i < n; i++) {
-                        let tagSet = this.__treeTags.get(tags[i]);
-
-                        // Remove from treeTags.
-                        let p : Element = this;
-                        while ((p = p.__parent)) {
-                            let parentTreeTags = p.__treeTags.get(tags[i]);
-
-                            tagSet.forEach(comp => {
-                                parentTreeTags.delete(comp);
-                            });
-
-                            if (p.__tagRoot) {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    _setTagsParent() {
-        // Just copy over the 'local' tags.
-        if (this.__tags) {
-            this.__tags.forEach((tag: string) => {
-                let p : Element = this;
-                while ((p = p.__parent)) {
-                    if (!p.__treeTags) {
-                        p.__treeTags = new Map();
-                    }
-
-                    let s = p.__treeTags.get(tag);
-                    if (!s) {
-                        s = new Set();
-                        p.__treeTags.set(tag, s);
-                    }
-
-                    s.add(this);
-
-                    if (p.__tagRoot) {
-                        break;
-                    }
-                }
-            });
-        }
-
-        if (this.__treeTags && this.__treeTags.size) {
-            if (!this.__tagRoot) {
-                this.__treeTags.forEach((tagSet, tag) => {
-                    let p: Element = this;
-                    while (!p.__tagRoot && (p = p.__parent)) {
-                        if (p.__tagRoot) {
-                            // Do not copy all subs.
-                        }
-                        if (!p.__treeTags) {
-                            p.__treeTags = new Map();
-                        }
-
-                        let s = p.__treeTags.get(tag);
-                        if (!s) {
-                            s = new Set();
-                            p.__treeTags.set(tag, s);
-                        }
-
-                        tagSet.forEach(function (comp) {
-                            s.add(comp);
-                        });
-                    }
-                });
-            }
-        }
-    };
-
-
-    _getByTag(tag) {
-        if (!this.__treeTags) {
-            return [];
-        }
-        let t = this.__treeTags.get(tag);
-        return t ? Utils.setToArray(t) : [];
-    };
-
-    getTags(): string[] {
-        return this.__tags || [];
-    };
-
-    setTags(tags) {
-        tags = tags.reduce((acc, tag) => {
-            return acc.concat(tag.split(' '));
-        }, []);
-
-        if (this.__ref) {
-            tags.push(this.__ref);
-        }
-
-        let i, n = tags.length;
-        let removes = [];
-        let adds = [];
-        for (i = 0; i < n; i++) {
-            if (!this.hasTag(tags[i])) {
-                adds.push(tags[i]);
-            }
-        }
-
-        let currentTags = this.tags || [];
-        n = currentTags.length;
-        for (i = 0; i < n; i++) {
-            if (tags.indexOf(currentTags[i]) == -1) {
-                removes.push(currentTags[i]);
-            }
-        }
-
-        for (i = 0; i < removes.length; i++) {
-            this.removeTag(removes[i]);
-        }
-
-        for (i = 0; i < adds.length; i++) {
-            this.addTag(adds[i]);
-        }
-    }
-
-    addTag(tag) {
-        if (tag.indexOf(' ') === -1) {
-            if (Utils.isUcChar(tag.charCodeAt(0))) {
-                this._throwError("Tag may not start with an upper case character.");
-            }
-
-            this._addTag(tag);
-        } else {
-            const tags = tag.split(' ');
-            for (let i = 0, m = tags.length; i < m; i++) {
-                const tag = tags[i];
-
-                if (Utils.isUcChar(tag.charCodeAt(0))) {
-                    this._throwError("Tag may not start with an upper case character.");
-                }
-
-                this._addTag(tag);
-            }
-        }
-    }
-
-    _addTag(tag) {
-        if (!this.__tags) {
-            this.__tags = [];
-        }
-        if (this.__tags.indexOf(tag) === -1) {
-            this.__tags.push(tag);
-
-            // Add to treeTags hierarchy.
-            let p = this.__parent;
-            if (p) {
-                do {
-                    if (!p.__treeTags) {
-                        p.__treeTags = new Map();
-                    }
-
-                    let s = p.__treeTags.get(tag);
-                    if (!s) {
-                        s = new Set();
-                        p.__treeTags.set(tag, s);
-                    }
-
-                    s.add(this);
-
-                } while (!p.__tagRoot && (p = p.__parent));
-            }
-        }
-    }
-
-    removeTag(tag) {
-        let i = this.__tags.indexOf(tag);
-        if (i !== -1) {
-            this.__tags.splice(i, 1);
-
-            // Remove from treeTags hierarchy.
-            let p = this.__parent;
-            if (p) {
-                do {
-                    let list = p.__treeTags.get(tag);
-                    if (list) {
-                        list.delete(this);
-                    }
-                } while (!p.__tagRoot && (p = p.__parent));
-            }
-        }
-    }
-
-    hasTag(tag) : boolean {
-        return (this.__tags && (this.__tags.indexOf(tag) !== -1));
-    }
-
-    tag(tag : string) : Element {
-        if (tag.indexOf(".") !== -1) {
-            return this.mtag(tag)[0];
-        } else {
-            if (this.__treeTags) {
-                let t = this.__treeTags.get(tag);
-                if (t) {
-                    const item = t.values().next();
-                    return item ? item.value : undefined;
-                }
-            }
-        }
-    };
-
-    // Returns all elements from the subtree that have this tag.
-    mtag(tag: string): Element[] {
-        let idx = tag.indexOf(".");
-        if (idx >= 0) {
-            let parts = tag.split('.');
-            let res = this._getByTag(parts[0]);
-            let level = 1;
-            let c = parts.length;
-            while (res.length && level < c) {
-                let resn = [];
-                for (let j = 0, n = res.length; j < n; j++) {
-                    resn = resn.concat(res[j]._getByTag(parts[level]));
-                }
-
-                res = resn;
-                level++;
-            }
-            return res;
-        } else {
-            return this._getByTag(tag);
-        }
-    };
-
-    stag(tag: string, settings: any) {
-        let t = this.mtag(tag);
-        let n = t.length;
-        for (let i = 0; i < n; i++) {
-            Base.patchObject(t[i], settings);
-        }
-    }
-
-    get tagRoot() {
-        return this.__tagRoot;
-    }
-
-    set tagRoot(v) {
-        if (this.__tagRoot !== v) {
-            if (!v) {
-                this._setTagsParent();
-            } else {
-                this._unsetTagsParent();
-            }
-
-            this.__tagRoot = v;
-        }
-    }
-
-    sel(path) {
-        const results = this.select(path);
-        if (results.length) {
-            return results[0];
-        } else {
-            return undefined;
-        }
-    }
-
-    select(path) {
-        if (path.indexOf(",") !== -1) {
-            let selectors = path.split(',');
-            let res = [];
-            for (let i = 0; i < selectors.length; i++) {
-                res = res.concat(this._select(selectors[i]));
-            }
-            return res;
-        } else {
-            return this._select(path);
-        }
-    }
-
-    _select(path) {
-        if (path === "") return [this];
-
-
-        let pointIdx = path.indexOf(".");
-        let arrowIdx = path.indexOf(">");
-        if (pointIdx === -1 && arrowIdx === -1) {
-            // Quick case.
-            return this.mtag(path);
-        }
-
-        // Detect by first char.
-        let isRef;
-        if (arrowIdx === 0) {
-            isRef = true;
-            path = path.substr(1);
-        } else if (pointIdx === 0) {
-            isRef = false;
-            path = path.substr(1);
-        } else {
-            isRef = false;
-        }
-
-        return this._selectChilds(path, isRef);
-    }
-
-    _selectChilds(path, isRef) {
-        const pointIdx = path.indexOf(".");
-        const arrowIdx = path.indexOf(">");
-
-        if (pointIdx === -1 && arrowIdx === -1) {
-            if (isRef) {
-                const ref = this.getByRef(path);
-                return ref ? [ref] : [];
-            } else {
-                return this.mtag(path);
-            }
-        }
-
-        if ((arrowIdx === -1) || (pointIdx !== -1 && pointIdx < arrowIdx)) {
-            let next;
-            const str = path.substr(0, pointIdx);
-            if (isRef) {
-                const ref = this.getByRef(str);
-                next = ref ? [ref] : [];
-            } else {
-                next = this.mtag(str);
-            }
-            let total = [];
-            const subPath = path.substr(pointIdx + 1);
-            for (let i = 0, n = next.length; i < n; i++) {
-                total = total.concat(next[i]._selectChilds(subPath, false));
-            }
-            return total;
-        } else {
-            let next;
-            const str = path.substr(0, arrowIdx);
-            if (isRef) {
-                const ref = this.getByRef(str);
-                next = ref ? [ref] : [];
-            } else {
-                next = this.mtag(str);
-            }
-            let total = [];
-            const subPath = path.substr(arrowIdx + 1);
-            for (let i = 0, n = next.length; i < n; i++) {
-                total = total.concat(next[i]._selectChilds(subPath, true));
-            }
-            return total;
-        }
-    }
-
-    getByRef(ref) {
+    getByRef(ref: string) {
         return this.childList.getByRef(ref);
     }
 
-    getLocationString() {
+    getLocationString() : string{
         let i;
         i = this.__parent ? this.__parent._children.getIndex(this) : "R";
-        let localTags = this.getTags();
         let str = this.__parent ? this.__parent.getLocationString(): "";
         if (this.ref) {
             str += ":[" + i + "]" + this.ref;
-        } else if (localTags.length) {
-            str += ":[" + i + "]" + localTags.join(",");
         } else {
             str += ":[" + i + "]#" + this.id;
         }
@@ -1161,7 +651,7 @@ class Element {
         return Element.getPrettyString(obj, "");
     };
 
-    static getPrettyString(obj, indent) {
+    static getPrettyString(obj: any, indent: string) {
         let children = obj.children;
         delete obj.children;
 
@@ -1245,10 +735,6 @@ class Element {
             settings.ref = this.__ref;
         }
 
-        if (this.__tags && this.__tags.length) {
-            settings.tags = this.__tags;
-        }
-
         if (this.x !== 0) settings.x = this.x;
         if (this.y !== 0) settings.y = this.y;
         if (this.w !== 0) settings.w = this.w;
@@ -1330,8 +816,8 @@ class Element {
         return settings;
     };
 
-    get withinBoundsMargin() {
-        return this.__core._withinBoundsMargin;
+    isWithinBoundsMargin() {
+        return this.__core.isWithinBoundsMargin();
     }
 
     _enableWithinBoundsMargin() {
@@ -1348,7 +834,7 @@ class Element {
         }
     }
 
-    set boundsMargin(v: number[]) {
+    set boundsMargin(v: number[]|undefined) {
         if (!Array.isArray(v) && v !== undefined) {
             throw new Error("boundsMargin should be an array of left-top-right-bottom values or undefined (inherit margin)");
         }
@@ -1359,56 +845,36 @@ class Element {
         return this.__core.boundsMargin;
     }
 
-    get x() {
+    get x(): number|FunctionX {
         return this.__core.offsetX;
     }
 
-    set x(v) {
+    set x(v: number|FunctionX) {
         this.__core.offsetX = v;
     }
 
-    get y() {
+    get y(): number|FunctionY {
         return this.__core.offsetY;
     }
 
-    set y(v) {
+    set y(v: number|FunctionY) {
         this.__core.offsetY = v;
     }
 
-    get w() {
-        return this._w;
+    get w(): number|FunctionW {
+        return this.__core.offsetW;
     }
 
     set w(v) {
-        if (Utils.isFunction(v)) {
-            this._w = 0;
-            this.__core.funcW = v;
-        } else {
-            v = Math.max(v, 0);
-            if (this._w !== v) {
-                this.__core.disableFuncW();
-                this._w = v;
-                this._updateDimensions();
-            }
-        }
+        this.__core.offsetW = v;
     }
 
-    get h() {
-        return this._h;
+    get h(): number|FunctionH {
+        return this.__core.offsetH;
     }
 
     set h(v) {
-        if (Utils.isFunction(v)) {
-            this._h = 0;
-            this.__core.funcH = v;
-        } else {
-            v = Math.max(v, 0);
-            if (this._h !== v) {
-                this.__core.disableFuncH();
-                this._h = v;
-                this._updateDimensions();
-            }
-        }
+        this.__core.offsetH = v;
     }
 
     get scaleX() {
@@ -1616,19 +1082,6 @@ class Element {
         this.__core.clipbox = v;
     }
 
-    get tags() {
-        return this.getTags();
-    }
-
-    set tags(v: string[]|string) {
-        if (!Array.isArray(v)) v = [v];
-        this.setTags(v);
-    }
-
-    set t(v) {
-        this.tags = v;
-    }
-
     get _children(): ElementChildList {
         if (!this.__childList) {
             this.__childList = new ElementChildList(this);
@@ -1659,10 +1112,6 @@ class Element {
         this.childList.patch(children);
     }
 
-    add(o) {
-        return this.childList.a(o);
-    }
-
     get p() {
         return this.__parent;
     }
@@ -1685,19 +1134,19 @@ class Element {
         this.texture = texture;
     }
 
-    set mw(v) {
+    set mw(v : number) {
         if (this.texture) {
             this.texture.mw = v;
-            this._updateDimensions();
+            this._updateTextureDimensions();
         } else {
             this._throwError('Please set mw after setting a texture.');
         }
     }
 
-    set mh(v) {
+    set mh(v: number) {
         if (this.texture) {
             this.texture.mh = v;
-            this._updateDimensions();
+            this._updateTextureDimensions();
         } else {
             this._throwError('Please set mh after setting a texture.');
         }
@@ -1722,8 +1171,8 @@ class Element {
             if (!this.texture.w && !this.texture.h) {
                 // Inherit dimensions from element.
                 // This allows userland to set dimensions of the Element and then later specify the text.
-                this.texture.w = this.w;
-                this.texture.h = this.h;
+                this.texture.w = this.core.w;
+                this.texture.h = this.core.h;
             }
         }
         return this.texture;
@@ -1748,15 +1197,15 @@ class Element {
         }
     }
 
-    set onUpdate(f) {
+    set onUpdate(f: Function) {
         this.__core.onUpdate = f;
     }
 
-    set onAfterCalcs(f) {
+    set onAfterCalcs(f: Function) {
         this.__core.onAfterCalcs = f;
     }
 
-    set onAfterUpdate(f) {
+    set onAfterUpdate(f: Function) {
         this.__core.onAfterUpdate = f;
     }
 
@@ -1770,28 +1219,21 @@ class Element {
     }
 
     set shader(v) {
-        if (Utils.isObjectLiteral(v) && !v.type) {
-            // Setting properties on an existing shader.
-            if (this.shader) {
-                this.shader.patch(v);
-            }
-        } else {
-            const shader = Shader.create(this.stage, v);
+        const shader = Shader.create(this.stage, v);
 
-            if (this.__enabled && this.__core.shader) {
-                this.__core.shader.removeElement(this.__core);
-            }
+        if (this.__enabled && this.__core.shader) {
+            this.__core.shader.removeElement(this.__core);
+        }
 
-            this.__core.shader = shader;
+        this.__core.shader = shader;
 
-            if (this.__enabled && this.__core.shader) {
-                this.__core.shader.addElement(this.__core);
-            }
+        if (this.__enabled && this.__core.shader) {
+            this.__core.shader.addElement(this.__core);
         }
     }
 
     _hasTexturizer() {
-        return !!this.__core._texturizer;
+        return this.__core.hasTexturizer();
     }
 
     get renderToTexture() {
@@ -1842,85 +1284,12 @@ class Element {
         return this.__core.texturizer;
     }
 
-    patch(settings) {
-        let paths = Object.keys(settings);
-
-        for (let i = 0, n = paths.length; i < n; i++) {
-            let path = paths[i];
-            const v = settings[path];
-
-            const firstCharCode = path.charCodeAt(0);
-            if (Utils.isUcChar(firstCharCode)) {
-                // Ref.
-                const child = this.getByRef(path);
-                if (!child) {
-                    if (v !== undefined) {
-                        // Add to list immediately.
-                        let c;
-                        if (Utils.isObjectLiteral(v)) {
-                            // Catch this case to capture createMode flag.
-                            c = this.childList.createItem(v);
-                            c.patch(v);
-                        } else if (Utils.isObject(v)) {
-                            c = v;
-                        }
-                        c.ref = path;
-
-                        this.childList.a(c);
-                    }
-                } else {
-                    if (v === undefined) {
-                        if (child.parent) {
-                            child.parent.childList.remove(child);
-                        }
-                    } else if (Utils.isObjectLiteral(v)) {
-                        child.patch(v);
-                    } else if (v instanceof Element) {
-                        // Replace element by new element.
-                        v.ref = path;
-                        this.childList.replace(v, child);
-                    } else {
-                        this._throwError("Unexpected value for path: " + path);
-                    }
-                }
-            } else {
-                // Property.
-                Base.patchObjectProperty(this, path, v);
-            }
-        }
-    }
-
-    _throwError(message) {
+    _throwError(message: string) {
         throw new Error(this.constructor.name + " (" + this.getLocationString() + "): " + message);
     }
 
-    get flex() {
-        return this.__core.flex;
-    }
+    // @todo: flexbox stuff.
 
-    set flex(v) {
-        this.__core.flex = v;
-    }
-
-    get flexItem() {
-        return this.__core.flexItem;
-    }
-
-    set flexItem(v) {
-        this.__core.flexItem = v;
-    }
-
-    static isColorProperty(property) {
-        return property.toLowerCase().indexOf("color") >= 0;
-    }
-
-    static getMerger(property) {
-        if (Element.isColorProperty(property)) {
-            return StageUtils.mergeColors;
-        } else {
-            return StageUtils.mergeNumbers;
-        }
-    }
 }
 
 import Texture from "./Texture";

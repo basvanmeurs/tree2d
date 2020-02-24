@@ -5,10 +5,12 @@ import Element from "./tree/Element";
 import ElementCore from "./tree/core/ElementCore";
 import ElementTexturizer from "./tree/core/ElementTexturizer";
 import Texture from "./tree/Texture";
+
 import Tools from "./tools/Tools";
 import ObjMerger from "./tools/ObjMerger";
 import ObjectListProxy from "./tools/ObjectListProxy";
 import ObjectListWrapper from "./tools/ObjectListWrapper";
+
 import RectangleTexture from "./textures/RectangleTexture";
 import NoiseTexture from "./textures/NoiseTexture";
 import TextTexture from "./textures/TextTexture";
@@ -17,7 +19,9 @@ import HtmlTexture from "./textures/HtmlTexture";
 import StaticTexture from "./textures/StaticTexture";
 import StaticCanvasTexture from "./textures/StaticCanvasTexture";
 import SourceTexture from "./textures/SourceTexture";
+
 import EventEmitter from "./EventEmitter";
+
 import WebGLShader from "./renderer/webgl/WebGLShader";
 import WebGLDefaultShader from "./renderer/webgl/shaders/DefaultShader";
 import { WebGLGrayscaleShader } from "./renderer/common/shaders/GrayscaleShader";
@@ -32,15 +36,19 @@ import RadialFilterShader from "./renderer/webgl/shaders/RadialFilterShader";
 import RoundedRectangleShader from "./renderer/webgl/shaders/RoundedRectangleShader";
 import RadialGradientShader from "./renderer/webgl/shaders/RadialGradientShader";
 import Light3dShader from "./renderer/webgl/shaders/Light3dShader";
+
 import C2dShader from "./renderer/c2d/C2dShader";
 import C2dDefaultShader from "./renderer/c2d/shaders/DefaultShader";
 import { C2dGrayscaleShader } from "./renderer/common/shaders/GrayscaleShader";
 import C2dBlurShader from "./renderer/c2d/shaders/BlurShader";
+
 import Stage from "./tree/Stage";
+
 import FlexTarget from "./flex/FlexTarget";
 import FlexLayout from "./flex/layout/FlexLayout";
 import FlexContainer from "./flex/FlexContainer";
-const lightning = {
+
+const index = {
     Base,
     Utils,
     StageUtils,
@@ -92,8 +100,11 @@ const lightning = {
         ObjectListWrapper
     }
 };
+
+declare const window : any;
+
 if (Utils.isWeb) {
-    window.lng = lightning;
+    (window as any).lng = index;
 }
-export default lightning;
-//# sourceMappingURL=lightning.js.map
+
+export default index;

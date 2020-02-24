@@ -1,170 +1,192 @@
 import FlexTarget from "../../flex/FlexTarget";
+import Element from "../Element"
 
 export default class ElementCore {
 
-    constructor(element) {
+    private _element: Element;
+
+    private ctx: CoreContext;
+
+    /**
+     * Recalc flags in bits.
+     */
+    private _recalc: number = 0;
+
+    private _parent?: ElementCore;
+
+    private _onUpdate?: Function;
+
+    private _pRecalc: number = 0;
+
+    private _worldContext = new ElementCoreContext();
+
+    private _hasUpdates: boolean = false;
+
+    private _localAlpha: number = 1;
+
+    private _onAfterCalcs?: Function;
+
+    private _onAfterUpdate?: Function;
+
+    // All local translation/transform updates: directly propagated from x/y/w/h/scale/whatever.
+    private _localPx: number = 0;
+    private _localPy: number = 0;
+    private _localTa: number = 1;
+    private _localTb: number = 0;
+    private _localTc: number = 0;
+    private _localTd: number = 1;
+
+    private _isComplex: boolean = false;
+    private _dimsUnknown: boolean = false;
+    private _clipping: boolean = false;
+    private _zSort: boolean = false;
+    private _outOfBounds: number = 0;
+
+    /**
+     * The texture source to be displayed.
+     */
+    private _displayedTextureSource?: TextureSource;
+
+    private _zContextUsage: number = 0;
+
+    private _children?: ElementCore[];
+
+    private _hasRenderUpdates: number = 0;
+
+    private _zIndexedChildren?: ElementCore[];
+
+    private _renderContext: ElementCoreContext = this._worldContext;
+
+    private renderState: CoreRenderState = this.ctx.renderState;
+
+    private _scissor?: number[];
+
+    // The ancestor ElementCore that defined the inherited shader. Undefined if none is active (default shader).
+    private _shaderOwner?: ElementCore;
+    
+    // Counter while updating the tree order.
+    private _updateTreeOrder: number = 0;
+    
+    // Texture corner point colors.
+    private _colorUl: number = 0xFFFFFFFF;
+    private _colorUr: number = 0xFFFFFFFF;
+    private _colorBl: number = 0xFFFFFFFF;
+    private _colorBr: number = 0xFFFFFFFF;
+
+    // Internal coords.
+    private _x: number = 0;
+    private _y: number = 0;
+    private _w: number = 0;
+    private _h: number = 0;
+
+    // Fixed set size.
+    private _fw: number = 0;
+    private _fh: number = 0;
+
+    // Active texture size.
+    private _tw: number = 0;
+    private _th: number = 0;
+
+    // Defines which relative functions are enabled.
+    private _relFuncFlags: number = 0;
+
+    private _funcX?: FunctionX;
+    private _funcY?: FunctionY;
+    private _funcW?: FunctionW;
+    private _funcH?: FunctionH;
+
+    private _scaleX: number = 1;
+    private _scaleY: number = 1;
+    private _pivotX: number = 0.5;
+    private _pivotY: number = 0.5;
+    private _mountX: number = 0;
+    private _mountY: number = 0;
+    private _rotation: number = 0;
+
+    private _alpha: number = 1;
+    private _visible: boolean = true;
+
+    // Texture clipping.
+    private _ulx: number = 0;
+    private _uly: number = 0;
+    private _brx: number = 1;
+    private _bry: number = 1;
+
+    private _isRoot: boolean = false;
+
+    private _zIndex: number = 0;
+    private _forceZIndexContext: boolean = false;
+    private _zParent?: ElementCore;
+
+    /**
+     * Iff true, during next zSort, this element should be 're-sorted' because either:
+     * - zIndex did change
+     * - zParent did change
+     * - element was moved in the render tree
+     */
+    private _zIndexResort: boolean = false;
+
+    private _shader?: Shader;
+
+    // Element is rendered on another texture.
+    private _renderToTextureEnabled: boolean = false;
+
+    // Manages the render texture.
+    private _texturizer?: ElementTexturizer;
+
+    private _useRenderToTexture: boolean = false;
+
+    private _boundsMargin?: number[];
+
+    private _recBoundsMargin?: number[];
+
+    private _withinBoundsMargin: boolean = false;
+
+    private _viewport?: number[];
+
+    // If this element is out of viewport, the branch is also skipped in updating and rendering.
+    private _clipbox: boolean = true;
+
+    // The render function. _renderComplex is only used if necessary.
+    private render: Function = this._renderSimple;
+
+    // Flex layouting if enabled.
+    private _layout?: FlexTarget;
+
+    private _stashedTexCoords?: number[];
+    private _stashedColors?: number[];
+
+    constructor(element: Element) {
         this._element = element;
 
         this.ctx = element.stage.ctx;
-
-        // The memory layout of the internal variables is affected by their position in the constructor.
-        // It boosts performance to order them by usage of cpu-heavy functions (renderSimple and update).
-
-        this._recalc = 0;
-
-        this._parent = null;
-
-        this._onUpdate = null;
-
-        this._pRecalc = 0;
-
-        this._worldContext = new ElementCoreContext();
-
-        this._hasUpdates = false;
-
-        this._localAlpha = 1;
-
-        this._onAfterCalcs = null;
-
-        this._onAfterUpdate = null;
-
-        // All local translation/transform updates: directly propagated from x/y/w/h/scale/whatever.
-        this._localPx = 0;
-        this._localPy = 0;
-
-        this._localTa = 1;
-        this._localTb = 0;
-        this._localTc = 0;
-        this._localTd = 1;
-
-        this._isComplex = false;
-
-        this._dimsUnknown = false;
-
-        this._clipping = false;
-
-        // Used by both update and render.
-        this._zSort = false;
-
-        this._outOfBounds = 0;
-
-        /**
-         * The texture source to be displayed.
-         * @type {TextureSource}
-         */
-        this._displayedTextureSource = null;
-
-        this._zContextUsage = 0;
-
-        this._children = null;
-
-        this._hasRenderUpdates = 0;
-
-        this._zIndexedChildren = null;
-
-        this._renderContext = this._worldContext;
-
-        this.renderState = this.ctx.renderState;
-
-        this._scissor = null;
-
-        // The ancestor ElementCore that owns the inherited shader. Null if none is active (default shader).
-        this._shaderOwner = null;
-
-
-        this._updateTreeOrder = 0;
-
-        this._colorUl = this._colorUr = this._colorBl = this._colorBr = 0xFFFFFFFF;
-
-        this._x = 0;
-        this._y = 0;
-        this._w = 0;
-        this._h = 0;
-
-        this._optFlags = 0;
-        this._funcX = null;
-        this._funcY = null;
-        this._funcW = null;
-        this._funcH = null;
-
-        this._scaleX = 1;
-        this._scaleY = 1;
-        this._pivotX = 0.5;
-        this._pivotY = 0.5;
-        this._mountX = 0;
-        this._mountY = 0;
-        this._rotation = 0;
-
-        this._alpha = 1;
-        this._visible = true;
-
-        this._ulx = 0;
-        this._uly = 0;
-        this._brx = 1;
-        this._bry = 1;
-
-        this._zIndex = 0;
-        this._forceZIndexContext = false;
-        this._zParent = null;
-
-        this._isRoot = false;
-
-        /**
-         * Iff true, during zSort, this element should be 're-sorted' because either:
-         * - zIndex did chang
-         * - zParent did change
-         * - element was moved in the render tree
-         * @type {boolean}
-         */
-        this._zIndexResort = false;
-
-        this._shader = null;
-
-        // Element is rendered on another texture.
-        this._renderToTextureEnabled = false;
-
-        this._texturizer = null;
-
-        this._useRenderToTexture = false;
-
-        this._boundsMargin = null;
-
-        this._recBoundsMargin = null;
-
-        this._withinBoundsMargin = false;
-
-        this._viewport = null;
-
-        this._clipbox = true;
-
-        this.render = this._renderSimple;
-
-        this._layout = null;
     }
 
-    get offsetX() {
+    get offsetX() : number|FunctionX {
         if (this._funcX) {
             return this._funcX;
         } else {
             if (this.hasFlexLayout()) {
-                return this._layout.originalX;
+                return this._layout!.originalX;
             } else {
                 return this._x;
             }
         }
     }
 
-    set offsetX(v) {
+    set offsetX(v: number|FunctionX) {
         if (Utils.isFunction(v)) {
-            this.funcX = v;
+            this.funcX = v as FunctionX;
         } else {
             this._disableFuncX();
+            let dx;
             if (this.hasFlexLayout()) {
-                this.x += (v - this._layout.originalX);
-                this._layout.setOriginalXWithoutUpdatingLayout(v);
+                dx = ((v as number) - this.layout.originalX);
+                this.layout.originalX = v;
             } else {
-                this.x = v;
+                dx = (v as number) - this._x;
             }
+            this._updateLocalTranslateDelta(dx, 0);
         }
     }
 
@@ -172,59 +194,54 @@ export default class ElementCore {
         return this._x;
     }
 
-    set x(v) {
-        if (v !== this._x) {
-            this._updateLocalTranslateDelta(v - this._x, 0);
-            this._x = v;
-        }
-    }
-
     get funcX() {
-        return (this._optFlags & 1 ? this._funcX : null);
+        return (this._relFuncFlags & 1 ? this._funcX : undefined);
     }
 
     set funcX(v) {
         if (this._funcX !== v) {
-            this._optFlags |= 1;
+            this._relFuncFlags |= 1;
             this._funcX = v;
+            this._x = 0;
             if (this.hasFlexLayout()) {
-                this._layout.setOriginalXWithoutUpdatingLayout(0);
+                this.layout.originalX = 0;
                 this.layout.forceLayout();
             } else {
-                this._x = 0;
                 this._triggerRecalcTranslate();
             }
         }
     }
 
     _disableFuncX() {
-        this._optFlags = this._optFlags & (0xFFFF - 1);
-        this._funcX = null;
+        this._relFuncFlags = this._relFuncFlags & (0xFFFF - 1);
+        this._funcX = undefined;
     }
 
-    get offsetY() {
+    get offsetY(): number|FunctionY {
         if (this._funcY) {
             return this._funcY;
         } else {
             if (this.hasFlexLayout()) {
-                return this._layout.originalY;
+                return this._layout!.originalY;
             } else {
                 return this._y;
             }
         }
     }
 
-    set offsetY(v) {
+    set offsetY(v: number|FunctionY) {
         if (Utils.isFunction(v)) {
-            this.funcY = v;
+            this.funcY = (v as FunctionY);
         } else {
             this._disableFuncY();
+            let dy;
             if (this.hasFlexLayout()) {
-                this.y += (v - this._layout.originalY);
-                this._layout.setOriginalYWithoutUpdatingLayout(v);
+                dy = ((v as number) - this.layout.originalY);
+                this.layout.originalY = v;
             } else {
-                this.y = v;
+                dy = (v as number) - this._y;
             }
+            this._updateLocalTranslateDelta(0, dy);
         }
     }
 
@@ -232,23 +249,16 @@ export default class ElementCore {
         return this._y;
     }
 
-    set y(v) {
-        if (v !== this._y) {
-            this._updateLocalTranslateDelta(0, v - this._y);
-            this._y = v;
-        }
-    }
-
     get funcY() {
-        return (this._optFlags & 2 ? this._funcY : null);
+        return (this._relFuncFlags & 2 ? this._funcY : undefined);
     }
 
     set funcY(v) {
         if (this._funcY !== v) {
-            this._optFlags |= 2;
+            this._relFuncFlags |= 2;
             this._funcY = v;
             if (this.hasFlexLayout()) {
-                this._layout.setOriginalYWithoutUpdatingLayout(0);
+                this.layout.originalY = 0;
                 this.layout.forceLayout();
             } else {
                 this._y = 0;
@@ -258,78 +268,88 @@ export default class ElementCore {
     }
 
     _disableFuncY() {
-        this._optFlags = this._optFlags & (0xFFFF - 2);
-        this._funcY = null;
+        this._relFuncFlags = this._relFuncFlags & (0xFFFF - 2);
+        this._funcY = undefined;
+    }
+
+    get offsetW() : number|FunctionW {
+        if (this._funcW) {
+            return this._funcW;
+        } else {
+            return this._fw;
+        }
+    }
+
+    set offsetW(v: number|FunctionW) {
+        if (Utils.isFunction(v)) {
+            this.funcW = v as FunctionW;
+        } else {
+            this._disableFuncW();
+            this._fw = v as number;
+            this._updateBaseDimensions();
+        }
     }
 
     get funcW() {
-        return (this._optFlags & 4 ? this._funcW : null);
+        return this._funcW;
     }
 
     set funcW(v) {
         if (this._funcW !== v) {
-            this._optFlags |= 4;
+            this._relFuncFlags |= 4;
             this._funcW = v;
-            if (this.hasFlexLayout()) {
-                this._layout._originalWidth = 0;
-                this.layout.changedDimensions(true, false);
-            } else {
-                this._w = 0;
-                this._triggerRecalcTranslate();
-            }
+            this._fw = 0;
+            this._updateBaseDimensions();
         }
     }
 
-    disableFuncW() {
-        this._optFlags = this._optFlags & (0xFFFF - 4);
-        this._funcW = null;
-    }
-
-    get funcH() {
-        return (this._optFlags & 8 ? this._funcH : null);
-    }
-
-    set funcH(v) {
-        if (this._funcH !== v) {
-            this._optFlags |= 8;
-            this._funcH = v;
-            if (this.hasFlexLayout()) {
-                this._layout._originalHeight = 0;
-                this.layout.changedDimensions(false, true);
-            } else {
-                this._h = 0;
-                this._triggerRecalcTranslate();
-            }
-        }
-    }
-
-    disableFuncH() {
-        this._optFlags = this._optFlags & (0xFFFF - 8);
-        this._funcH = null;
+    _disableFuncW() {
+        this._relFuncFlags = this._relFuncFlags & (0xFFFF - 4);
+        this._funcW = undefined;
     }
 
     get w() {
         return this._w;
     }
 
-    getRenderWidth() {
-        if (this.hasFlexLayout()) {
-            return this._layout.originalWidth;
+    get offsetH() : number|FunctionH {
+        if (this._funcH) {
+            return this._funcH;
         } else {
-            return this._w;
+            return this._fh;
         }
+    }
+
+    set offsetH(v: number|FunctionH) {
+        if (Utils.isFunction(v)) {
+            this.funcH = v as FunctionH;
+        } else {
+            this._disableFuncH();
+            this._fh = v as number;
+            this._updateBaseDimensions();
+        }
+    }
+
+    get funcH() {
+        return this._funcH;
+    }
+
+    set funcH(v) {
+        if (this._funcH !== v) {
+            this._relFuncFlags |= 8;
+            this._funcH = v;
+            this._fh = 0;
+            this._updateBaseDimensions();
+        }
+    }
+
+    _disableFuncH() {
+        this._relFuncFlags = this._relFuncFlags & (0xFFFF - 8);
+        this._funcH = undefined;
     }
 
     get h() {
         return this._h;
-    }
-
-    getRenderHeight() {
-        if (this.hasFlexLayout()) {
-            return this._layout.originalHeight;
-        } else {
-            return this._h;
-        }
     }
 
     get scaleX() {
@@ -517,7 +537,7 @@ export default class ElementCore {
         this._localPy = py;
     }
 
-    _updateLocalTranslateDelta(dx, dy) {
+    _updateLocalTranslateDelta(dx: number, dy: number) {
         this._addLocalTranslate(dx, dy);
     };
 
@@ -531,10 +551,10 @@ export default class ElementCore {
      * 1: re-invoke shader
      * 3: re-create render texture and re-invoke shader
      */
-    setHasRenderUpdates(type) {
+    setHasRenderUpdates(type: number) {
         if (this._worldContext.alpha) {
             // Ignore if 'world invisible'. Render updates will be reset to 3 for every element that becomes visible.
-            let p = this;
+            let p : ElementCore|undefined = this;
             p._hasRenderUpdates = Math.max(type, p._hasRenderUpdates);
             while ((p = p._parent) && (p._hasRenderUpdates !== 3)) {
                 p._hasRenderUpdates = 3;
@@ -543,14 +563,15 @@ export default class ElementCore {
     }
 
     /**
-     * @param {Number} type
+     * Marks recalculation updates.
+     * @param type
      *   1: alpha
      *   2: translate
      *   4: transform
      * 128: becomes visible
      * 256: flex layout updated
      */
-    _setRecalc(type) {
+    _setRecalc(type: number) {
         this._recalc |= type;
 
         this._setHasUpdates();
@@ -562,7 +583,7 @@ export default class ElementCore {
     }
 
     _setHasUpdates() {
-        let p = this;
+        let p : ElementCore|undefined = this;
         while(p && !p._hasUpdates) {
             p._hasUpdates = true;
             p = p._parent;
@@ -573,7 +594,7 @@ export default class ElementCore {
         return this._parent;
     }
 
-    setParent(parent) {
+    private setParent(parent?: ElementCore) {
         if (parent !== this._parent) {
             let prevIsZContext = this.isZContext();
             let prevParent = this._parent;
@@ -599,14 +620,15 @@ export default class ElementCore {
             if (this._zIndex === 0) {
                 this.setZParent(parent);
             } else {
-                this.setZParent(parent ? parent.findZContext() : null);
+                this.setZParent(parent ? parent.findZContext() : undefined);
             }
 
             if (prevIsZContext !== this.isZContext()) {
                 if (!this.isZContext()) {
                     this.disableZContext();
                 } else {
-                    this.enableZContext(prevParent.findZContext());
+                    const prevZContext = prevParent ? prevParent.findZContext() : undefined;
+                    this.enableZContext(prevZContext);
                 }
             }
 
@@ -617,7 +639,7 @@ export default class ElementCore {
             }
 
             if (!this._shader) {
-                let newShaderOwner = parent && !parent._renderToTextureEnabled ? parent._shaderOwner : null;
+                let newShaderOwner = parent && !parent._renderToTextureEnabled ? parent._shaderOwner : undefined;
                 if (newShaderOwner !== this._shaderOwner) {
                     this.setHasRenderUpdates(1);
                     this._setShaderOwnerRecursive(newShaderOwner);
@@ -626,7 +648,7 @@ export default class ElementCore {
         }
     };
 
-    enableZSort(force = false) {
+    private enableZSort(force = false) {
         if (!this._zSort && this._zContextUsage > 0) {
             this._zSort = true;
             if (force) {
@@ -637,29 +659,31 @@ export default class ElementCore {
         }
     }
 
-    addChildAt(index, child) {
+    addChildAt(index: number, child: ElementCore) {
         if (!this._children) this._children = [];
         this._children.splice(index, 0, child);
         child.setParent(this);
     };
 
-    setChildAt(index, child) {
+    setChildAt(index: number, child: ElementCore) {
         if (!this._children) this._children = [];
-        this._children[index].setParent(null);
+        this._children[index].setParent(undefined);
         this._children[index] = child;
         child.setParent(this);
     }
 
-    removeChildAt(index) {
-        let child = this._children[index];
-        this._children.splice(index, 1);
-        child.setParent(null);
+    removeChildAt(index: number) {
+        if (this._children) {
+            let child = this._children[index];
+            this._children.splice(index, 1);
+            child.setParent(undefined);
+        }
     };
 
     removeChildren() {
         if (this._children) {
             for (let i = 0, n = this._children.length; i < n; i++) {
-                this._children[i].setParent(null);
+                this._children[i].setParent(undefined);
             }
 
             this._children.splice(0);
@@ -670,29 +694,31 @@ export default class ElementCore {
         }
     };
 
-    syncChildren(removed, added, order) {
+    syncChildren(removed: ElementCore[], added: ElementCore[], order: ElementCore[]) {
         this._children = order;
         for (let i = 0, n = removed.length; i < n; i++) {
-            removed[i].setParent(null);
+            removed[i].setParent(undefined);
         }
         for (let i = 0, n = added.length; i < n; i++) {
             added[i].setParent(this);
         }
     }
 
-    moveChild(fromIndex, toIndex) {
-        let c = this._children[fromIndex];
-        this._children.splice(fromIndex, 1);
-        this._children.splice(toIndex, 0, c);
+    moveChild(fromIndex: number, toIndex: number) {
+        if (this._children) {
+            let c = this._children[fromIndex];
+            this._children.splice(fromIndex, 1);
+            this._children.splice(toIndex, 0, c);
+        }
 
-        // Tree order changed: must resort!;
+        // Tree order changed: must resort!
         this._zIndexResort = true;
         if (this._zParent) {
             this._zParent.enableZSort();
         }
     }
 
-    _setLocalTransform(a, b, c, d) {
+    private _setLocalTransform(a: number, b: number, c: number, d: number) {
         this._setRecalc(4);
         this._localTa = a;
         this._localTb = b;
@@ -703,13 +729,13 @@ export default class ElementCore {
         this._isComplex = (b !== 0) || (c !== 0) || (a < 0) || (d < 0);
     };
 
-    _addLocalTranslate(dx, dy) {
+    private _addLocalTranslate(dx: number, dy: number) {
         this._localPx += dx;
         this._localPy += dy;
         this._triggerRecalcTranslate();
     }
 
-    _setLocalAlpha(a) {
+    private _setLocalAlpha(a: number) {
         if (!this._worldContext.alpha && ((this._parent && this._parent._worldContext.alpha) && a)) {
             // Element is becoming visible. We need to force update.
             this._setRecalc(1 + 128);
@@ -725,39 +751,54 @@ export default class ElementCore {
         this._localAlpha = a;
     };
 
-    setDimensions(w, h, isEstimate = this._dimsUnknown) {
+    setTextureDimensions(w: number, h: number, isEstimate: boolean = this._dimsUnknown) {
         // In case of an estimation, the update loop should perform different bound checks.
+        this._tw = w;
+        this._th = h;
         this._dimsUnknown = isEstimate;
 
-        if (this.hasFlexLayout()) {
-            this._layout.originalWidth = w;
-            this._layout.originalHeight = h;
-        } else {
-            if (this._w !== w || this._h !== h) {
-                this._updateDimensions(w, h);
-                return true;
-            }
-        }
-        return false;
+        this._updateBaseDimensions();
     };
 
-    _updateDimensions(w, h) {
+    private _updateBaseDimensions() {
+        if (this._funcW || this._funcH) {
+            this._triggerRecalcTranslate();
+        } else {
+            const w = this._fw || this._tw;
+            const h = this._fh || this._th;
+
+            if (this.hasFlexLayout()) {
+                // Notify layout; it will trigger re-layout if it needs to.
+                this.layout.originalW = w;
+                this.layout.originalH = h;
+            } else {
+                this._setInternalDimensions(w, h);
+            }
+        }
+    }
+
+    private _setInternalDimensions(w: number, h: number) {
         if (this._w !== w || this._h !== h) {
             this._w = w;
             this._h = h;
 
-            this._triggerRecalcTranslate();
-
-            if (this._texturizer) {
-                this._texturizer.releaseRenderTexture();
-                this._texturizer.updateResultTexture();
-            }
             // Due to width/height change: update the translation vector.
             this._updateLocalTranslate();
+
+            this.onDimensionsChanged();
         }
     }
 
-    setTextureCoords(ulx, uly, brx, bry) {
+    private onDimensionsChanged() {
+        if (this._texturizer) {
+            this._texturizer.releaseRenderTexture();
+            this._texturizer.updateResultTexture();
+        }
+
+        this.element._onResize(this._w, this._h);
+    }
+
+    setTextureCoords(ulx: number, uly: number, brx: number, bry: number) {
         this.setHasRenderUpdates(3);
 
         this._ulx = ulx;
@@ -766,16 +807,16 @@ export default class ElementCore {
         this._bry = bry;
     };
 
-    get displayedTextureSource() {
+    get displayedTextureSource() : TextureSource|undefined {
         return this._displayedTextureSource;
     }
 
-    setDisplayedTextureSource(textureSource) {
+    setDisplayedTextureSource(textureSource: TextureSource|undefined) {
         this.setHasRenderUpdates(3);
         this._displayedTextureSource = textureSource;
     };
 
-    get isRoot() {
+    get isRoot() : boolean {
         return this._isRoot;
     }
 
@@ -796,15 +837,15 @@ export default class ElementCore {
         this._parent._viewport = [0, 0, this.ctx.stage.coordsWidth, this.ctx.stage.coordsHeight];
         this._parent._scissor = this._parent._viewport;
 
-        // When recBoundsMargin is null, the defaults are used (100 for all sides).
-        this._parent._recBoundsMargin = null;
+        // When recBoundsMargin is undefined, the defaults are used (100 for all sides).
+        this._parent._recBoundsMargin = undefined;
 
         this._setRecalc(1 + 2 + 4);
     };
 
-    isAncestorOf(c) {
-        let p = c;
-        while (p = p._parent) {
+    private isAncestorOf(c: ElementCore) {
+        let p : ElementCore|undefined = c;
+        while ((p = p._parent)) {
             if (this === p) {
                 return true;
             }
@@ -812,21 +853,21 @@ export default class ElementCore {
         return false;
     };
 
-    isZContext() {
+    private isZContext() : boolean {
         return (this._forceZIndexContext || this._renderToTextureEnabled || this._zIndex !== 0 || this._isRoot || !this._parent);
     };
 
-    findZContext() {
+    private findZContext() : ElementCore {
         if (this.isZContext()) {
             return this;
         } else {
-            return this._parent.findZContext();
+            return this._parent!.findZContext();
         }
     };
 
-    setZParent(newZParent) {
+    private setZParent(newZParent?: ElementCore) {
         if (this._zParent !== newZParent) {
-            if (this._zParent !== null) {
+            if (this._zParent) {
                 if (this._zIndex !== 0) {
                     this._zParent.decZContextUsage();
                 }
@@ -835,7 +876,7 @@ export default class ElementCore {
                 this._zParent.enableZSort();
             }
 
-            if (newZParent !== null) {
+            if (newZParent !== undefined) {
                 let hadZContextUsage = (newZParent._zContextUsage > 0);
 
                 // @pre: new parent's children array has already been modified.
@@ -849,7 +890,7 @@ export default class ElementCore {
                         // Do not add double.
                     } else {
                         // Add new child to array.
-                        newZParent._zIndexedChildren.push(this);
+                        newZParent._zIndexedChildren!.push(this);
                     }
 
                     // Order should be checked.
@@ -864,7 +905,7 @@ export default class ElementCore {
         }
     };
 
-    incZContextUsage() {
+    private incZContextUsage() {
         this._zContextUsage++;
         if (this._zContextUsage === 1) {
             if (!this._zIndexedChildren) {
@@ -881,19 +922,19 @@ export default class ElementCore {
         }
     };
 
-    decZContextUsage() {
+    private decZContextUsage() {
         this._zContextUsage--;
         if (this._zContextUsage === 0) {
             this._zSort = false;
-            this._zIndexedChildren.splice(0);
+            this._zIndexedChildren!.splice(0);
         }
     };
 
-    get zIndex() {
+    get zIndex() : number {
         return this._zIndex;
     }
 
-    set zIndex(zIndex) {
+    set zIndex(zIndex: number) {
         if (this._zIndex !== zIndex) {
             this.setHasRenderUpdates(1);
 
@@ -909,7 +950,7 @@ export default class ElementCore {
                     newZParent = this._parent;
                 }
             } else if (zIndex !== 0 && this._zIndex === 0) {
-                newZParent = this._parent ? this._parent.findZContext() : null;
+                newZParent = this._parent ? this._parent.findZContext() : undefined;
                 if (newZParent === this._zParent) {
                     if (this._zParent) {
                         this._zParent.incZContextUsage();
@@ -923,7 +964,7 @@ export default class ElementCore {
             }
 
             if (newZParent !== this._zParent) {
-                this.setZParent(null);
+                this.setZParent(undefined);
             }
 
             this._zIndex = zIndex;
@@ -936,7 +977,8 @@ export default class ElementCore {
                 if (!this.isZContext()) {
                     this.disableZContext();
                 } else {
-                    this.enableZContext(this._parent.findZContext());
+                    const prevZContext = this._parent ? this._parent.findZContext() : undefined;
+                    this.enableZContext(prevZContext);
                 }
             }
 
@@ -962,12 +1004,13 @@ export default class ElementCore {
             if (!this.isZContext()) {
                 this.disableZContext();
             } else {
-                this.enableZContext(this._parent.findZContext());
+                const prevZContext = this._parent ? this._parent.findZContext() : undefined;
+                this.enableZContext(prevZContext);
             }
         }
     };
 
-    enableZContext(prevZContext) {
+    private enableZContext(prevZContext?: ElementCore) {
         if (prevZContext && prevZContext._zContextUsage > 0) {
             // Transfer from upper z context to this z context.
             const results = this._getZIndexedDescs();
@@ -979,8 +1022,8 @@ export default class ElementCore {
         }
     }
 
-    _getZIndexedDescs() {
-        const results = [];
+    private _getZIndexedDescs() {
+        const results : ElementCore[] = [];
         if (this._children) {
             for (let i = 0, n = this._children.length; i < n; i++) {
                 this._children[i]._getZIndexedDescsRec(results);
@@ -989,7 +1032,7 @@ export default class ElementCore {
         return results;
     }
 
-    _getZIndexedDescsRec(results) {
+    private _getZIndexedDescsRec(results: ElementCore[]) {
         if (this._zIndex) {
             results.push(this);
         } else if (this._children && !this.isZContext()) {
@@ -999,17 +1042,17 @@ export default class ElementCore {
         }
     }
 
-    disableZContext() {
+    private disableZContext() {
         // Transfer from this z context to upper z context.
         if (this._zContextUsage > 0) {
-            let newZParent = this._parent.findZContext();
+            let newZParent = this._parent ? this._parent.findZContext() : undefined;
 
             // Make sure that z-indexed children are up to date (old ones removed).
             if (this._zSort) {
                 this.sortZIndexedChildren();
             }
 
-            this._zIndexedChildren.slice().forEach(function (c) {
+            this._zIndexedChildren!.slice().forEach(function (c) {
                 if (c._zIndex !== 0) {
                     c.setZParent(newZParent);
                 }
@@ -1062,17 +1105,17 @@ export default class ElementCore {
     };
 
 
-    set onUpdate(f) {
+    set onUpdate(f: Function) {
         this._onUpdate = f;
         this._setRecalc(7);
     }
 
-    set onAfterUpdate(f) {
+    set onAfterUpdate(f: Function) {
         this._onAfterUpdate = f;
         this._setRecalc(7);
     }
 
-    set onAfterCalcs(f) {
+    set onAfterCalcs(f: Function) {
         this._onAfterCalcs = f;
         this._setRecalc(7);
     }
@@ -1088,7 +1131,7 @@ export default class ElementCore {
         this._shader = v;
         if (!v && prevShader) {
             // Disabled shader.
-            let newShaderOwner = (this._parent && !this._parent._renderToTextureEnabled ? this._parent._shaderOwner : null);
+            let newShaderOwner = (this._parent && !this._parent._renderToTextureEnabled ? this._parent._shaderOwner : undefined);
             this._setShaderOwnerRecursive(newShaderOwner);
         } else if (v) {
             // Enabled shader.
@@ -1129,7 +1172,7 @@ export default class ElementCore {
         this._clipbox = v;
     }
 
-    _setShaderOwnerRecursive(elementCore) {
+    private _setShaderOwnerRecursive(elementCore?: ElementCore) {
         this._shaderOwner = elementCore;
 
         if (this._children && !this._renderToTextureEnabled) {
@@ -1143,7 +1186,7 @@ export default class ElementCore {
         }
     };
 
-    _setShaderOwnerChildrenRecursive(elementCore) {
+    private _setShaderOwnerChildrenRecursive(elementCore?: ElementCore) {
         if (this._children) {
             for (let i = 0, n = this._children.length; i < n; i++) {
                 let c = this._children[i];
@@ -1155,7 +1198,7 @@ export default class ElementCore {
         }
     };
 
-    _hasRenderContext() {
+    private _hasRenderContext() {
         return this._renderContext !== this._worldContext;
     }
 
@@ -1163,19 +1206,20 @@ export default class ElementCore {
         return this._renderContext;
     }
 
-    updateRenderToTextureEnabled() {
+    public updateRenderToTextureEnabled() {
         // Enforce texturizer initialisation.
-        let v = this.texturizer._enabled;
+        const texturizer = this.texturizer;
+        let v = texturizer._enabled;
 
         if (v) {
             this._enableRenderToTexture();
         } else {
             this._disableRenderToTexture();
-            this._texturizer.releaseRenderTexture();
+            texturizer.releaseRenderTexture();
         }
     }
 
-    _enableRenderToTexture() {
+    private _enableRenderToTexture() {
         if (!this._renderToTextureEnabled) {
             let prevIsZContext = this.isZContext();
 
@@ -1184,11 +1228,11 @@ export default class ElementCore {
             this._renderContext = new ElementCoreContext();
 
             // If render to texture is active, a new shader context is started.
-            this._setShaderOwnerChildrenRecursive(null);
+            this._setShaderOwnerChildrenRecursive(undefined);
 
             if (!prevIsZContext) {
                 // Render context forces z context.
-                this.enableZContext(this._parent ? this._parent.findZContext() : null);
+                this.enableZContext(this._parent ? this._parent.findZContext() : undefined);
             }
 
             this.setHasRenderUpdates(3);
@@ -1200,7 +1244,7 @@ export default class ElementCore {
         }
     }
 
-    _disableRenderToTexture() {
+    private _disableRenderToTexture() {
         if (this._renderToTextureEnabled) {
             this._renderToTextureEnabled = false;
 
@@ -1221,15 +1265,15 @@ export default class ElementCore {
         }
     }
 
-    isWhite() {
+    private isWhite() {
         return (this._colorUl === 0xFFFFFFFF) && (this._colorUr === 0xFFFFFFFF) && (this._colorBl === 0xFFFFFFFF) && (this._colorBr === 0xFFFFFFFF);
     }
 
-    hasSimpleTexCoords() {
+    private hasSimpleTexCoords() {
         return (this._ulx === 0) && (this._uly === 0) && (this._brx === 1) && (this._bry === 1);
     }
 
-    _stashTexCoords() {
+    private _stashTexCoords() {
         this._stashedTexCoords = [this._ulx, this._uly, this._brx, this._bry];
         this._ulx = 0;
         this._uly = 0;
@@ -1237,15 +1281,15 @@ export default class ElementCore {
         this._bry = 1;
     }
 
-    _unstashTexCoords() {
-        this._ulx = this._stashedTexCoords[0];
-        this._uly = this._stashedTexCoords[1];
-        this._brx = this._stashedTexCoords[2];
-        this._bry = this._stashedTexCoords[3];
-        this._stashedTexCoords = null;
+    private _unstashTexCoords() {
+        this._ulx = this._stashedTexCoords![0];
+        this._uly = this._stashedTexCoords![1];
+        this._brx = this._stashedTexCoords![2];
+        this._bry = this._stashedTexCoords![3];
+        this._stashedTexCoords = undefined;
     }
 
-    _stashColors() {
+    private _stashColors() {
         this._stashedColors = [this._colorUl, this._colorUr, this._colorBr, this._colorBl];
         this._colorUl = 0xFFFFFFFF;
         this._colorUr = 0xFFFFFFFF;
@@ -1253,12 +1297,12 @@ export default class ElementCore {
         this._colorBl = 0xFFFFFFFF;
     }
 
-    _unstashColors() {
-        this._colorUl = this._stashedColors[0];
-        this._colorUr = this._stashedColors[1];
-        this._colorBr = this._stashedColors[2];
-        this._colorBl = this._stashedColors[3];
-        this._stashedColors = null;
+    private _unstashColors() {
+        this._colorUl = this._stashedColors![0];
+        this._colorUr = this._stashedColors![1];
+        this._colorBr = this._stashedColors![2];
+        this._colorBl = this._stashedColors![3];
+        this._stashedColors = undefined;
     }
 
     isVisible() {
@@ -1272,10 +1316,10 @@ export default class ElementCore {
     set boundsMargin(v) {
 
         /**
-         *  null: inherit from parent.
+         *  undefined: inherit from parent.
          *  number[4]: specific margins: left, top, right, bottom.
          */
-        this._boundsMargin = v ? v.slice() : null;
+        this._boundsMargin = v ? v.slice() : undefined;
 
         // We force recalc in order to set all boundsMargin recursively during the next update.
         this._triggerRecalcTranslate();
@@ -1285,14 +1329,14 @@ export default class ElementCore {
         return this._boundsMargin;
     }
 
-    update() {
-        this._recalc |= this._parent._pRecalc;
+    private update(): void {
+        this._recalc |= this._parent!._pRecalc;
 
         if (this._layout && this._layout.isEnabled()) {
             if (this._recalc & 256) {
                 this._layout.layoutFlexTree();
             }
-        } else if ((this._recalc & 2) && this._optFlags) {
+        } else if ((this._recalc & 2) && this._relFuncFlags) {
             this._applyRelativeDimFuncs();
         }
 
@@ -1302,7 +1346,7 @@ export default class ElementCore {
             this._onUpdate(this.element, this);
         }
 
-        const pw = this._parent._worldContext;
+        const pw = this._parent!._worldContext;
         let w = this._worldContext;
         const visible = (pw.alpha && this._localAlpha);
 
@@ -1351,8 +1395,8 @@ export default class ElementCore {
             }
 
             // Update render coords/alpha.
-            const pr = this._parent._renderContext;
-            if (this._parent._hasRenderContext()) {
+            const pr = this._parent!._renderContext;
+            if (this._parent!._hasRenderContext()) {
                 const init = this._renderContext === this._worldContext;
                 if (init) {
                     // First render context build: make sure that it is fully initialized correctly.
@@ -1407,7 +1451,7 @@ export default class ElementCore {
             }
 
             // Determine whether we must use a 'renderTexture'.
-            const useRenderToTexture = this._renderToTextureEnabled && this._texturizer.mustRenderToTexture();
+            const useRenderToTexture = this._renderToTextureEnabled && this._texturizer!.mustRenderToTexture();
             if (this._useRenderToTexture !== useRenderToTexture) {
                 // Coords must be changed.
                 this._recalc |= 2 + 4;
@@ -1417,7 +1461,7 @@ export default class ElementCore {
 
                 if (!this._useRenderToTexture) {
                     // We must release the texture.
-                    this._texturizer.release();
+                    this._texturizer!.release();
                 }
             }
             this._useRenderToTexture = useRenderToTexture;
@@ -1457,7 +1501,7 @@ export default class ElementCore {
                 // Determine whether we must 'clip'.
                 if (this._clipping && r.isSquare()) {
                     // If the parent renders to a texture, it's scissor should be ignored;
-                    const area = this._parent._useRenderToTexture ? this._parent._viewport : this._parent._scissor;
+                    const area = this._parent!._useRenderToTexture ? this._parent!._viewport : this._parent!._scissor;
                     if (area) {
                         // Merge scissor areas.
                         const lx = Math.max(area[0], sx);
@@ -1473,7 +1517,7 @@ export default class ElementCore {
                     }
                 } else {
                     // No clipping: reuse parent scissor.
-                    this._scissor = this._parent._useRenderToTexture ? this._parent._viewport : this._parent._scissor;
+                    this._scissor = this._parent!._useRenderToTexture ? this._parent!._viewport : this._parent!._scissor;
                 }
             }
 
@@ -1481,7 +1525,7 @@ export default class ElementCore {
             if (this._boundsMargin) {
                 this._recBoundsMargin = this._boundsMargin;
             } else {
-                this._recBoundsMargin = this._parent._recBoundsMargin;
+                this._recBoundsMargin = this._parent!._recBoundsMargin;
             }
 
             if (this._onAfterCalcs) {
@@ -1511,7 +1555,7 @@ export default class ElementCore {
                 }
             }
 
-            if (this._parent._outOfBounds === 2) {
+            if (this._parent!._outOfBounds === 2) {
                 // Inherit parent out of boundsness.
                 this._outOfBounds = 2;
 
@@ -1527,15 +1571,16 @@ export default class ElementCore {
 
                     // Offscreens are always rendered as long as the parent is within bounds.
                     if (!this._renderToTextureEnabled || !this._texturizer || !this._texturizer.renderOffscreen) {
-                        if (this._scissor && (this._scissor[2] <= 0 || this._scissor[3] <= 0)) {
+                        const scissor = this._scissor!;
+                        if (scissor && (scissor[2] <= 0 || scissor[3] <= 0)) {
                             // Empty scissor area.
                             this._outOfBounds = 2;
                         } else {
                             // Use bbox to check out-of-boundness.
-                            if ((this._scissor[0] > ex) ||
-                                (this._scissor[1] > ey) ||
-                                (sx > (this._scissor[0] + this._scissor[2])) ||
-                                (sy > (this._scissor[1] + this._scissor[3]))
+                            if ((scissor[0] > ex) ||
+                                (scissor[1] > ey) ||
+                                (sx > (scissor[0] + scissor[2])) ||
+                                (sy > (scissor[1] + scissor[3]))
                             ) {
                                 this._outOfBounds = 1;
                             }
@@ -1551,15 +1596,15 @@ export default class ElementCore {
                         if (!withinMargin) {
                             // Re-test, now with margins.
                             if (this._recBoundsMargin) {
-                                withinMargin = !((ex < this._scissor[0] - this._recBoundsMargin[2]) ||
-                                    (ey < this._scissor[1] - this._recBoundsMargin[3]) ||
-                                    (sx > this._scissor[0] + this._scissor[2] + this._recBoundsMargin[0]) ||
-                                    (sy > this._scissor[1] + this._scissor[3] + this._recBoundsMargin[1]))
+                                withinMargin = !((ex < scissor[0] - this._recBoundsMargin[2]) ||
+                                    (ey < scissor[1] - this._recBoundsMargin[3]) ||
+                                    (sx > scissor[0] + scissor[2] + this._recBoundsMargin[0]) ||
+                                    (sy > scissor[1] + scissor[3] + this._recBoundsMargin[1]))
                             } else {
-                                withinMargin = !((ex < this._scissor[0] - 100) ||
-                                    (ey < this._scissor[1] - 100) ||
-                                    (sx > this._scissor[0] + this._scissor[2] + 100) ||
-                                    (sy > this._scissor[1] + this._scissor[3] + 100))
+                                withinMargin = !((ex < scissor[0] - 100) ||
+                                    (ey < scissor[1] - 100) ||
+                                    (sx > scissor[0] + scissor[2] + 100) ||
+                                    (sy > scissor[1] + scissor[3] + 100))
                             }
                             if (withinMargin && this._outOfBounds === 2) {
                                 // Children must be visited because they may contain elements that are within margin, so must be visible.
@@ -1669,15 +1714,15 @@ export default class ElementCore {
     }
 
     _applyRelativeDimFuncs() {
-        if (this._optFlags & 1) {
-            const x = this._funcX(this._parent.w);
+        if (this._relFuncFlags & 1) {
+            const x = this._funcX!(this._parent!._w);
             if (x !== this._x) {
                 this._localPx += (x - this._x);
                 this._x = x;
             }
         }
-        if (this._optFlags & 2) {
-            const y = this._funcY(this._parent.h);
+        if (this._relFuncFlags & 2) {
+            const y = this._funcY!(this._parent!._h);
             if (y !== this._y) {
                 this._localPy += (y - this._y);
                 this._y = y;
@@ -1685,15 +1730,15 @@ export default class ElementCore {
         }
 
         let changedDims = false;
-        if (this._optFlags & 4) {
-            const w = this._funcW(this._parent.w);
+        if (this._relFuncFlags & 4) {
+            const w = this._funcW!(this._parent!._w);
             if (w !== this._w) {
                 this._w = w;
                 changedDims = true;
             }
         }
-        if (this._optFlags & 8) {
-            const h = this._funcH(this._parent.h);
+        if (this._relFuncFlags & 8) {
+            const h = this._funcH!(this._parent!._h);
             if (h !== this._h) {
                 this._h = h;
                 changedDims = true;
@@ -1703,8 +1748,7 @@ export default class ElementCore {
         if (changedDims) {
             // Recalc mount, scale position.
             this._recalcLocalTranslate();
-
-            this.element.onDimensionsChanged(this._w, this._h);
+            this.onDimensionsChanged();
         }
     }
 
@@ -1760,8 +1804,8 @@ export default class ElementCore {
             // Also add children to the VBO.
             if (this._children) {
                 if (this._zContextUsage) {
-                    for (let i = 0, n = this._zIndexedChildren.length; i < n; i++) {
-                        this._zIndexedChildren[i].render();
+                    for (let i = 0, n = this._zIndexedChildren!.length; i < n; i++) {
+                        this._zIndexedChildren![i].render();
                     }
                 } else {
                     for (let i = 0, n = this._children.length; i < n; i++) {
@@ -1792,20 +1836,20 @@ export default class ElementCore {
             let renderState = this.renderState;
 
             let mustRenderChildren = true;
-            let renderTextureInfo;
+            let renderTextureInfo: any;
             let prevRenderTextureInfo;
             if (this._useRenderToTexture) {
                 if (this._w === 0 || this._h === 0) {
                     // Ignore this branch and don't draw anything.
                     return;
-                } else if (!this._texturizer.hasRenderTexture() || (hasRenderUpdates >= 3)) {
+                } else if (!this._texturizer!.hasRenderTexture() || (hasRenderUpdates >= 3)) {
                     // Switch to default shader for building up the render texture.
                     renderState.setShader(renderState.defaultShader, this);
 
                     prevRenderTextureInfo = renderState.renderTextureInfo;
 
                     renderTextureInfo = {
-                        nativeTexture: null,
+                        nativeTexture: undefined,
                         offset: 0,  // Set by CoreRenderState.
                         w: this._w,
                         h: this._h,
@@ -1815,7 +1859,7 @@ export default class ElementCore {
                         cache: false
                     };
 
-                    if (this._texturizer.hasResultTexture() || (!renderState.isCachingTexturizer && (hasRenderUpdates < 3))) {
+                    if (this._texturizer!.hasResultTexture() || (!renderState.isCachingTexturizer && (hasRenderUpdates < 3))) {
                         /**
                          * We don't always cache render textures.
                          *
@@ -1836,13 +1880,13 @@ export default class ElementCore {
                         renderState.isCachingTexturizer = true;
                     }
 
-                    if (!this._texturizer.hasResultTexture()) {
+                    if (!this._texturizer!.hasResultTexture()) {
                         // We can already release the current texture to the pool, as it will be rebuild anyway.
                         // In case of multiple layers of 'filtering', this may save us from having to create one
                         //  render-to-texture layer.
                         // Notice that we don't do this when there is a result texture, as any other element may rely on
                         //  that result texture being filled.
-                        this._texturizer.releaseRenderTexture();
+                        this._texturizer!.releaseRenderTexture();
                     }
 
                     renderState.setRenderTextureInfo(renderTextureInfo);
@@ -1873,8 +1917,8 @@ export default class ElementCore {
             // Also add children to the VBO.
             if (mustRenderChildren && this._children) {
                 if (this._zContextUsage) {
-                    for (let i = 0, n = this._zIndexedChildren.length; i < n; i++) {
-                        this._zIndexedChildren[i].render();
+                    for (let i = 0, n = this._zIndexedChildren!.length; i < n; i++) {
+                        this._zIndexedChildren![i].render();
                     }
                 } else {
                     for (let i = 0, n = this._children.length; i < n; i++) {
@@ -1894,25 +1938,25 @@ export default class ElementCore {
 
                     // If nothing was rendered, we store a flag in the texturizer and prevent unnecessary
                     //  render-to-texture and filtering.
-                    this._texturizer.empty = renderTextureInfo.empty;
+                    this._texturizer!.empty = renderTextureInfo.empty;
 
                     if (renderTextureInfo.empty) {
                         // We ignore empty render textures and do not draw the final quad.
 
                         // The following cleans up memory and enforces that the result texture is also cleared.
-                        this._texturizer.releaseRenderTexture();
+                        this._texturizer!.releaseRenderTexture();
                     } else if (renderTextureInfo.nativeTexture) {
                         // If nativeTexture is set, we can reuse that directly instead of creating a new render texture.
-                        this._texturizer.reuseTextureAsRenderTexture(renderTextureInfo.nativeTexture);
+                        this._texturizer!.reuseTextureAsRenderTexture(renderTextureInfo!.nativeTexture);
 
                         renderTextureInfo.ignore = true;
                     } else {
-                        if (this._texturizer.renderTextureReused) {
+                        if (this._texturizer!.renderTextureReused) {
                             // Quad operations must be written to a render texture actually owned.
-                            this._texturizer.releaseRenderTexture();
+                            this._texturizer!.releaseRenderTexture();
                         }
                         // Just create the render texture.
-                        renderTextureInfo.nativeTexture = this._texturizer.getRenderTexture();
+                        renderTextureInfo.nativeTexture = this._texturizer!.getRenderTexture();
                     }
 
                     // Restore the parent's render texture.
@@ -1921,17 +1965,17 @@ export default class ElementCore {
                     updateResultTexture = true;
                 }
 
-                if (!this._texturizer.empty) {
-                    let resultTexture = this._texturizer.getResultTexture();
+                if (!this._texturizer!.empty) {
+                    let resultTexture = this._texturizer!.getResultTexture();
                     if (updateResultTexture) {
                         if (resultTexture) {
                             // Logging the update frame can be handy for userland.
                             resultTexture.update = renderState.stage.frameCounter;
                         }
-                        this._texturizer.updateResultTexture();
+                        this._texturizer!.updateResultTexture();
                     }
 
-                    if (!this._texturizer.renderOffscreen) {
+                    if (!this._texturizer!.renderOffscreen) {
                         // Render result texture to the actual render target.
                         renderState.setShader(this.activeShader, this._shaderOwner);
                         renderState.setScissor(this._scissor);
@@ -1941,9 +1985,9 @@ export default class ElementCore {
 
                         renderState.setTexturizer(this._texturizer, cache);
                         this._stashTexCoords();
-                        if (!this._texturizer.colorize) this._stashColors();
-                        this.renderState.addQuad(this, true);
-                        if (!this._texturizer.colorize) this._unstashColors();
+                        if (!this._texturizer!.colorize) this._stashColors();
+                        this.renderState.addQuad(this);
+                        if (!this._texturizer!.colorize) this._unstashColors();
                         this._unstashTexCoords();
                         renderState.setTexturizer(null);
                     }
@@ -1971,9 +2015,9 @@ export default class ElementCore {
          * - if the old one is larger (in size) than it should be, splice off the end of the array.
          */
 
-        const n = this._zIndexedChildren.length;
+        const n = this._zIndexedChildren!.length;
         let ptr = 0;
-        const a = this._zIndexedChildren;
+        const a = this._zIndexedChildren!;
 
         // Notice that items may occur multiple times due to z-index changing.
         const b = [];
@@ -2014,7 +2058,7 @@ export default class ElementCore {
                 ptr = 0;
                 let i = 0;
                 let j = 0;
-                const mergeResult = [];
+                const mergeResult : ElementCore[] = [];
                 do {
                     const v = (a[i]._zIndex === b[j]._zIndex ? a[i]._updateTreeOrder - b[j]._updateTreeOrder : a[i]._zIndex - b[j]._zIndex);
 
@@ -2101,7 +2145,7 @@ export default class ElementCore {
         ]
     };
 
-    getRenderTextureCoords(relX, relY) {
+    getRenderTextureCoords(relX: number, relY: number) {
         let r = this._renderContext;
         return [
             r.px + r.ta * relX + r.tb * relY,
@@ -2109,7 +2153,7 @@ export default class ElementCore {
         ]
     }
 
-    getAbsoluteCoords(relX, relY) {
+    getAbsoluteCoords(relX: number, relY: number) {
         let w = this._renderContext;
         return [
             w.px + w.ta * relX + w.tb * relY,
@@ -2118,26 +2162,12 @@ export default class ElementCore {
     }
 
 
-    get layout() {
+    private get layout(): FlexTarget {
         this._ensureLayout();
-        return this._layout;
+        return this._layout!;
     }
 
-    get flex() {
-        return this._layout ? this._layout.flex : null;
-    }
-
-    set flex(v) {
-        this.layout.flex = v;
-    }
-
-    get flexItem() {
-        return this._layout ? this._layout.flexItem : null;
-    }
-
-    set flexItem(v) {
-        this.layout.flexItem = v;
-    }
+    //@todo: delegate all flex properties.
 
     isFlexItem() {
         return !!this._layout && this._layout.isFlexItemEnabled();
@@ -2151,7 +2181,7 @@ export default class ElementCore {
         this._ensureLayout();
     }
 
-    _ensureLayout() {
+    private _ensureLayout() {
         if (!this._layout) {
             this._layout = new FlexTarget(this);
         }
@@ -2165,11 +2195,24 @@ export default class ElementCore {
         return (this._layout && this._layout.isEnabled());
     }
 
-    setLayout(x, y, w, h) {
-        this.x = x;
-        this.y = y;
-        this._updateDimensions(w, h);
+    getFlexContainer() : FlexContainer {
+        return this.layout.flex as any
     }
+
+    getFlexItem(): FlexItem {
+        return this.layout.flexItem as any
+    }
+
+    setLayout(x: number, y: number, w: number, h: number) {
+        if (this._x !== x || this._y !== y) {
+            this._x = x;
+            this._y = y;
+            this._updateLocalTranslate();
+        }
+        this._setInternalDimensions(w, h);
+    }
+
+
 
     triggerLayout() {
         this._setRecalc(256);
@@ -2179,42 +2222,39 @@ export default class ElementCore {
         this._setRecalc(2);
     }
 
-}
-
-class ElementCoreContext {
-
-    constructor() {
-        this.alpha = 1;
-
-        this.px = 0;
-        this.py = 0;
-
-        this.ta = 1;
-        this.tb = 0;
-        this.tc = 0;
-        this.td = 1;
+    public getRenderWidth() {
+        return this._w;
     }
 
-    isIdentity() {
-        return this.alpha === 1 &&
-            this.px === 0 &&
-            this.py === 0 &&
-            this.ta === 1 &&
-            this.tb === 0 &&
-            this.tc === 0 &&
-            this.td === 1;
+    public getRenderHeight() {
+        return this._h;
     }
 
-    isSquare() {
-        return this.tb === 0 && this.tc === 0;
+    public isWithinBoundsMargin(): boolean {
+        return this._withinBoundsMargin;
+    }
+
+    hasTexturizer(): boolean {
+        return !!this._texturizer;
+    }
+
+    static sortZIndexedChildren(a: ElementCore, b: ElementCore) {
+        return (a._zIndex === b._zIndex ? a._updateTreeOrder - b._updateTreeOrder : a._zIndex - b._zIndex);
     }
 
 }
 
-ElementCoreContext.IDENTITY = new ElementCoreContext();
-ElementCore.sortZIndexedChildren = function(a, b) {
-    return (a._zIndex === b._zIndex ? a._updateTreeOrder - b._updateTreeOrder : a._zIndex - b._zIndex);
-}
+export type FunctionX = (parentW: number) => number;
+export type FunctionY = (parentH: number) => number;
+export type FunctionW = (parentW: number) => number;
+export type FunctionH = (parentH: number) => number;
 
 import ElementTexturizer from "./ElementTexturizer";
 import Utils from "../Utils";
+import CoreContext from "./CoreContext";
+import TextureSource from "../TextureSource";
+import CoreRenderState from "./CoreRenderState";
+import Shader from "../Shader";
+import ElementCoreContext from "./ElementCoreContext";
+import FlexContainer from "../../flex/FlexContainer";
+import FlexItem from "../../flex/FlexItem";
