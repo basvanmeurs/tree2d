@@ -1,8 +1,8 @@
 import Element from "./Element";
+import Utils from "./Utils";
 
 export interface ListType {
     ref: string | undefined;
-    marker?: boolean;
 }
 
 /**
@@ -185,13 +185,15 @@ export default class ObjectList<T extends ListType> {
         const prevItems = this._items;
         this._items = newItems;
 
-        // Remove the items.
-        const removed = prevItems.filter(item => {
-            const m = item.marker;
-            delete item.marker;
-            return m;
-        });
-        const added = newItems.filter(item => prevItems.indexOf(item) === -1);
+        const removedSet = new Set(prevItems);
+        const added = [];
+        for (let i = 0, n = newItems.length; i < n; i++) {
+            const alreadyExists = removedSet.delete(newItems[i]);
+            if (!alreadyExists) {
+                added.push(newItems[i]);
+            }
+        }
+        const removed = Utils.setToArray(removedSet);
 
         if (removed.length || added.length) {
             // Recalculate refs.

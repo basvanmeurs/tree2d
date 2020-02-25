@@ -94,7 +94,7 @@ class Element {
         return this.__core.isRoot;
     }
 
-    _setParent(parent: Element|undefined) {
+    _setParent(parent: Element | undefined) {
         if (this.__parent === parent) return;
 
         this.__parent = parent;
@@ -1094,6 +1094,10 @@ class Element {
         return this.childList.getItems();
     }
 
+    set children(items: Element[]) {
+        this.childList.setItems(items);
+    }
+
     get p() {
         return this.__parent;
     }
@@ -1148,7 +1152,7 @@ class Element {
 
     enableTextTexture() {
         if (!this.texture || !(this.texture instanceof TextTexture)) {
-            this.texture = (new TextTexture(this.stage)) as any;
+            this.texture = new TextTexture(this.stage) as any;
 
             if (this.texture && !this.texture.w && !this.texture.h) {
                 // Inherit dimensions from element.

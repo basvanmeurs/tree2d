@@ -100,16 +100,12 @@ class ChildList {
         }
 
         const items = this.c.getItems();
-        for (let i = 0, n = items.length; i < n; i++) {
-            (items[i] as any).marker = true;
-        }
 
         let refs;
         const newItems = [];
         for (let i = 0, n = array.length; i < n; i++) {
             const s = array[i];
             if (this.isItem(s)) {
-                s.marker = false;
                 newItems.push(s);
             } else {
                 const cref = s.ref;
@@ -122,8 +118,6 @@ class ChildList {
                 if (!c) {
                     // Create new item.
                     c = this.createItem(s);
-                } else {
-                    (c as any).marker = false;
                 }
 
                 if (Utils.isObjectLiteral(s)) {
