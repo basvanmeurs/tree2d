@@ -1,30 +1,40 @@
+import Element from "./Element";
+
+export interface ListType {
+    ref: string | undefined;
+    marker?: boolean;
+}
+
 /**
  * Manages a list of objects.
  * Objects may be patched. Then, they can be referenced using the 'ref' (string) property.
  */
-export default class ObjectList {
+export default class ObjectList<T extends ListType> {
+    private _items: T[];
+    private _refs: Record<string, T | undefined>;
+
     constructor() {
         this._items = [];
         this._refs = {};
     }
 
-    get() {
+    getItems() {
         return this._items;
     }
 
-    get first() {
+    get first(): T | undefined {
         return this._items[0];
     }
 
-    get last() {
+    get last(): T | undefined {
         return this._items.length ? this._items[this._items.length - 1] : undefined;
     }
 
-    add(item, ensureNew = false) {
+    add(item: T, ensureNew = false) {
         this.addAt(item, this._items.length, ensureNew);
     }
 
-    addAt(item, index, ensureNew = false) {
+    addAt(item: T, index: number, ensureNew = false) {
         if (index >= 0 && index <= this._items.length) {
             let currentIndex = -1;
             if (!ensureNew) {
@@ -48,7 +58,7 @@ export default class ObjectList {
         }
     }
 
-    replaceByRef(item) {
+    replaceByRef(item: T) {
         if (item.ref) {
             const existingItem = this.getByRef(item.ref);
             if (!existingItem) {
@@ -61,7 +71,7 @@ export default class ObjectList {
         this.addAt(item, this._items.length);
     }
 
-    replace(item, prevItem) {
+    replace(item: T, prevItem: T) {
         const index = this.getIndex(prevItem);
         if (index === -1) {
             throw new Error("replace: The previous item does not exist");
@@ -69,7 +79,7 @@ export default class ObjectList {
         this.setAt(item, index);
     }
 
-    setAt(item, index) {
+    setAt(item: T, index: number) {
         if (index >= 0 && index <= this._items.length) {
             const currentIndex = this._items.indexOf(item);
             if (currentIndex !== -1) {
@@ -83,8 +93,9 @@ export default class ObjectList {
                 }
             } else {
                 if (index < this._items.length) {
-                    if (this._items[index].ref) {
-                        this._refs[this._items[index].ref] = undefined;
+                    const ref = this._items[index].ref;
+                    if (ref) {
+                        this._refs[ref] = undefined;
                     }
                 }
 
@@ -104,15 +115,15 @@ export default class ObjectList {
         }
     }
 
-    getAt(index) {
+    getAt(index: number) {
         return this._items[index];
     }
 
-    getIndex(item) {
+    getIndex(item: T) {
         return this._items.indexOf(item);
     }
 
-    remove(item) {
+    remove(item: T) {
         const index = this._items.indexOf(item);
 
         if (index !== -1) {
@@ -120,7 +131,15 @@ export default class ObjectList {
         }
     }
 
-    removeAt(index) {
+    removeAt(index: number) {
+        const item = this.removeSilently(index);
+
+        this.onRemove(item, index);
+
+        return item;
+    }
+
+    protected removeSilently(index: number): T {
         const item = this._items[index];
 
         if (item.ref) {
@@ -128,8 +147,6 @@ export default class ObjectList {
         }
 
         this._items.splice(index, 1);
-
-        this.onRemove(item, index);
 
         return item;
     }
@@ -144,143 +161,27 @@ export default class ObjectList {
         }
     }
 
-    a(o) {
-        if (Utils.isObjectLiteral(o)) {
-            const c = this.createItem(o);
-            c.patch(o);
-            this.add(c);
-            return c;
-        } else if (Array.isArray(o)) {
-            for (let i = 0, n = o.length; i < n; i++) {
-                this.a(o[i]);
-            }
-            return null;
-        } else if (this.isItem(o)) {
-            this.add(o);
-            return o;
-        }
-    }
-
     get length() {
         return this._items.length;
     }
 
-    _getRefs() {
+    getRefs() {
         return this._refs;
     }
 
-    getByRef(ref) {
+    getByRef(ref: string) {
         return this._refs[ref];
     }
 
-    clearRef(ref) {
+    clearRef(ref: string) {
         delete this._refs[ref];
     }
 
-    setRef(ref, child) {
+    setRef(ref: string, child: T) {
         this._refs[ref] = child;
     }
 
-    patch(settings) {
-        if (Utils.isObjectLiteral(settings)) {
-            this._setByObject(settings);
-        } else if (Array.isArray(settings)) {
-            this._setByArray(settings);
-        }
-    }
-
-    _setByObject(settings) {
-        // Overrule settings of known referenced items.
-        const refs = this._getRefs();
-        const crefs = Object.keys(settings);
-        for (let i = 0, n = crefs.length; i < n; i++) {
-            const cref = crefs[i];
-            const s = settings[cref];
-
-            let c = refs[cref];
-            if (!c) {
-                if (this.isItem(s)) {
-                    // Replace previous item;
-                    s.ref = cref;
-                    this.add(s);
-                } else {
-                    // Create new item.
-                    c = this.createItem(s);
-                    c.ref = cref;
-                    Base.patchObject(c, s);
-                    this.add(c);
-                }
-            } else {
-                if (this.isItem(s)) {
-                    if (c !== s) {
-                        // Replace previous item;
-                        const idx = this.getIndex(c);
-                        s.ref = cref;
-                        this.setAt(s, idx);
-                    }
-                } else {
-                    c.patch(s);
-                }
-            }
-        }
-    }
-
-    _equalsArray(array) {
-        let same = true;
-        if (array.length === this._items.length) {
-            for (let i = 0, n = this._items.length; i < n && same; i++) {
-                same = same && this._items[i] === array[i];
-            }
-        } else {
-            same = false;
-        }
-        return same;
-    }
-
-    _setByArray(array) {
-        // For performance reasons, first check if the arrays match exactly and bail out if they do.
-        if (this._equalsArray(array)) {
-            return;
-        }
-
-        for (let i = 0, n = this._items.length; i < n; i++) {
-            this._items[i].marker = true;
-        }
-
-        let refs;
-        const newItems = [];
-        for (let i = 0, n = array.length; i < n; i++) {
-            const s = array[i];
-            if (this.isItem(s)) {
-                s.marker = false;
-                newItems.push(s);
-            } else {
-                const cref = s.ref;
-                let c;
-                if (cref) {
-                    if (!refs) refs = this._getRefs();
-                    c = refs[cref];
-                }
-
-                if (!c) {
-                    // Create new item.
-                    c = this.createItem(s);
-                } else {
-                    c.marker = false;
-                }
-
-                if (Utils.isObjectLiteral(s)) {
-                    c.patch(s);
-                }
-
-                newItems.push(c);
-            }
-        }
-
-        this._setItems(newItems);
-    }
-
-    _setItems(newItems) {
+    setItems(newItems: T[]) {
         const prevItems = this._items;
         this._items = newItems;
 
@@ -306,34 +207,19 @@ export default class ObjectList {
         this.onSync(removed, added, newItems);
     }
 
-    sort(f) {
+    sort(f: (a: T, b: T) => number) {
         const items = this._items.slice();
         items.sort(f);
-        this._setByArray(items);
+        this.onSync([], [], items);
     }
 
-    onAdd(item, index) {}
+    protected onAdd(item: T, index: number) {}
 
-    onRemove(item, index) {}
+    protected onRemove(item: T, index: number) {}
 
-    onSync(removed, added, order) {}
+    protected onSync(removed: T[], added: T[], order: T[]) {}
 
-    onSet(item, index, prevItem) {}
+    protected onSet(item: T, index: number, prevItem: T) {}
 
-    onMove(item, fromIndex, toIndex) {}
-
-    createItem(object) {
-        throw new Error("ObjectList.createItem must create and return a new object");
-    }
-
-    isItem(object) {
-        return false;
-    }
-
-    forEach(f) {
-        this.get().forEach(f);
-    }
+    protected onMove(item: T, fromIndex: number, toIndex: number) {}
 }
-
-import Utils from "./Utils";
-import Base from "./Base";

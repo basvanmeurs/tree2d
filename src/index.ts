@@ -1,4 +1,4 @@
-import Base from "./tree/Base";
+import Patcher from "./patch/Patcher";
 import Utils from "./tree/Utils";
 import StageUtils from "./tree/StageUtils";
 import Element from "./tree/Element";
@@ -49,7 +49,7 @@ import FlexLayout from "./flex/layout/FlexLayout";
 import FlexContainer from "./flex/FlexContainer";
 
 const index = {
-    Base,
+    Patcher,
     Utils,
     StageUtils,
     Element,

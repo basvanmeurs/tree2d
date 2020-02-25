@@ -593,7 +593,7 @@ export default class Texture {
     }
 
     patch(settings) {
-        Base.patchObject(this, settings);
+        Patcher.patchObject(this, settings);
     }
 }
 
@@ -601,4 +601,4 @@ Texture.prototype.isTexture = true;
 
 Texture.id = 0;
 
-import Base from "./Base";
+import Patcher from "../patch/Patcher";

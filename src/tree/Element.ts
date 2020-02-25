@@ -4,7 +4,6 @@
  */
 
 import ElementCore, { FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
-import Base from "./Base";
 
 import Utils from "./Utils";
 import Shader from "./Shader";
@@ -95,7 +94,7 @@ class Element {
         return this.__core.isRoot;
     }
 
-    _setParent(parent: Element) {
+    _setParent(parent: Element|undefined) {
         if (this.__parent === parent) return;
 
         this.__parent = parent;
@@ -141,7 +140,7 @@ class Element {
                 this._onSetup();
             }
 
-            const children = this._children.get();
+            const children = this._children.getItems();
             if (children) {
                 const m = children.length;
                 if (m > 0) {
@@ -170,7 +169,7 @@ class Element {
                 this._unsetEnabledFlag();
             }
 
-            const children = this._children.get();
+            const children = this._children.getItems();
             if (children) {
                 const m = children.length;
                 if (m > 0) {
@@ -681,7 +680,7 @@ class Element {
     getSettings(): any {
         const settings = this.getNonDefaults();
 
-        const children = this._children.get();
+        const children = this._children.getItems();
         if (children) {
             const n = children.length;
             if (n) {
@@ -1092,11 +1091,7 @@ class Element {
     }
 
     get children() {
-        return this.childList.get();
-    }
-
-    set children(children) {
-        this.childList.patch(children);
+        return this.childList.getItems();
     }
 
     get p() {

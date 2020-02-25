@@ -33,7 +33,7 @@ export default class Renderer {
             return new convertedShaderType(ctx);
         } else {
             const shader = new shaderType(ctx);
-            Base.patchObject(this, settings);
+            Patcher.patchObject(this, settings);
             return shader;
         }
     }
@@ -49,4 +49,4 @@ export default class Renderer {
     }
 }
 
-import Base from "../tree/Base";
+import Patcher from "../patch/Patcher";
