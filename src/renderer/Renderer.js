@@ -21,20 +21,15 @@ export default class Renderer {
         return shaderType.prototype instanceof this._getShaderBaseType();
     }
 
-    createShader(ctx, settings) {
-        const shaderType = settings.type;
-        // If shader type is not correct, use a different platform.
+    getSupportedShaderType(shaderType) {
         if (!this.isValidShaderType(shaderType)) {
             const convertedShaderType = this._getShaderAlternative(shaderType);
             if (!convertedShaderType) {
-                console.warn("Shader has no implementation for render target: " + shaderType.name);
-                return this._createDefaultShader(ctx);
+                return undefined;
             }
-            return new convertedShaderType(ctx);
+            return convertedShaderType;
         } else {
-            const shader = new shaderType(ctx);
-            Patcher.patchObject(this, settings);
-            return shader;
+            return shaderType;
         }
     }
 
