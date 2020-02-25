@@ -4,9 +4,15 @@ import { SpacingMode } from "./layout/SpacingCalculator";
 
 export type AlignItemsMode = "flex-start" | "flex-end" | "center" | "stretch";
 
-export type JustifyContentMode = SpacingMode;
+export type JustifyContentMode =
+    | "flex-start"
+    | "flex-end"
+    | "center"
+    | "space-between"
+    | "space-around"
+    | "space-evenly";
 
-export type AlignContentMode = "flex-start" | "flex-end" | "center" | "space-between" | "space-around" | "space-evenly";
+export type AlignContentMode = SpacingMode;
 
 export default class FlexContainer {
     public horizontal: boolean;

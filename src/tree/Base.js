@@ -1,6 +1,21 @@
+import Element from "./Element";
+
 export default class Base {
     static defaultSetter(obj, name, value) {
         obj[name] = value;
+    }
+
+    static createObject(settings, defaultType, ...cargs) {
+        let object;
+        if (settings.type) {
+            object = new settings.type(...cargs);
+        } else {
+            object = new defaultType(...cargs);
+        }
+
+        this.patchObject(object, settings);
+
+        return object;
     }
 
     static patchObject(obj, settings) {

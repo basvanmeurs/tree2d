@@ -2,8 +2,11 @@ import WebGLShaderProgram from "./WebGLShaderProgram";
 import Shader from "../../tree/Shader";
 
 export default class WebGLShader extends Shader {
+
     constructor(ctx) {
         super(ctx);
+
+        this._initialized = false;
 
         const stage = ctx.stage;
 

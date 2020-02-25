@@ -5,6 +5,7 @@
 
 import EventEmitter from "../EventEmitter";
 import Utils from "./Utils";
+import Base from "./Base";
 import WebGLRenderer from "../renderer/webgl/WebGLRenderer";
 import C2dRenderer from "../renderer/c2d/C2dRenderer";
 import PlatformLoader from "../platforms/PlatformLoader";
@@ -299,22 +300,11 @@ export default class Stage extends EventEmitter {
     }
 
     createShader(settings) {
-        return Shader.create(this, settings);
+        return Base.createObject(settings, undefined, this);
     }
 
     element(settings) {
-        if (settings instanceof Element) return settings;
-
-        let element;
-        if (settings.type) {
-            element = new settings.type(this);
-        } else {
-            element = new Element(this);
-        }
-
-        element.patch(settings);
-
-        return element;
+        return Base.createObject(settings, Element, this);
     }
 
     c(settings) {

@@ -46,11 +46,7 @@ class Element {
         this.stage = stage;
 
         this.__core = new ElementCore(this);
-
-        this.__start();
     }
-
-    __start() {}
 
     private getListeners(): ElementListeners {
         if (!this.listeners) {
@@ -436,13 +432,11 @@ class Element {
         let texture;
         if (Utils.isObjectLiteral(v)) {
             if (v.type) {
-                texture = new v.type(this.stage);
+                texture = Base.createObject(v, undefined, this.stage);
             } else {
-                texture = this.texture;
-            }
-
-            if (texture) {
-                Base.patchObject(texture, v);
+                if (this.texture) {
+                    Base.patchObject(this.texture, v);
+                }
             }
         } else if (!v) {
             texture = undefined;
@@ -636,8 +630,7 @@ class Element {
     }
 
     getLocationString(): string {
-        let i;
-        i = this.__parent ? this.__parent._children.getIndex(this) : "R";
+        const i = this.__parent ? this.__parent._children.getIndex(this) : "R";
         let str = this.__parent ? this.__parent.getLocationString() : "";
         if (this.ref) {
             str += ":[" + i + "]" + this.ref;
@@ -787,13 +780,6 @@ class Element {
             const tnd = this.__texture.getNonDefaults();
             if (Object.keys(tnd).length) {
                 settings.texture = tnd;
-            }
-        }
-
-        if (this.shader) {
-            const tnd = this.shader.getNonDefaults();
-            if (Object.keys(tnd).length) {
-                settings.shader = tnd;
             }
         }
 
@@ -1223,13 +1209,11 @@ class Element {
         this.__core._setHasUpdates();
     }
 
-    get shader() {
+    get shader(): Shader | undefined {
         return this.__core.shader;
     }
 
-    set shader(v) {
-        const shader = Shader.create(this.stage, v);
-
+    set shader(shader: Shader | undefined) {
         if (this.__enabled && this.__core.shader) {
             this.__core.shader.removeElement(this.__core);
         }

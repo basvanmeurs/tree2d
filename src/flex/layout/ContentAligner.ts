@@ -24,7 +24,7 @@ export default class ContentAligner {
 
         const { spacingBefore, spacingBetween } = this._getSpacing(remainingSpace);
 
-        const lines = this._lines;
+        const lines = this._lines!;
 
         const mode = this._layout._flexContainer.alignContent;
         let growSize = 0;
@@ -58,7 +58,7 @@ export default class ContentAligner {
     }
 
     _getTotalCrossAxisSize() {
-        const lines = this._lines;
+        const lines = this._lines!;
         let total = 0;
         for (let i = 0, n = lines.length; i < n; i++) {
             const line = lines[i];

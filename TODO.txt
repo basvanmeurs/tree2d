@@ -1,0 +1,8 @@
+Move all patching to another level.
+Make it a Utils thing.
+All type-specific sub-patching should be done there as well (texture, shader, children, etc).
+Remove it completely from the core structure (Element, Shader, Texture, etc).
+
+Only use it for testing.
+
+Goal: a simple render tree implementation.

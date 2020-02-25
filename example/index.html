@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Lightning example</title>
-    <script src="../dist/lightning.js"></script>
-    <script src="../devtools/lightning-inspect.js"></script>
+    <script src="../dist/Lightning.global.js"></script>
+<!--    <script src="../devtools/lightning-inspect.js"></script>-->
 </head>
 <body>
     <script>
         window.onload = () => {
             const options = {w: 900, h: 900, clearColor: 0xFF000000};
             const stage = new lng.Stage(options);
-            stage.root.add({texture: {type: lng.textures.TextTexture, text: "hello world", fontSize: 46, fontStyle: 'bold'}, color: 0xFFFF0000});
+            const el = stage.createElement({texture: {type: lng.textures.TextTexture, text: "hello world", fontSize: 46, fontStyle: 'bold'}, color: 0xFFFF0000})
+            stage.root.childList.add(el);
             document.body.appendChild(stage.getCanvas());
         };
     </script>

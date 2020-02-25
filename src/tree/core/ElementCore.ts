@@ -56,7 +56,7 @@ export default class ElementCore {
 
     private _renderContext: ElementCoreContext = this._worldContext;
 
-    private renderState: CoreRenderState = this.ctx.renderState;
+    private renderState: CoreRenderState;
 
     private _scissor?: number[];
 
@@ -159,6 +159,8 @@ export default class ElementCore {
         this._element = element;
 
         this.ctx = element.stage.ctx;
+
+        this.renderState = this.ctx.renderState;
     }
 
     get offsetX(): number | FunctionX {
@@ -181,7 +183,7 @@ export default class ElementCore {
             let dx;
             if (this.hasFlexLayout()) {
                 dx = (v as number) - this.layout.originalX;
-                this.layout.originalX = (v as number);
+                this.layout.originalX = v as number;
             } else {
                 dx = (v as number) - this._x;
             }
@@ -236,7 +238,7 @@ export default class ElementCore {
             let dy;
             if (this.hasFlexLayout()) {
                 dy = (v as number) - this.layout.originalY;
-                this.layout.originalY = (v as number);
+                this.layout.originalY = v as number;
             } else {
                 dy = (v as number) - this._y;
             }
@@ -543,9 +545,9 @@ export default class ElementCore {
     setHasRenderUpdates(type: number) {
         if (this._worldContext.alpha) {
             // Ignore if 'world invisible'. Render updates will be reset to 3 for every element that becomes visible.
-            let p: ElementCore | undefined = this;
-            p._hasRenderUpdates = Math.max(type, p._hasRenderUpdates);
-            while ((p = p._parent) && p._hasRenderUpdates !== 3) {
+            let p = this as ElementCore | undefined;
+            p!._hasRenderUpdates = Math.max(type, p!._hasRenderUpdates);
+            while ((p = p!._parent) && p._hasRenderUpdates !== 3) {
                 p._hasRenderUpdates = 3;
             }
         }
@@ -572,7 +574,7 @@ export default class ElementCore {
     }
 
     _setHasUpdates() {
-        let p: ElementCore | undefined = this;
+        let p = this as ElementCore | undefined;
         while (p && !p._hasUpdates) {
             p._hasUpdates = true;
             p = p._parent;
