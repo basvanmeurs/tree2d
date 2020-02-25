@@ -424,26 +424,18 @@ class Element {
         this._setDisplayedTexture(undefined);
     }
 
-    get texture(): Texture | any {
+    get texture(): Texture | undefined {
         return this.__texture;
     }
 
-    set texture(v: Texture | any) {
+    set texture(v: Texture | undefined) {
         let texture;
-        if (Utils.isObjectLiteral(v)) {
-            if (v.type) {
-                texture = Base.createObject(v, undefined, this.stage);
-            } else {
-                if (this.texture) {
-                    Base.patchObject(this.texture, v);
-                }
-            }
-        } else if (!v) {
+        if (!v) {
             texture = undefined;
         } else {
             if (v.isTexture) {
                 texture = v;
-            } else if (v.isTextureSource) {
+            } else if (v instanceof TextureSource) {
                 texture = new SourceTexture(this.stage);
                 texture.textureSource = v;
             } else {
@@ -454,7 +446,7 @@ class Element {
 
         const prevTexture = this.__texture;
         if (texture !== prevTexture) {
-            this.__texture = texture;
+            this.__texture = texture as Texture;
 
             if (this.__texture) {
                 if (this.__enabled) {
@@ -1161,9 +1153,9 @@ class Element {
 
     enableTextTexture() {
         if (!this.texture || !(this.texture instanceof TextTexture)) {
-            this.texture = new TextTexture(this.stage);
+            this.texture = (new TextTexture(this.stage)) as any;
 
-            if (!this.texture.w && !this.texture.h) {
+            if (this.texture && !this.texture.w && !this.texture.h) {
                 // Inherit dimensions from element.
                 // This allows userland to set dimensions of the Element and then later specify the text.
                 this.texture.w = this.core.w;
@@ -1171,25 +1163,6 @@ class Element {
             }
         }
         return this.texture;
-    }
-
-    get text() {
-        if (this.texture && this.texture instanceof TextTexture) {
-            return this.texture;
-        } else {
-            return undefined;
-        }
-    }
-
-    set text(v) {
-        if (!this.texture || !(this.texture instanceof TextTexture)) {
-            this.enableTextTexture();
-        }
-        if (Utils.isString(v)) {
-            this.texture.text = v;
-        } else {
-            this.texture.patch(v);
-        }
     }
 
     set onUpdate(f: Function) {
@@ -1292,5 +1265,6 @@ import ElementChildList from "./ElementChildList";
 import Stage from "./Stage";
 import ElementTexturizer from "./core/ElementTexturizer";
 import ElementListeners from "./ElementListeners";
+import TextureSource from "./TextureSource";
 
 export default Element;

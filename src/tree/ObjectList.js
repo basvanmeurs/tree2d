@@ -207,7 +207,7 @@ export default class ObjectList {
                     // Create new item.
                     c = this.createItem(s);
                     c.ref = cref;
-                    c.patch(s);
+                    Base.patchObject(c, s);
                     this.add(c);
                 }
             } else {
@@ -336,3 +336,4 @@ export default class ObjectList {
 }
 
 import Utils from "./Utils";
+import Base from "./Base";

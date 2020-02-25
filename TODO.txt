@@ -6,3 +6,10 @@ Remove it completely from the core structure (Element, Shader, Texture, etc).
 Only use it for testing.
 
 Goal: a simple render tree implementation.
+
+Another option would be to patch a recursive object structure in which patch operations are pre-defined:
+{
+    children: Base.children({Item: {texture: Base.patch({}), ..., children: }})
+}
+
+- text property

@@ -67,10 +67,12 @@ describe("textures", function() {
         describe("visible:false", () => {
             it("should not be loaded", () => {
                 const element = stage.createElement({
-                    Item: { texture: { type: TestTexture, async: false }, visible: false }
+                    children: {
+                        Item: { texture: { type: TestTexture, async: false }, visible: false }
+                    }
                 });
                 root.children = [element];
-                const texture = root.tag("Item").texture;
+                const texture = element.getByRef("Item").texture;
 
                 stage.drawFrame();
                 chai.assert(!texture.isLoaded(), "Texture must not be loaded");
