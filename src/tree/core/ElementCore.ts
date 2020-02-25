@@ -186,6 +186,7 @@ export default class ElementCore {
                 this.layout.originalX = v as number;
             } else {
                 dx = (v as number) - this._x;
+                this._x = (v as number);
             }
             this._updateLocalTranslateDelta(dx, 0);
         }
@@ -241,6 +242,7 @@ export default class ElementCore {
                 this.layout.originalY = v as number;
             } else {
                 dy = (v as number) - this._y;
+                this._y = (v as number);
             }
             this._updateLocalTranslateDelta(0, dy);
         }
