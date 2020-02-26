@@ -56,7 +56,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         this.gl.deleteBuffer(this._quadsBuffer);
     }
 
-    protected _reset() {
+    public _reset() {
         super._reset();
 
         const gl = this.gl;
@@ -76,12 +76,12 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         gl.bufferData(gl.ARRAY_BUFFER, element, gl.DYNAMIC_DRAW);
     }
 
-    protected _setupQuadOperation(quadOperation: WebGLCoreQuadOperation) {
+    public _setupQuadOperation(quadOperation: WebGLCoreQuadOperation) {
         super._setupQuadOperation(quadOperation);
         this._useShaderProgram(quadOperation.shader, quadOperation);
     }
 
-    protected _renderQuadOperation(op: WebGLCoreQuadOperation) {
+    public _renderQuadOperation(op: WebGLCoreQuadOperation) {
         const shader = op.shader;
 
         if (op.length || op.shader.addEmpty()) {
@@ -114,7 +114,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
     }
 
-    protected _bindRenderTexture(renderTexture: RenderTexture) {
+    public _bindRenderTexture(renderTexture: RenderTexture) {
         super._bindRenderTexture(renderTexture);
 
         const gl = this.gl;
@@ -127,7 +127,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
     }
 
-    protected _clearRenderTexture() {
+    public _clearRenderTexture() {
         super._clearRenderTexture();
         const gl = this.gl;
         if (!this._renderTexture) {
@@ -148,7 +148,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
     }
 
-    protected _setScissor(area: number[]) {
+    public _setScissor(area: number[]) {
         super._setScissor(area);
 
         if (this._scissor === area) {
