@@ -229,12 +229,10 @@ export default class FlexLayout {
             return true;
         }
         const canIgnoreCacheMiss = !this.isCrossAxisFitToContents();
-        if (canIgnoreCacheMiss) {
-            // Allow other main axis resizes and check if final resize matches the target main axis size
-            //  (ItemCoordinatesUpdater).
-            return true;
-        }
-        return false;
+
+        // Allow other main axis resizes and check if final resize matches the target main axis size
+        //  (ItemCoordinatesUpdater).
+        return canIgnoreCacheMiss;
     }
 
     performResizeMainAxis(size: number) {
@@ -266,11 +264,11 @@ export default class FlexLayout {
     }
 
     get targetMainAxisSize() {
-        return this._horizontal ? this.item.target.w : this.item.target.h;
+        return this._horizontal ? this.item.target.getLayoutW() : this.item.target.getLayoutH();
     }
 
     get targetCrossAxisSize() {
-        return this._horizontal ? this.item.target.h : this.item.target.w;
+        return this._horizontal ? this.item.target.getLayoutH() : this.item.target.getLayoutW();
     }
 
     getParentFlexContainer() {

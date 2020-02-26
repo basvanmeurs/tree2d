@@ -366,20 +366,20 @@ class Element {
         return this.__core.getRenderHeight();
     }
 
-    get finalX(): number {
-        return this.__core.x;
+    get layoutX(): number {
+        return this.__core.getLayoutX();
     }
 
-    get finalY(): number {
-        return this.__core.y;
+    get layoutY(): number {
+        return this.__core.getLayoutY();
     }
 
-    get finalW(): number {
-        return this.__core.w;
+    get layoutW(): number {
+        return this.__core.getLayoutW();
     }
 
-    get finalH(): number {
-        return this.__core.h;
+    get layoutH(): number {
+        return this.__core.getLayoutH();
     }
 
     textureIsLoaded(): boolean {
@@ -824,19 +824,19 @@ class Element {
     }
 
     get x(): number | FunctionX {
-        return this.__core.offsetX;
+        return this.__core.x;
     }
 
     set x(v: number | FunctionX) {
-        this.__core.offsetX = v;
+        this.__core.x = v;
     }
 
     get y(): number | FunctionY {
-        return this.__core.offsetY;
+        return this.__core.y;
     }
 
     set y(v: number | FunctionY) {
-        this.__core.offsetY = v;
+        this.__core.y = v;
     }
 
     get w(): number | FunctionW {

@@ -14,7 +14,7 @@ export default class Handler {
         return this.name === prop && obj instanceof this.sourceType;
     }
 
-    handle(obj: any, settings: any): any {
+    handle(obj: any, settings: any) {
         const value = obj[this.name];
         if (!settings) {
             obj[this.name] = undefined;

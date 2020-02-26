@@ -1,7 +1,7 @@
 import FlexTarget from "../../flex/FlexTarget";
 import Element from "../Element";
 
-export default class ElementCore {
+export default class ElementCore implements FlexSubject {
     private _element: Element;
 
     private ctx: CoreContext;
@@ -78,9 +78,11 @@ export default class ElementCore {
     private _w: number = 0;
     private _h: number = 0;
 
-    // Fixed set size.
-    private _fw: number = 0;
-    private _fh: number = 0;
+    // Actual settings.
+    private _sx: number = 0;
+    private _sy: number = 0;
+    private _sw: number = 0;
+    private _sh: number = 0;
 
     // Active texture size.
     private _tw: number = 0;
@@ -163,37 +165,24 @@ export default class ElementCore {
         this.renderState = this.ctx.renderState;
     }
 
-    get offsetX(): number | FunctionX {
+    get x(): number | FunctionX {
         if (this._funcX) {
             return this._funcX;
         } else {
-            if (this.hasFlexLayout()) {
-                return this._layout!.originalX;
-            } else {
-                return this._x;
-            }
+            return this._sx;
         }
     }
 
-    set offsetX(v: number | FunctionX) {
+    set x(v: number | FunctionX) {
         if (Utils.isFunction(v)) {
             this.funcX = v as FunctionX;
         } else {
             this._disableFuncX();
-            let dx;
-            if (this.hasFlexLayout()) {
-                dx = (v as number) - this.layout.originalX;
-                this.layout.originalX = v as number;
-            } else {
-                dx = (v as number) - this._x;
-                this._x = v as number;
-            }
+            const dx = (v as number) - this._sx;
+            this._sx = v as number;
+            this._x += dx;
             this._updateLocalTranslateDelta(dx, 0);
         }
-    }
-
-    get x() {
-        return this._x;
     }
 
     get funcX() {
@@ -206,7 +195,6 @@ export default class ElementCore {
             this._funcX = v;
             this._x = 0;
             if (this.hasFlexLayout()) {
-                this.layout.originalX = 0;
                 this.layout.forceLayout();
             } else {
                 this._triggerRecalcTranslate();
@@ -219,37 +207,24 @@ export default class ElementCore {
         this._funcX = undefined;
     }
 
-    get offsetY(): number | FunctionY {
+    get y(): number | FunctionY {
         if (this._funcY) {
             return this._funcY;
         } else {
-            if (this.hasFlexLayout()) {
-                return this._layout!.originalY;
-            } else {
-                return this._y;
-            }
+            return this._sy;
         }
     }
 
-    set offsetY(v: number | FunctionY) {
+    set y(v: number | FunctionY) {
         if (Utils.isFunction(v)) {
             this.funcY = v as FunctionY;
         } else {
-            this._disableFuncY();
-            let dy;
-            if (this.hasFlexLayout()) {
-                dy = (v as number) - this.layout.originalY;
-                this.layout.originalY = v as number;
-            } else {
-                dy = (v as number) - this._y;
-                this._y = v as number;
-            }
-            this._updateLocalTranslateDelta(0, dy);
+            this._disableFuncX();
+            const dy = (v as number) - this._sy;
+            this._sy = v as number;
+            this._y += dy;
+            this._updateLocalTranslateDelta(dy, 0);
         }
-    }
-
-    get y() {
-        return this._y;
     }
 
     get funcY() {
@@ -260,11 +235,10 @@ export default class ElementCore {
         if (this._funcY !== v) {
             this._relFuncFlags |= 2;
             this._funcY = v;
+            this._y = 0;
             if (this.hasFlexLayout()) {
-                this.layout.originalY = 0;
                 this.layout.forceLayout();
             } else {
-                this._y = 0;
                 this._triggerRecalcTranslate();
             }
         }
@@ -279,7 +253,7 @@ export default class ElementCore {
         if (this._funcW) {
             return this._funcW;
         } else {
-            return this._fw;
+            return this._sw;
         }
     }
 
@@ -288,7 +262,7 @@ export default class ElementCore {
             this.funcW = v as FunctionW;
         } else {
             this._disableFuncW();
-            this._fw = v as number;
+            this._sw = v as number;
             this._updateBaseDimensions();
         }
     }
@@ -301,7 +275,7 @@ export default class ElementCore {
         if (this._funcW !== v) {
             this._relFuncFlags |= 4;
             this._funcW = v;
-            this._fw = 0;
+            this._sw = 0;
             this._updateBaseDimensions();
         }
     }
@@ -319,7 +293,7 @@ export default class ElementCore {
         if (this._funcH) {
             return this._funcH;
         } else {
-            return this._fh;
+            return this._sh;
         }
     }
 
@@ -328,7 +302,7 @@ export default class ElementCore {
             this.funcH = v as FunctionH;
         } else {
             this._disableFuncH();
-            this._fh = v as number;
+            this._sh = v as number;
             this._updateBaseDimensions();
         }
     }
@@ -341,7 +315,7 @@ export default class ElementCore {
         if (this._funcH !== v) {
             this._relFuncFlags |= 8;
             this._funcH = v;
-            this._fh = 0;
+            this._sh = 0;
             this._updateBaseDimensions();
         }
     }
@@ -583,7 +557,7 @@ export default class ElementCore {
         }
     }
 
-    getParent() {
+    getParent(): ElementCore | undefined {
         return this._parent;
     }
 
@@ -757,26 +731,26 @@ export default class ElementCore {
         if (this._funcW || this._funcH) {
             this._triggerRecalcTranslate();
         } else {
-            const w = this._fw || this._tw;
-            const h = this._fh || this._th;
+            const w = this._sw || this._tw;
+            const h = this._sh || this._th;
 
             if (this.hasFlexLayout()) {
-                // Notify layout; it will trigger re-layout if it needs to.
-                this.layout.originalW = w;
-                this.layout.originalH = h;
+                // Notify layout.
+                this.layout.updatedSourceW();
+                this.layout.updatedSourceH();
             } else {
-                this.setInternalDimensions(w, h);
+                this.setLayoutDimensions(w, h);
             }
         }
     }
 
-    setInternalCoords(x: number, y: number) {
+    setLayoutCoords(x: number, y: number) {
         this._x = x;
         this._y = y;
         this._updateLocalTranslate();
     }
 
-    setInternalDimensions(w: number, h: number) {
+    setLayoutDimensions(w: number, h: number) {
         if (this._w !== w || this._h !== h) {
             this._w = w;
             this._h = h;
@@ -2180,6 +2154,10 @@ export default class ElementCore {
         return this._layout!;
     }
 
+    getLayout(): FlexTarget {
+        return this.layout;
+    }
+
     //@todo: delegate all flex properties.
 
     isFlexItem() {
@@ -2216,15 +2194,6 @@ export default class ElementCore {
         return this.layout.flexItem as any;
     }
 
-    setLayout(x: number, y: number, w: number, h: number) {
-        if (this._x !== x || this._y !== y) {
-            this._x = x;
-            this._y = y;
-            this._updateLocalTranslate();
-        }
-        this.setInternalDimensions(w, h);
-    }
-
     triggerLayout() {
         this._setRecalc(256);
     }
@@ -2253,8 +2222,60 @@ export default class ElementCore {
         return !!this._texturizer;
     }
 
+    getChildren(): ElementCore[] | undefined {
+        return this._children;
+    }
+
+    getFuncX() {
+        return this._funcX;
+    }
+
+    getFuncY() {
+        return this._funcY;
+    }
+
+    getFuncW() {
+        return this._funcW;
+    }
+
+    getFuncH() {
+        return this._funcH;
+    }
+
     static sortZIndexedChildren(a: ElementCore, b: ElementCore) {
         return a._zIndex === b._zIndex ? a._updateTreeOrder - b._updateTreeOrder : a._zIndex - b._zIndex;
+    }
+
+    getSourceX() {
+        return this._sx;
+    }
+
+    getSourceY() {
+        return this._sy;
+    }
+
+    getSourceW() {
+        return this._sw;
+    }
+
+    getSourceH() {
+        return this._sh;
+    }
+
+    getLayoutX() {
+        return this._x;
+    }
+
+    getLayoutY() {
+        return this._y;
+    }
+
+    getLayoutW() {
+        return this._w;
+    }
+
+    getLayoutH() {
+        return this._h;
     }
 }
 
@@ -2273,3 +2294,4 @@ import ElementCoreContext from "./ElementCoreContext";
 import FlexContainer from "../../flex/FlexContainer";
 import FlexItem from "../../flex/FlexItem";
 import { RenderTextureInfo } from "./RenderTextureInfo";
+import { FlexSubject } from "../../flex/FlexSubject";
