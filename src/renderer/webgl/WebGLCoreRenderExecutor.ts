@@ -1,7 +1,18 @@
 import CoreRenderExecutor from "../../tree/core/CoreRenderExecutor";
+import CoreContext from "../../tree/core/CoreContext";
+import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
+import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
+import WebGLShader from "./WebGLShader";
+import { RenderTexture } from "./WebGLRenderer";
 
 export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
-    constructor(ctx) {
+    private _attribsBuffer: WebGLBuffer;
+    private _quadsBuffer: WebGLBuffer;
+    private _projection: Float32Array;
+    private _scissor: number[];
+    private _currentShaderProgram?: WebGLShader;
+
+    constructor(ctx: CoreContext) {
         super(ctx);
 
         this.gl = this.ctx.stage.gl;
@@ -45,7 +56,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         this.gl.deleteBuffer(this._quadsBuffer);
     }
 
-    _reset() {
+    protected _reset() {
         super._reset();
 
         const gl = this.gl;
@@ -57,7 +68,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         this._setupBuffers();
     }
 
-    _setupBuffers() {
+    protected _setupBuffers() {
         const gl = this.gl;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._quadsBuffer);
         const element = new Float32Array(this.renderState.quads.data, 0, this.renderState.quads.dataLength);
@@ -65,12 +76,12 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         gl.bufferData(gl.ARRAY_BUFFER, element, gl.DYNAMIC_DRAW);
     }
 
-    _setupQuadOperation(quadOperation) {
+    protected _setupQuadOperation(quadOperation: WebGLCoreQuadOperation) {
         super._setupQuadOperation(quadOperation);
         this._useShaderProgram(quadOperation.shader, quadOperation);
     }
 
-    _renderQuadOperation(op) {
+    protected _renderQuadOperation(op: WebGLCoreQuadOperation) {
         const shader = op.shader;
 
         if (op.length || op.shader.addEmpty()) {
@@ -84,8 +95,8 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
      * @param {WebGLShader} shader;
      * @param {CoreQuadOperation} operation;
      */
-    _useShaderProgram(shader, operation) {
-        if (!shader.hasSameProgram(this._currentShaderProgram)) {
+    protected _useShaderProgram(shader: WebGLShader, operation: WebGLCoreQuadOperation) {
+        if (!shader.hasSameProgram(this._currentShaderProgram!)) {
             if (this._currentShaderProgram) {
                 this._currentShaderProgram.stopProgram();
             }
@@ -95,15 +106,15 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         shader.setupUniforms(operation);
     }
 
-    _stopShaderProgram() {
+    protected _stopShaderProgram() {
         if (this._currentShaderProgram) {
             // The currently used shader program should be stopped gracefully.
             this._currentShaderProgram.stopProgram();
-            this._currentShaderProgram = null;
+            this._currentShaderProgram = undefined;
         }
     }
 
-    _bindRenderTexture(renderTexture) {
+    protected _bindRenderTexture(renderTexture: RenderTexture) {
         super._bindRenderTexture(renderTexture);
 
         const gl = this.gl;
@@ -116,7 +127,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
     }
 
-    _clearRenderTexture() {
+    protected _clearRenderTexture() {
         super._clearRenderTexture();
         const gl = this.gl;
         if (!this._renderTexture) {
@@ -137,7 +148,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
     }
 
-    _setScissor(area) {
+    protected _setScissor(area: number[]) {
         super._setScissor(area);
 
         if (this._scissor === area) {

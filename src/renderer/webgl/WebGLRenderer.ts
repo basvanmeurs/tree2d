@@ -13,6 +13,8 @@ import Stage from "../../tree/Stage";
 import CoreContext from "../../tree/core/CoreContext";
 import Shader from "../../tree/Shader";
 import { Constructor } from "../../util/types";
+import ElementCore from "../../tree/core/ElementCore";
+import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 
 export interface RenderTexture extends WebGLTexture {
     id: number;
@@ -46,14 +48,23 @@ export default class WebGLRenderer extends Renderer {
     }
 
     protected _getShaderAlternative(shaderType: Constructor<Shader>) {
-        return shaderType.getWebGL && shaderType.getWebGL();
+        return (
+            (shaderType.constructor as typeof Shader).getWebGL && (shaderType.constructor as typeof Shader).getWebGL()
+        );
     }
 
     createCoreQuadList(ctx: CoreContext) {
         return new WebGLCoreQuadList(ctx);
     }
 
-    createCoreQuadOperation(ctx: CoreContext, shader: Shader, shaderOwner, renderTextureInfo, scissor, index) {
+    createCoreQuadOperation(
+        ctx: CoreContext,
+        shader: Shader,
+        shaderOwner: ElementCore,
+        renderTextureInfo: RenderTextureInfo,
+        scissor: number[],
+        index: number
+    ) {
         return new WebGLCoreQuadOperation(ctx, shader, shaderOwner, renderTextureInfo, scissor, index);
     }
 

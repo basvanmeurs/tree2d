@@ -1,7 +1,12 @@
 import CoreQuadList from "../../tree/core/CoreQuadList";
+import CoreContext from "../../tree/core/CoreContext";
 
 export default class WebGLCoreQuadList extends CoreQuadList {
-    constructor(ctx) {
+    uints: Uint32Array;
+    floats: Float32Array;
+    data: ArrayBuffer;
+
+    constructor(ctx: CoreContext) {
         super(ctx);
 
         // Allocate a fairly big chunk of memory that should be enough to support ~100000 (default) quads.
@@ -15,7 +20,7 @@ export default class WebGLCoreQuadList extends CoreQuadList {
         this.uints = new Uint32Array(this.data);
     }
 
-    getAttribsDataByteOffset(index) {
+    getAttribsDataByteOffset(index: number) {
         // Where this quad can be found in the attribs buffer.
         return index * 80;
     }

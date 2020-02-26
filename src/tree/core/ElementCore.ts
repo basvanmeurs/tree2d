@@ -186,7 +186,7 @@ export default class ElementCore {
                 this.layout.originalX = v as number;
             } else {
                 dx = (v as number) - this._x;
-                this._x = (v as number);
+                this._x = v as number;
             }
             this._updateLocalTranslateDelta(dx, 0);
         }
@@ -242,7 +242,7 @@ export default class ElementCore {
                 this.layout.originalY = v as number;
             } else {
                 dy = (v as number) - this._y;
-                this._y = (v as number);
+                this._y = v as number;
             }
             this._updateLocalTranslateDelta(0, dy);
         }
@@ -1850,7 +1850,7 @@ export default class ElementCore {
             const renderState = this.renderState;
 
             let mustRenderChildren = true;
-            let renderTextureInfo: any;
+            let renderTextureInfo!: RenderTextureInfo;
             let prevRenderTextureInfo;
             if (this._useRenderToTexture) {
                 if (this._w === 0 || this._h === 0) {
@@ -2272,3 +2272,4 @@ import Shader from "../Shader";
 import ElementCoreContext from "./ElementCoreContext";
 import FlexContainer from "../../flex/FlexContainer";
 import FlexItem from "../../flex/FlexItem";
+import { RenderTextureInfo } from "./RenderTextureInfo";

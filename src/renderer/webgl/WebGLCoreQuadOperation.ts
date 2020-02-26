@@ -1,17 +1,26 @@
 import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
 import CoreContext from "../../tree/core/CoreContext";
 import Shader from "../../tree/Shader";
+import ElementCore from "../../tree/core/ElementCore";
+import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 
 export default class WebGLCoreQuadOperation extends CoreQuadOperation {
     extraAttribsDataByteOffset: number;
 
-    constructor(ctx: CoreContext, shader: Shader, shaderOwner, renderTextureInfo, scissor, index) {
+    constructor(
+        ctx: CoreContext,
+        shader: Shader,
+        shaderOwner: ElementCore,
+        renderTextureInfo: RenderTextureInfo,
+        scissor: number[],
+        index: number
+    ) {
         super(ctx, shader, shaderOwner, renderTextureInfo, scissor, index);
 
         this.extraAttribsDataByteOffset = 0;
     }
 
-    getAttribsDataByteOffset(index) {
+    getAttribsDataByteOffset(index: number) {
         // Where this quad can be found in the attribs buffer.
         return this.quads.getAttribsDataByteOffset(this.index + index);
     }
@@ -22,7 +31,7 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
      * @param y
      * @return {number[]}
      */
-    getNormalRenderTextureCoords(x, y) {
+    getNormalRenderTextureCoords(x: number, y: number) {
         const coords = this.shaderOwner.getRenderTextureCoords(x, y);
         coords[0] /= this.getRenderWidth();
         coords[1] /= this.getRenderHeight();
