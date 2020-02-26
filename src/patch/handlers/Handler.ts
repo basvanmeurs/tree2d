@@ -1,9 +1,8 @@
 import Patcher from "../Patcher";
-
-export type Constructor<T> = new (...args: any[]) => T;
+import { Constructor } from "../../util/types";
 
 export default class Handler {
-    private sourceType: Constructor<any>;
+    private readonly sourceType: Constructor<any>;
     public name: string;
 
     constructor(sourceType: Constructor<any>, name: string) {
@@ -24,4 +23,3 @@ export default class Handler {
         }
     }
 }
-

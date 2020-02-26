@@ -1,7 +1,11 @@
 import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
+import CoreContext from "../../tree/core/CoreContext";
+import Shader from "../../tree/Shader";
 
 export default class WebGLCoreQuadOperation extends CoreQuadOperation {
-    constructor(ctx, shader, shaderOwner, renderTextureInfo, scissor, index) {
+    extraAttribsDataByteOffset: number;
+
+    constructor(ctx: CoreContext, shader: Shader, shaderOwner, renderTextureInfo, scissor, index) {
         super(ctx, shader, shaderOwner, renderTextureInfo, scissor, index);
 
         this.extraAttribsDataByteOffset = 0;

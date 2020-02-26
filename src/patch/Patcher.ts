@@ -1,10 +1,7 @@
-import Utils from "../tree/Utils";
-import { Constructor } from "./handlers/Handler";
-
 import handlers from "./handlers/handlers";
+import { Constructor } from "../util/types";
 
 export default class Patcher {
-
     static createObject<T>(settings: any, defaultType: Constructor<T> | undefined, ...cargs: any[]): T {
         let object;
         if (settings.type) {

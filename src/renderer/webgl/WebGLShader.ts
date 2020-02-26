@@ -1,9 +1,18 @@
 import WebGLShaderProgram from "./WebGLShaderProgram";
 import Shader from "../../tree/Shader";
+import CoreContext from "../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 
 export default class WebGLShader extends Shader {
+    vertexShaderSource: string;
+    fragmentShaderSource: string;
 
-    constructor(ctx) {
+    private _initialized: boolean;
+
+    private readonly _program: any;
+    gl: any;
+
+    constructor(ctx: CoreContext) {
         super(ctx);
 
         this._initialized = false;
@@ -13,8 +22,8 @@ export default class WebGLShader extends Shader {
         this._program = stage.renderer.shaderPrograms.get(this.constructor);
         if (!this._program) {
             this._program = new WebGLShaderProgram(
-                this.constructor.vertexShaderSource,
-                this.constructor.fragmentShaderSource
+                this.constructor.prototype.vertexShaderSource,
+                this.constructor.prototype.fragmentShaderSource
             );
 
             // Let the vbo context perform garbage collection.
@@ -28,7 +37,7 @@ export default class WebGLShader extends Shader {
         return this._program.glProgram;
     }
 
-    _init() {
+    private _init() {
         if (!this._initialized) {
             this.initialize();
             this._initialized = true;
@@ -43,15 +52,15 @@ export default class WebGLShader extends Shader {
         return this._initialized;
     }
 
-    _uniform(name) {
+    private _uniform(name: string) {
         return this._program.getUniformLocation(name);
     }
 
-    _attrib(name) {
+    private _attrib(name: string) {
         return this._program.getAttribLocation(name);
     }
 
-    _setUniform(name, value, glFunction) {
+    private _setUniform(name: string, value: any, glFunction: Function) {
         this._program.setUniformValue(name, value, glFunction);
     }
 
@@ -67,7 +76,7 @@ export default class WebGLShader extends Shader {
         this.disableAttribs();
     }
 
-    hasSameProgram(other) {
+    hasSameProgram(other: WebGLShader) {
         // For performance reasons, we first check for identical references.
         return other && (other === this || other._program === this._program);
     }
@@ -88,34 +97,34 @@ export default class WebGLShader extends Shader {
         return 0;
     }
 
-    getVertexAttribPointerOffset(operation) {
+    getVertexAttribPointerOffset(operation: WebGLCoreQuadOperation) {
         return operation.extraAttribsDataByteOffset - (operation.index + 1) * 4 * this.getExtraAttribBytesPerVertex();
     }
 
-    setExtraAttribsInBuffer(operation) {
+    setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
         // Set extra attrib data in in operation.quads.data/floats/uints, starting from
         // operation.extraAttribsBufferByteOffset.
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         // Set all shader-specific uniforms.
         // Notice that all uniforms should be set, even if they have not been changed within this shader instance.
         // The uniforms are shared by all shaders that have the same type (and shader program).
     }
 
-    _getProjection(operation) {
+    _getProjection(operation: WebGLCoreQuadOperation) {
         return operation.getProjection();
     }
 
-    getFlipY(operation) {
+    getFlipY(operation: WebGLCoreQuadOperation) {
         return this._getProjection(operation)[1] < 0;
     }
 
-    beforeDraw(operation) {}
+    beforeDraw(operation: WebGLCoreQuadOperation) {}
 
-    draw(operation) {}
+    draw(operation: WebGLCoreQuadOperation) {}
 
-    afterDraw(operation) {}
+    afterDraw(operation: WebGLCoreQuadOperation) {}
 
     cleanup() {
         this._initialized = false;

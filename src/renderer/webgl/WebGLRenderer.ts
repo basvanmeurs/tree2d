@@ -7,9 +7,28 @@ import CoreRenderState from "../../tree/core/CoreRenderState";
 import DefaultShader from "./shaders/DefaultShader";
 import WebGLShader from "./WebGLShader";
 import Renderer from "../Renderer";
+import CoreQuadList from "../../tree/core/CoreQuadList";
+import TextureSource from "../../tree/TextureSource";
+import Stage from "../../tree/Stage";
+import CoreContext from "../../tree/core/CoreContext";
+import Shader from "../../tree/Shader";
+import { Constructor } from "../../util/types";
+
+export interface RenderTexture extends WebGLTexture {
+    id: number;
+    f: number;
+    ow: number;
+    oh: number;
+    w: number;
+    h: number;
+    precision: number;
+    framebuffer: WebGLFramebuffer;
+}
 
 export default class WebGLRenderer extends Renderer {
-    constructor(stage) {
+    shaderPrograms: Map<Function, any>;
+
+    constructor(stage: Stage) {
         super(stage);
         this.shaderPrograms = new Map();
     }
@@ -18,7 +37,7 @@ export default class WebGLRenderer extends Renderer {
         this.shaderPrograms.forEach(shaderProgram => shaderProgram.destroy());
     }
 
-    _createDefaultShader(ctx) {
+    _createDefaultShader(ctx: CoreContext) {
         return new DefaultShader(ctx);
     }
 
@@ -26,27 +45,27 @@ export default class WebGLRenderer extends Renderer {
         return WebGLShader;
     }
 
-    _getShaderAlternative(shaderType) {
+    protected _getShaderAlternative(shaderType: Constructor<Shader>) {
         return shaderType.getWebGL && shaderType.getWebGL();
     }
 
-    createCoreQuadList(ctx) {
+    createCoreQuadList(ctx: CoreContext) {
         return new WebGLCoreQuadList(ctx);
     }
 
-    createCoreQuadOperation(ctx, shader, shaderOwner, renderTextureInfo, scissor, index) {
+    createCoreQuadOperation(ctx: CoreContext, shader: Shader, shaderOwner, renderTextureInfo, scissor, index) {
         return new WebGLCoreQuadOperation(ctx, shader, shaderOwner, renderTextureInfo, scissor, index);
     }
 
-    createCoreRenderExecutor(ctx) {
+    createCoreRenderExecutor(ctx: CoreContext) {
         return new WebGLCoreRenderExecutor(ctx);
     }
 
-    createCoreRenderState(ctx) {
+    createCoreRenderState(ctx: CoreContext) {
         return new CoreRenderState(ctx);
     }
 
-    createRenderTexture(w, h, pw, ph) {
+    createRenderTexture(w: number, h: number, pw: GLsizei, ph: GLsizei): RenderTexture {
         const gl = this.stage.gl;
         const glTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
@@ -75,20 +94,27 @@ export default class WebGLRenderer extends Renderer {
         return glTexture;
     }
 
-    freeRenderTexture(glTexture) {
+    freeRenderTexture(glTexture: RenderTexture) {
         const gl = this.stage.gl;
         gl.deleteFramebuffer(glTexture.framebuffer);
         gl.deleteTexture(glTexture);
     }
 
-    uploadTextureSource(textureSource, options) {
+    uploadTextureSource(textureSource: TextureSource, options: any) {
         const gl = this.stage.gl;
 
         const source = options.source;
 
         const format = {
             premultiplyAlpha: true,
-            hasAlpha: true
+            hasAlpha: true,
+            flipBlueRed: false,
+            texParams: {} as { [key: number]: GLenum },
+            texOptions: {
+                format: 0,
+                internalFormat: 0,
+                type: gl.UNSIGNED_BYTE
+            }
         };
 
         if (options && options.hasOwnProperty("premultiplyAlpha")) {
@@ -116,7 +142,7 @@ export default class WebGLRenderer extends Renderer {
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, format.premultiplyAlpha);
 
         if (Utils.isNode) {
-            gl.pixelStorei(gl.UNPACK_FLIP_BLUE_RED, !!format.flipBlueRed);
+            gl.pixelStorei(gl.UNPACK_FLIP_BLUE_RED, format.flipBlueRed);
         }
 
         const texParams = format.texParams;
@@ -125,10 +151,10 @@ export default class WebGLRenderer extends Renderer {
         if (!texParams[gl.TEXTURE_WRAP_S]) texParams[gl.TEXTURE_WRAP_S] = gl.CLAMP_TO_EDGE;
         if (!texParams[gl.TEXTURE_WRAP_T]) texParams[gl.TEXTURE_WRAP_T] = gl.CLAMP_TO_EDGE;
 
-        Object.keys(texParams).forEach(key => {
+        for (const key in texParams) {
             const value = texParams[key];
             gl.texParameteri(gl.TEXTURE_2D, parseInt(key), value);
-        });
+        }
 
         const texOptions = format.texOptions;
         texOptions.format = texOptions.format || (format.hasAlpha ? gl.RGBA : gl.RGB);
@@ -143,11 +169,11 @@ export default class WebGLRenderer extends Renderer {
         return glTexture;
     }
 
-    freeTextureSource(textureSource) {
+    freeTextureSource(textureSource: TextureSource) {
         this.stage.gl.deleteTexture(textureSource.nativeTexture);
     }
 
-    addQuad(renderState, quads, index) {
+    addQuad(renderState: CoreRenderState, quads: CoreQuadList, index: number) {
         let offset = index * 20;
         const elementCore = quads.quadElements[index];
 
@@ -206,7 +232,7 @@ export default class WebGLRenderer extends Renderer {
         }
     }
 
-    isRenderTextureReusable(renderState, renderTextureInfo) {
+    isRenderTextureReusable(renderState: CoreRenderState, renderTextureInfo: TextureSource) {
         const offset = (renderState._renderTextureInfo.offset * 80) / 4;
         const floats = renderState.quads.floats;
         const uints = renderState.quads.uints;
@@ -234,7 +260,7 @@ export default class WebGLRenderer extends Renderer {
         );
     }
 
-    finishRenderState(renderState) {
+    finishRenderState(renderState: CoreRenderState) {
         // Set extra shader attribute data.
         let offset = renderState.length * 80;
         for (let i = 0, n = renderState.quadOperations.length; i < n; i++) {
@@ -254,7 +280,18 @@ export default class WebGLRenderer extends Renderer {
         renderState.quads.dataLength = offset;
     }
 
-    copyRenderTexture(renderTexture, nativeTexture, options) {
+    copyRenderTexture(
+        renderTexture: RenderTexture,
+        nativeTexture: WebGLTexture,
+        options: {
+            sx?: number;
+            sy?: number;
+            x?: number;
+            y?: number;
+            w?: number;
+            h?: number;
+        }
+    ) {
         const gl = this.stage.gl;
         gl.bindTexture(gl.TEXTURE_2D, nativeTexture);
         gl.bindFramebuffer(gl.FRAMEBUFFER, renderTexture.framebuffer);

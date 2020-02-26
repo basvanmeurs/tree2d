@@ -2,6 +2,8 @@ export default class CoreRenderState {
     constructor(ctx) {
         this.ctx = ctx;
 
+        this.quadOperations = [];
+
         this.stage = ctx.stage;
 
         this.defaultShader = this.stage.renderer.getDefaultShader(ctx);

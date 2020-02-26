@@ -1,10 +1,9 @@
 import { SingleReferenceHandler } from "./SingleReferenceHandler";
 import Element from "../../tree/Element";
 import Shader from "../../tree/Shader";
-import { Constructor } from "./Handler";
+import { Constructor } from "../../util/types";
 
 export class ShaderHandler extends SingleReferenceHandler {
-
     constructor(sourceType: Constructor<Element>, name: string) {
         super(sourceType, name, Shader, obj => [obj.stage.ctx]);
     }
@@ -18,9 +17,9 @@ export class ShaderHandler extends SingleReferenceHandler {
                 return;
             }
             if (type !== settings.type) {
-                return super.handle(obj, Object.assign({}, settings, {type}));
+                return super.handle(obj, Object.assign({}, settings, { type }));
             }
         }
-        super.handle(obj, settings)
+        super.handle(obj, settings);
     }
 }
