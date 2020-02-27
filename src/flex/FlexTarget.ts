@@ -7,8 +7,6 @@ import { FlexSubject } from "./FlexSubject";
  * This is the connection between the render tree with the layout tree of this flex container/item.
  */
 export default class FlexTarget {
-    private _target: FlexSubject;
-
     /**
      * Possible values (only in case of container):
      * bit 0: has changed or contains items with changes
@@ -30,12 +28,10 @@ export default class FlexTarget {
 
     public _items?: FlexTarget[] = undefined;
 
-    constructor(target: FlexSubject) {
-        this._target = target;
-    }
+    constructor(private _target: FlexSubject) {}
 
     get flexLayout() {
-        return this.flex ? this.flex._layout : undefined;
+        return this.flex ? this.flex.layout : undefined;
     }
 
     layoutFlexTree() {
@@ -327,7 +323,7 @@ export default class FlexTarget {
     }
 
     private _getRecalcFromChangedChildRecalc(childRecalc: number) {
-        const layout = this._flex!._layout;
+        const layout = this._flex!.layout;
 
         const mainAxisRecalcFlag = layout._horizontal ? 1 : 2;
         const crossAxisRecalcFlag = layout._horizontal ? 2 : 1;
@@ -362,8 +358,7 @@ export default class FlexTarget {
 
         const localRecalc = 1 + (isWidthDynamic ? 2 : 0) + (isHeightDynamic ? 4 : 0);
 
-        const combinedRecalc = childRecalc & localRecalc;
-        return combinedRecalc;
+        return childRecalc & localRecalc;
     }
 
     get recalc() {

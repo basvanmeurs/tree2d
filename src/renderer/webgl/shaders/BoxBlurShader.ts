@@ -1,10 +1,11 @@
 import DefaultShader from "./DefaultShader";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 /**
  * 4x4 box blur shader which works in conjunction with a 50% rescale.
  */
 export default class BoxBlurShader extends DefaultShader {
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         const dx = 1.0 / operation.getTextureWidth(0);
         const dy = 1.0 / operation.getTextureHeight(0);
@@ -12,7 +13,7 @@ export default class BoxBlurShader extends DefaultShader {
     }
 }
 
-BoxBlurShader.vertexShaderSource = `
+BoxBlurShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -37,7 +38,7 @@ BoxBlurShader.vertexShaderSource = `
     }
 `;
 
-BoxBlurShader.fragmentShaderSource = `
+BoxBlurShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

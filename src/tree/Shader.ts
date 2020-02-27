@@ -2,7 +2,7 @@ import CoreContext from "./core/CoreContext";
 import ElementCore from "./core/ElementCore";
 
 export default class Shader {
-    private ctx: CoreContext;
+    protected ctx: CoreContext;
 
     // The (enabled) elements that use this shader.
     private _elements = new Set<ElementCore>();

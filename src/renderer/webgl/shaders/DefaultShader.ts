@@ -1,4 +1,5 @@
 import WebGLShader from "../WebGLShader";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class DefaultShader extends WebGLShader {
     enableAttribs() {
@@ -33,11 +34,11 @@ export default class DefaultShader extends WebGLShader {
         }
     }
 
-    setupUniforms(operation) {
-        this._setUniform("projection", this._getProjection(operation), this.gl.uniform2fv, false);
+    setupUniforms(operation: WebGLCoreQuadOperation) {
+        this._setUniform("projection", this._getProjection(operation), this.gl.uniform2fv);
     }
 
-    draw(operation) {
+    draw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
 
         const length = operation.length;
@@ -62,7 +63,7 @@ export default class DefaultShader extends WebGLShader {
     }
 }
 
-DefaultShader.vertexShaderSource = `
+DefaultShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -80,7 +81,7 @@ DefaultShader.vertexShaderSource = `
     }
 `;
 
-DefaultShader.fragmentShaderSource = `
+DefaultShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

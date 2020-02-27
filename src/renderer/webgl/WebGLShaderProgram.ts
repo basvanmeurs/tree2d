@@ -2,18 +2,14 @@
  * Base functionality for shader setup/destroy.
  */
 export default class WebGLShaderProgram {
-    _program: WebGLProgram | null;
-    _uniformLocations: Map<string, WebGLUniformLocation>;
-    _attributeLocations: Map<string, GLint>;
-    _currentUniformValues: { [key: string]: any };
+    private _program: WebGLProgram | null;
+    private _uniformLocations: Map<string, WebGLUniformLocation> = new Map();
+    private _attributeLocations: Map<string, GLint> = new Map();
+    private readonly _currentUniformValues: { [key: string]: any } = {};
+
     gl: WebGLRenderingContext;
 
-    constructor(public vertexShaderSource: string, public fragmentShaderSource: string) {
-        this._uniformLocations = new Map();
-        this._attributeLocations = new Map();
-
-        this._currentUniformValues = {};
-    }
+    constructor(public vertexShaderSource: string, public fragmentShaderSource: string) {}
 
     compile(gl: WebGLRenderingContext) {
         if (this._program) return;

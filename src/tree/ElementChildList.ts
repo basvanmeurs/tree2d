@@ -8,11 +8,8 @@ import Element from "./Element";
 const gc = (i: Element) => i.core;
 
 export default class ElementChildList extends ObjectList<Element> {
-    private element: Element;
-
-    constructor(element: Element) {
+    constructor(private readonly element: Element) {
         super();
-        this.element = element;
     }
 
     protected onAdd(item: Element, index: number) {

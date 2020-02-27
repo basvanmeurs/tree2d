@@ -15,44 +15,27 @@ export type JustifyContentMode =
 export type AlignContentMode = SpacingMode;
 
 export default class FlexContainer {
-    public horizontal: boolean;
-    public reverse: boolean;
+    public horizontal: boolean = true;
+    public reverse: boolean = false;
 
-    public _layout: Layout;
-    private _wrap: boolean;
-    private _alignItems: AlignItemsMode;
-    private _justifyContent: JustifyContentMode;
-    private _alignContent: AlignContentMode;
+    public layout: Layout = new Layout(this);
+    private _wrap: boolean = false;
+    private _alignItems: AlignItemsMode = "stretch";
+    private _justifyContent: JustifyContentMode = "flex-start";
+    private _alignContent: AlignContentMode = "flex-start";
 
-    private _paddingLeft: number;
-    private _paddingTop: number;
-    private _paddingRight: number;
-    private _paddingBottom: number;
+    private _paddingLeft: number = 0;
+    private _paddingTop: number = 0;
+    private _paddingRight: number = 0;
+    private _paddingBottom: number = 0;
 
-    constructor(public readonly item: FlexTarget) {
-        this._layout = new Layout(this);
-        this.horizontal = true;
-        this.reverse = false;
-        this._wrap = false;
-        this._alignItems = "stretch";
-        this._justifyContent = "flex-start";
-        this._alignContent = "flex-start";
+    constructor(public readonly item: FlexTarget) {}
 
-        this._paddingLeft = 0;
-        this._paddingTop = 0;
-        this._paddingRight = 0;
-        this._paddingBottom = 0;
-    }
-
-    get layout() {
-        return this._layout;
-    }
-
-    _changedDimensions() {
+    private _changedDimensions() {
         this.item.forceLayout();
     }
 
-    _changedContents() {
+    changedContents() {
         this.item.changedContents();
     }
 
@@ -66,12 +49,12 @@ export default class FlexContainer {
         this.horizontal = f === "row" || f === "row-reverse";
         this.reverse = f === "row-reverse" || f === "column-reverse";
 
-        this._changedContents();
+        this.changedContents();
     }
 
     set wrap(v) {
         this._wrap = v;
-        this._changedContents();
+        this.changedContents();
     }
 
     get wrap() {
@@ -87,7 +70,7 @@ export default class FlexContainer {
 
         this._alignItems = v;
 
-        this._changedContents();
+        this.changedContents();
     }
 
     get alignContent() {
@@ -98,7 +81,7 @@ export default class FlexContainer {
         if (this._alignContent === v) return;
         this._alignContent = v;
 
-        this._changedContents();
+        this.changedContents();
     }
 
     get justifyContent() {
@@ -110,7 +93,7 @@ export default class FlexContainer {
 
         this._justifyContent = v;
 
-        this._changedContents();
+        this.changedContents();
     }
 
     set padding(v) {

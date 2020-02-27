@@ -1,15 +1,10 @@
 import LineLayout from "./LineLayout";
 
 export default class SizeShrinker {
-
-    private _line: LineLayout;
-
     private _amountRemaining: number = 0;
     private _shrunkSize: number = 0;
 
-    constructor(line: LineLayout) {
-        this._line = line;
-    }
+    constructor(private _line: LineLayout) {}
 
     shrink(amount: number) {
         this._shrunkSize = 0;

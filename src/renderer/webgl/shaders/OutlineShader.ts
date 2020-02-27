@@ -1,15 +1,18 @@
 import StageUtils from "../../../tree/StageUtils";
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class OutlineShader extends DefaultShader {
-    constructor(ctx) {
+    private _width: number = 5;
+    private _col: number = 0xffffffff;
+    private _color: number[] = [1, 1, 1, 1];
+
+    constructor(ctx: CoreContext) {
         super(ctx);
-        this._width = 5;
-        this._col = 0xffffffff;
-        this._color = [1, 1, 1, 1];
     }
 
-    set width(v) {
+    set width(v: number) {
         this._width = v;
         this.redraw();
     }
@@ -34,10 +37,10 @@ export default class OutlineShader extends DefaultShader {
     }
 
     useDefault() {
-        return this._width === 0 || this._col[3] === 0;
+        return this._width === 0 || this._color[3] === 0;
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         const gl = this.gl;
         this._setUniform("color", new Float32Array(this._color), gl.uniform4fv);
@@ -53,7 +56,7 @@ export default class OutlineShader extends DefaultShader {
         this.gl.disableVertexAttribArray(this._attrib("aCorner"));
     }
 
-    setExtraAttribsInBuffer(operation) {
+    setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
         let offset = operation.extraAttribsDataByteOffset / 4;
         const floats = operation.quads.floats;
 
@@ -85,7 +88,7 @@ export default class OutlineShader extends DefaultShader {
         }
     }
 
-    beforeDraw(operation) {
+    beforeDraw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
         gl.vertexAttribPointer(
             this._attrib("aCorner"),
@@ -102,7 +105,7 @@ export default class OutlineShader extends DefaultShader {
     }
 }
 
-OutlineShader.vertexShaderSource = `
+OutlineShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -123,7 +126,7 @@ OutlineShader.vertexShaderSource = `
     }
 `;
 
-OutlineShader.fragmentShaderSource = `
+OutlineShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

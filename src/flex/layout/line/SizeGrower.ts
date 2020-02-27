@@ -1,13 +1,10 @@
 import LineLayout from "./LineLayout";
 
 export default class SizeGrower {
-    private _line: LineLayout;
     private _amountRemaining: number = 0;
     private _grownSize: number = 0;
 
-    constructor(line: LineLayout) {
-        this._line = line;
-    }
+    constructor(private _line: LineLayout) {}
 
     grow(amount: number) {
         this._grownSize = 0;

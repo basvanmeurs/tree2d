@@ -2,13 +2,9 @@ import SpacingCalculator from "./SpacingCalculator";
 import FlexLayouter from "./FlexLayouter";
 
 export default class ContentAligner {
-    private _layout: FlexLayouter;
-    private _totalCrossAxisSize: number;
+    private _totalCrossAxisSize: number = 0;
 
-    constructor(layout: FlexLayouter) {
-        this._layout = layout;
-        this._totalCrossAxisSize = 0;
-    }
+    constructor(private _layout: FlexLayouter) {}
 
     get _lines() {
         return this._layout._lines;

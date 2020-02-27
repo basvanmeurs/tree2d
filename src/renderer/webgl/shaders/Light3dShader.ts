@@ -1,26 +1,29 @@
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class Light3dShader extends DefaultShader {
-    constructor(ctx) {
+    private _strength: number = 0.5;
+    private _ambient: number = 0.5;
+    private _fudge: number = 0.4;
+
+    private _rx: number = 0;
+    private _ry: number = 0;
+
+    private _z: number = 0;
+
+    private _pivotX: number = NaN;
+    private _pivotY: number = NaN;
+    private _pivotZ: number = NaN;
+
+    private _lightY: number = 0;
+    private _lightZ: number = 0;
+
+    constructor(ctx: CoreContext) {
         super(ctx);
-
-        this._strength = 0.5;
-        this._ambient = 0.5;
-        this._fudge = 0.4;
-
-        this._rx = 0;
-        this._ry = 0;
-
-        this._z = 0;
-        this._pivotX = NaN;
-        this._pivotY = NaN;
-        this._pivotZ = 0;
-
-        this._lightY = 0;
-        this._lightZ = 0;
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
 
         const vr = operation.shaderOwner;
@@ -150,7 +153,7 @@ export default class Light3dShader extends DefaultShader {
     }
 }
 
-Light3dShader.vertexShaderSource = `
+Light3dShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -219,7 +222,7 @@ Light3dShader.vertexShaderSource = `
     }
 `;
 
-Light3dShader.fragmentShaderSource = `
+Light3dShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

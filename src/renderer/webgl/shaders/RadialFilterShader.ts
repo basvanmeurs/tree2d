@@ -1,10 +1,13 @@
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class RadialFilterShader extends DefaultShader {
-    constructor(context) {
+    private _radius: number = 0;
+    private _cutoff: number = 1;
+
+    constructor(context: CoreContext) {
         super(context);
-        this._radius = 0;
-        this._cutoff = 1;
     }
 
     set radius(v) {
@@ -29,7 +32,7 @@ export default class RadialFilterShader extends DefaultShader {
         return this._radius === 0;
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         // We substract half a pixel to get a better cutoff effect.
         this._setUniform("radius", (2 * (this._radius - 0.5)) / operation.getRenderWidth(), this.gl.uniform1f);
@@ -37,7 +40,7 @@ export default class RadialFilterShader extends DefaultShader {
     }
 }
 
-RadialFilterShader.vertexShaderSource = `
+RadialFilterShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -57,7 +60,7 @@ RadialFilterShader.vertexShaderSource = `
     }
 `;
 
-RadialFilterShader.fragmentShaderSource = `
+RadialFilterShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

@@ -1,12 +1,15 @@
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class RoundedRectangleShader extends DefaultShader {
-    constructor(context) {
+    private _radius: number = 1;
+
+    constructor(context: CoreContext) {
         super(context);
-        this._radius = 1;
     }
 
-    set radius(v) {
+    set radius(v: number) {
         if (v < 1) {
             v = 1;
         }
@@ -14,7 +17,7 @@ export default class RoundedRectangleShader extends DefaultShader {
         this.redraw();
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         const owner = operation.shaderOwner;
 
@@ -28,7 +31,7 @@ export default class RoundedRectangleShader extends DefaultShader {
     }
 }
 
-RoundedRectangleShader.vertexShaderSource = `
+RoundedRectangleShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -48,7 +51,7 @@ RoundedRectangleShader.vertexShaderSource = `
     }
 `;
 
-RoundedRectangleShader.fragmentShaderSource = `
+RoundedRectangleShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

@@ -1,12 +1,15 @@
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class InversionShader extends DefaultShader {
-    constructor(context) {
+    private _amount: number = 1;
+
+    constructor(context: CoreContext) {
         super(context);
-        this._amount = 1;
     }
 
-    set amount(v) {
+    set amount(v: number) {
         this._amount = v;
         this.redraw();
     }
@@ -19,13 +22,13 @@ export default class InversionShader extends DefaultShader {
         return this._amount === 0;
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         this._setUniform("amount", this._amount, this.gl.uniform1f);
     }
 }
 
-InversionShader.fragmentShaderSource = `
+InversionShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

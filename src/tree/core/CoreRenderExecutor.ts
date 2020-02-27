@@ -1,15 +1,22 @@
-export default class CoreRenderExecutor {
-    constructor(ctx) {
-        this.ctx = ctx;
+import CoreContext from "./CoreContext";
+import CoreQuadOperation from "./CoreQuadOperation";
+import { RenderTexture } from "../../renderer/webgl/WebGLRenderer";
+import CoreRenderState from "./CoreRenderState";
 
+export default class CoreRenderExecutor<T extends RenderingContext> {
+    renderState: CoreRenderState;
+    gl: T;
+
+    protected _renderTexture: RenderTexture | null;
+
+    constructor(public ctx: CoreContext) {
         this.renderState = ctx.renderState;
-
         this.gl = this.ctx.stage.gl;
     }
 
     destroy() {}
 
-    _reset() {
+    protected _reset() {
         this._bindRenderTexture(null);
         this._setScissor(null);
         this._clearRenderTexture();
@@ -20,16 +27,15 @@ export default class CoreRenderExecutor {
 
         const qops = this.renderState.quadOperations;
 
-        let i = 0,
-            j = 0,
-            n = qops.length;
+        let i = 0;
+        const n = qops.length;
         while (i < n) {
             this._processQuadOperation(qops[i]);
             i++;
         }
     }
 
-    _processQuadOperation(quadOperation) {
+    protected _processQuadOperation(quadOperation: CoreQuadOperation) {
         if (quadOperation.renderTextureInfo && quadOperation.renderTextureInfo.ignore) {
             // Ignore quad operations when we are 're-using' another texture as the render texture result.
             return;
@@ -39,9 +45,9 @@ export default class CoreRenderExecutor {
         this._execQuadOperation(quadOperation);
     }
 
-    _setupQuadOperation(quadOperation) {}
+    protected _setupQuadOperation(quadOperation: CoreQuadOperation) {}
 
-    _execQuadOperation(op) {
+    protected _execQuadOperation(op: CoreQuadOperation) {
         // Set render texture.
         const nativeTexture = op.renderTextureInfo ? op.renderTextureInfo.nativeTexture : null;
 
@@ -61,13 +67,13 @@ export default class CoreRenderExecutor {
         this._renderQuadOperation(op);
     }
 
-    _renderQuadOperation(op) {}
+    protected _renderQuadOperation(op: CoreQuadOperation) {}
 
-    _bindRenderTexture(renderTexture) {
+    protected _bindRenderTexture(renderTexture: RenderTexture | null) {
         this._renderTexture = renderTexture;
     }
 
-    _clearRenderTexture(renderTexture) {}
+    protected _clearRenderTexture() {}
 
-    _setScissor(area) {}
+    protected _setScissor(area: number[] | null) {}
 }

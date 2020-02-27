@@ -15,6 +15,7 @@ import Shader from "../../tree/Shader";
 import { Constructor } from "../../util/types";
 import ElementCore from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
+import WebGLShaderProgram from "./WebGLShaderProgram";
 
 export interface RenderTexture extends WebGLTexture {
     id: number;
@@ -27,8 +28,10 @@ export interface RenderTexture extends WebGLTexture {
     framebuffer: WebGLFramebuffer;
 }
 
+type TexParams = { [key: number]: GLenum };
+
 export default class WebGLRenderer extends Renderer {
-    shaderPrograms: Map<Function, any>;
+    shaderPrograms: Map<Function, WebGLShaderProgram>;
 
     constructor(stage: Stage) {
         super(stage);
@@ -111,7 +114,21 @@ export default class WebGLRenderer extends Renderer {
         gl.deleteTexture(glTexture);
     }
 
-    uploadTextureSource(textureSource: TextureSource, options: any) {
+    uploadTextureSource(
+        textureSource: TextureSource,
+        options: {
+            premultiplyAlpha?: boolean;
+            flipBlueRed?: boolean;
+            hasAlpha?: boolean;
+            texParams?: TexParams;
+            texOptions: {
+                format: number;
+                internalFormat: number;
+                type: GLenum;
+            };
+            source: ImageData | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | ImageBitmap;
+        }
+    ) {
         const gl = this.stage.gl;
 
         const source = options.source;
@@ -120,7 +137,7 @@ export default class WebGLRenderer extends Renderer {
             premultiplyAlpha: true,
             hasAlpha: true,
             flipBlueRed: false,
-            texParams: {} as { [key: number]: GLenum },
+            texParams: {} as TexParams,
             texOptions: {
                 format: 0,
                 internalFormat: 0,
@@ -128,15 +145,15 @@ export default class WebGLRenderer extends Renderer {
             }
         };
 
-        if (options && options.hasOwnProperty("premultiplyAlpha")) {
+        if (options && options.premultiplyAlpha !== undefined) {
             format.premultiplyAlpha = options.premultiplyAlpha;
         }
 
-        if (options && options.hasOwnProperty("flipBlueRed")) {
+        if (options && options.flipBlueRed !== undefined) {
             format.flipBlueRed = options.flipBlueRed;
         }
 
-        if (options && options.hasOwnProperty("hasAlpha")) {
+        if (options && options.hasAlpha !== undefined) {
             format.hasAlpha = options.hasAlpha;
         }
 

@@ -1,26 +1,30 @@
 import Utils from "../../../tree/Utils";
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class CircularPushShader extends DefaultShader {
-    constructor(ctx) {
+    private _inputValue: number = 0;
+
+    private _maxDerivative: number = 0.01;
+    private _normalizedValue: number = 0;
+
+    // The offset between buckets. A value between 0 and 1.
+    private _offset: number = 0;
+
+    private _amount: number = 0.1;
+    private _aspectRatio: number = 1;
+
+    private _offsetX: number = 0;
+    private _offsetY: number = 0;
+
+    private _valuesTexture: WebGLTexture;
+    private _values: Uint8Array;
+
+    private _buckets: number;
+
+    constructor(ctx: CoreContext) {
         super(ctx);
-
-        this._inputValue = 0;
-
-        this._maxDerivative = 0.01;
-
-        this._normalizedValue = 0;
-
-        // The offset between buckets. A value between 0 and 1.
-        this._offset = 0;
-
-        this._amount = 0.1;
-
-        this._aspectRatio = 1;
-
-        this._offsetX = 0;
-
-        this._offsetY = 0;
 
         this.buckets = 100;
     }
@@ -77,7 +81,7 @@ export default class CircularPushShader extends DefaultShader {
         return this._maxDerivative;
     }
 
-    set buckets(v) {
+    set buckets(v: number) {
         if (v > 100) {
             console.warn("CircularPushShader: supports max 100 buckets");
             v = 100;
@@ -96,7 +100,7 @@ export default class CircularPushShader extends DefaultShader {
         return this._buckets;
     }
 
-    _getValues(n) {
+    _getValues(n: number) {
         const v = [];
         for (let i = 0; i < n; i++) {
             v.push(this._inputValue);
@@ -109,7 +113,7 @@ export default class CircularPushShader extends DefaultShader {
      * @param {number} o;
      *   A number from 0 to 1 (1 = all buckets).
      */
-    progress(o) {
+    progress(o: number) {
         this._offset += o * this._buckets;
         const full = Math.floor(this._offset);
         this._offset -= full;
@@ -117,7 +121,7 @@ export default class CircularPushShader extends DefaultShader {
         this.redraw();
     }
 
-    _shiftBuckets(n) {
+    private _shiftBuckets(n: number) {
         for (let i = this._buckets - 1; i >= 0; i--) {
             const targetIndex = i - n;
             if (targetIndex < 0) {
@@ -132,12 +136,12 @@ export default class CircularPushShader extends DefaultShader {
         }
     }
 
-    set offset(v) {
+    set offset(v: number) {
         this._offset = v;
         this.redraw();
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         this._setUniform("aspectRatio", this._aspectRatio, this.gl.uniform1f);
         this._setUniform("offsetX", this._offsetX, this.gl.uniform1f);
@@ -152,17 +156,19 @@ export default class CircularPushShader extends DefaultShader {
         return this._amount === 0;
     }
 
-    beforeDraw(operation) {
+    beforeDraw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
         gl.activeTexture(gl.TEXTURE1);
         if (!this._valuesTexture) {
-            this._valuesTexture = gl.createTexture();
+            this._valuesTexture = gl.createTexture()!!;
             gl.bindTexture(gl.TEXTURE_2D, this._valuesTexture);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             if (Utils.isNode) {
+                // TODO
+                // @ts-ignore
                 gl.pixelStorei(gl.UNPACK_FLIP_BLUE_RED, false);
             }
             gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
@@ -182,7 +188,7 @@ export default class CircularPushShader extends DefaultShader {
     }
 }
 
-CircularPushShader.vertexShaderSource = `
+CircularPushShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -208,7 +214,7 @@ CircularPushShader.vertexShaderSource = `
     }
 `;
 
-CircularPushShader.fragmentShaderSource = `
+CircularPushShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

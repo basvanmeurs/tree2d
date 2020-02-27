@@ -4,16 +4,13 @@ import FlexTarget from "../../FlexTarget";
 import FlexItem from "../../FlexItem";
 
 export default class ItemAligner {
-    private _line: LineLayout;
     private _crossAxisLayoutSize: number = 0;
     private _crossAxisLayoutOffset: number = 0;
     private _alignItemsSetting?: AlignItemsMode;
     private _recursiveResizeOccured: boolean = false;
     private _isCrossAxisFitToContents: boolean = false;
 
-    constructor(line: LineLayout) {
-        this._line = line;
-    }
+    constructor(private _line: LineLayout) {}
 
     get _layout() {
         return this._line._layout;

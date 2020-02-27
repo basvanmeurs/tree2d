@@ -5,11 +5,11 @@ import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import WebGLShader from "./WebGLShader";
 import { RenderTexture } from "./WebGLRenderer";
 
-export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
+export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLRenderingContext> {
     private _attribsBuffer: WebGLBuffer;
     private _quadsBuffer: WebGLBuffer;
     private _projection: Float32Array;
-    private _scissor: number[];
+    _scissor: number[];
     private _currentShaderProgram?: WebGLShader;
 
     constructor(ctx: CoreContext) {
@@ -24,7 +24,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         const gl = this.gl;
 
         // Create new sharable buffer for params.
-        this._attribsBuffer = gl.createBuffer();
+        this._attribsBuffer = gl.createBuffer()!;
 
         const maxQuads = Math.floor(this.renderState.quads.data.byteLength / 80);
 
@@ -42,7 +42,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
 
         // The quads buffer can be (re)used to draw a range of quads.
-        this._quadsBuffer = gl.createBuffer();
+        this._quadsBuffer = gl.createBuffer()!;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._quadsBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, allIndices, gl.STATIC_DRAW);
 
@@ -56,7 +56,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         this.gl.deleteBuffer(this._quadsBuffer);
     }
 
-    public _reset() {
+    protected _reset() {
         super._reset();
 
         const gl = this.gl;
@@ -76,12 +76,12 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         gl.bufferData(gl.ARRAY_BUFFER, element, gl.DYNAMIC_DRAW);
     }
 
-    public _setupQuadOperation(quadOperation: WebGLCoreQuadOperation) {
+    protected _setupQuadOperation(quadOperation: WebGLCoreQuadOperation) {
         super._setupQuadOperation(quadOperation);
         this._useShaderProgram(quadOperation.shader, quadOperation);
     }
 
-    public _renderQuadOperation(op: WebGLCoreQuadOperation) {
+    protected _renderQuadOperation(op: WebGLCoreQuadOperation) {
         const shader = op.shader;
 
         if (op.length || op.shader.addEmpty()) {
@@ -127,7 +127,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
     }
 
-    public _clearRenderTexture() {
+    protected _clearRenderTexture() {
         super._clearRenderTexture();
         const gl = this.gl;
         if (!this._renderTexture) {
@@ -148,7 +148,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
     }
 
-    public _setScissor(area: number[]) {
+    protected _setScissor(area: number[]) {
         super._setScissor(area);
 
         if (this._scissor === area) {

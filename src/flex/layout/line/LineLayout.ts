@@ -6,20 +6,16 @@ import FlexLayouter from "../FlexLayouter";
 import FlexTarget from "../../FlexTarget";
 
 export default class LineLayout {
-
-    public _layout: FlexLayouter;
     public items: FlexTarget[];
-    public startIndex: number;
-    public endIndex: number;
-    public _availableSpace: number;
     private _crossAxisMaxLayoutSize: number;
 
-    constructor(layout: FlexLayouter, startIndex: number, endIndex: number, availableSpace: number) {
-        this._layout = layout;
-        this.items = layout.items;
-        this.startIndex = startIndex;
-        this.endIndex = endIndex;
-        this._availableSpace = availableSpace;
+    constructor(
+        private _layout: FlexLayouter,
+        public startIndex: number,
+        public endIndex: number,
+        private _availableSpace: number
+    ) {
+        this.items = _layout.items;
     }
 
     performLayout() {

@@ -44,7 +44,7 @@ export default class FlexUtils {
 
     static _allowRelAxisSizeFunction(item: FlexTarget, horizontal: boolean) {
         const flexParent = item.flexParent;
-        if (flexParent && flexParent._flex!._layout.isAxisFitToContents(horizontal)) {
+        if (flexParent && flexParent._flex!.layout.isAxisFitToContents(horizontal)) {
             // We don't allow relative width on fit-to-contents because it leads to conflicts.
             return false;
         }
@@ -100,7 +100,7 @@ export default class FlexUtils {
 
     static getPlainAxisMinSize(item: FlexTarget, horizontal: boolean) {
         if (item.isFlexEnabled()) {
-            return item._flex!._layout.getAxisMinSize(horizontal);
+            return item._flex!.layout.getAxisMinSize(horizontal);
         } else {
             const isShrinkable = item._flexItem!.shrink !== 0;
             if (isShrinkable) {
@@ -115,9 +115,9 @@ export default class FlexUtils {
         if (item.isFlexEnabled()) {
             const isMainAxis = item._flex!.horizontal === horizontal;
             if (isMainAxis) {
-                item._flex!._layout.resizeMainAxis(size);
+                item._flex!.layout.resizeMainAxis(size);
             } else {
-                item._flex!._layout.resizeCrossAxis(size);
+                item._flex!.layout.resizeCrossAxis(size);
             }
         } else {
             this.setAxisLayoutSize(item, horizontal, size);

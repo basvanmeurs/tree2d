@@ -1,11 +1,13 @@
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class LinearBlurShader extends DefaultShader {
-    constructor(context) {
-        super(context);
+    private _direction: Float32Array = new Float32Array([1, 0]);
+    private _kernelRadius: number = 1;
 
-        this._direction = new Float32Array([1, 0]);
-        this._kernelRadius = 1;
+    constructor(context: CoreContext) {
+        super(context);
     }
 
     get x() {
@@ -39,7 +41,7 @@ export default class LinearBlurShader extends DefaultShader {
         return this._kernelRadius === 0;
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         this._setUniform("direction", this._direction, this.gl.uniform2fv);
         this._setUniform("kernelRadius", this._kernelRadius, this.gl.uniform1i);
@@ -50,7 +52,7 @@ export default class LinearBlurShader extends DefaultShader {
     }
 }
 
-LinearBlurShader.fragmentShaderSource = `
+LinearBlurShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

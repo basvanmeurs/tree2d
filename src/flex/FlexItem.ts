@@ -6,7 +6,6 @@ export default class FlexItem {
     public static readonly SHRINK_AUTO = -1;
 
     _ctr?: FlexContainer;
-    _item: FlexTarget;
 
     _grow: number = 0;
     _shrink: number = FlexItem.SHRINK_AUTO;
@@ -23,9 +22,7 @@ export default class FlexItem {
     _marginRight: number = 0;
     _marginBottom: number = 0;
 
-    constructor(item: FlexTarget) {
-        this._item = item;
-    }
+    constructor(private _item: FlexTarget) {}
 
     get item() {
         return this._item;
@@ -170,8 +167,8 @@ export default class FlexItem {
         return this._marginBottom;
     }
 
-    _changed() {
-        if (this.ctr) this.ctr._changedContents();
+    private _changed() {
+        if (this.ctr) this.ctr.changedContents();
     }
 
     set ctr(v: FlexContainer | undefined) {

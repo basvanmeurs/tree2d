@@ -34,7 +34,7 @@ import OutlineShader from "./renderer/webgl/shaders/OutlineShader";
 import PixelateShader from "./renderer/webgl/shaders/PixelateShader";
 import RadialFilterShader from "./renderer/webgl/shaders/RadialFilterShader";
 import RoundedRectangleShader from "./renderer/webgl/shaders/RoundedRectangleShader";
-import RadialGradientShader from "./renderer/webgl/shaders/RadialGradientShader";
+import RadialGradientShader from "./renderer/webgl/shaders/RadialGradientShader.js";
 import Light3dShader from "./renderer/webgl/shaders/Light3dShader";
 
 import C2dShader from "./renderer/c2d/C2dShader";

@@ -1,13 +1,15 @@
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 /**
  * @see https://github.com/pixijs/pixi-filters/tree/master/filters/pixelate/src
  */
 export default class PixelateShader extends DefaultShader {
-    constructor(ctx) {
-        super(ctx);
+    private _size = new Float32Array([4, 4]);
 
-        this._size = new Float32Array([4, 4]);
+    constructor(ctx: CoreContext) {
+        super(ctx);
     }
 
     get x() {
@@ -42,7 +44,7 @@ export default class PixelateShader extends DefaultShader {
         return this._size[0] === 0 && this._size[1] === 0;
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         const gl = this.gl;
         this._setUniform("size", new Float32Array(this._size), gl.uniform2fv);
@@ -62,7 +64,7 @@ export default class PixelateShader extends DefaultShader {
         this.gl.disableVertexAttribArray(this._attrib("aTextureRes"));
     }
 
-    setExtraAttribsInBuffer(operation) {
+    setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
         let offset = operation.extraAttribsDataByteOffset / 4;
         const floats = operation.quads.floats;
 
@@ -84,7 +86,7 @@ export default class PixelateShader extends DefaultShader {
         }
     }
 
-    beforeDraw(operation) {
+    beforeDraw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
         gl.vertexAttribPointer(
             this._attrib("aTextureRes"),
@@ -97,7 +99,7 @@ export default class PixelateShader extends DefaultShader {
     }
 }
 
-PixelateShader.vertexShaderSource = `
+PixelateShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -118,7 +120,7 @@ PixelateShader.vertexShaderSource = `
     }
 `;
 
-PixelateShader.fragmentShaderSource = `
+PixelateShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

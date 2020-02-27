@@ -2,12 +2,7 @@ import SpacingCalculator from "../SpacingCalculator";
 import LineLayout from "./LineLayout";
 
 export default class ItemPositioner {
-
-    private _line: LineLayout;
-
-    constructor(lineLayout: LineLayout) {
-        this._line = lineLayout;
-    }
+    constructor(private _line: LineLayout) {}
 
     get _layout() {
         return this._line._layout;

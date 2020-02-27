@@ -9,33 +9,19 @@ import FlexTarget from "../FlexTarget";
  * Layouts a flex container (and descendants).
  */
 export default class FlexLayouter {
-    _flexContainer: FlexContainer;
+    private _lineLayouter: LineLayouter = new LineLayouter(this);
 
-    _lineLayouter: LineLayouter;
+    private _resizingMainAxis: boolean = false;
+    private _resizingCrossAxis: boolean = false;
 
-    _resizingMainAxis: boolean;
-    _resizingCrossAxis: boolean;
+    private _cachedMainAxisSizeAfterLayout: number = 0;
+    private _cachedCrossAxisSizeAfterLayout: number = 0;
 
-    _cachedMainAxisSizeAfterLayout: number;
-    _cachedCrossAxisSizeAfterLayout: number;
+    private _shrunk: boolean = false;
 
-    _shrunk: boolean;
+    private _totalCrossAxisSize: any;
 
-    _totalCrossAxisSize: any;
-
-    constructor(flexContainer: FlexContainer) {
-        this._flexContainer = flexContainer;
-
-        this._lineLayouter = new LineLayouter(this);
-
-        this._resizingMainAxis = false;
-        this._resizingCrossAxis = false;
-
-        this._cachedMainAxisSizeAfterLayout = 0;
-        this._cachedCrossAxisSizeAfterLayout = 0;
-
-        this._shrunk = false;
-    }
+    constructor(private _flexContainer: FlexContainer) {}
 
     get shrunk() {
         return this._shrunk;

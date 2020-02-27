@@ -1,31 +1,31 @@
 import NoiseTexture from "../../../textures/NoiseTexture";
 import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 /**
  * This shader can be used to fix a problem that is known as 'gradient banding'.
  */
 export default class DitheringShader extends DefaultShader {
-    constructor(ctx) {
+    private _noiseTexture: NoiseTexture;
+    private _graining: number = 1 / 256;
+    private _random: boolean = false;
+
+    constructor(ctx: CoreContext) {
         super(ctx);
-
-        this._noiseTexture = new NoiseTexture(ctx.stage);
-
-        this._graining = 1 / 256;
-
-        this._random = false;
     }
 
-    set graining(v) {
+    set graining(v: number) {
         this._graining = v;
         this.redraw();
     }
 
-    set random(v) {
+    set random(v: boolean) {
         this._random = v;
         this.redraw();
     }
 
-    setExtraAttribsInBuffer(operation) {
+    setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
         // Make sure that the noise texture is uploaded to the GPU.
         this._noiseTexture.load();
 
@@ -80,7 +80,7 @@ export default class DitheringShader extends DefaultShader {
         }
     }
 
-    beforeDraw(operation) {
+    beforeDraw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
         gl.vertexAttribPointer(
             this._attrib("aNoiseTextureCoord"),
@@ -101,7 +101,7 @@ export default class DitheringShader extends DefaultShader {
         return 8;
     }
 
-    setupUniforms(operation) {
+    setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         this._setUniform("uNoiseSampler", 1, this.gl.uniform1i);
         this._setUniform("graining", 2 * this._graining, this.gl.uniform1f);
@@ -123,14 +123,14 @@ export default class DitheringShader extends DefaultShader {
         return this._graining === 0;
     }
 
-    afterDraw(operation) {
+    afterDraw(operation: WebGLCoreQuadOperation) {
         if (this._random) {
             this.redraw();
         }
     }
 }
 
-DitheringShader.vertexShaderSource = `
+DitheringShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -151,7 +151,7 @@ DitheringShader.vertexShaderSource = `
     }
 `;
 
-DitheringShader.fragmentShaderSource = `
+DitheringShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

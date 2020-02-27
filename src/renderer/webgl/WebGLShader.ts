@@ -9,8 +9,8 @@ export default class WebGLShader extends Shader {
 
     private _initialized: boolean;
 
-    private readonly _program: any;
-    gl: any;
+    private readonly _program: WebGLShaderProgram;
+    gl: WebGLRenderingContext;
 
     constructor(ctx: CoreContext) {
         super(ctx);
@@ -37,7 +37,7 @@ export default class WebGLShader extends Shader {
         return this._program.glProgram;
     }
 
-    private _init() {
+    protected _init() {
         if (!this._initialized) {
             this.initialize();
             this._initialized = true;
@@ -52,15 +52,15 @@ export default class WebGLShader extends Shader {
         return this._initialized;
     }
 
-    private _uniform(name: string) {
+    protected _uniform(name: string) {
         return this._program.getUniformLocation(name);
     }
 
-    private _attrib(name: string) {
+    protected _attrib(name: string) {
         return this._program.getAttribLocation(name);
     }
 
-    private _setUniform(name: string, value: any, glFunction: Function) {
+    protected _setUniform(name: string, value: any, glFunction: Function) {
         this._program.setUniformValue(name, value, glFunction);
     }
 
@@ -112,7 +112,7 @@ export default class WebGLShader extends Shader {
         // The uniforms are shared by all shaders that have the same type (and shader program).
     }
 
-    _getProjection(operation: WebGLCoreQuadOperation) {
+    protected _getProjection(operation: WebGLCoreQuadOperation) {
         return operation.getProjection();
     }
 

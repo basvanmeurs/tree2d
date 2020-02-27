@@ -23,7 +23,7 @@ export default class ItemCoordinatesUpdater {
         const parentFlex = this._layout.getParentFlexContainer();
         if (parentFlex) {
             // We must update it from the parent to set padding offsets and reverse position.
-            const updater = new ItemCoordinatesUpdater(parentFlex._layout);
+            const updater = new ItemCoordinatesUpdater(parentFlex.layout);
             updater._finalizeItemAndChildren(this._flexContainer.item);
         } else {
             this._finalizeRoot();
@@ -64,7 +64,7 @@ export default class ItemCoordinatesUpdater {
     _validateItemCache(item: FlexTarget) {
         if (item.recalc === 0) {
             if (item.isFlexEnabled()) {
-                const layout = item._flex!._layout;
+                const layout = item._flex!.layout;
 
                 const dimensionsMatchPreviousResult =
                     item.w === item.target.getLayoutW() && item.h === item.target.getLayoutH();
@@ -101,8 +101,8 @@ export default class ItemCoordinatesUpdater {
 
         const flex = item.flex;
         if (flex) {
-            w += flex._layout._getHorizontalPadding();
-            h += flex._layout._getVerticalPadding();
+            w += flex.layout._getHorizontalPadding();
+            h += flex.layout._getVerticalPadding();
         }
 
         const flexItem = item.flexItem;
@@ -118,7 +118,7 @@ export default class ItemCoordinatesUpdater {
     _finalizeItemChildren(item: FlexTarget) {
         const flex = item._flex;
         if (flex) {
-            const updater = new ItemCoordinatesUpdater(flex._layout);
+            const updater = new ItemCoordinatesUpdater(flex.layout);
             updater._finalizeItems();
         }
     }
