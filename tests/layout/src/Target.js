@@ -1,3 +1,5 @@
+import { FunctionW } from "../../../src/tree/core/ElementCore";
+
 const Utils = lng.Utils;
 const Base = lng.Base;
 const FlexTarget = lng.FlexTarget;
@@ -10,9 +12,13 @@ export default class Target {
 
         this._x = 0;
         this._y = 0;
-
         this._w = 0;
         this._h = 0;
+
+        this._sx = 0;
+        this._sy = 0;
+        this._sw = 0;
+        this._sh = 0;
 
         this._optFlags = 0;
 
@@ -23,10 +29,20 @@ export default class Target {
 
         this._visible = true;
 
-        this._layout = null;
+        /**
+         * @type FlexTarget
+         */
+        this._layout = undefined;
 
         this._recalc = 0;
         this._hasUpdates = false;
+
+        // Will contain the expected layout result while unit testing.
+        this.r = [];
+    }
+
+    getChildren() {
+        return this._children;
     }
 
     get layout() {
@@ -34,12 +50,29 @@ export default class Target {
         return this._layout;
     }
 
+    getLayout() {
+        return this.layout;
+    }
+
     get flex() {
         return this._layout ? this._layout.flex : null;
     }
 
     set flex(v) {
-        this.layout.flex = v;
+        if (v === undefined) {
+            if (this._layout) {
+                this.layout.setEnabled(false);
+            }
+        } else {
+            this.layout.setEnabled(true);
+            Target.patch(this.layout.flex, v);
+        }
+    }
+
+    static patch(obj, settings) {
+        for (const [key, value] of Object.entries(settings)) {
+            obj[key] = value;
+        }
     }
 
     get flexItem() {
@@ -47,15 +80,14 @@ export default class Target {
     }
 
     set flexItem(v) {
-        this.layout.flexItem = v;
-    }
-
-    isFlexItem() {
-        return !!this._layout && this._layout.isFlexItemEnabled();
-    }
-
-    isFlexContainer() {
-        return !!this._layout && this._layout.isFlexEnabled();
+        if (v === false) {
+            if (this._layout) {
+                this.layout.setItemEnabled(false);
+            }
+        } else {
+            this.layout.setItemEnabled(true);
+            Target.patch(this.layout.flexItem, v);
+        }
     }
 
     enableFlexLayout() {
@@ -145,45 +177,28 @@ export default class Target {
         }
     }
 
-    get offsetX() {
+    get x() {
         if (this._funcX) {
             return this._funcX;
         } else {
-            if (this.hasFlexLayout()) {
-                return this._layout.originalX;
-            } else {
-                return this._x;
-            }
+            return this._sx;
         }
     }
 
-    set offsetX(v) {
+    set x(v) {
         if (Utils.isFunction(v)) {
             this.funcX = v;
         } else {
             this._disableFuncX();
-            if (this.hasFlexLayout()) {
-                this._x += v - this._layout.originalX;
-                this._triggerRecalcTranslate();
-                this._layout.setOriginalXWithoutUpdatingLayout(v);
-            } else {
-                this.x = v;
-            }
+            const dx = v - this._sx;
+            this._sx = v;
+
+            // No recalc is necessary because the layout offset can be updated directly.
+            this._x += dx;
         }
     }
 
-    get x() {
-        return this._x;
-    }
-
-    set x(v) {
-        if (v !== this._x) {
-            this._x = v;
-            this._triggerRecalcTranslate();
-        }
-    }
-
-    get funcX() {
+    getFuncX() {
         return this._optFlags & 1 ? this._funcX : null;
     }
 
@@ -191,11 +206,10 @@ export default class Target {
         if (this._funcX !== v) {
             this._optFlags |= 1;
             this._funcX = v;
+            this._x = 0;
             if (this.hasFlexLayout()) {
-                this._layout.setOriginalXWithoutUpdatingLayout(0);
                 this._layout.forceLayout();
             } else {
-                this._x = 0;
                 this._triggerRecalcTranslate();
             }
         }
@@ -206,45 +220,30 @@ export default class Target {
         this._funcX = null;
     }
 
-    get offsetY() {
+    get y() {
         if (this._funcY) {
             return this._funcY;
         } else {
-            if (this.hasFlexLayout()) {
-                return this._layout.originalY;
-            } else {
-                return this._y;
-            }
+            return this._sy;
         }
     }
 
-    set offsetY(v) {
+    set y(v) {
         if (Utils.isFunction(v)) {
             this.funcY = v;
         } else {
             this._disableFuncY();
-            if (this.hasFlexLayout()) {
-                this._y += v - this._layout.originalY;
-                this._triggerRecalcTranslate();
-                this._layout.setOriginalYWithoutUpdatingLayout(v);
-            } else {
-                this.y = v;
+            const dy = v - this._sy;
+            if (dy) {
+                this._sy = v;
+
+                // No recalc is necessary because the layout offset can be updated directly.
+                this._y += dy;
             }
         }
     }
 
-    get y() {
-        return this._y;
-    }
-
-    set y(v) {
-        if (v !== this._y) {
-            this._y = v;
-            this._triggerRecalcTranslate();
-        }
-    }
-
-    get funcY() {
+    getFuncY() {
         return this._optFlags & 2 ? this._funcY : null;
     }
 
@@ -252,11 +251,10 @@ export default class Target {
         if (this._funcY !== v) {
             this._optFlags |= 2;
             this._funcY = v;
+            this._y = 0;
             if (this.hasFlexLayout()) {
-                this._layout.setOriginalYWithoutUpdatingLayout(0);
                 this._layout.forceLayout();
             } else {
-                this._y = 0;
                 this._triggerRecalcTranslate();
             }
         }
@@ -268,7 +266,11 @@ export default class Target {
     }
 
     get w() {
-        return this._w;
+        if (this._funcW) {
+            return this._funcW;
+        } else {
+            return this._sw;
+        }
     }
 
     set w(v) {
@@ -276,18 +278,14 @@ export default class Target {
             this.funcW = v;
         } else {
             this.disableFuncW();
-            if (this.hasFlexLayout()) {
-                this._layout.originalWidth = v;
-            } else {
-                this._setW(v);
+            if (this._sw !== v) {
+                this._sw = v;
+                if (this.hasFlexLayout()) {
+                    this._layout.updatedSourceW();
+                } else {
+                    this._triggerRecalcTranslate();
+                }
             }
-        }
-    }
-
-    _setW(v) {
-        if (this._w !== v) {
-            this._w = v;
-            this._triggerRecalcTranslate();
         }
     }
 
@@ -300,27 +298,18 @@ export default class Target {
             this.funcH = v;
         } else {
             this.disableFuncH();
-            if (this.hasFlexLayout()) {
-                this._layout.originalHeight = v;
-            } else {
-                this._setH(v);
+            if (this._sh !== v) {
+                this._sh = v;
+                if (this.hasFlexLayout()) {
+                    this._layout.updatedSourceH();
+                } else {
+                    this._triggerRecalcTranslate();
+                }
             }
         }
     }
 
-    _setH(v) {
-        if (this._h !== v) {
-            this._h = v;
-            this._triggerRecalcTranslate();
-        }
-    }
-
-    setDimensions(w, h) {
-        this._setW(w);
-        this._setH(h);
-    }
-
-    get funcW() {
+    getFuncW() {
         return this._optFlags & 4 ? this._funcW : null;
     }
 
@@ -329,8 +318,7 @@ export default class Target {
             this._optFlags |= 4;
             this._funcW = v;
             if (this.hasFlexLayout()) {
-                this._layout._originalWidth = 0;
-                this.layout.changedDimensions(true, false);
+                this.layout.updatedSourceW();
             } else {
                 this._w = 0;
                 this._triggerRecalcTranslate();
@@ -343,7 +331,7 @@ export default class Target {
         this._funcW = null;
     }
 
-    get funcH() {
+    getFuncH() {
         return this._optFlags & 8 ? this._funcH : null;
     }
 
@@ -352,8 +340,7 @@ export default class Target {
             this._optFlags |= 8;
             this._funcH = v;
             if (this.hasFlexLayout()) {
-                this._layout._originalHeight = 0;
-                this.layout.changedDimensions(false, true);
+                this.layout.updatedSourceH();
             } else {
                 this._h = 0;
                 this._triggerRecalcTranslate();
@@ -391,7 +378,7 @@ export default class Target {
         const children = v.map(o => {
             if (Utils.isObjectLiteral(o)) {
                 const c = new Target();
-                c.patch(o);
+                Target.patch(c, o);
                 return c;
             } else {
                 return o;
@@ -421,12 +408,19 @@ export default class Target {
         child.setParent(null);
     }
 
-    setLayout(x, y, w, h) {
-        if (this._x !== x || this._y !== y || this._w !== w || this._h !== h) {
+    setLayoutCoords(x, y) {
+        if (this._x !== x || this._y !== y) {
             this._x = x;
             this._y = y;
+            this._triggerRecalcTranslate();
+        }
+    }
+
+    setLayoutDimensions(w, h) {
+        if (this._w !== w || this._h !== h) {
             this._w = w;
             this._h = h;
+
             this._triggerRecalcTranslate();
         }
     }
@@ -435,25 +429,21 @@ export default class Target {
         if (this._visible !== v) {
             this._visible = v;
             if (this.hasFlexLayout()) {
-                this.layout.setVisible(v);
+                this.layout.updateVisible(v);
             }
         }
     }
 
-    get visible() {
+    isVisible() {
         return this._visible;
-    }
-
-    patch(settings) {
-        Base.patchObject(this, settings);
     }
 
     toJson() {
         const json = {
-            w: this.w,
-            h: this.h,
-            x: this.x,
-            y: this.y,
+            w: this.getLayoutW(),
+            h: this.getLayoutH(),
+            x: this.getLayoutX(),
+            y: this.getLayoutY(),
             layout: [this._x, this._y, this._w, this._h].join(" "),
             r: this.r ? this.r.join(" ") : undefined,
             flex: this._layout && this._layout.flex ? Target.flexToJson(this._layout.flex) : false,
@@ -489,10 +479,41 @@ export default class Target {
     }
 
     getLocationString() {
-        let i;
-        i = this._parent ? this._parent._children.indexOf(this) : "R";
+        const i = this._parent ? this._parent._children.indexOf(this) : "R";
         let str = this._parent ? this._parent.getLocationString() : "";
         str += "[" + i + "]";
         return str;
+    }
+
+    getSourceX() {
+        return this._sx;
+    }
+
+    getSourceY() {
+        return this._sy;
+    }
+
+    getSourceW() {
+        return this._sw;
+    }
+
+    getSourceH() {
+        return this._sh;
+    }
+
+    getLayoutX() {
+        return this._x;
+    }
+
+    getLayoutY() {
+        return this._y;
+    }
+
+    getLayoutW() {
+        return this._w;
+    }
+
+    getLayoutH() {
+        return this._h;
     }
 }

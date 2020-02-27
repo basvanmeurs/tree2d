@@ -840,19 +840,19 @@ class Element {
     }
 
     get w(): number | FunctionW {
-        return this.__core.offsetW;
+        return this.__core.w;
     }
 
     set w(v) {
-        this.__core.offsetW = v;
+        this.__core.w = v;
     }
 
     get h(): number | FunctionH {
-        return this.__core.offsetH;
+        return this.__core.h;
     }
 
     set h(v) {
-        this.__core.offsetH = v;
+        this.__core.h = v;
     }
 
     get scaleX() {
@@ -1157,8 +1157,8 @@ class Element {
             if (this.texture && !this.texture.w && !this.texture.h) {
                 // Inherit dimensions from element.
                 // This allows userland to set dimensions of the Element and then later specify the text.
-                this.texture.w = this.core.w;
-                this.texture.h = this.core.h;
+                this.texture.w = this.core.getSourceW();
+                this.texture.h = this.core.getSourceH();
             }
         }
         return this.texture;

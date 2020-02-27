@@ -25,7 +25,7 @@ export default class HtmlTreeBuilder {
             }
         }
 
-        if (!item.visible) {
+        if (!item.isVisible()) {
             div.style.display = "none";
         }
 
@@ -39,7 +39,7 @@ export default class HtmlTreeBuilder {
         div.style.backgroundColor = this._getColor();
 
         if (item.hasFlexLayout()) {
-            if (item.layout.originalWidth || (item.isFlexContainer() && !item.layout.flexParent)) {
+            if (item.layout.originalWidth || (item.layout.isFlexEnabled() && !item.layout.flexParent)) {
                 // If root-level, then set width explicitly.
                 div.style.width = item.layout.originalWidth + "px";
             }

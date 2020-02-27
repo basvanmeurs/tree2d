@@ -8,7 +8,7 @@ import FlexTarget from "../FlexTarget";
 /**
  * Layouts a flex container (and descendants).
  */
-export default class FlexLayout {
+export default class FlexLayouter {
     _flexContainer: FlexContainer;
 
     _lineLayouter: LineLayouter;

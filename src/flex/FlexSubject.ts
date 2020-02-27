@@ -18,6 +18,8 @@ export interface FlexSubject {
     getSourceY(): number;
     getSourceW(): number;
     getSourceH(): number;
+
+    // Last layout results. Used to determine changes/reuse caches.
     getLayoutX(): number;
     getLayoutY(): number;
     getLayoutW(): number;

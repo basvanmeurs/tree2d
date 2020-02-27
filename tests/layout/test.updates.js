@@ -230,7 +230,7 @@ describe("layout", () => {
                 };
 
                 const newSubtree = new Target();
-                newSubtree.patch(structure);
+                Target.patch(newSubtree, structure);
 
                 const target = root.children[0].children[0];
                 target.addChildAt(target.children.length, newSubtree);

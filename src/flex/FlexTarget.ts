@@ -53,6 +53,7 @@ export default class FlexTarget {
     }
 
     get flexItem() {
+        this._ensureFlexItem();
         return this._flexItem;
     }
 
@@ -69,21 +70,10 @@ export default class FlexTarget {
     }
 
     setItemEnabled(v: boolean) {
-        if (!v) {
-            if (!this._flexItemDisabled) {
-                const parent = this.flexParent;
-                this._flexItemDisabled = true;
-                this._checkEnabled();
-                if (parent) {
-                    parent._clearFlexItemsCache();
-                    parent.changedContents();
-                }
-            }
-        } else {
+        if (v) {
             this._ensureFlexItem();
-
-            if (this._flexItemDisabled) {
-                this._flexItemDisabled = false;
+            if (v !== !this._flexItemDisabled) {
+                this._flexItemDisabled = !v;
                 this._checkEnabled();
                 const parent = this.flexParent;
                 if (parent) {
@@ -94,21 +84,21 @@ export default class FlexTarget {
         }
     }
 
-    _enableFlex() {
+    private _enableFlex() {
         this._flex = new FlexContainer(this);
         this._checkEnabled();
         this.forceLayout();
         this._enableChildrenAsFlexItems();
     }
 
-    _disableFlex() {
+    private _disableFlex() {
         this.forceLayout();
         this._flex = undefined;
         this._checkEnabled();
         this._disableChildrenAsFlexItems();
     }
 
-    _enableChildrenAsFlexItems() {
+    private _enableChildrenAsFlexItems() {
         const children = this._target.getChildren();
         if (children) {
             for (let i = 0, n = children.length; i < n; i++) {
@@ -118,7 +108,7 @@ export default class FlexTarget {
         }
     }
 
-    _disableChildrenAsFlexItems() {
+    private _disableChildrenAsFlexItems() {
         const children = this._target.getChildren();
         if (children) {
             for (let i = 0, n = children.length; i < n; i++) {
@@ -128,7 +118,7 @@ export default class FlexTarget {
         }
     }
 
-    _enableFlexItem() {
+    private _enableFlexItem() {
         this._ensureFlexItem();
         const flexParent = this._target!.getParent()!.getLayout();
         this._flexItem!.ctr = flexParent._flex;
@@ -136,7 +126,7 @@ export default class FlexTarget {
         this._checkEnabled();
     }
 
-    _disableFlexItem() {
+    private _disableFlexItem() {
         if (this._flexItem) {
             this._flexItem.ctr = undefined;
         }
@@ -144,22 +134,21 @@ export default class FlexTarget {
         // We keep the flexItem object because it may contain custom settings.
         this._checkEnabled();
 
-        // Offsets have been changed. We can't recover them, so we'll just clear them instead.
         this._resetOffsets();
     }
 
-    _resetOffsets() {
-        this.x = 0;
-        this.y = 0;
+    private _resetOffsets() {
+        this.x = this.target.getSourceX();
+        this.y = this.target.getSourceY();
     }
 
-    _ensureFlexItem() {
+    private _ensureFlexItem() {
         if (!this._flexItem) {
             this._flexItem = new FlexItem(this);
         }
     }
 
-    _checkEnabled() {
+    private _checkEnabled() {
         const enabled = this.isEnabled();
         if (this._enabled !== enabled) {
             if (enabled) {
@@ -171,11 +160,11 @@ export default class FlexTarget {
         }
     }
 
-    _enable() {
+    private _enable() {
         this._target.enableFlexLayout();
     }
 
-    _disable() {
+    private _disable() {
         this._restoreTargetToNonFlex();
         this._target.disableFlexLayout();
     }
@@ -192,7 +181,7 @@ export default class FlexTarget {
         return this.flexParent !== undefined;
     }
 
-    _restoreTargetToNonFlex() {
+    private _restoreTargetToNonFlex() {
         const target = this._target;
         target.setLayoutCoords(target.getSourceX(), target.getSourceY());
         target.setLayoutDimensions(target.getSourceW(), target.getSourceH());
@@ -222,7 +211,7 @@ export default class FlexTarget {
         return undefined;
     }
 
-    setVisible() {
+    updateVisible() {
         const parent = this.flexParent;
         if (parent) {
             parent._changedChildren();
@@ -236,7 +225,7 @@ export default class FlexTarget {
         return this._items;
     }
 
-    _getFlexItems(): FlexTarget[] {
+    private _getFlexItems(): FlexTarget[] {
         const items = [];
         const children = this._target.getChildren();
         if (children) {
@@ -252,12 +241,12 @@ export default class FlexTarget {
         return items;
     }
 
-    _changedChildren() {
+    private _changedChildren() {
         this._clearFlexItemsCache();
         this.changedContents();
     }
 
-    _clearFlexItemsCache() {
+    private _clearFlexItemsCache() {
         this._items = undefined;
     }
 
@@ -294,9 +283,9 @@ export default class FlexTarget {
         return this._recalc > 0;
     }
 
-    _updateRecalc(changeExternalWidth = false, changeExternalHeight = false) {
+    private _updateRecalc(changeExternalWidth = false, changeExternalHeight = false) {
         if (this.isFlexEnabled()) {
-            const layout = this._flex!._layout;
+            const layout = this._flex!.layout;
 
             // When something internal changes, it can have effect on the external dimensions.
             changeExternalWidth = changeExternalWidth || layout.isAxisFitToContents(true);
@@ -321,7 +310,7 @@ export default class FlexTarget {
         return (7 - this._recalc) & flags;
     }
 
-    _updateRecalcBottomUp(childRecalc: number) {
+    private _updateRecalcBottomUp(childRecalc: number) {
         const newRecalc = this._getRecalcFromChangedChildRecalc(childRecalc);
         const newRecalcFlags = this.getNewRecalcFlags(newRecalc);
         this._recalc |= newRecalc;
@@ -337,7 +326,7 @@ export default class FlexTarget {
         }
     }
 
-    _getRecalcFromChangedChildRecalc(childRecalc: number) {
+    private _getRecalcFromChangedChildRecalc(childRecalc: number) {
         const layout = this._flex!._layout;
 
         const mainAxisRecalcFlag = layout._horizontal ? 1 : 2;

@@ -179,9 +179,11 @@ export default class ElementCore implements FlexSubject {
         } else {
             this._disableFuncX();
             const dx = (v as number) - this._sx;
-            this._sx = v as number;
-            this._x += dx;
-            this._updateLocalTranslateDelta(dx, 0);
+            if (dx) {
+                this._sx = v as number;
+                this._x += dx;
+                this._updateLocalTranslateDelta(dx, 0);
+            }
         }
     }
 
@@ -221,9 +223,11 @@ export default class ElementCore implements FlexSubject {
         } else {
             this._disableFuncX();
             const dy = (v as number) - this._sy;
-            this._sy = v as number;
-            this._y += dy;
-            this._updateLocalTranslateDelta(dy, 0);
+            if (dy) {
+                this._sy = v as number;
+                this._y += dy;
+                this._updateLocalTranslateDelta(dy, 0);
+            }
         }
     }
 
@@ -249,7 +253,7 @@ export default class ElementCore implements FlexSubject {
         this._funcY = undefined;
     }
 
-    get offsetW(): number | FunctionW {
+    get w(): number | FunctionW {
         if (this._funcW) {
             return this._funcW;
         } else {
@@ -257,13 +261,15 @@ export default class ElementCore implements FlexSubject {
         }
     }
 
-    set offsetW(v: number | FunctionW) {
+    set w(v: number | FunctionW) {
         if (Utils.isFunction(v)) {
             this.funcW = v as FunctionW;
         } else {
             this._disableFuncW();
-            this._sw = v as number;
-            this._updateBaseDimensions();
+            if (this._sw !== v) {
+                this._sw = v as number;
+                this._updateBaseDimensions();
+            }
         }
     }
 
@@ -285,11 +291,7 @@ export default class ElementCore implements FlexSubject {
         this._funcW = undefined;
     }
 
-    get w() {
-        return this._w;
-    }
-
-    get offsetH(): number | FunctionH {
+    get h(): number | FunctionH {
         if (this._funcH) {
             return this._funcH;
         } else {
@@ -297,13 +299,15 @@ export default class ElementCore implements FlexSubject {
         }
     }
 
-    set offsetH(v: number | FunctionH) {
+    set h(v: number | FunctionH) {
         if (Utils.isFunction(v)) {
             this.funcH = v as FunctionH;
         } else {
             this._disableFuncH();
-            this._sh = v as number;
-            this._updateBaseDimensions();
+            if (this._sh !== v) {
+                this._sh = v as number;
+                this._updateBaseDimensions();
+            }
         }
     }
 
@@ -323,10 +327,6 @@ export default class ElementCore implements FlexSubject {
     _disableFuncH() {
         this._relFuncFlags = this._relFuncFlags & (0xffff - 8);
         this._funcH = undefined;
-    }
-
-    get h() {
-        return this._h;
     }
 
     get scaleX() {
@@ -470,7 +470,7 @@ export default class ElementCore implements FlexSubject {
             this._element._updateEnabledFlag();
 
             if (this.hasFlexLayout()) {
-                this.layout.setVisible();
+                this.layout.updateVisible();
             }
         }
     }
@@ -745,9 +745,11 @@ export default class ElementCore implements FlexSubject {
     }
 
     setLayoutCoords(x: number, y: number) {
-        this._x = x;
-        this._y = y;
-        this._updateLocalTranslate();
+        if (this._x !== x || this._y !== y) {
+            this._x = x;
+            this._y = y;
+            this._updateLocalTranslate();
+        }
     }
 
     setLayoutDimensions(w: number, h: number) {
@@ -2186,12 +2188,12 @@ export default class ElementCore implements FlexSubject {
         return this._layout && this._layout.isEnabled();
     }
 
-    getFlexContainer(): FlexContainer {
-        return this.layout.flex as any;
+    getFlexContainer(): FlexContainer|undefined {
+        return this.layout.flex;
     }
 
-    getFlexItem(): FlexItem {
-        return this.layout.flexItem as any;
+    getFlexItem(): FlexItem|undefined {
+        return this.layout.flexItem;
     }
 
     triggerLayout() {

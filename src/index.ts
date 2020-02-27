@@ -45,7 +45,7 @@ import C2dBlurShader from "./renderer/c2d/shaders/BlurShader";
 import Stage from "./tree/Stage";
 
 import FlexTarget from "./flex/FlexTarget";
-import FlexLayout from "./flex/layout/FlexLayout";
+import FlexLayouter from "./flex/layout/FlexLayouter";
 import FlexContainer from "./flex/FlexContainer";
 
 const index = {
@@ -60,7 +60,7 @@ const index = {
     Texture,
     EventEmitter,
     FlexTarget,
-    FlexLayout,
+    FlexLayout: FlexLayouter,
     FlexContainer,
     shaders: {
         Grayscale: WebGLGrayscaleShader,

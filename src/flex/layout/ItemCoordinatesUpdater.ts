@@ -1,14 +1,14 @@
 import FlexUtils from "../FlexUtils.js";
-import FlexLayout from "./FlexLayout";
+import FlexLayouter from "./FlexLayouter";
 import FlexTarget from "../FlexTarget";
 
 export default class ItemCoordinatesUpdater {
-    private _layout: FlexLayout;
+    private _layout: FlexLayouter;
     private _isReverse: boolean;
     private _horizontalPaddingOffset: number;
     private _verticalPaddingOffset: number;
 
-    constructor(layout: FlexLayout) {
+    constructor(layout: FlexLayouter) {
         this._layout = layout;
         this._isReverse = this._flexContainer.reverse;
         this._horizontalPaddingOffset = this._layout._getHorizontalPaddingOffset();
@@ -52,7 +52,7 @@ export default class ItemCoordinatesUpdater {
             const item = items[i];
             const validCache = this._validateItemCache(item);
 
-            // Notice that we must also finalize a cached items, as it's coordinates may have changed.
+            // Notice that we must also finalize a cached item, as it's coordinates may have changed.
             this._finalizeItem(item);
 
             if (!validCache) {

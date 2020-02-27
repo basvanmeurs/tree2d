@@ -1,4 +1,4 @@
-import Layout from "./layout/FlexLayout";
+import Layout from "./layout/FlexLayouter";
 import FlexTarget from "./FlexTarget";
 import { SpacingMode } from "./layout/SpacingCalculator";
 
@@ -42,6 +42,10 @@ export default class FlexContainer {
         this._paddingTop = 0;
         this._paddingRight = 0;
         this._paddingBottom = 0;
+    }
+
+    get layout() {
+        return this._layout;
     }
 
     _changedDimensions() {

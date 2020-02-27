@@ -2,19 +2,19 @@ import SizeShrinker from "./SizeShrinker";
 import SizeGrower from "./SizeGrower";
 import ItemPositioner from "./ItemPositioner";
 import ItemAligner from "./ItemAligner";
-import FlexLayout from "../FlexLayout";
+import FlexLayouter from "../FlexLayouter";
 import FlexTarget from "../../FlexTarget";
 
 export default class LineLayout {
 
-    public _layout: FlexLayout;
+    public _layout: FlexLayouter;
     public items: FlexTarget[];
     public startIndex: number;
     public endIndex: number;
     public _availableSpace: number;
     private _crossAxisMaxLayoutSize: number;
 
-    constructor(layout: FlexLayout, startIndex: number, endIndex: number, availableSpace: number) {
+    constructor(layout: FlexLayouter, startIndex: number, endIndex: number, availableSpace: number) {
         this._layout = layout;
         this.items = layout.items;
         this.startIndex = startIndex;

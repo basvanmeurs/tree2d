@@ -1,12 +1,12 @@
 import LineLayout from "./line/LineLayout";
-import FlexLayout from "./FlexLayout";
+import FlexLayouter from "./FlexLayouter";
 import FlexTarget from "../FlexTarget";
 
 /**
  * Distributes items over layout lines.
  */
 export default class LineLayouter {
-    private _layout: FlexLayout;
+    private _layout: FlexLayouter;
     private _mainAxisMinSize: number = -1;
     private _crossAxisMinSize: number = -1;
     private _mainAxisContentSize: number = 0;
@@ -15,7 +15,7 @@ export default class LineLayouter {
     private _mainAxisSize: number = 0;
     private _maxMainAxisPos: number = 0;
 
-    constructor(layout: FlexLayout) {
+    constructor(layout: FlexLayouter) {
         this._layout = layout;
     }
 

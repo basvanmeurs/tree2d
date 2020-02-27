@@ -43,7 +43,7 @@ export default class FlexTestUtils {
 
     buildFlexFromStructure(structure) {
         const root = new Target();
-        root.patch(structure);
+        Target.patch(root, structure);
         return root;
     }
 
@@ -221,7 +221,7 @@ class AnnotatedStructureMismatchCollector {
     _collectRecursive(item, location) {
         if (
             !this._checkLayoutsEqual(
-                { x: item.x, y: item.y, w: item.w, h: item.h },
+                { x: item.getLayoutX(), y: item.getLayoutY(), w: item.getLayoutW(), h: item.getLayoutH() },
                 item.r ? { x: item.r[0], y: item.r[1], w: item.r[2], h: item.r[3] } : { x: 0, y: 0, w: 0, h: 0 }
             )
         ) {
