@@ -1,5 +1,3 @@
-import { FunctionW } from "../../../src/tree/core/ElementCore";
-
 const Utils = lng.Utils;
 const Base = lng.Base;
 const FlexTarget = lng.FlexTarget;
