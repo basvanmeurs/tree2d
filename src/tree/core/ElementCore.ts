@@ -1314,7 +1314,7 @@ export default class ElementCore implements FlexSubject {
         return this._boundsMargin;
     }
 
-    private update(): void {
+    public update(): void {
         this._recalc |= this._parent!._pRecalc;
 
         if (this._layout && this._layout.isEnabled()) {

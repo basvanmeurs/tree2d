@@ -10,10 +10,10 @@ export default class LineLayout {
     private _crossAxisMaxLayoutSize: number;
 
     constructor(
-        private _layout: FlexLayouter,
+        public _layout: FlexLayouter,
         public startIndex: number,
         public endIndex: number,
-        private _availableSpace: number
+        public _availableSpace: number
     ) {
         this.items = _layout.items;
     }

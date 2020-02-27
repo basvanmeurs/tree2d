@@ -2,18 +2,17 @@ import FlexTarget from "./FlexTarget";
 
 export default class FlexUtils {
     static getParentAxisSizeWithPadding(item: FlexTarget, horizontal: boolean) {
-        const target = item.target;
-        const parent = target.getParent();
-        if (!parent) {
+        const flexParent = item.getParent();
+        if (!flexParent) {
             return 0;
         } else {
-            const flexParent = item.flexParent;
-            if (flexParent) {
+            if (flexParent.isFlexEnabled()) {
                 // Use pending layout size.
                 return this.getAxisLayoutSize(flexParent, horizontal) + this.getTotalPadding(flexParent, horizontal);
             } else {
-                // Use 'absolute' size.
-                return horizontal ? parent.getSourceW() : parent.getSourceH();
+                // Use layouted size.
+                const parentTarget = flexParent.target;
+                return horizontal ? parentTarget.getLayoutW() : parentTarget.getLayoutH();
             }
         }
     }

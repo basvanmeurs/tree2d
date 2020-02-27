@@ -1,5 +1,4 @@
 const Utils = lng.Utils;
-const Base = lng.Base;
 const FlexTarget = lng.FlexTarget;
 
 export default class Target {
@@ -79,9 +78,7 @@ export default class Target {
 
     set flexItem(v) {
         if (v === false) {
-            if (this._layout) {
-                this.layout.setItemEnabled(false);
-            }
+            this.layout.setItemEnabled(false);
         } else {
             this.layout.setItemEnabled(true);
             Target.patch(this.layout.flexItem, v);
@@ -134,28 +131,28 @@ export default class Target {
 
         if (this._optFlags && !this.hasFlexLayout()) {
             if (this._optFlags & 1) {
-                const x = this._funcX(this._parent.w);
+                const x = this._funcX(this._parent.getLayoutW());
                 if (x !== this._x) {
                     this._x = x;
                     this._recalc |= 2;
                 }
             }
             if (this._optFlags & 2) {
-                const y = this._funcY(this._parent.h);
+                const y = this._funcY(this._parent.getLayoutH());
                 if (y !== this._y) {
                     this._y = y;
                     this._recalc |= 2;
                 }
             }
             if (this._optFlags & 4) {
-                const w = this._funcW(this._parent.w);
+                const w = this._funcW(this._parent.getLayoutW());
                 if (w !== this._w) {
                     this._w = w;
                     this._recalc |= 2;
                 }
             }
             if (this._optFlags & 8) {
-                const h = this._funcH(this._parent.h);
+                const h = this._funcH(this._parent.getLayoutH());
                 if (h !== this._h) {
                     this._h = h;
                     this._recalc |= 2;
@@ -281,6 +278,7 @@ export default class Target {
                 if (this.hasFlexLayout()) {
                     this._layout.updatedSourceW();
                 } else {
+                    this._w = v;
                     this._triggerRecalcTranslate();
                 }
             }
@@ -301,6 +299,7 @@ export default class Target {
                 if (this.hasFlexLayout()) {
                     this._layout.updatedSourceH();
                 } else {
+                    this._h = v;
                     this._triggerRecalcTranslate();
                 }
             }
@@ -359,7 +358,7 @@ export default class Target {
         if (this._parent !== p) {
             const prevParent = this._parent;
             this._parent = p;
-            if (this._layout || (p && p.isFlexContainer())) {
+            if (this._layout || (p && p.getLayout().isFlexEnabled())) {
                 this.layout.setParent(prevParent, p);
             }
 
@@ -442,6 +441,10 @@ export default class Target {
             h: this.getLayoutH(),
             x: this.getLayoutX(),
             y: this.getLayoutY(),
+            sw: this.getSourceW(),
+            sh: this.getSourceH(),
+            sx: this.getSourceX(),
+            sy: this.getSourceY(),
             layout: [this._x, this._y, this._w, this._h].join(" "),
             r: this.r ? this.r.join(" ") : undefined,
             flex: this._layout && this._layout.flex ? Target.flexToJson(this._layout.flex) : false,

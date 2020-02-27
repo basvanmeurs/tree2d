@@ -66,16 +66,19 @@ export default class FlexTarget {
     }
 
     setItemEnabled(v: boolean) {
-        if (v) {
-            this._ensureFlexItem();
-            if (v !== !this._flexItemDisabled) {
-                this._flexItemDisabled = !v;
-                this._checkEnabled();
-                const parent = this.flexParent;
-                if (parent) {
-                    parent._clearFlexItemsCache();
-                    parent.changedContents();
-                }
+        this._ensureFlexItem();
+        if (v !== !this._flexItemDisabled) {
+            const prevFlexParent = this.flexParent;
+            this._flexItemDisabled = !v;
+            this._checkEnabled();
+            if (prevFlexParent) {
+                prevFlexParent._clearFlexItemsCache();
+                prevFlexParent.changedContents();
+            }
+            const newFlexParent = this.flexParent;
+            if (newFlexParent) {
+                newFlexParent._clearFlexItemsCache();
+                newFlexParent.changedContents();
             }
         }
     }
@@ -193,6 +196,15 @@ export default class FlexTarget {
             to.getLayout()._changedChildren();
         }
         this._checkEnabled();
+    }
+
+    getParent(): FlexTarget | undefined {
+        const parent = this._target.getParent();
+        if (!parent) {
+            return undefined;
+        } else {
+            return parent.getLayout();
+        }
     }
 
     get flexParent(): FlexTarget | undefined {

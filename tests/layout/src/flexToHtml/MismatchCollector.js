@@ -42,7 +42,7 @@ export default class MismatchCollector {
     }
 
     _getTargetLayout(target) {
-        return { x: target.x, y: target.y, w: target.w, h: target.h };
+        return { x: target.getLayoutX(), y: target.getLayoutY(), w: target.getLayoutW(), h: target.getLayoutH() };
     }
 
     _getHtmlLayout(div) {

@@ -39,13 +39,13 @@ export default class HtmlTreeBuilder {
         div.style.backgroundColor = this._getColor();
 
         if (item.hasFlexLayout()) {
-            if (item.layout.originalWidth || (item.layout.isFlexEnabled() && !item.layout.flexParent)) {
-                // If root-level, then set width explicitly.
-                div.style.width = item.layout.originalWidth + "px";
+            if (item.getSourceW() || (item.layout.isFlexEnabled() && !item.layout.flexParent)) {
+                // If root-level, then width must be explicitly set to 0px (which is not true for height).
+                div.style.width = item.getSourceW() + "px";
             }
 
-            if (item.layout.originalHeight) {
-                div.style.height = item.layout.originalHeight + "px";
+            if (item.getSourceH()) {
+                div.style.height = item.getSourceH() + "px";
             }
         } else {
             // Absolute positioning.
@@ -53,8 +53,8 @@ export default class HtmlTreeBuilder {
             div.style.height = item.h + "px";
             div.style.position = "absolute";
         }
-        div.style.left = item.offsetX + "px";
-        div.style.top = item.offsetY + "px";
+        div.style.left = item.x + "px";
+        div.style.top = item.y + "px";
 
         while (div.firstChild) {
             div.removeChild(div.firstChild);

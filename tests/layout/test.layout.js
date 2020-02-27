@@ -79,7 +79,8 @@ const crossSizeAspect = createCrossSizeAspect();
 
 const alignSelfAspect = FlexHtmlTester.createAspect("alignSelf", function(structure) {
     const tests = {};
-    FlexContainer.ALIGN_ITEMS.forEach(option => {
+    const alignItems = ["flex-start", "flex-end", "center", "stretch"];
+    alignItems.forEach(option => {
         const result = Utils.getDeepClone(structure);
         if (option === "stretch") {
             // HTML does not allow stretch overriding when main axis set.
@@ -123,7 +124,7 @@ const addSimpleStructureTests = (name, structure) => {
                     "column-reverse"
                 ]),
                 FlexHtmlTester.createAspectFromFlexProperty("wrap", [true, false]),
-                FlexHtmlTester.createAspectFromFlexProperty("justifyContent", FlexContainer.JUSTIFY_CONTENT),
+                FlexHtmlTester.createAspectFromFlexProperty("justifyContent", ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly"]),
                 mainSizeAspect
             ],
             []
@@ -136,7 +137,7 @@ const addSimpleStructureTests = (name, structure) => {
                 FlexHtmlTester.createAspectFromFlexProperty("direction", ["row", "column"]),
                 FlexHtmlTester.createAspectFromFlexProperty("wrap", [true, false]),
                 FlexHtmlTester.createAspectFromFlexProperty("alignItems", ["flex-end", "stretch", "center"]),
-                FlexHtmlTester.createAspectFromFlexProperty("alignContent", FlexContainer.ALIGN_CONTENT),
+                FlexHtmlTester.createAspectFromFlexProperty("alignContent", ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly", "stretch"]),
                 mainSizeAspect,
                 crossSizeAspect
             ],
@@ -146,7 +147,7 @@ const addSimpleStructureTests = (name, structure) => {
         FlexHtmlTester.addMochaTestsFromAspects("alignSelf", structure, [
             FlexHtmlTester.createAspectFromFlexProperty("direction", ["row", "column"]),
             FlexHtmlTester.createAspectFromFlexProperty("wrap", [true, false]),
-            FlexHtmlTester.createAspectFromFlexProperty("alignItems", FlexContainer.ALIGN_ITEMS),
+            FlexHtmlTester.createAspectFromFlexProperty("alignItems", ["flex-start", "flex-end", "center", "stretch"]),
             alignSelfAspect,
             mainSizeAspect,
             crossSizeAspect

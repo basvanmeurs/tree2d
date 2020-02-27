@@ -82,13 +82,13 @@ describe("layout", () => {
             });
 
             addUpdateTest("change offset of root", () => {
-                root.offsetX = 200;
+                root.x = 200;
                 return { layouts: [] };
             });
 
             addUpdateTest("change offset of subject", () => {
-                subject.offsetX = 2;
-                subject.offsetY = 2;
+                subject.x = 2;
+                subject.y = 2;
                 return { layouts: [] };
             });
         });

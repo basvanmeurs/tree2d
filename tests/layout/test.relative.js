@@ -12,8 +12,8 @@ describe("relative", function() {
             r: [0, 0, 200, 400],
             children: [
                 {
-                    offsetX: w => 0.1 * w,
-                    offsetY: h => 0.15 * h,
+                    x: w => 0.1 * w,
+                    y: h => 0.15 * h,
                     w: w => 0.3 * w,
                     h: h => 0.2 * h + 5,
                     r: [20, 60, 60, 85]
@@ -21,8 +21,8 @@ describe("relative", function() {
                 { w: w => 0.2 * w, h: h => 0.1 * h, r: [60, 0, 40, 40] },
                 {
                     flexItem: false,
-                    offsetX: w => 0.2 * w,
-                    offsetY: h => 0.2 * h,
+                    x: w => 0.2 * w,
+                    y: h => 0.2 * h,
                     w: w => 0.2 * w,
                     h: h => 0.2 * h + 5,
                     r: [40, 80, 40, 85]
@@ -42,8 +42,8 @@ describe("relative", function() {
                     r: [0, 0, 200, 400],
                     children: [
                         {
-                            offsetX: w => 0.1 * w,
-                            offsetY: h => 0.15 * h,
+                            x: w => 0.1 * w,
+                            y: h => 0.15 * h,
                             w: w => 0.3 * w,
                             h: h => 0.2 * h + 5,
                             r: [20, 60, 60, 85]
@@ -51,8 +51,8 @@ describe("relative", function() {
                         { w: w => 0.2 * w, h: h => 0.1 * h, r: [60, 0, 40, 40] },
                         {
                             flexItem: false,
-                            offsetX: w => 0.2 * w,
-                            offsetY: h => 0.2 * h,
+                            x: w => 0.2 * w,
+                            y: h => 0.2 * h,
                             w: w => 0.2 * w,
                             h: h => 0.2 * h + 5,
                             r: [40, 80, 40, 85]
@@ -294,8 +294,8 @@ describe("relative", function() {
             });
 
             addUpdateTest("convert siblingSub to funcW,funcH", () => {
-                siblingSub.offsetX = w => w * 0.1;
-                siblingSub.offsetY = h => h * 0.1;
+                siblingSub.x = w => w * 0.1;
+                siblingSub.y = h => h * 0.1;
                 siblingSub.w = w => w * 0.25;
                 siblingSub.h = h => h * 0.25;
                 siblingSub.r = [36, 20, 65, 25];
@@ -304,8 +304,8 @@ describe("relative", function() {
             });
 
             addUpdateTest("convert siblingSub to fixed w,h", () => {
-                siblingSub.offsetX = 1;
-                siblingSub.offsetY = 1;
+                siblingSub.x = 1;
+                siblingSub.y = 1;
                 siblingSub.w = 500;
                 siblingSub.h = 500;
                 siblingSub.flexItem.shrink = 0;
