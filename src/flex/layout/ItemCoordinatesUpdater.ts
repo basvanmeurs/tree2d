@@ -67,7 +67,7 @@ export default class ItemCoordinatesUpdater {
                 const layout = item._flex!.layout;
 
                 const dimensionsMatchPreviousResult =
-                    item.w === item.target.getLayoutW() && item.h === item.target.getLayoutH();
+                    item.w === item.subject.getLayoutW() && item.h === item.subject.getLayoutH();
                 if (dimensionsMatchPreviousResult) {
                     // Cache is valid.
                     return true;

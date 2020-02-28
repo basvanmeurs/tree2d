@@ -28,7 +28,7 @@ export default class FlexTarget {
 
     public _items?: FlexTarget[] = undefined;
 
-    constructor(private _target: FlexSubject) {}
+    constructor(public readonly subject: FlexSubject) {}
 
     get flexLayout() {
         return this.flex ? this.flex.layout : undefined;
@@ -38,10 +38,6 @@ export default class FlexTarget {
         if (this.isFlexEnabled() && this.isChanged()) {
             this.flexLayout!.layoutTree();
         }
-    }
-
-    get target() {
-        return this._target;
     }
 
     get flex() {
@@ -98,7 +94,7 @@ export default class FlexTarget {
     }
 
     private _enableChildrenAsFlexItems() {
-        const children = this._target.getChildren();
+        const children = this.subject.getChildren();
         if (children) {
             for (let i = 0, n = children.length; i < n; i++) {
                 const child = children[i];
@@ -108,7 +104,7 @@ export default class FlexTarget {
     }
 
     private _disableChildrenAsFlexItems() {
-        const children = this._target.getChildren();
+        const children = this.subject.getChildren();
         if (children) {
             for (let i = 0, n = children.length; i < n; i++) {
                 const child = children[i];
@@ -119,7 +115,7 @@ export default class FlexTarget {
 
     private _enableFlexItem() {
         this._ensureFlexItem();
-        const flexParent = this._target!.getParent()!.getLayout();
+        const flexParent = this.subject!.getParent()!.getLayout();
         this._flexItem!.ctr = flexParent._flex;
         flexParent.changedContents();
         this._checkEnabled();
@@ -137,8 +133,8 @@ export default class FlexTarget {
     }
 
     private _resetOffsets() {
-        this.x = this.target.getSourceX();
-        this.y = this.target.getSourceY();
+        this.x = this.subject.getSourceX();
+        this.y = this.subject.getSourceY();
     }
 
     private _ensureFlexItem() {
@@ -160,12 +156,12 @@ export default class FlexTarget {
     }
 
     private _enable() {
-        this._target.enableFlexLayout();
+        this.subject.enableFlexLayout();
     }
 
     private _disable() {
-        this._restoreTargetToNonFlex();
-        this._target.disableFlexLayout();
+        this.restoreSubjectToNonFlex();
+        this.subject.disableFlexLayout();
     }
 
     isEnabled() {
@@ -180,10 +176,10 @@ export default class FlexTarget {
         return this.flexParent !== undefined;
     }
 
-    private _restoreTargetToNonFlex() {
-        const target = this._target;
-        target.setLayoutCoords(target.getSourceX(), target.getSourceY());
-        target.setLayoutDimensions(target.getSourceW(), target.getSourceH());
+    private restoreSubjectToNonFlex() {
+        const subject = this.subject;
+        subject.setLayoutCoords(subject.getSourceX(), subject.getSourceY());
+        subject.setLayoutDimensions(subject.getSourceW(), subject.getSourceH());
     }
 
     setParent(from?: FlexSubject, to?: FlexSubject) {
@@ -199,7 +195,7 @@ export default class FlexTarget {
     }
 
     getParent(): FlexTarget | undefined {
-        const parent = this._target.getParent();
+        const parent = this.subject.getParent();
         if (!parent) {
             return undefined;
         } else {
@@ -212,7 +208,7 @@ export default class FlexTarget {
             return undefined;
         }
 
-        const parent = this._target.getParent();
+        const parent = this.subject.getParent();
         if (parent && parent.getLayout().isFlexEnabled()) {
             return parent.getLayout();
         }
@@ -235,7 +231,7 @@ export default class FlexTarget {
 
     private _getFlexItems(): FlexTarget[] {
         const items = [];
-        const children = this._target.getChildren();
+        const children = this.subject.getChildren();
         if (children) {
             for (let i = 0, n = children.length; i < n; i++) {
                 const item = children[i];
@@ -259,10 +255,10 @@ export default class FlexTarget {
     }
 
     setLayout(x: number, y: number, w: number, h: number) {
-        const target = this._target;
+        const subject = this.subject;
 
-        let sourceX = target.getSourceX();
-        let sourceY = target.getSourceY();
+        let sourceX = subject.getSourceX();
+        let sourceY = subject.getSourceY();
         if (this.funcX) {
             sourceX = this.funcX(FlexUtils.getParentAxisSizeWithPadding(this, true));
         }
@@ -271,12 +267,12 @@ export default class FlexTarget {
         }
 
         if (this.isFlexItemEnabled()) {
-            target.setLayoutCoords(x + sourceX, y + sourceY);
+            subject.setLayoutCoords(x + sourceX, y + sourceY);
         } else {
             // Reuse the x,y 'settings'.
-            target.setLayoutCoords(sourceX, sourceY);
+            subject.setLayoutCoords(sourceX, sourceY);
         }
-        target.setLayoutDimensions(w, h);
+        subject.setLayoutDimensions(w, h);
     }
 
     forceLayout(changeWidth = true, changeHeight = true) {
@@ -307,10 +303,10 @@ export default class FlexTarget {
             if (this.flexParent) {
                 this.flexParent._updateRecalcBottomUp(recalc);
             } else {
-                this._target.triggerLayout();
+                this.subject.triggerLayout();
             }
         } else {
-            this._target.triggerLayout();
+            this.subject.triggerLayout();
         }
     }
 
@@ -327,10 +323,10 @@ export default class FlexTarget {
             if (flexParent) {
                 flexParent._updateRecalcBottomUp(newRecalc);
             } else {
-                this._target.triggerLayout();
+                this.subject.triggerLayout();
             }
         } else {
-            this._target.triggerLayout();
+            this.subject.triggerLayout();
         }
     }
 
@@ -394,18 +390,18 @@ export default class FlexTarget {
     }
 
     get funcX() {
-        return this._target.getFuncX();
+        return this.subject.getFuncX();
     }
 
     get funcY() {
-        return this._target.getFuncY();
+        return this.subject.getFuncY();
     }
 
     get funcW() {
-        return this._target.getFuncW();
+        return this.subject.getFuncW();
     }
 
     get funcH() {
-        return this._target.getFuncH();
+        return this.subject.getFuncH();
     }
 }

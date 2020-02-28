@@ -11,8 +11,8 @@ export default class FlexUtils {
                 return this.getAxisLayoutSize(flexParent, horizontal) + this.getTotalPadding(flexParent, horizontal);
             } else {
                 // Use layouted size.
-                const parentTarget = flexParent.target;
-                return horizontal ? parentTarget.getLayoutW() : parentTarget.getLayoutH();
+                const parentSubject = flexParent.subject;
+                return horizontal ? parentSubject.getLayoutW() : parentSubject.getLayoutH();
             }
         }
     }
@@ -26,7 +26,7 @@ export default class FlexUtils {
                     return 0;
                 }
             } else {
-                return item.target.getSourceW();
+                return item.subject.getSourceW();
             }
         } else {
             if (item.funcH) {
@@ -36,7 +36,7 @@ export default class FlexUtils {
                     return 0;
                 }
             } else {
-                return item.target.getSourceH();
+                return item.subject.getSourceH();
             }
         }
     }
@@ -52,9 +52,9 @@ export default class FlexUtils {
 
     static isZeroAxisSize(item: FlexTarget, horizontal: boolean) {
         if (horizontal) {
-            return !item.target.getSourceW() && !item.funcW;
+            return !item.subject.getSourceW() && !item.funcW;
         } else {
-            return !item.target.getSourceH() && !item.funcH;
+            return !item.subject.getSourceH() && !item.funcH;
         }
     }
 

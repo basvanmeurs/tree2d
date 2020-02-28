@@ -210,13 +210,13 @@ export default class FlexLayouter {
     }
 
     _checkValidCacheMainAxisResize(size: number) {
-        const isFinalMainAxisSize = size === this.targetMainAxisSize;
+        const isFinalMainAxisSize = size === this.subjectMainAxisSize;
         if (isFinalMainAxisSize) {
             return true;
         }
         const canIgnoreCacheMiss = !this.isCrossAxisFitToContents();
 
-        // Allow other main axis resizes and check if final resize matches the target main axis size
+        // Allow other main axis resizes and check if final resize matches the subject main axis size
         //  (ItemCoordinatesUpdater).
         return canIgnoreCacheMiss;
     }
@@ -249,12 +249,12 @@ export default class FlexLayouter {
         this._resizingCrossAxis = false;
     }
 
-    get targetMainAxisSize() {
-        return this._horizontal ? this.item.target.getLayoutW() : this.item.target.getLayoutH();
+    get subjectMainAxisSize() {
+        return this._horizontal ? this.item.subject.getLayoutW() : this.item.subject.getLayoutH();
     }
 
-    get targetCrossAxisSize() {
-        return this._horizontal ? this.item.target.getLayoutH() : this.item.target.getLayoutW();
+    get subjectCrossAxisSize() {
+        return this._horizontal ? this.item.subject.getLayoutH() : this.item.subject.getLayoutW();
     }
 
     getParentFlexContainer() {
