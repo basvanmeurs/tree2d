@@ -1,5 +1,4 @@
 import ContentAligner from "./ContentAligner";
-import FlexUtils from "./FlexUtils.js";
 import LineLayouter from "./LineLayouter";
 import ItemCoordinatesUpdater from "./ItemCoordinatesUpdater";
 import FlexContainer from "../FlexContainer";

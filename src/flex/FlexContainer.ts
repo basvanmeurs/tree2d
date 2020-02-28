@@ -1,7 +1,6 @@
 import Layout from "./layout/FlexLayouter";
 import FlexNode from "./FlexNode";
 import { SpacingMode } from "./layout/SpacingCalculator";
-import FlexUtils from "./layout/FlexUtils";
 
 export type AlignItemsMode = "flex-start" | "flex-end" | "center" | "stretch";
 
@@ -153,11 +152,11 @@ export default class FlexContainer {
     }
 
     getHorizontalPaddingOffset() {
-        return FlexUtils.getPaddingOffset(this.node, true);
+        return this.node.getPaddingOffset( true);
     }
 
     getVerticalPaddingOffset() {
-        return FlexUtils.getPaddingOffset(this.node, false);
+        return this.node.getPaddingOffset(false);
     }
 
 }

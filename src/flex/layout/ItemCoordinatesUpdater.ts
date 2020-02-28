@@ -104,11 +104,8 @@ export default class ItemCoordinatesUpdater {
             h += flex.getVerticalPadding();
         }
 
-        const flexItem = item.flexItem;
-        if (flexItem) {
-            x += flexItem._getHorizontalMarginOffset();
-            y += flexItem._getVerticalMarginOffset();
-        }
+        x += item.getHorizontalMarginOffset();
+        y += item.getVerticalMarginOffset();
 
         item.clearRecalcFlag();
         item.setLayout(x, y, w, h);

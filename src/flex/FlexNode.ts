@@ -1,6 +1,5 @@
 import FlexContainer from "./FlexContainer";
 import FlexItem from "./FlexItem";
-import FlexUtils from "./layout/FlexUtils.js";
 import { FlexSubject } from "./FlexSubject";
 
 /**
@@ -452,6 +451,20 @@ export default class FlexNode {
         }
     }
 
+    getPaddingOffset(horizontal: boolean) {
+        if (this.isFlexEnabled()) {
+            const flex = this.flex!;
+            if (horizontal) {
+                return flex.paddingLeft;
+            } else {
+                return flex.paddingTop;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+
     getRelAxisSize(horizontal: boolean) {
         if (horizontal) {
             if (this.sourceFuncW) {
@@ -473,6 +486,40 @@ export default class FlexNode {
             } else {
                 return this.subject.getSourceH();
             }
+        }
+    }
+
+    getMarginOffset(horizontal: boolean) {
+        const flexItem = this.flexItem!;
+        if (flexItem) {
+            if (horizontal) {
+                return flexItem.marginLeft;
+            } else {
+                return flexItem.marginTop;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    getHorizontalMarginOffset() {
+        return this.getMarginOffset(true);
+    }
+
+    getVerticalMarginOffset() {
+        return this.getMarginOffset(false);
+    }
+
+    getTotalMargin(horizontal: boolean) {
+        const flexItem = this.flexItem!;
+        if (flexItem) {
+            if (horizontal) {
+                return flexItem.marginRight + flexItem.marginLeft;
+            } else {
+                return flexItem.marginTop + flexItem.marginBottom;
+            }
+        } else {
+            return 0;
         }
     }
 
@@ -521,7 +568,18 @@ export default class FlexNode {
         }
     }
 
-
-
+    resizeAxis(horizontal: boolean, size: number) {
+        if (this.isFlexEnabled()) {
+            const flex = this.flex!;
+            const isMainAxis = flex.horizontal === horizontal;
+            if (isMainAxis) {
+                flex.layout.resizeMainAxis(size);
+            } else {
+                flex.layout.resizeCrossAxis(size);
+            }
+        } else {
+            this.setAxisLayoutSize(horizontal, size);
+        }
+    }
 
 }

@@ -1,4 +1,3 @@
-import FlexUtils from "./layout/FlexUtils.js";
 import FlexContainer, { AlignItemsMode } from "./FlexContainer";
 import FlexNode from "./FlexNode";
 
@@ -181,7 +180,7 @@ export default class FlexItem {
     }
 
     _resetCrossAxisLayoutSize() {
-        if (this.ctr!.horizontal) {
+        if (this.horizontal) {
             this._resetVerticalAxisLayoutSize();
         } else {
             this._resetHorizontalAxisLayoutSize();
@@ -211,15 +210,15 @@ export default class FlexItem {
     }
 
     _getCrossAxisMinSizeSetting() {
-        return this._getMinSizeSetting(!this.ctr!.horizontal);
+        return this._getMinSizeSetting(!this.horizontal);
     }
 
     _getCrossAxisMaxSizeSetting() {
-        return this._getMaxSizeSetting(!this.ctr!.horizontal);
+        return this._getMaxSizeSetting(!this.horizontal);
     }
 
     _getMainAxisMaxSizeSetting() {
-        return this._getMaxSizeSetting(this.ctr!.horizontal);
+        return this._getMaxSizeSetting(this.horizontal);
     }
 
     _getMinSizeSetting(horizontal: boolean) {
@@ -238,64 +237,60 @@ export default class FlexItem {
         }
     }
 
+    private get horizontal() {
+        return this.ctr!.horizontal;
+    }
+    
     _getMainAxisMinSize() {
-        return this.node.getAxisMinSize(this.ctr!.horizontal);
+        return this.node.getAxisMinSize(this.horizontal);
     }
 
     _getCrossAxisMinSize() {
-        return this.node.getAxisMinSize(!this.ctr!.horizontal);
+        return this.node.getAxisMinSize(!this.horizontal);
     }
 
     _getMainAxisLayoutSize() {
-        return this.node.getAxisLayoutSize(this.ctr!.horizontal);
+        return this.node.getAxisLayoutSize(this.horizontal);
     }
 
     _getMainAxisLayoutPos() {
-        return this.node.getAxisLayoutPos(this.ctr!.horizontal);
+        return this.node.getAxisLayoutPos(this.horizontal);
     }
 
     _setMainAxisLayoutPos(pos: number) {
-        return this.node.setAxisLayoutPos(this.ctr!.horizontal, pos);
+        return this.node.setAxisLayoutPos(this.horizontal, pos);
     }
 
     _setCrossAxisLayoutPos(pos: number) {
-        return this.node.setAxisLayoutPos(!this.ctr!.horizontal, pos);
+        return this.node.setAxisLayoutPos(!this.horizontal, pos);
     }
 
     _getCrossAxisLayoutSize() {
-        return this.node.getAxisLayoutSize(!this.ctr!.horizontal);
+        return this.node.getAxisLayoutSize(!this.horizontal);
     }
 
     _resizeCrossAxis(size: number) {
-        return FlexUtils.resizeAxis(this.node, !this.ctr!.horizontal, size);
+        return this.node.resizeAxis(!this.horizontal, size);
     }
 
     _resizeMainAxis(size: number) {
-        return FlexUtils.resizeAxis(this.node, this.ctr!.horizontal, size);
+        return this.node.resizeAxis(this.horizontal, size);
     }
 
     _getMainAxisPadding() {
-        return this.node.getTotalPadding(this.ctr!.horizontal);
+        return this.node.getTotalPadding(this.horizontal);
     }
 
     _getCrossAxisPadding() {
-        return this.node.getTotalPadding(!this.ctr!.horizontal);
+        return this.node.getTotalPadding(!this.horizontal);
     }
 
     _getMainAxisMargin() {
-        return FlexUtils.getTotalMargin(this.node, this.ctr!.horizontal);
+        return this.node.getTotalMargin(this.horizontal);
     }
 
     _getCrossAxisMargin() {
-        return FlexUtils.getTotalMargin(this.node, !this.ctr!.horizontal);
-    }
-
-    _getHorizontalMarginOffset() {
-        return FlexUtils.getMarginOffset(this.node, true);
-    }
-
-    _getVerticalMarginOffset() {
-        return FlexUtils.getMarginOffset(this.node, false);
+        return this.node.getTotalMargin(!this.horizontal);
     }
 
     _getMainAxisMinSizeWithPaddingAndMargin() {
@@ -315,10 +310,10 @@ export default class FlexItem {
     }
 
     _hasFixedCrossAxisSize() {
-        return !this.node.isZeroAxisSize(!this.ctr!.horizontal);
+        return !this.node.isZeroAxisSize(!this.horizontal);
     }
 
     _hasRelCrossAxisSize() {
-        return !!(this.ctr!.horizontal ? this.node.sourceFuncH : this.node.sourceFuncW);
+        return !!(this.horizontal ? this.node.sourceFuncH : this.node.sourceFuncW);
     }
 }
