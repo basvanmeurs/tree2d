@@ -15,9 +15,10 @@ describe("flex", () => {
                     children: {
                         Item: {
                             w: 300,
-                            flex: { padding: 5 },
+                            flex: true,
+                            padding: 5,
                             children: [
-                                { flexItem: { shrink: 1, minWidth: 50 }, w: 100, h: 100 },
+                                { flexShrink: 1, minWidth: 50, w: 100, h: 100 },
                                 { w: 100, h: 100 },
                                 { w: 100, h: 100 },
                                 { w: 100, h: 100 }
@@ -41,7 +42,7 @@ describe("flex", () => {
                 chai.assert(child.layoutW === 100, "final W updated");
                 chai.assert(child.layoutH === 100, "final H updated");
 
-                const item = root.tag("Item");
+                const item = element.getByRef("Item");
                 chai.assert(item.layoutH === 110, "final H updated");
             });
         });

@@ -209,7 +209,7 @@ export default class FlexNode {
         if (children) {
             for (let i = 0, n = children.length; i < n; i++) {
                 const item = children[i];
-                if (item.isVisible()) {
+                if (item.isDisplayed()) {
                     if (item.getLayout().isFlexItemEnabled()) {
                         items.push(item.getLayout());
                     }

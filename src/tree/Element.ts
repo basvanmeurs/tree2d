@@ -1253,7 +1253,110 @@ class Element {
         throw new Error(this.constructor.name + " (" + this.getLocationString() + "): " + message);
     }
 
-    // @todo: flexbox stuff.
+    private get _flex() {
+        return this.__core.layout.flex;
+    }
+    
+    private get _flexItem() {
+        return this.__core.layout.flexItem;
+    }
+    
+    set flex(v: boolean) {
+        this._flex.enabled = v;
+    }
+
+    set flexDirection(v: FlexDirection) {
+        this._flex.direction = v;
+    }
+
+    set flexWrap(v: boolean) {
+        this._flex.wrap = v;
+    }
+
+    set flexAlignItems(v: AlignItemsMode) {
+        this._flex.alignItems = v;
+    }
+
+    set flexJustifyContent(v: JustifyContentMode) {
+        this._flex.justifyContent = v;
+    }
+
+    set flexAlignContent(v: AlignContentMode) {
+        this._flex.alignContent = v;
+    }
+
+    set flexItem(v: boolean) {
+        this._flexItem.enabled = v;
+    }
+
+    set flexGrow(v: number) {
+        this._flexItem.grow = v;
+    }
+
+    set flexShrink(v: number) {
+        this._flexItem.shrink = v;
+    }
+
+    set alignSelf(v: AlignItemsMode) {
+        this._flexItem.alignSelf = v;
+    }
+
+    set padding(v: number) {
+        this._flex.padding = v;
+    }
+
+    set paddingLeft(v: number) {
+        this._flex.paddingLeft = v;
+    }
+
+    set paddingRight(v: number) {
+        this._flex.paddingRight = v;
+    }
+
+    set paddingTop(v: number) {
+        this._flex.paddingTop = v;
+    }
+
+    set paddingBottom(v: number) {
+        this._flex.paddingBottom = v;
+    }
+
+    set margin(v: number) {
+        this._flexItem.margin = v;
+    }
+
+    set marginLeft(v: number) {
+        this._flexItem.marginLeft = v;
+    }
+
+    set marginRight(v: number) {
+        this._flexItem.marginRight = v;
+    }
+
+    set marginTop(v: number) {
+        this._flexItem.marginTop = v;
+    }
+
+    set marginBottom(v: number) {
+        this._flexItem.marginBottom = v;
+    }
+
+    set minWidth(v: number) {
+        this._flexItem.minWidth = v;
+    }
+
+    set maxWidth(v: number) {
+        this._flexItem.maxWidth = v;
+    }
+
+    set minHeight(v: number) {
+        this._flexItem.minHeight = v;
+    }
+
+    set maxHeight(v: number) {
+        this._flexItem.maxHeight = v;
+    }
+
 }
 
 import Texture from "./Texture";
@@ -1265,5 +1368,6 @@ import Stage from "./Stage";
 import ElementTexturizer from "./core/ElementTexturizer";
 import ElementListeners from "./ElementListeners";
 import TextureSource from "./TextureSource";
+import {AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode} from "../flex/FlexContainer";
 
 export default Element;

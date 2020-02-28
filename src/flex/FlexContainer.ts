@@ -14,6 +14,8 @@ export type JustifyContentMode =
 
 export type AlignContentMode = SpacingMode;
 
+export type FlexDirection = "row" | "row-reverse" | "column" | "column-reverse"
+
 export default class FlexContainer {
     public horizontal: boolean = true;
     public reverse: boolean = false;
@@ -44,11 +46,15 @@ export default class FlexContainer {
         }
     }
 
-    get direction() {
-        return (this.horizontal ? "row" : "column") + (this.reverse ? "-reverse" : "");
+    get direction(): FlexDirection {
+        if (this.horizontal) {
+            return this.reverse ? "row-reverse" : "row"
+        } else {
+            return this.reverse ? "column-reverse" : "column"
+        }
     }
 
-    set direction(f) {
+    set direction(f: FlexDirection) {
         if (this.direction === f) return;
 
         this.horizontal = f === "row" || f === "row-reverse";

@@ -1291,8 +1291,12 @@ export default class ElementCore implements FlexSubject {
         this._stashedColors = undefined;
     }
 
+    isDisplayed() {
+        return this._visible;
+    }
+
     isVisible() {
-        return this._localAlpha > 1e-14;
+        return (this._localAlpha > 1e-14);
     }
 
     get outOfBounds() {
@@ -2159,8 +2163,6 @@ export default class ElementCore implements FlexSubject {
     getLayout(): FlexNode {
         return this.layout;
     }
-
-    //@todo: delegate all flex properties.
 
     isFlexItem() {
         return !!this._layout && this._layout.isFlexItemEnabled();

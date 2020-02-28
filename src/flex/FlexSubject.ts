@@ -18,7 +18,7 @@ export interface FlexSubject {
     triggerLayout(): void;
 
     // An invisible subject doesn't take space in the flex container
-    isVisible(): boolean;
+    isDisplayed(): boolean;
 
     // The 'set' layout dimensions.
     getSourceX(): number;

@@ -25,7 +25,7 @@ export default class HtmlTreeBuilder {
             }
         }
 
-        if (!item.isVisible()) {
+        if (!item.isDisplayed()) {
             div.style.display = "none";
         }
 

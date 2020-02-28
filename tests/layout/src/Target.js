@@ -174,7 +174,7 @@ export default class Target {
     }
 
     getSourceFuncX() {
-        return this._optFlags & 1 ? this._funcX : null;
+        return this._funcX;
     }
 
     set funcX(v) {
@@ -219,7 +219,7 @@ export default class Target {
     }
 
     getSourceFuncY() {
-        return this._optFlags & 2 ? this._funcY : null;
+        return this._funcY;
     }
 
     set funcY(v) {
@@ -287,7 +287,7 @@ export default class Target {
     }
 
     getSourceFuncW() {
-        return this._optFlags & 4 ? this._funcW : null;
+        return this._funcW;
     }
 
     set funcW(v) {
@@ -309,7 +309,7 @@ export default class Target {
     }
 
     getSourceFuncH() {
-        return this._optFlags & 8 ? this._funcH : null;
+        return this._funcH;
     }
 
     set funcH(v) {
@@ -406,12 +406,12 @@ export default class Target {
         if (this._visible !== v) {
             this._visible = v;
             if (this.hasFlexLayout()) {
-                this.layout.updateVisible(v);
+                this.layout.updateVisible();
             }
         }
     }
 
-    isVisible() {
+    isDisplayed() {
         return this._visible;
     }
 
