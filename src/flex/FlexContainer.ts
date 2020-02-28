@@ -143,20 +143,4 @@ export default class FlexContainer {
         return this._paddingBottom;
     }
 
-    getHorizontalPadding() {
-        return this.node.getTotalPadding(true);
-    }
-
-    getVerticalPadding() {
-        return this.node.getTotalPadding(false);
-    }
-
-    getHorizontalPaddingOffset() {
-        return this.node.getPaddingOffset( true);
-    }
-
-    getVerticalPaddingOffset() {
-        return this.node.getPaddingOffset(false);
-    }
-
 }

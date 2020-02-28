@@ -10,8 +10,8 @@ export default class ItemCoordinatesUpdater {
     constructor(layout: FlexLayouter) {
         this.layout = layout;
         this.isReverse = this.flexContainer.reverse;
-        this.horizontalPaddingOffset = this.flexContainer.getHorizontalPaddingOffset();
-        this.verticalPaddingOffset = this.flexContainer.getVerticalPaddingOffset();
+        this.horizontalPaddingOffset = this.flexContainer.node.getHorizontalPaddingOffset();
+        this.verticalPaddingOffset = this.flexContainer.node.getVerticalPaddingOffset();
     }
 
     private get flexContainer() {
@@ -31,18 +31,18 @@ export default class ItemCoordinatesUpdater {
     }
 
     private finalizeRoot() {
-        const item = this.flexContainer.node;
-        const x = item.getAxisLayoutPos(true);
-        const y = item.getAxisLayoutPos(false);
-        let w = item.getAxisLayoutSize(true);
-        let h = item.getAxisLayoutSize(false);
+        const flexNode = this.flexContainer.node;
+        const x = flexNode.getAxisLayoutPos(true);
+        const y = flexNode.getAxisLayoutPos(false);
+        let w = flexNode.getAxisLayoutSize(true);
+        let h = flexNode.getAxisLayoutSize(false);
 
-        w += this.flexContainer.getHorizontalPadding();
-        h += this.flexContainer.getVerticalPadding();
+        w += flexNode.getHorizontalPadding();
+        h += flexNode.getVerticalPadding();
 
-        item.clearRecalcFlag();
+        flexNode.clearRecalcFlag();
 
-        item.setLayout(x, y, w, h);
+        flexNode.setLayout(x, y, w, h);
     }
 
     private finalizeItems() {
@@ -98,11 +98,8 @@ export default class ItemCoordinatesUpdater {
         x += this.horizontalPaddingOffset;
         y += this.verticalPaddingOffset;
 
-        const flex = item.flex;
-        if (flex) {
-            w += flex.getHorizontalPadding();
-            h += flex.getVerticalPadding();
-        }
+        w += item.getHorizontalPadding();
+        h += item.getVerticalPadding();
 
         x += item.getHorizontalMarginOffset();
         y += item.getVerticalMarginOffset();

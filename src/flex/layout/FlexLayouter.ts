@@ -229,7 +229,7 @@ export default class FlexLayouter {
     }
 
     getParentFlexContainer() {
-        return this.item.isFlexItemEnabled() ? this.item.flexItem!.ctr : undefined;
+        return this.item.isFlexItemEnabled() ? this.item.flexItem!.getContainer() : undefined;
     }
 
     private getMainAxisBasis() {

@@ -115,14 +115,14 @@ export default class FlexNode {
     private _enableFlexItem() {
         this._ensureFlexItem();
         const flexParent = this.subject!.getParent()!.getLayout();
-        this._flexItem!.ctr = flexParent._flex;
+        this._flexItem!.setContainer(flexParent._flex);
         flexParent.changedContents();
         this._checkEnabled();
     }
 
     private _disableFlexItem() {
         if (this._flexItem) {
-            this._flexItem.ctr = undefined;
+            this._flexItem.setContainer(undefined);
         }
 
         // We keep the flexItem object because it may contain custom settings.
@@ -438,17 +438,12 @@ export default class FlexNode {
         }
     }
 
-    getTotalPadding(horizontal: boolean) {
-        if (this.isFlexEnabled()) {
-            const flex = this.flex!;
-            if (horizontal) {
-                return flex.paddingRight + flex.paddingLeft;
-            } else {
-                return flex.paddingTop + flex.paddingBottom;
-            }
-        } else {
-            return 0;
-        }
+    getHorizontalPaddingOffset() {
+        return this.getPaddingOffset( true);
+    }
+
+    getVerticalPaddingOffset() {
+        return this.getPaddingOffset(false);
     }
 
     getPaddingOffset(horizontal: boolean) {
@@ -458,6 +453,27 @@ export default class FlexNode {
                 return flex.paddingLeft;
             } else {
                 return flex.paddingTop;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    getHorizontalPadding() {
+        return this.getTotalPadding(true);
+    }
+
+    getVerticalPadding() {
+        return this.getTotalPadding(false);
+    }
+
+    getTotalPadding(horizontal: boolean) {
+        if (this.isFlexEnabled()) {
+            const flex = this.flex!;
+            if (horizontal) {
+                return flex.paddingRight + flex.paddingLeft;
+            } else {
+                return flex.paddingTop + flex.paddingBottom;
             }
         } else {
             return 0;

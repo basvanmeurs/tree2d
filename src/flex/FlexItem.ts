@@ -4,24 +4,32 @@ import FlexNode from "./FlexNode";
 export default class FlexItem {
     public static readonly SHRINK_AUTO = -1;
 
-    _ctr?: FlexContainer;
+    public container?: FlexContainer;
 
-    _grow: number = 0;
-    _shrink: number = FlexItem.SHRINK_AUTO;
-    _alignSelf?: AlignItemsMode;
+    private _grow: number = 0;
+    private _shrink: number = FlexItem.SHRINK_AUTO;
+    private _alignSelf?: AlignItemsMode;
 
-    _minWidth: number = 0;
-    _minHeight: number = 0;
+    private _minWidth: number = 0;
+    private _minHeight: number = 0;
 
-    _maxWidth: number = 0;
-    _maxHeight: number = 0;
+    private _maxWidth: number = 0;
+    private _maxHeight: number = 0;
 
-    _marginLeft: number = 0;
-    _marginTop: number = 0;
-    _marginRight: number = 0;
-    _marginBottom: number = 0;
+    private _marginLeft: number = 0;
+    private _marginTop: number = 0;
+    private _marginRight: number = 0;
+    private _marginBottom: number = 0;
 
     constructor(public readonly node: FlexNode) {}
+
+    public getContainer() {
+        return this.container;
+    }
+
+    public setContainer(c: FlexContainer | undefined) {
+        this.container = c;
+    }
 
     get grow() {
         return this._grow;
@@ -163,15 +171,7 @@ export default class FlexItem {
     }
 
     private _changed() {
-        if (this.ctr) this.ctr.changedContents();
-    }
-
-    set ctr(v: FlexContainer | undefined) {
-        this._ctr = v;
-    }
-
-    get ctr(): FlexContainer | undefined {
-        return this._ctr;
+        if (this.container) this.container.changedContents();
     }
 
     _resetLayoutSize() {
@@ -238,7 +238,7 @@ export default class FlexItem {
     }
 
     private get horizontal() {
-        return this.ctr!.horizontal;
+        return this.container!.horizontal;
     }
     
     _getMainAxisMinSize() {
