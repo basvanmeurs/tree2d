@@ -6,7 +6,7 @@ describe("layout", () => {
     describe("absolute", () => {
         // flexItem: false should cause the item to be ignored.
         flexTestUtils.addMochaTestForAnnotatedStructure("simple", {
-            flex: {},
+            flex: {enabled: true},
             r: [0, 0, 770, 315],
             flexItem: {},
             children: [

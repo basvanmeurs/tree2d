@@ -6,7 +6,7 @@ describe("relative", function() {
     this.timeout(0);
     describe("absolute", () => {
         flexTestUtils.addMochaTestForAnnotatedStructure("func x, y, w, h", {
-            flex: {},
+            flex: { enabled: true },
             w: 200,
             h: 400,
             r: [0, 0, 200, 400],
@@ -36,7 +36,7 @@ describe("relative", function() {
             r: [0, 0, 600, 800],
             children: [
                 {
-                    flex: {},
+                    flex: { enabled: true },
                     w: w => w / 3,
                     h: h => h / 2,
                     r: [0, 0, 200, 400],
@@ -65,11 +65,11 @@ describe("relative", function() {
         flexTestUtils.addMochaTestForAnnotatedStructure("fit-to-contents containing funcW, funcH (expect 0)", {
             w: 100,
             h: 100,
-            flex: {},
+            flex: { enabled: true },
             r: [0, 0, 100, 100],
             children: [
                 {
-                    flex: {},
+                    flex: { enabled: true },
                     flexItem: { grow: 1 },
                     r: [0, 0, 100, 100],
                     children: [
@@ -90,11 +90,11 @@ describe("relative", function() {
         flexTestUtils.addMochaTestForAnnotatedStructure("dynamic main axis situation", {
             w: 100,
             h: 300,
-            flex: { direction: "column" },
+            flex: { enabled: true, direction: "column" },
             r: [0, 0, 100, 300],
             children: [
                 {
-                    flex: {},
+                    flex: { enabled: true },
                     w: 100,
                     h: 200,
                     flexItem: { grow: 1 },
@@ -110,11 +110,11 @@ describe("relative", function() {
         flexTestUtils.addMochaTestForAnnotatedStructure("dynamic main axis situation", {
             w: 100,
             h: 300,
-            flex: { direction: "column" },
+            flex: { enabled: true, direction: "column" },
             r: [0, 0, 100, 300],
             children: [
                 {
-                    flex: { direction: "column" },
+                    flex: { enabled: true, direction: "column" },
                     w: 100,
                     h: 200,
                     flexItem: { grow: 1 },
@@ -130,11 +130,11 @@ describe("relative", function() {
         flexTestUtils.addMochaTestForAnnotatedStructure("dynamic main axis situation - with grow", {
             w: 100,
             h: 300,
-            flex: { direction: "column" },
+            flex: { enabled: true, direction: "column" },
             r: [0, 0, 100, 300],
             children: [
                 {
-                    flex: { direction: "column" },
+                    flex: { enabled: true, direction: "column" },
                     w: 100,
                     h: 200,
                     flexItem: { grow: 1 },
@@ -150,11 +150,11 @@ describe("relative", function() {
         flexTestUtils.addMochaTestForAnnotatedStructure("dynamic main axis situation - with ignored grow", {
             w: 100,
             h: 300,
-            flex: { direction: "column" },
+            flex: { enabled: true, direction: "column" },
             r: [0, 0, 100, 300],
             children: [
                 {
-                    flex: { direction: "column" },
+                    flex: { enabled: true, direction: "column" },
                     w: 100,
                     h: 200,
                     flexItem: { grow: 1 },
@@ -171,7 +171,7 @@ describe("relative", function() {
             let root, level1, level2, leaf, abs, sibling, siblingSub, siblingLeaf, siblingAbs;
             before(() => {
                 const structure = {
-                    flex: {},
+                    flex: { enabled: true },
                     r: [0, 0, 800, 200],
                     w: 800,
                     h: 200,
@@ -179,16 +179,16 @@ describe("relative", function() {
                         {
                             w: w => w * 0.5,
                             h: h => h * 0.2,
-                            flex: {},
+                            flex: { enabled: true },
                             r: [0, 0, 400, 40],
                             children: [
                                 {
                                     w: w => w * 0.4,
                                     h: h => h * 0.2,
-                                    flex: {},
+                                    flex: { enabled: true },
                                     r: [0, 0, 160, 8],
                                     children: [
-                                        { w: w => w * 0.5, h: h => h * 0.5, flex: {}, r: [0, 0, 80, 4] },
+                                        { w: w => w * 0.5, h: h => h * 0.5, flex: { enabled: true }, r: [0, 0, 80, 4] },
                                         {
                                             flexItem: {enabled: false},
                                             w: w => w * 0.5,
@@ -204,11 +204,11 @@ describe("relative", function() {
                         {
                             w: w => w * 0.2,
                             h: h => h * 0.2,
-                            flex: { padding: 10 },
+                            flex: { enabled: true, padding: 10 },
                             r: [400, 0, 180, 60],
                             children: [
                                 {
-                                    flex: {},
+                                    flex: { enabled: true },
                                     r: [10, 10, 10, 40],
                                     children: [
                                         { w: 10, h: 10, r: [0, 0, 10, 10] },

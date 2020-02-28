@@ -5,7 +5,7 @@ const flexTestUtils = new FlexTestUtils();
 describe("layout", () => {
     describe("padding", () => {
         flexTestUtils.addMochaTestForAnnotatedStructure("no wrap", {
-            flex: { paddingLeft: 100, paddingTop: 120, paddingRight: 50, paddingBottom: 20 },
+            flex: { enabled: true, paddingLeft: 100, paddingTop: 120, paddingRight: 50, paddingBottom: 20 },
             w: 1000,
             r: [0, 0, 1150, 440],
             flexItem: {},
@@ -17,7 +17,7 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("wrap", {
-            flex: { padding: 100, wrap: true },
+            flex: { enabled: true, padding: 100, wrap: true },
             w: 250,
             r: [0, 0, 450, 650],
             flexItem: {},
@@ -29,12 +29,12 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("no wrap, shrink", {
-            flex: {},
+            flex: { enabled: true },
             w: 200,
             r: [0, 0, 200, 500],
             children: [
                 {
-                    flex: { padding: 100, wrap: false },
+                    flex: { enabled: true, padding: 100, wrap: false },
                     w: 1000,
                     r: [0, 0, 650, 500],
                     flexItem: {},
@@ -48,12 +48,12 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("wrap, grow", {
-            flex: {},
+            flex: { enabled: true },
             r: [0, 0, 600, 650],
             w: 600,
             children: [
                 {
-                    flex: { padding: 100, wrap: true },
+                    flex: { enabled: true, padding: 100, wrap: true },
                     w: 250,
                     r: [0, 0, 600, 650],
                     flexItem: { grow: 1 },
@@ -67,7 +67,7 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("reverse", {
-            flex: { direction: "row-reverse", paddingLeft: 100, paddingRight: 50, paddingTop: 100, wrap: false },
+            flex: { enabled: true, direction: "row-reverse", paddingLeft: 100, paddingRight: 50, paddingTop: 100, wrap: false },
             r: [0, 0, 600, 400],
             flexItem: {},
             children: [
@@ -78,13 +78,13 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("stretch", {
-            flex: { alignItems: "stretch", alignContent: "stretch", wrap: true },
+            flex: { enabled: true, alignItems: "stretch", alignContent: "stretch", wrap: true },
             w: 600,
             h: 600,
             r: [0, 0, 600, 600],
             children: [
                 {
-                    flex: { padding: 100, wrap: false },
+                    flex: { enabled: true, padding: 100, wrap: false },
                     r: [0, 0, 400, 400],
                     children: [
                         { w: 100, h: 0, r: [100, 100, 100, 200] },
@@ -97,15 +97,15 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("advanced", {
-            flex: { paddingTop: 5, paddingLeft: 7 },
+            flex: { enabled: true, paddingTop: 5, paddingLeft: 7 },
             r: [0, 0, 477, 605],
             children: [
                 {
-                    flex: { padding: 100, alignItems: "flex-end" },
+                    flex: { enabled: true, padding: 100, alignItems: "flex-end" },
                     r: [7, 5, 470, 600],
                     children: [
                         {
-                            flex: { direction: "column-reverse", paddingLeft: 50 },
+                            flex: { enabled: true, direction: "column-reverse", paddingLeft: 50 },
                             r: [100, 100, 150, 400],
                             h: 400,
                             children: [
@@ -115,7 +115,7 @@ describe("layout", () => {
                             ]
                         },
                         {
-                            flex: { padding: 10 },
+                            flex: { enabled: true, padding: 10 },
                             r: [250, 280, 120, 220],
                             children: [{ w: 100, h: 200, r: [10, 10, 100, 200] }]
                         }

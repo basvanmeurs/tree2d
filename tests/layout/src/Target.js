@@ -52,18 +52,11 @@ export default class Target {
     }
 
     get flex() {
-        return this._layout ? this._layout.flex : null;
+        return this._layout ? this._layout.flex : undefined;
     }
 
     set flex(v) {
-        if (v === undefined) {
-            if (this._layout) {
-                this.layout.setEnabled(false);
-            }
-        } else {
-            this.layout.setEnabled(true);
-            Target.patch(this.layout.flex, v);
-        }
+        Target.patch(this.layout.flex, v);
     }
 
     static patch(obj, settings) {

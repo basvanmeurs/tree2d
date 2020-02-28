@@ -22,14 +22,14 @@ export default class FlexNode {
     public h: number = 0;
 
     private _flex?: FlexContainer;
-    private _flexItem?: FlexItem = undefined;
+    private _flexItem?: FlexItem;
 
-    private _items?: FlexNode[] = undefined;
+    private _items?: FlexNode[];
 
     constructor(public readonly subject: FlexSubject) {}
 
     get flexLayout() {
-        return this.flex ? this.flex.layout : undefined;
+        return this.isFlexEnabled() ? this.flex.layout : undefined;
     }
 
     layoutFlexTree() {
@@ -38,8 +38,42 @@ export default class FlexNode {
         }
     }
 
-    get flex() {
-        return this._flex;
+    get flex(): FlexContainer {
+        this._ensureFlex();
+        return this._flex!;
+    }
+
+    private _ensureFlex() {
+        if (!this._flex) {
+            this._flex = new FlexContainer(this);
+        }
+    }
+
+    setFlexEnabled(v: boolean) {
+        if (v) {
+            this._enableFlex();
+        } else {
+            this._disableFlex();
+        }
+    }
+
+    private _enableFlex() {
+        this.forceLayout();
+        this._enableChildrenAsFlexItems();
+    }
+
+    private _disableFlex() {
+        this.forceLayout();
+        this._disableChildrenAsFlexItems();
+        this.restoreLayoutIfNonFlex();
+    }
+
+    isFlexEnabled() {
+        return this._flex ? this._flex.enabled : false;
+    }
+
+    isEnabled() {
+        return this.isFlexEnabled() || this.isFlexItemEnabled();
     }
 
     get flexItem(): FlexItem {
@@ -47,34 +81,10 @@ export default class FlexNode {
         return this._flexItem!;
     }
 
-    setEnabled(v: boolean) {
-        if (!v) {
-            if (this.isFlexEnabled()) {
-                this._disableFlex();
-            }
-        } else {
-            if (!this.isFlexEnabled()) {
-                this._enableFlex();
-            }
+    private _ensureFlexItem() {
+        if (!this._flexItem) {
+            this._flexItem = new FlexItem(this);
         }
-    }
-
-    private get flexItemEnabled() {
-        return this.flexItem.enabled;
-    }
-
-    private _enableFlex() {
-        this._flex = new FlexContainer(this);
-        this.restoreLayoutIfNonFlex();
-        this.forceLayout();
-        this._enableChildrenAsFlexItems();
-    }
-
-    private _disableFlex() {
-        this.forceLayout();
-        this._flex = undefined;
-        this.restoreLayoutIfNonFlex();
-        this._disableChildrenAsFlexItems();
     }
 
     private _enableChildrenAsFlexItems() {
@@ -121,12 +131,6 @@ export default class FlexNode {
         this.y = this.subject.getSourceY();
     }
 
-    private _ensureFlexItem() {
-        if (!this._flexItem) {
-            this._flexItem = new FlexItem(this);
-        }
-    }
-
     public restoreLayoutIfNonFlex() {
         const enabled = this.isEnabled();
         if (this._enabled !== enabled) {
@@ -139,14 +143,6 @@ export default class FlexNode {
 
     private _disable() {
         this.restoreSubjectToNonFlex();
-    }
-
-    isEnabled() {
-        return this.isFlexEnabled() || this.isFlexItemEnabled();
-    }
-
-    isFlexEnabled() {
-        return this._flex !== undefined;
     }
 
     isFlexItemEnabled() {
@@ -182,7 +178,7 @@ export default class FlexNode {
     }
 
     get flexParent(): FlexNode | undefined {
-        if (!this.flexItemEnabled) {
+        if (!this.flexItem.enabled) {
             return undefined;
         }
 
@@ -433,7 +429,7 @@ export default class FlexNode {
 
     getPaddingOffset(horizontal: boolean) {
         if (this.isFlexEnabled()) {
-            const flex = this.flex!;
+            const flex = this.flex;
             if (horizontal) {
                 return flex.paddingLeft;
             } else {
@@ -454,7 +450,7 @@ export default class FlexNode {
 
     getTotalPadding(horizontal: boolean) {
         if (this.isFlexEnabled()) {
-            const flex = this.flex!;
+            const flex = this.flex;
             if (horizontal) {
                 return flex.paddingRight + flex.paddingLeft;
             } else {
@@ -526,7 +522,7 @@ export default class FlexNode {
 
     private allowRelAxisSizeFunction(horizontal: boolean) {
         const flexParent = this.flexParent;
-        if (flexParent && flexParent.flex!.layout.isAxisFitToContents(horizontal)) {
+        if (flexParent && flexParent.flex.layout.isAxisFitToContents(horizontal)) {
             // We don't allow relative width on fit-to-contents because it leads to conflicts.
             return false;
         }
@@ -558,7 +554,7 @@ export default class FlexNode {
 
     private getPlainAxisMinSize(horizontal: boolean) {
         if (this.isFlexEnabled()) {
-            return this.flex!.layout.getAxisMinLineSize(horizontal);
+            return this.flex.layout.getAxisMinLineSize(horizontal);
         } else {
             const isShrinkable = this.flexItem!.shrink !== 0;
             if (isShrinkable) {
@@ -571,7 +567,7 @@ export default class FlexNode {
 
     resizeAxis(horizontal: boolean, size: number) {
         if (this.isFlexEnabled()) {
-            const flex = this.flex!;
+            const flex = this.flex;
             const isMainAxis = flex.horizontal === horizontal;
             if (isMainAxis) {
                 flex.layout.resizeMainAxis(size);

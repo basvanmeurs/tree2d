@@ -63,7 +63,7 @@ export default class ItemCoordinatesUpdater {
     private validateItemCache(item: FlexNode) {
         if (item.recalc === 0) {
             if (item.isFlexEnabled()) {
-                const layout = item.flex!.layout;
+                const layout = item.flex.layout;
 
                 const dimensionsMatchPreviousResult =
                     item.w === item.subject.getLayoutW() && item.h === item.subject.getLayoutH();
@@ -109,9 +109,8 @@ export default class ItemCoordinatesUpdater {
     }
 
     private finalizeItemChildren(item: FlexNode) {
-        const flex = item.flex;
-        if (flex) {
-            const updater = new ItemCoordinatesUpdater(flex.layout);
+        if (item.isFlexEnabled()) {
+            const updater = new ItemCoordinatesUpdater(item.flex.layout);
             updater.finalizeItems();
         }
     }

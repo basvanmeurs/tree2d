@@ -2189,7 +2189,7 @@ export default class ElementCore implements FlexSubject {
     }
 
     getFlexContainer(): FlexContainer|undefined {
-        return this.layout.flex;
+        return this.layout.isFlexEnabled() ? this.layout.flex : undefined;
     }
 
     getFlexItem(): FlexItem|undefined {

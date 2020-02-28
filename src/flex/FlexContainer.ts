@@ -29,7 +29,20 @@ export default class FlexContainer {
     private _paddingRight: number = 0;
     private _paddingBottom: number = 0;
 
+    private _enabled: boolean = false;
+
     constructor(public readonly node: FlexNode) {}
+
+    get enabled() {
+        return this._enabled;
+    }
+
+    set enabled(v: boolean) {
+        if (v !== this._enabled) {
+            this._enabled = v;
+            this.node.setFlexEnabled(v);
+        }
+    }
 
     get direction() {
         return (this.horizontal ? "row" : "column") + (this.reverse ? "-reverse" : "");

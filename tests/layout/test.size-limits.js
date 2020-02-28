@@ -6,7 +6,7 @@ const flexTestUtils = new FlexTestUtils();
 describe("layout", () => {
     describe("sizing", () => {
         flexTestUtils.addMochaTestForAnnotatedStructure("overrule dimensions", {
-            flex: {},
+            flex: { enabled: true },
             r: [0, 0, 670, 300],
             children: [
                 { w: 200, h: 300, flexItem: { minWidth: 300 }, r: [0, 0, 300, 300] },
@@ -17,12 +17,12 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("shrink minWidth", {
-            flex: {},
+            flex: { enabled: true },
             r: [0, 0, 200, 300],
             w: 200,
             children: [
                 {
-                    flex: {},
+                    flex: { enabled: true },
                     w: 2000,
                     r: [0, 0, 520, 300],
                     flexItem: { minWidth: 520 },
@@ -36,7 +36,7 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("shrink minHeight", {
-            flex: { direction: "column" },
+            flex: { enabled: true, direction: "column" },
             r: [0, 0, 200, 200],
             h: 200,
             children: [
@@ -47,7 +47,7 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("stretch maxHeight", {
-            flex: {},
+            flex: { enabled: true },
             r: [0, 0, 450, 300],
             children: [
                 { w: 200, h: 300, r: [0, 0, 200, 300] },
@@ -57,7 +57,7 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("stretch maxWidth", {
-            flex: { direction: "column" },
+            flex: { enabled: true, direction: "column" },
             r: [0, 0, 200, 550],
             children: [
                 { w: 200, h: 300, r: [0, 0, 200, 300] },
@@ -67,7 +67,7 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("grow maxWidth", {
-            flex: {},
+            flex: { enabled: true },
             r: [0, 0, 600, 300],
             w: 600,
             children: [
@@ -78,7 +78,7 @@ describe("layout", () => {
         });
 
         flexTestUtils.addMochaTestForAnnotatedStructure("grow maxHeight", {
-            flex: { direction: "column" },
+            flex: { enabled: true, direction: "column" },
             r: [0, 0, 200, 700],
             h: 700,
             children: [
@@ -102,7 +102,7 @@ describe("layout", () => {
                 before(() => {
                     const structure = {
                         r: [0, 0, 200, 200],
-                        flex: {},
+                        flex: { enabled: true },
                         w: 200,
                         h: 200,
                         children: [
@@ -110,23 +110,23 @@ describe("layout", () => {
                                 r: [0, 0, 400, 200],
                                 w: 600,
                                 h: 200,
-                                flex: {},
+                                flex: { enabled: true },
                                 children: [
                                     {
                                         r: [0, 0, 400, 200],
-                                        flex: {},
+                                        flex: { enabled: true },
                                         w: 500,
                                         h: 200,
                                         children: [
                                             {
                                                 r: [0, 0, 400, 200],
-                                                flex: {},
+                                                flex: { enabled: true },
                                                 w: 500,
                                                 h: 200,
                                                 children: [
                                                     {
                                                         r: [0, 0, 400, 200],
-                                                        flex: {},
+                                                        flex: { enabled: true },
                                                         w: 100,
                                                         flexItem: { minWidth: 400 }
                                                     }

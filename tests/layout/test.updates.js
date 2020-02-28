@@ -20,19 +20,19 @@ describe("layout", () => {
                 const structure = {
                     w: 500,
                     h: 500,
-                    flex: { direction: "column", padding: 5 },
+                    flex: { enabled: true, direction: "column", padding: 5 },
                     children: [
                         {
                             w: 0,
                             h: 50,
-                            flex: {},
+                            flex: { enabled: true },
                             flexItem: { grow: 1 },
                             sibling: true
                         },
                         {
                             w: 100,
                             h: 100,
-                            flex: { direction: "column" },
+                            flex: { enabled: true, direction: "column" },
                             subject: true,
                             flexItem: { grow: 2 },
                             children: [{ w: 90, h: 100, flexItem: { grow: 1 }, sub: true }]
@@ -100,14 +100,14 @@ describe("layout", () => {
                         {
                             w: 550,
                             h: 500,
-                            flex: { paddingTop: 5, paddingLeft: 7 },
+                            flex: { enabled: true, paddingTop: 5, paddingLeft: 7 },
                             children: [
                                 {
-                                    flex: { padding: 100, alignItems: "flex-start" },
+                                    flex: { enabled: true, padding: 100, alignItems: "flex-start" },
                                     w: 500,
                                     children: [
                                         {
-                                            flex: { direction: "column-reverse", paddingLeft: 50 },
+                                            flex: { enabled: true, direction: "column-reverse", paddingLeft: 50 },
                                             h: 400,
                                             w: 200,
                                             children: [
@@ -117,7 +117,7 @@ describe("layout", () => {
                                             ]
                                         },
                                         {
-                                            flex: { padding: 10 },
+                                            flex: { enabled: true, padding: 10 },
                                             children: [{ w: 100, h: 200, flexItem: {} }]
                                         },
                                         {
@@ -125,7 +125,7 @@ describe("layout", () => {
                                             h: 300,
                                             children: [
                                                 {
-                                                    flex: { padding: 10 },
+                                                    flex: { enabled: true, padding: 10 },
                                                     w: 100,
                                                     children: [{ w: 100, h: 100 }]
                                                 }
@@ -136,7 +136,7 @@ describe("layout", () => {
                                 {
                                     w: 0,
                                     h: 400,
-                                    flex: {},
+                                    flex: { enabled: true },
                                     children: [{}]
                                 }
                             ]
@@ -210,16 +210,16 @@ describe("layout", () => {
             });
 
             addUpdateTest("disable flex container", () => {
-                root.children[0].children[0].children[0].flex = false;
+                root.children[0].children[0].children[0].flex.enabled = false;
             });
 
             addUpdateTest("enable flex container", () => {
-                root.children[0].children[0].children[0].flex = {};
+                root.children[0].children[0].children[0].flex.enabled = true;
             });
 
             addUpdateTest("add subtree", () => {
                 const structure = {
-                    flex: {},
+                    flex: { enabled: true },
                     w: 800,
                     flexItem: {},
                     children: [

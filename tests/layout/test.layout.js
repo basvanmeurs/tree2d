@@ -159,7 +159,7 @@ const addSimpleStructureTests = (name, structure) => {
 
 describe("layout", () => {
     addSimpleStructureTests("html flexbox comparison (single level, excluding autosize)", {
-        flex: {},
+        flex: { enabled: true },
         w: 100,
         h: 100,
         children: [
