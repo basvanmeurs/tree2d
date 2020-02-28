@@ -2,65 +2,65 @@ import FlexLayouter from "./FlexLayouter";
 import FlexNode from "../FlexNode";
 
 export default class ItemCoordinatesUpdater {
-    private _layout: FlexLayouter;
-    private _isReverse: boolean;
-    private _horizontalPaddingOffset: number;
-    private _verticalPaddingOffset: number;
+    private layout: FlexLayouter;
+    private isReverse: boolean;
+    private horizontalPaddingOffset: number;
+    private verticalPaddingOffset: number;
 
     constructor(layout: FlexLayouter) {
-        this._layout = layout;
-        this._isReverse = this._flexContainer.reverse;
-        this._horizontalPaddingOffset = this._flexContainer.getHorizontalPaddingOffset();
-        this._verticalPaddingOffset = this._flexContainer.getVerticalPaddingOffset();
+        this.layout = layout;
+        this.isReverse = this.flexContainer.reverse;
+        this.horizontalPaddingOffset = this.flexContainer.getHorizontalPaddingOffset();
+        this.verticalPaddingOffset = this.flexContainer.getVerticalPaddingOffset();
     }
 
-    get _flexContainer() {
-        return this._layout.container;
+    private get flexContainer() {
+        return this.layout.container;
     }
 
     finalize() {
-        const parentFlex = this._layout.getParentFlexContainer();
+        const parentFlex = this.layout.getParentFlexContainer();
         if (parentFlex) {
             // We must update it from the parent to set padding offsets and reverse position.
             const updater = new ItemCoordinatesUpdater(parentFlex.layout);
-            updater._finalizeItemAndChildren(this._flexContainer.node);
+            updater.finalizeItemAndChildren(this.flexContainer.node);
         } else {
-            this._finalizeRoot();
-            this._finalizeItems();
+            this.finalizeRoot();
+            this.finalizeItems();
         }
     }
 
-    _finalizeRoot() {
-        const item = this._flexContainer.node;
+    private finalizeRoot() {
+        const item = this.flexContainer.node;
         const x = item.getAxisLayoutPos(true);
         const y = item.getAxisLayoutPos(false);
         let w = item.getAxisLayoutSize(true);
         let h = item.getAxisLayoutSize(false);
 
-        w += this._flexContainer.getHorizontalPadding();
-        h += this._flexContainer.getVerticalPadding();
+        w += this.flexContainer.getHorizontalPadding();
+        h += this.flexContainer.getVerticalPadding();
 
         item.clearRecalcFlag();
 
         item.setLayout(x, y, w, h);
     }
 
-    _finalizeItems() {
-        const items = this._layout.items;
+    private finalizeItems() {
+        const items = this.layout.items;
         for (let i = 0, n = items.length; i < n; i++) {
             const item = items[i];
-            const validCache = this._validateItemCache(item);
+            const validCache = this.validateItemCache(item);
 
             // Notice that we must also finalize a cached item, as it's coordinates may have changed.
-            this._finalizeItem(item);
+            this.finalizeItem(item);
 
             if (!validCache) {
-                this._finalizeItemChildren(item);
+                this.finalizeItemChildren(item);
             }
         }
     }
 
-    _validateItemCache(item: FlexNode) {
+    private validateItemCache(item: FlexNode) {
         if (item.recalc === 0) {
             if (item.isFlexEnabled()) {
                 const layout = item.flex!.layout;
@@ -80,14 +80,14 @@ export default class ItemCoordinatesUpdater {
         return false;
     }
 
-    _finalizeItemAndChildren(item: FlexNode) {
-        this._finalizeItem(item);
-        this._finalizeItemChildren(item);
+    private finalizeItemAndChildren(item: FlexNode) {
+        this.finalizeItem(item);
+        this.finalizeItemChildren(item);
     }
 
-    _finalizeItem(item: FlexNode) {
-        if (this._isReverse) {
-            this._reverseMainAxisLayoutPos(item);
+    private finalizeItem(item: FlexNode) {
+        if (this.isReverse) {
+            this.reverseMainAxisLayoutPos(item);
         }
 
         let x = item.getAxisLayoutPos(true);
@@ -95,8 +95,8 @@ export default class ItemCoordinatesUpdater {
         let w = item.getAxisLayoutSize(true);
         let h = item.getAxisLayoutSize(false);
 
-        x += this._horizontalPaddingOffset;
-        y += this._verticalPaddingOffset;
+        x += this.horizontalPaddingOffset;
+        y += this.verticalPaddingOffset;
 
         const flex = item.flex;
         if (flex) {
@@ -111,18 +111,18 @@ export default class ItemCoordinatesUpdater {
         item.setLayout(x, y, w, h);
     }
 
-    _finalizeItemChildren(item: FlexNode) {
+    private finalizeItemChildren(item: FlexNode) {
         const flex = item.flex;
         if (flex) {
             const updater = new ItemCoordinatesUpdater(flex.layout);
-            updater._finalizeItems();
+            updater.finalizeItems();
         }
     }
 
-    _reverseMainAxisLayoutPos(item: FlexNode) {
+    private reverseMainAxisLayoutPos(item: FlexNode) {
         const endPos =
             item.flexItem!._getMainAxisLayoutPos() + item.flexItem!._getMainAxisLayoutSizeWithPaddingAndMargin();
-        const reversedPos = this._layout.mainAxisSize - endPos;
+        const reversedPos = this.layout.mainAxisSize - endPos;
         item.flexItem!._setMainAxisLayoutPos(reversedPos);
     }
 }

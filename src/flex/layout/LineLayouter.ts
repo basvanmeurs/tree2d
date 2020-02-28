@@ -6,40 +6,19 @@ import FlexNode from "../FlexNode";
  * Distributes items over layout lines.
  */
 export default class LineLayouter {
-    private _mainAxisMinSize: number = -1;
-    private _crossAxisMinSize: number = -1;
-    private _mainAxisContentSize: number = 0;
-    private _lines?: LineLayout[];
-    private _curMainAxisPos: number = 0;
-    private _mainAxisSize: number = 0;
-    private _maxMainAxisPos: number = 0;
+
+    private mainAxisMinSize?: number;
+    private crossAxisMinSize?: number;
+    private mainAxisContentSize: number = 0;
+    private lines?: LineLayout[];
+    private curMainAxisPos: number = 0;
+    private mainAxisSize: number = 0;
+    private maxMainAxisPos: number = 0;
 
     constructor(private _layout: FlexLayouter) {}
 
-    get lines() {
-        return this._lines;
-    }
-
-    get mainAxisMinSize() {
-        if (this._mainAxisMinSize === -1) {
-            this._mainAxisMinSize = this._getMainAxisMinSize();
-        }
-        return this._mainAxisMinSize;
-    }
-
-    get crossAxisMinSize() {
-        if (this._crossAxisMinSize === -1) {
-            this._crossAxisMinSize = this._getCrossAxisMinSize();
-        }
-        return this._crossAxisMinSize;
-    }
-
-    get mainAxisContentSize() {
-        return this._mainAxisContentSize;
-    }
-
     layoutLines() {
-        this._setup();
+        this.setup();
         const items = this._layout.items;
         const wrap = this._layout.isWrapping();
 
@@ -49,29 +28,40 @@ export default class LineLayouter {
         for (i = 0; i < n; i++) {
             const item = items[i];
 
-            this._layoutFlexItem(item);
+            this.layoutFlexItem(item);
 
             // Get predicted main axis size.
             const itemMainAxisSize = item.flexItem!._getMainAxisLayoutSizeWithPaddingAndMargin();
 
             if (wrap && i > startIndex) {
-                const isOverflowing = this._curMainAxisPos + itemMainAxisSize > this._mainAxisSize;
+                const isOverflowing = this.curMainAxisPos + itemMainAxisSize > this.mainAxisSize;
                 if (isOverflowing) {
-                    this._layoutLine(startIndex, i - 1);
-                    this._curMainAxisPos = 0;
+                    this.layoutLine(startIndex, i - 1);
+                    this.curMainAxisPos = 0;
                     startIndex = i;
                 }
             }
 
-            this._addToMainAxisPos(itemMainAxisSize);
+            this.addToMainAxisPos(itemMainAxisSize);
         }
 
         if (startIndex < i) {
-            this._layoutLine(startIndex, i - 1);
+            this.layoutLine(startIndex, i - 1);
         }
     }
 
-    _layoutFlexItem(item: FlexNode) {
+    private setup() {
+        this.mainAxisSize = this._layout.mainAxisSize;
+        this.curMainAxisPos = 0;
+        this.maxMainAxisPos = 0;
+        this.lines = [];
+
+        this.mainAxisMinSize = undefined;
+        this.crossAxisMinSize = undefined;
+        this.mainAxisContentSize = 0;
+    }
+
+    private layoutFlexItem(item: FlexNode) {
         if (item.isFlexEnabled()) {
             item.flexLayout!.updateTreeLayout();
         } else {
@@ -79,44 +69,33 @@ export default class LineLayouter {
         }
     }
 
-    _setup() {
-        this._mainAxisSize = this._layout.mainAxisSize;
-        this._curMainAxisPos = 0;
-        this._maxMainAxisPos = 0;
-        this._lines = [];
-
-        this._mainAxisMinSize = -1;
-        this._crossAxisMinSize = -1;
-        this._mainAxisContentSize = 0;
-    }
-
-    _addToMainAxisPos(itemMainAxisSize: number) {
-        this._curMainAxisPos += itemMainAxisSize;
-        if (this._curMainAxisPos > this._maxMainAxisPos) {
-            this._maxMainAxisPos = this._curMainAxisPos;
+    private addToMainAxisPos(itemMainAxisSize: number) {
+        this.curMainAxisPos += itemMainAxisSize;
+        if (this.curMainAxisPos > this.maxMainAxisPos) {
+            this.maxMainAxisPos = this.curMainAxisPos;
         }
     }
 
-    _layoutLine(startIndex: number, endIndex: number) {
-        const availableSpace = this._getAvailableMainAxisLayoutSpace();
+    private layoutLine(startIndex: number, endIndex: number) {
+        const availableSpace = this.getAvailableMainAxisLayoutSpace();
         const line = new LineLayout(this._layout, startIndex, endIndex, availableSpace);
         line.performLayout();
-        this._lines!.push(line);
+        this.lines!.push(line);
 
-        if (this._mainAxisContentSize === 0 || this._curMainAxisPos > this._mainAxisContentSize) {
-            this._mainAxisContentSize = this._curMainAxisPos;
+        if (this.mainAxisContentSize === 0 || this.curMainAxisPos > this.mainAxisContentSize) {
+            this.mainAxisContentSize = this.curMainAxisPos;
         }
     }
 
-    _getAvailableMainAxisLayoutSpace() {
+    private getAvailableMainAxisLayoutSpace() {
         if (!this._layout.isResizingMainAxis() && this._layout.isMainAxisFitToContents()) {
             return 0;
         } else {
-            return this._mainAxisSize - this._curMainAxisPos;
+            return this.mainAxisSize - this.curMainAxisPos;
         }
     }
 
-    _getCrossAxisMinSize() {
+    private calcCrossAxisMinSize() {
         let crossAxisMinSize = 0;
         const items = this._layout.items;
         for (let i = 0, n = items.length; i < n; i++) {
@@ -127,8 +106,8 @@ export default class LineLayouter {
         return crossAxisMinSize;
     }
 
-    _getMainAxisMinSize() {
-        const lines = this._lines!;
+    private calcMainAxisMinSize() {
+        const lines = this.lines!;
         if (lines.length === 1) {
             return lines[0].getMainAxisMinSize();
         } else {
@@ -136,4 +115,28 @@ export default class LineLayouter {
             return this._layout.mainAxisSize;
         }
     }
+
+    getLines(): LineLayout[] {
+        return this.lines!;
+    }
+
+    getMainAxisMinSize(): number {
+        if (this.mainAxisMinSize === undefined) {
+            this.mainAxisMinSize = this.calcMainAxisMinSize();
+        }
+        return this.mainAxisMinSize;
+    }
+
+    getCrossAxisMinSize(): number {
+        if (this.crossAxisMinSize === undefined) {
+            this.crossAxisMinSize = this.calcCrossAxisMinSize();
+        }
+        return this.crossAxisMinSize;
+    }
+
+    getMainAxisContentSize() {
+        return this.mainAxisContentSize;
+    }
+
+
 }

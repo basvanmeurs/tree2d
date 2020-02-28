@@ -105,13 +105,13 @@ export default class FlexLayouter {
     }
 
     getLines() {
-        return this.lineLayouter.lines;
+        return this.lineLayouter.getLines();
     }
 
     private fitMainAxisSizeToContents() {
         if (!this.resizingMainAxis) {
             if (this.isMainAxisFitToContents()) {
-                this.mainAxisSize = this.lineLayouter.mainAxisContentSize;
+                this.mainAxisSize = this.lineLayouter.getMainAxisContentSize();
             }
         }
     }
@@ -161,9 +161,9 @@ export default class FlexLayouter {
 
     getAxisMinLineSize(horizontal: boolean) {
         if (this.horizontal === horizontal) {
-            return this.lineLayouter.mainAxisMinSize;
+            return this.lineLayouter.getMainAxisMinSize();
         } else {
-            return this.lineLayouter.crossAxisMinSize;
+            return this.lineLayouter.getCrossAxisMinSize();
         }
     }
 
