@@ -49,14 +49,14 @@ export default class ItemAligner {
         const flexItem = item.flexItem!;
         let align = flexItem.alignSelf || this.alignItemsSetting;
 
-        if (align === "stretch" && this._preventStretch(flexItem)) {
+        if (align === "stretch" && this.preventStretch(flexItem)) {
             align = "flex-start";
         }
 
         if (align !== "center" && !this.isCrossAxisFitToContents) {
-            if (flexItem._hasRelCrossAxisSize()) {
+            if (flexItem.hasRelCrossAxisSize()) {
                 // As cross axis size might have changed, we need to recalc the relative flex item's size.
-                flexItem._resetCrossAxisLayoutSize();
+                flexItem.resetCrossAxisLayoutSize();
             }
         }
 
@@ -77,39 +77,39 @@ export default class ItemAligner {
     }
 
     _alignItemFlexStart(flexItem: FlexItem) {
-        flexItem._setCrossAxisLayoutPos(this.crossAxisLayoutOffset);
+        flexItem.setCrossAxisLayoutPos(this.crossAxisLayoutOffset);
     }
 
     _alignItemFlexEnd(flexItem: FlexItem) {
-        const itemCrossAxisSize = flexItem._getCrossAxisLayoutSizeWithPaddingAndMargin();
-        flexItem._setCrossAxisLayoutPos(this.crossAxisLayoutOffset + (this.crossAxisLayoutSize - itemCrossAxisSize));
+        const itemCrossAxisSize = flexItem.getCrossAxisLayoutSizeWithPaddingAndMargin();
+        flexItem.setCrossAxisLayoutPos(this.crossAxisLayoutOffset + (this.crossAxisLayoutSize - itemCrossAxisSize));
     }
 
     _alignItemFlexCenter(flexItem: FlexItem) {
-        const itemCrossAxisSize = flexItem._getCrossAxisLayoutSizeWithPaddingAndMargin();
+        const itemCrossAxisSize = flexItem.getCrossAxisLayoutSizeWithPaddingAndMargin();
         const center = (this.crossAxisLayoutSize - itemCrossAxisSize) / 2;
-        flexItem._setCrossAxisLayoutPos(this.crossAxisLayoutOffset + center);
+        flexItem.setCrossAxisLayoutPos(this.crossAxisLayoutOffset + center);
     }
 
     _alignItemStretch(flexItem: FlexItem) {
-        flexItem._setCrossAxisLayoutPos(this.crossAxisLayoutOffset);
+        flexItem.setCrossAxisLayoutPos(this.crossAxisLayoutOffset);
 
-        const mainAxisLayoutSizeBeforeResize = flexItem._getMainAxisLayoutSize();
-        let size = this.crossAxisLayoutSize - flexItem._getCrossAxisMargin() - flexItem._getCrossAxisPadding();
+        const mainAxisLayoutSizeBeforeResize = flexItem.getMainAxisLayoutSize();
+        let size = this.crossAxisLayoutSize - flexItem.getCrossAxisMargin() - flexItem.getCrossAxisPadding();
 
-        const crossAxisMinSizeSetting = flexItem._getCrossAxisMinSizeSetting();
+        const crossAxisMinSizeSetting = flexItem.getCrossAxisMinSizeSetting();
         if (crossAxisMinSizeSetting > 0) {
             size = Math.max(size, crossAxisMinSizeSetting);
         }
 
-        const crossAxisMaxSizeSetting = flexItem._getCrossAxisMaxSizeSetting();
+        const crossAxisMaxSizeSetting = flexItem.getCrossAxisMaxSizeSetting();
         const crossAxisMaxSizeSettingEnabled = crossAxisMaxSizeSetting > 0;
         if (crossAxisMaxSizeSettingEnabled) {
             size = Math.min(size, crossAxisMaxSizeSetting);
         }
 
-        flexItem._resizeCrossAxis(size);
-        const mainAxisLayoutSizeAfterResize = flexItem._getMainAxisLayoutSize();
+        flexItem.resizeCrossAxis(size);
+        const mainAxisLayoutSizeAfterResize = flexItem.getMainAxisLayoutSize();
 
         const recursiveResize = mainAxisLayoutSizeAfterResize !== mainAxisLayoutSizeBeforeResize;
         if (recursiveResize) {
@@ -124,8 +124,8 @@ export default class ItemAligner {
         }
     }
 
-    _preventStretch(flexItem: FlexItem) {
-        const hasFixedCrossAxisSize = flexItem._hasFixedCrossAxisSize();
+    private preventStretch(flexItem: FlexItem) {
+        const hasFixedCrossAxisSize = flexItem.hasFixedCrossAxisSize();
         const forceStretch = flexItem.alignSelf === "stretch";
         return hasFixedCrossAxisSize && !forceStretch;
     }

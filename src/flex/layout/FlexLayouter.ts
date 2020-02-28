@@ -83,7 +83,7 @@ export default class FlexLayouter {
     private initializeAxisSizes() {
         if (this.item.isFlexItemEnabled()) {
             if (this.item.flexItem) {
-                this.item.flexItem._resetLayoutSize();
+                this.item.flexItem.resetLayoutSize();
             }
         } else {
             this.mainAxisSize = this.getMainAxisBasis();

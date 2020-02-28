@@ -118,8 +118,8 @@ export default class ItemCoordinatesUpdater {
 
     private reverseMainAxisLayoutPos(item: FlexNode) {
         const endPos =
-            item.flexItem!._getMainAxisLayoutPos() + item.flexItem!._getMainAxisLayoutSizeWithPaddingAndMargin();
+            item.flexItem!.getMainAxisLayoutPos() + item.flexItem!.getMainAxisLayoutSizeWithPaddingAndMargin();
         const reversedPos = this.layout.mainAxisSize - endPos;
-        item.flexItem!._setMainAxisLayoutPos(reversedPos);
+        item.flexItem!.setMainAxisLayoutPos(reversedPos);
     }
 }

@@ -17,8 +17,8 @@ export default class ItemPositioner {
         for (let i = this.line.startIndex; i <= this.line.endIndex; i++) {
             const item = items[i];
 
-            item.flexItem!._setMainAxisLayoutPos(currentPos);
-            currentPos += item.flexItem!._getMainAxisLayoutSizeWithPaddingAndMargin();
+            item.flexItem!.setMainAxisLayoutPos(currentPos);
+            currentPos += item.flexItem!.getMainAxisLayoutSizeWithPaddingAndMargin();
             currentPos += spacingBetween;
         }
     }

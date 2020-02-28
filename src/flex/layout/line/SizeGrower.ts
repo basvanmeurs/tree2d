@@ -22,8 +22,8 @@ export default class SizeGrower {
                     const isGrowableItem = growAmount > 0;
                     if (isGrowableItem) {
                         let grow = growAmount * amountPerGrow;
-                        const maxSize = flexItem._getMainAxisMaxSizeSetting();
-                        const size = flexItem._getMainAxisLayoutSize();
+                        const maxSize = flexItem.getMainAxisMaxSizeSetting();
+                        const size = flexItem.getMainAxisLayoutSize();
                         if (maxSize > 0) {
                             if (size >= maxSize) {
                                 // Already fully grown.
@@ -42,7 +42,7 @@ export default class SizeGrower {
 
                         if (grow > 0) {
                             const finalSize = size + grow;
-                            flexItem._resizeMainAxis(finalSize);
+                            flexItem.resizeMainAxis(finalSize);
 
                             this.grownSize += grow;
                             this.amountRemaining -= grow;
@@ -65,8 +65,8 @@ export default class SizeGrower {
             const flexItem = item.flexItem!;
 
             if (flexItem.grow) {
-                const maxSize = flexItem._getMainAxisMaxSizeSetting();
-                const size = flexItem._getMainAxisLayoutSize();
+                const maxSize = flexItem.getMainAxisMaxSizeSetting();
+                const size = flexItem.getMainAxisLayoutSize();
 
                 // Exclude those already fully grown.
                 if (maxSize === 0 || size < maxSize) {

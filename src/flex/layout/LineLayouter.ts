@@ -31,7 +31,7 @@ export default class LineLayouter {
             this.layoutFlexItem(item);
 
             // Get predicted main axis size.
-            const itemMainAxisSize = item.flexItem!._getMainAxisLayoutSizeWithPaddingAndMargin();
+            const itemMainAxisSize = item.flexItem!.getMainAxisLayoutSizeWithPaddingAndMargin();
 
             if (wrap && i > startIndex) {
                 const isOverflowing = this.curMainAxisPos + itemMainAxisSize > this.mainAxisSize;
@@ -65,7 +65,7 @@ export default class LineLayouter {
         if (item.isFlexEnabled()) {
             item.flexLayout!.updateTreeLayout();
         } else {
-            item.flexItem!._resetLayoutSize();
+            item.flexItem!.resetLayoutSize();
         }
     }
 
@@ -100,7 +100,7 @@ export default class LineLayouter {
         const items = this._layout.items;
         for (let i = 0, n = items.length; i < n; i++) {
             const item = items[i];
-            const itemCrossAxisMinSize = item.flexItem!._getCrossAxisMinSizeWithPaddingAndMargin();
+            const itemCrossAxisMinSize = item.flexItem!.getCrossAxisMinSizeWithPaddingAndMargin();
             crossAxisMinSize = Math.max(crossAxisMinSize, itemCrossAxisMinSize);
         }
         return crossAxisMinSize;

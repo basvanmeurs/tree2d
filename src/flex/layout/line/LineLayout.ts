@@ -65,7 +65,7 @@ export default class LineLayout {
         let mainAxisMinSize = 0;
         for (let i = this.startIndex; i <= this.endIndex; i++) {
             const item = this.items[i];
-            mainAxisMinSize += item.flexItem!._getMainAxisMinSizeWithPaddingAndMargin();
+            mainAxisMinSize += item.flexItem!.getMainAxisMinSizeWithPaddingAndMargin();
         }
         return mainAxisMinSize;
     }
@@ -92,7 +92,7 @@ export default class LineLayout {
         let crossAxisMaxSize = 0;
         for (let i = this.startIndex; i <= this.endIndex; i++) {
             const item = this.items[i];
-            crossAxisMaxSize = Math.max(crossAxisMaxSize, item.flexItem!._getCrossAxisLayoutSizeWithPaddingAndMargin());
+            crossAxisMaxSize = Math.max(crossAxisMaxSize, item.flexItem!.getCrossAxisLayoutSizeWithPaddingAndMargin());
         }
         return crossAxisMaxSize;
     }

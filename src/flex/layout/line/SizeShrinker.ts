@@ -22,8 +22,8 @@ export default class SizeShrinker {
                     const isShrinkableItem = shrinkAmount > 0;
                     if (isShrinkableItem) {
                         let shrink = shrinkAmount * amountPerShrink;
-                        const minSize = flexItem._getMainAxisMinSize();
-                        const size = flexItem._getMainAxisLayoutSize();
+                        const minSize = flexItem.getMainAxisMinSize();
+                        const size = flexItem.getMainAxisLayoutSize();
                         if (size > minSize) {
                             const maxShrink = size - minSize;
                             const isFullyShrunk = shrink >= maxShrink;
@@ -35,7 +35,7 @@ export default class SizeShrinker {
                             }
 
                             const finalSize = size - shrink;
-                            flexItem._resizeMainAxis(finalSize);
+                            flexItem.resizeMainAxis(finalSize);
 
                             this.shrunkSize += shrink;
                             this.amountRemaining -= shrink;
@@ -58,8 +58,8 @@ export default class SizeShrinker {
             const flexItem = item.flexItem!;
 
             if (flexItem.shrink) {
-                const minSize = flexItem._getMainAxisMinSize();
-                const size = flexItem._getMainAxisLayoutSize();
+                const minSize = flexItem.getMainAxisMinSize();
+                const size = flexItem.getMainAxisLayoutSize();
 
                 // Exclude those already fully shrunk.
                 if (size > minSize) {

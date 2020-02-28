@@ -174,20 +174,20 @@ export default class FlexItem {
         if (this.container) this.container.changedContents();
     }
 
-    _resetLayoutSize() {
-        this._resetHorizontalAxisLayoutSize();
-        this._resetVerticalAxisLayoutSize();
+    resetLayoutSize() {
+        this.resetHorizontalAxisLayoutSize();
+        this.resetVerticalAxisLayoutSize();
     }
 
-    _resetCrossAxisLayoutSize() {
+    resetCrossAxisLayoutSize() {
         if (this.horizontal) {
-            this._resetVerticalAxisLayoutSize();
+            this.resetVerticalAxisLayoutSize();
         } else {
-            this._resetHorizontalAxisLayoutSize();
+            this.resetHorizontalAxisLayoutSize();
         }
     }
 
-    _resetHorizontalAxisLayoutSize() {
+    private resetHorizontalAxisLayoutSize() {
         let w = this.node.getRelAxisSize(true);
         if (this._minWidth) {
             w = Math.max(this._minWidth, w);
@@ -198,7 +198,7 @@ export default class FlexItem {
         this.node.setAxisLayoutSize(true, w);
     }
 
-    _resetVerticalAxisLayoutSize() {
+    private resetVerticalAxisLayoutSize() {
         let h = this.node.getRelAxisSize(false);
         if (this._minHeight) {
             h = Math.max(this._minHeight, h);
@@ -209,19 +209,19 @@ export default class FlexItem {
         this.node.setAxisLayoutSize(false, h);
     }
 
-    _getCrossAxisMinSizeSetting() {
-        return this._getMinSizeSetting(!this.horizontal);
+    getCrossAxisMinSizeSetting() {
+        return this.getMinSizeSetting(!this.horizontal);
     }
 
-    _getCrossAxisMaxSizeSetting() {
-        return this._getMaxSizeSetting(!this.horizontal);
+    getCrossAxisMaxSizeSetting() {
+        return this.getMaxSizeSetting(!this.horizontal);
     }
 
-    _getMainAxisMaxSizeSetting() {
-        return this._getMaxSizeSetting(this.horizontal);
+    getMainAxisMaxSizeSetting() {
+        return this.getMaxSizeSetting(this.horizontal);
     }
 
-    _getMinSizeSetting(horizontal: boolean) {
+    getMinSizeSetting(horizontal: boolean) {
         if (horizontal) {
             return this._minWidth;
         } else {
@@ -229,7 +229,7 @@ export default class FlexItem {
         }
     }
 
-    _getMaxSizeSetting(horizontal: boolean) {
+    getMaxSizeSetting(horizontal: boolean) {
         if (horizontal) {
             return this._maxWidth;
         } else {
@@ -241,79 +241,79 @@ export default class FlexItem {
         return this.container!.horizontal;
     }
     
-    _getMainAxisMinSize() {
+    getMainAxisMinSize() {
         return this.node.getAxisMinSize(this.horizontal);
     }
 
-    _getCrossAxisMinSize() {
+    getCrossAxisMinSize() {
         return this.node.getAxisMinSize(!this.horizontal);
     }
 
-    _getMainAxisLayoutSize() {
+    getMainAxisLayoutSize() {
         return this.node.getAxisLayoutSize(this.horizontal);
     }
 
-    _getMainAxisLayoutPos() {
+    getMainAxisLayoutPos() {
         return this.node.getAxisLayoutPos(this.horizontal);
     }
 
-    _setMainAxisLayoutPos(pos: number) {
+    setMainAxisLayoutPos(pos: number) {
         return this.node.setAxisLayoutPos(this.horizontal, pos);
     }
 
-    _setCrossAxisLayoutPos(pos: number) {
+    setCrossAxisLayoutPos(pos: number) {
         return this.node.setAxisLayoutPos(!this.horizontal, pos);
     }
 
-    _getCrossAxisLayoutSize() {
+    getCrossAxisLayoutSize() {
         return this.node.getAxisLayoutSize(!this.horizontal);
     }
 
-    _resizeCrossAxis(size: number) {
+    resizeCrossAxis(size: number) {
         return this.node.resizeAxis(!this.horizontal, size);
     }
 
-    _resizeMainAxis(size: number) {
+    resizeMainAxis(size: number) {
         return this.node.resizeAxis(this.horizontal, size);
     }
 
-    _getMainAxisPadding() {
+    private getMainAxisPadding() {
         return this.node.getTotalPadding(this.horizontal);
     }
 
-    _getCrossAxisPadding() {
+    getCrossAxisPadding() {
         return this.node.getTotalPadding(!this.horizontal);
     }
 
-    _getMainAxisMargin() {
+    getMainAxisMargin() {
         return this.node.getTotalMargin(this.horizontal);
     }
 
-    _getCrossAxisMargin() {
+    getCrossAxisMargin() {
         return this.node.getTotalMargin(!this.horizontal);
     }
 
-    _getMainAxisMinSizeWithPaddingAndMargin() {
-        return this._getMainAxisMinSize() + this._getMainAxisPadding() + this._getMainAxisMargin();
+    getMainAxisMinSizeWithPaddingAndMargin() {
+        return this.getMainAxisMinSize() + this.getMainAxisPadding() + this.getMainAxisMargin();
     }
 
-    _getCrossAxisMinSizeWithPaddingAndMargin() {
-        return this._getCrossAxisMinSize() + this._getCrossAxisPadding() + this._getCrossAxisMargin();
+    getCrossAxisMinSizeWithPaddingAndMargin() {
+        return this.getCrossAxisMinSize() + this.getCrossAxisPadding() + this.getCrossAxisMargin();
     }
 
-    _getMainAxisLayoutSizeWithPaddingAndMargin() {
-        return this._getMainAxisLayoutSize() + this._getMainAxisPadding() + this._getMainAxisMargin();
+    getMainAxisLayoutSizeWithPaddingAndMargin() {
+        return this.getMainAxisLayoutSize() + this.getMainAxisPadding() + this.getMainAxisMargin();
     }
 
-    _getCrossAxisLayoutSizeWithPaddingAndMargin() {
-        return this._getCrossAxisLayoutSize() + this._getCrossAxisPadding() + this._getCrossAxisMargin();
+    getCrossAxisLayoutSizeWithPaddingAndMargin() {
+        return this.getCrossAxisLayoutSize() + this.getCrossAxisPadding() + this.getCrossAxisMargin();
     }
 
-    _hasFixedCrossAxisSize() {
+    hasFixedCrossAxisSize() {
         return !this.node.isZeroAxisSize(!this.horizontal);
     }
 
-    _hasRelCrossAxisSize() {
+    hasRelCrossAxisSize() {
         return !!(this.horizontal ? this.node.sourceFuncH : this.node.sourceFuncW);
     }
 }

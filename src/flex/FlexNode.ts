@@ -561,7 +561,7 @@ export default class FlexNode {
 
         let flexItemMinSize = 0;
         if (this.isFlexItemEnabled()) {
-            flexItemMinSize = this.flexItem!._getMinSizeSetting(horizontal);
+            flexItemMinSize = this.flexItem!.getMinSizeSetting(horizontal);
         }
 
         const hasLimitedMinSize = flexItemMinSize > 0;

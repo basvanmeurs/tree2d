@@ -1,9 +1,12 @@
 import FlexNode from "./FlexNode";
 
 export interface FlexSubject {
+
     getChildren(): FlexSubject[] | undefined;
-    getLayout(): FlexNode;
+
     getParent(): FlexSubject | undefined;
+
+    getLayout(): FlexNode;
 
     // Set the layout results.
     setLayoutCoords(x: number, y: number): void;
@@ -14,6 +17,7 @@ export interface FlexSubject {
     // call FlexTarget.layoutFlexTree().
     triggerLayout(): void;
 
+    // An invisible subject doesn't take space in the flex container
     isVisible(): boolean;
 
     // The 'set' layout dimensions.
