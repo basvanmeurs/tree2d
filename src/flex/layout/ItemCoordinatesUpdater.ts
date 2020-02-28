@@ -1,4 +1,4 @@
-import FlexUtils from "../FlexUtils.js";
+import FlexUtils from "./FlexUtils.js";
 import FlexLayouter from "./FlexLayouter";
 import FlexNode from "../FlexNode";
 

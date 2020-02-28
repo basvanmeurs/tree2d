@@ -1,7 +1,7 @@
 import Target from "./Target.js";
 import FlexHtmlComparer from "./flexToHtml/Comparer.js";
 
-const FlexLayout = lng.FlexLayout;
+const FlexLayouter = lng.FlexLayouter;
 
 export default class FlexTestUtils {
     constructor() {
@@ -134,7 +134,7 @@ export default class FlexTestUtils {
 
                 let layoutSpy;
                 if (tests && tests.layouts) {
-                    layoutSpy = sinon.spy(FlexLayout.prototype, "_layoutMainAxis");
+                    layoutSpy = sinon.spy(FlexLayouter.prototype, "_layoutMainAxis");
                 }
 
                 root.update();
@@ -148,7 +148,7 @@ export default class FlexTestUtils {
                     })
                     .finally(() => {
                         if (tests && tests.layouts) {
-                            FlexLayout.prototype._layoutMainAxis.restore();
+                            FlexLayouter.prototype._layoutMainAxis.restore();
                         }
                     });
             });
@@ -163,7 +163,7 @@ export default class FlexTestUtils {
 
                 let layoutSpy;
                 if (tests && tests.layouts) {
-                    layoutSpy = sinon.spy(FlexLayout.prototype, "_layoutMainAxis");
+                    layoutSpy = sinon.spy(FlexLayouter.prototype, "_layoutMainAxis");
                 }
 
                 root.update();
@@ -177,7 +177,7 @@ export default class FlexTestUtils {
                     })
                     .finally(() => {
                         if (tests && tests.layouts) {
-                            FlexLayout.prototype._layoutMainAxis.restore();
+                            FlexLayouter.prototype._layoutMainAxis.restore();
                         }
                     });
             });

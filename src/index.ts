@@ -59,8 +59,8 @@ const index = {
     ElementTexturizer,
     Texture,
     EventEmitter,
-    FlexTarget: FlexNode,
-    FlexLayout: FlexLayouter,
+    FlexNode,
+    FlexLayouter,
     FlexContainer,
     shaders: {
         Grayscale: WebGLGrayscaleShader,

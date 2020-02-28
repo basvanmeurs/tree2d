@@ -1,5 +1,5 @@
 import ContentAligner from "./ContentAligner";
-import FlexUtils from "../FlexUtils.js";
+import FlexUtils from "./FlexUtils.js";
 import LineLayouter from "./LineLayouter";
 import ItemCoordinatesUpdater from "./ItemCoordinatesUpdater";
 import FlexContainer from "../FlexContainer";
@@ -62,7 +62,7 @@ export default class FlexLayouter {
     }
 
     _performUpdateLayoutTreeFromCache() {
-        const sizeMightHaveChanged = this.item.funcW || this.item.funcH;
+        const sizeMightHaveChanged = this.item.sourceFuncW || this.item.sourceFuncH;
         if (sizeMightHaveChanged) {
             // Update after all.
             this.item.enableLocalRecalcFlag();

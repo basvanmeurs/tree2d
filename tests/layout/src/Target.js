@@ -1,5 +1,5 @@
 const Utils = lng.Utils;
-const FlexTarget = lng.FlexTarget;
+const FlexNode = lng.FlexNode;
 
 export default class Target {
     constructor() {
@@ -27,7 +27,7 @@ export default class Target {
         this._visible = true;
 
         /**
-         * @type FlexTarget
+         * @type FlexNode
          */
         this._layout = undefined;
 
@@ -85,18 +85,10 @@ export default class Target {
         }
     }
 
-    enableFlexLayout() {
-        this._ensureLayout();
-    }
-
     _ensureLayout() {
         if (!this._layout) {
-            this._layout = new FlexTarget(this);
+            this._layout = new FlexNode(this);
         }
-    }
-
-    disableFlexLayout() {
-        this._triggerRecalcTranslate();
     }
 
     hasFlexLayout() {
@@ -193,7 +185,7 @@ export default class Target {
         }
     }
 
-    getFuncX() {
+    getSourceFuncX() {
         return this._optFlags & 1 ? this._funcX : null;
     }
 
@@ -238,7 +230,7 @@ export default class Target {
         }
     }
 
-    getFuncY() {
+    getSourceFuncY() {
         return this._optFlags & 2 ? this._funcY : null;
     }
 
@@ -306,7 +298,7 @@ export default class Target {
         }
     }
 
-    getFuncW() {
+    getSourceFuncW() {
         return this._optFlags & 4 ? this._funcW : null;
     }
 
@@ -328,7 +320,7 @@ export default class Target {
         this._funcW = null;
     }
 
-    getFuncH() {
+    getSourceFuncH() {
         return this._optFlags & 8 ? this._funcH : null;
     }
 

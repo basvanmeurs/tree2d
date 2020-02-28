@@ -2228,19 +2228,19 @@ export default class ElementCore implements FlexSubject {
         return this._children;
     }
 
-    getFuncX() {
+    getSourceFuncX() {
         return this._funcX;
     }
 
-    getFuncY() {
+    getSourceFuncY() {
         return this._funcY;
     }
 
-    getFuncW() {
+    getSourceFuncW() {
         return this._funcW;
     }
 
-    getFuncH() {
+    getSourceFuncH() {
         return this._funcH;
     }
 

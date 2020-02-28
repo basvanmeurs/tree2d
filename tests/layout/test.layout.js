@@ -155,6 +155,8 @@ const addSimpleStructureTests = (name, structure) => {
     });
 };
 
+// Note that on some systems Chrome flexbox layout will have serious rounding errors, resulting in 'false positives' in the test result.
+
 describe("layout", () => {
     addSimpleStructureTests("html flexbox comparison (single level, excluding autosize)", {
         flex: {},

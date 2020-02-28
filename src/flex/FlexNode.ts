@@ -1,6 +1,6 @@
 import FlexContainer from "./FlexContainer";
 import FlexItem from "./FlexItem";
-import FlexUtils from "./FlexUtils.js";
+import FlexUtils from "./layout/FlexUtils.js";
 import { FlexSubject } from "./FlexSubject";
 
 /**
@@ -146,22 +146,15 @@ export default class FlexNode {
     private _checkEnabled() {
         const enabled = this.isEnabled();
         if (this._enabled !== enabled) {
-            if (enabled) {
-                this._enable();
-            } else {
+            if (!enabled) {
                 this._disable();
             }
             this._enabled = enabled;
         }
     }
 
-    private _enable() {
-        this.subject.enableFlexLayout();
-    }
-
     private _disable() {
         this.restoreSubjectToNonFlex();
-        this.subject.disableFlexLayout();
     }
 
     isEnabled() {
@@ -191,6 +184,7 @@ export default class FlexNode {
             this._enableFlexItem();
             to.getLayout()._changedChildren();
         }
+
         this._checkEnabled();
     }
 
@@ -259,11 +253,11 @@ export default class FlexNode {
 
         let sourceX = subject.getSourceX();
         let sourceY = subject.getSourceY();
-        if (this.funcX) {
-            sourceX = this.funcX(FlexUtils.getParentAxisSizeWithPadding(this, true));
+        if (this.sourceFuncX) {
+            sourceX = this.sourceFuncX(FlexUtils.getParentAxisSizeWithPadding(this, true));
         }
-        if (this.funcY) {
-            sourceY = this.funcY(FlexUtils.getParentAxisSizeWithPadding(this, false));
+        if (this.sourceFuncY) {
+            sourceY = this.sourceFuncY(FlexUtils.getParentAxisSizeWithPadding(this, false));
         }
 
         if (this.isFlexItemEnabled()) {
@@ -389,19 +383,19 @@ export default class FlexNode {
         this.forceLayout(false, true);
     }
 
-    get funcX() {
-        return this.subject.getFuncX();
+    get sourceFuncX() {
+        return this.subject.getSourceFuncX();
     }
 
-    get funcY() {
-        return this.subject.getFuncY();
+    get sourceFuncY() {
+        return this.subject.getSourceFuncY();
     }
 
-    get funcW() {
-        return this.subject.getFuncW();
+    get sourceFuncW() {
+        return this.subject.getSourceFuncW();
     }
 
-    get funcH() {
-        return this.subject.getFuncH();
+    get sourceFuncH() {
+        return this.subject.getSourceFuncH();
     }
 }

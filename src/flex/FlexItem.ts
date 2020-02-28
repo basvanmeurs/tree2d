@@ -1,4 +1,4 @@
-import FlexUtils from "./FlexUtils.js";
+import FlexUtils from "./layout/FlexUtils.js";
 import FlexContainer, { AlignItemsMode } from "./FlexContainer";
 import FlexNode from "./FlexNode";
 
@@ -323,6 +323,6 @@ export default class FlexItem {
     }
 
     _hasRelCrossAxisSize() {
-        return !!(this.ctr!.horizontal ? this.item.funcH : this.item.funcW);
+        return !!(this.ctr!.horizontal ? this.item.sourceFuncH : this.item.sourceFuncW);
     }
 }

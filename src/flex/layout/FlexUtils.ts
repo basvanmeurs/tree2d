@@ -1,4 +1,4 @@
-import FlexNode from "./FlexNode";
+import FlexNode from "../FlexNode";
 
 export default class FlexUtils {
     static getParentAxisSizeWithPadding(item: FlexNode, horizontal: boolean) {
@@ -19,9 +19,9 @@ export default class FlexUtils {
 
     static getRelAxisSize(item: FlexNode, horizontal: boolean) {
         if (horizontal) {
-            if (item.funcW) {
+            if (item.sourceFuncW) {
                 if (this._allowRelAxisSizeFunction(item, true)) {
-                    return item.funcW(this.getParentAxisSizeWithPadding(item, true));
+                    return item.sourceFuncW(this.getParentAxisSizeWithPadding(item, true));
                 } else {
                     return 0;
                 }
@@ -29,9 +29,9 @@ export default class FlexUtils {
                 return item.subject.getSourceW();
             }
         } else {
-            if (item.funcH) {
+            if (item.sourceFuncH) {
                 if (this._allowRelAxisSizeFunction(item, false)) {
-                    return item.funcH(this.getParentAxisSizeWithPadding(item, false));
+                    return item.sourceFuncH(this.getParentAxisSizeWithPadding(item, false));
                 } else {
                     return 0;
                 }
@@ -52,9 +52,9 @@ export default class FlexUtils {
 
     static isZeroAxisSize(item: FlexNode, horizontal: boolean) {
         if (horizontal) {
-            return !item.subject.getSourceW() && !item.funcW;
+            return !item.subject.getSourceW() && !item.sourceFuncW;
         } else {
-            return !item.subject.getSourceH() && !item.funcH;
+            return !item.subject.getSourceH() && !item.sourceFuncH;
         }
     }
 
