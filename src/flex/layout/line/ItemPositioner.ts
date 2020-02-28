@@ -1,4 +1,4 @@
-import SpacingCalculator from "../SpacingCalculator";
+import getSpacing from "../spacing";
 import LineLayout from "./LineLayout";
 
 export default class ItemPositioner {
@@ -28,6 +28,6 @@ export default class ItemPositioner {
         const mode = this._layout.container.justifyContent;
         const numberOfItems = this.line.numberOfItems;
 
-        return SpacingCalculator.getSpacing(mode, numberOfItems, remainingSpace);
+        return getSpacing(mode, numberOfItems, remainingSpace);
     }
 }

@@ -1,4 +1,4 @@
-import SpacingCalculator from "./SpacingCalculator";
+import getSpacing from "./spacing";
 import FlexLayouter from "./FlexLayouter";
 
 export default class ContentAligner {
@@ -69,6 +69,6 @@ export default class ContentAligner {
     private getSpacing(remainingSpace: number) {
         const mode = this.layout.container.alignContent;
         const numberOfItems = this.lines.length;
-        return SpacingCalculator.getSpacing(mode, numberOfItems, remainingSpace);
+        return getSpacing(mode, numberOfItems, remainingSpace);
     }
 }

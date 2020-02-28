@@ -1,6 +1,6 @@
 import Layout from "./layout/FlexLayouter";
 import FlexNode from "./FlexNode";
-import { SpacingMode } from "./layout/SpacingCalculator";
+import { SpacingMode } from "./layout/spacing";
 
 export type AlignItemsMode = "flex-start" | "flex-end" | "center" | "stretch";
 
