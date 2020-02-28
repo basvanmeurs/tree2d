@@ -77,12 +77,7 @@ export default class Target {
     }
 
     set flexItem(v) {
-        if (v === false) {
-            this.layout.setItemEnabled(false);
-        } else {
-            this.layout.setItemEnabled(true);
-            Target.patch(this.layout.flexItem, v);
-        }
+        Target.patch(this.layout.flexItem, v);
     }
 
     _ensureLayout() {

@@ -372,7 +372,7 @@ describe("layout", () => {
                 { w: 200, h: 200, r: [10, 10, 200, 200] },
                 {
                     flex: { direction: "column" },
-                    flexItem: false,
+                    flexItem: {enabled: false},
                     w: w => w * 0.5,
                     h: h => h * 0.5,
                     r: [0, 0, 260, 210],

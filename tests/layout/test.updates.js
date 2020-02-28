@@ -202,11 +202,11 @@ describe("layout", () => {
             });
 
             addUpdateTest("disable flex item", () => {
-                root.children[0].children[0].children[0].children[1].flexItem = false;
+                root.children[0].children[0].children[0].children[1].flexItem.enabled = false;
             });
 
             addUpdateTest("re-enable flex item", () => {
-                root.children[0].children[0].children[0].children[1].flexItem = {};
+                root.children[0].children[0].children[0].children[1].flexItem.enabled = true;
             });
 
             addUpdateTest("disable flex container", () => {

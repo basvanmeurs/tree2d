@@ -20,7 +20,7 @@ describe("relative", function() {
                 },
                 { w: w => 0.2 * w, h: h => 0.1 * h, r: [60, 0, 40, 40] },
                 {
-                    flexItem: false,
+                    flexItem: {enabled: false},
                     x: w => 0.2 * w,
                     y: h => 0.2 * h,
                     w: w => 0.2 * w,
@@ -50,7 +50,7 @@ describe("relative", function() {
                         },
                         { w: w => 0.2 * w, h: h => 0.1 * h, r: [60, 0, 40, 40] },
                         {
-                            flexItem: false,
+                            flexItem: {enabled: false},
                             x: w => 0.2 * w,
                             y: h => 0.2 * h,
                             w: w => 0.2 * w,
@@ -190,7 +190,7 @@ describe("relative", function() {
                                     children: [
                                         { w: w => w * 0.5, h: h => h * 0.5, flex: {}, r: [0, 0, 80, 4] },
                                         {
-                                            flexItem: false,
+                                            flexItem: {enabled: false},
                                             w: w => w * 0.5,
                                             h: h => h * 0.5,
                                             x: 0,
@@ -213,7 +213,7 @@ describe("relative", function() {
                                     children: [
                                         { w: 10, h: 10, r: [0, 0, 10, 10] },
                                         {
-                                            flexItem: false,
+                                            flexItem: {enabled: false},
                                             w: w => w * 0.5,
                                             h: h => h * 0.5,
                                             x: 0,

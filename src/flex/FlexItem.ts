@@ -21,6 +21,8 @@ export default class FlexItem {
     private _marginRight: number = 0;
     private _marginBottom: number = 0;
 
+    private _enabled: boolean = true;
+
     constructor(public readonly node: FlexNode) {}
 
     public getContainer() {
@@ -29,6 +31,25 @@ export default class FlexItem {
 
     public setContainer(c: FlexContainer | undefined) {
         this.container = c;
+    }
+
+    get enabled() {
+        return this._enabled;
+    }
+
+    set enabled(v: boolean) {
+        if (v !== this._enabled) {
+            const prevFlexParent = this.node.flexParent;
+            this._enabled = v;
+            this.node.restoreLayoutIfNonFlex();
+            if (prevFlexParent) {
+                prevFlexParent.changedChildren();
+            }
+            const newFlexParent = this.node.flexParent;
+            if (newFlexParent) {
+                newFlexParent.changedChildren();
+            }
+        }
     }
 
     get grow() {

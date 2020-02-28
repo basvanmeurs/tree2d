@@ -31,14 +31,6 @@ export default class FlexContainer {
 
     constructor(public readonly node: FlexNode) {}
 
-    private _changedDimensions() {
-        this.node.forceLayout();
-    }
-
-    changedContents() {
-        this.node.changedContents();
-    }
-
     get direction() {
         return (this.horizontal ? "row" : "column") + (this.reverse ? "-reverse" : "");
     }
@@ -109,7 +101,7 @@ export default class FlexContainer {
 
     set paddingLeft(v) {
         this._paddingLeft = v;
-        this._changedDimensions();
+        this.changedDimensions();
     }
 
     get paddingLeft() {
@@ -118,7 +110,7 @@ export default class FlexContainer {
 
     set paddingTop(v) {
         this._paddingTop = v;
-        this._changedDimensions();
+        this.changedDimensions();
     }
 
     get paddingTop() {
@@ -127,7 +119,7 @@ export default class FlexContainer {
 
     set paddingRight(v) {
         this._paddingRight = v;
-        this._changedDimensions();
+        this.changedDimensions();
     }
 
     get paddingRight() {
@@ -136,11 +128,19 @@ export default class FlexContainer {
 
     set paddingBottom(v) {
         this._paddingBottom = v;
-        this._changedDimensions();
+        this.changedDimensions();
     }
 
     get paddingBottom() {
         return this._paddingBottom;
+    }
+
+    private changedDimensions() {
+        this.node.forceLayout();
+    }
+
+    changedContents() {
+        this.node.changedContents();
     }
 
 }

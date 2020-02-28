@@ -23,7 +23,6 @@ export default class FlexNode {
 
     private _flex?: FlexContainer;
     private _flexItem?: FlexItem = undefined;
-    private _flexItemDisabled: boolean = false;
 
     private _items?: FlexNode[] = undefined;
 
@@ -43,9 +42,9 @@ export default class FlexNode {
         return this._flex;
     }
 
-    get flexItem() {
+    get flexItem(): FlexItem {
         this._ensureFlexItem();
-        return this._flexItem;
+        return this._flexItem!;
     }
 
     setEnabled(v: boolean) {
@@ -60,27 +59,13 @@ export default class FlexNode {
         }
     }
 
-    setItemEnabled(v: boolean) {
-        this._ensureFlexItem();
-        if (v !== !this._flexItemDisabled) {
-            const prevFlexParent = this.flexParent;
-            this._flexItemDisabled = !v;
-            this._checkEnabled();
-            if (prevFlexParent) {
-                prevFlexParent._clearFlexItemsCache();
-                prevFlexParent.changedContents();
-            }
-            const newFlexParent = this.flexParent;
-            if (newFlexParent) {
-                newFlexParent._clearFlexItemsCache();
-                newFlexParent.changedContents();
-            }
-        }
+    private get flexItemEnabled() {
+        return this.flexItem.enabled;
     }
 
     private _enableFlex() {
         this._flex = new FlexContainer(this);
-        this._checkEnabled();
+        this.restoreLayoutIfNonFlex();
         this.forceLayout();
         this._enableChildrenAsFlexItems();
     }
@@ -88,7 +73,7 @@ export default class FlexNode {
     private _disableFlex() {
         this.forceLayout();
         this._flex = undefined;
-        this._checkEnabled();
+        this.restoreLayoutIfNonFlex();
         this._disableChildrenAsFlexItems();
     }
 
@@ -117,7 +102,7 @@ export default class FlexNode {
         const flexParent = this.subject!.getParent()!.getLayout();
         this._flexItem!.setContainer(flexParent._flex);
         flexParent.changedContents();
-        this._checkEnabled();
+        this.restoreLayoutIfNonFlex();
     }
 
     private _disableFlexItem() {
@@ -126,7 +111,7 @@ export default class FlexNode {
         }
 
         // We keep the flexItem object because it may contain custom settings.
-        this._checkEnabled();
+        this.restoreLayoutIfNonFlex();
 
         this._resetOffsets();
     }
@@ -142,7 +127,7 @@ export default class FlexNode {
         }
     }
 
-    private _checkEnabled() {
+    public restoreLayoutIfNonFlex() {
         const enabled = this.isEnabled();
         if (this._enabled !== enabled) {
             if (!enabled) {
@@ -176,15 +161,15 @@ export default class FlexNode {
 
     setParent(from?: FlexSubject, to?: FlexSubject) {
         if (from && from.getLayout().isFlexEnabled()) {
-            from.getLayout()._changedChildren();
+            from.getLayout().changedChildren();
         }
 
         if (to && to.getLayout().isFlexEnabled()) {
             this._enableFlexItem();
-            to.getLayout()._changedChildren();
+            to.getLayout().changedChildren();
         }
 
-        this._checkEnabled();
+        this.restoreLayoutIfNonFlex();
     }
 
     getParent(): FlexNode | undefined {
@@ -197,7 +182,7 @@ export default class FlexNode {
     }
 
     get flexParent(): FlexNode | undefined {
-        if (this._flexItemDisabled) {
+        if (!this.flexItemEnabled) {
             return undefined;
         }
 
@@ -211,7 +196,7 @@ export default class FlexNode {
     updateVisible() {
         const parent = this.flexParent;
         if (parent) {
-            parent._changedChildren();
+            parent.changedChildren();
         }
     }
 
@@ -238,7 +223,7 @@ export default class FlexNode {
         return items;
     }
 
-    private _changedChildren() {
+    public changedChildren() {
         this._clearFlexItemsCache();
         this.changedContents();
     }
