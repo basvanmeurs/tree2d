@@ -3,34 +3,6 @@ import FlexNode from "../FlexNode";
 export default class FlexUtils {
 
 
-    static getAxisMinSize(item: FlexNode, horizontal: boolean) {
-        let minSize = this.getPlainAxisMinSize(item, horizontal);
-
-        let flexItemMinSize = 0;
-        if (item.isFlexItemEnabled()) {
-            flexItemMinSize = item.flexItem!._getMinSizeSetting(horizontal);
-        }
-
-        const hasLimitedMinSize = flexItemMinSize > 0;
-        if (hasLimitedMinSize) {
-            minSize = Math.max(minSize, flexItemMinSize);
-        }
-        return minSize;
-    }
-
-    static getPlainAxisMinSize(item: FlexNode, horizontal: boolean) {
-        if (item.isFlexEnabled()) {
-            return item.flex!.layout.getAxisMinSize(horizontal);
-        } else {
-            const isShrinkable = item.flexItem!.shrink !== 0;
-            if (isShrinkable) {
-                return 0;
-            } else {
-                return item.getRelAxisSize(horizontal);
-            }
-        }
-    }
-
     static resizeAxis(item: FlexNode, horizontal: boolean, size: number) {
         if (item.isFlexEnabled()) {
             const isMainAxis = item.flex!.horizontal === horizontal;

@@ -239,11 +239,11 @@ export default class FlexItem {
     }
 
     _getMainAxisMinSize() {
-        return FlexUtils.getAxisMinSize(this.node, this.ctr!.horizontal);
+        return this.node.getAxisMinSize(this.ctr!.horizontal);
     }
 
     _getCrossAxisMinSize() {
-        return FlexUtils.getAxisMinSize(this.node, !this.ctr!.horizontal);
+        return this.node.getAxisMinSize(!this.ctr!.horizontal);
     }
 
     _getMainAxisLayoutSize() {

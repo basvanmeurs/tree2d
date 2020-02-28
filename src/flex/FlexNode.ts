@@ -493,6 +493,34 @@ export default class FlexNode {
         }
     }
 
+    getAxisMinSize(horizontal: boolean) {
+        let minSize = this.getPlainAxisMinSize(horizontal);
+
+        let flexItemMinSize = 0;
+        if (this.isFlexItemEnabled()) {
+            flexItemMinSize = this.flexItem!._getMinSizeSetting(horizontal);
+        }
+
+        const hasLimitedMinSize = flexItemMinSize > 0;
+        if (hasLimitedMinSize) {
+            minSize = Math.max(minSize, flexItemMinSize);
+        }
+        return minSize;
+    }
+
+    private getPlainAxisMinSize(horizontal: boolean) {
+        if (this.isFlexEnabled()) {
+            return this.flex!.layout.getAxisMinLineSize(horizontal);
+        } else {
+            const isShrinkable = this.flexItem!.shrink !== 0;
+            if (isShrinkable) {
+                return 0;
+            } else {
+                return this.getRelAxisSize(horizontal);
+            }
+        }
+    }
+
 
 
 

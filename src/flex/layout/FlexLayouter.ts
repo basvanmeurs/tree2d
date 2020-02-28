@@ -160,7 +160,7 @@ export default class FlexLayouter {
         return !this.item.isZeroAxisSize(!this.horizontal);
     }
 
-    getAxisMinSize(horizontal: boolean) {
+    getAxisMinLineSize(horizontal: boolean) {
         if (this.horizontal === horizontal) {
             return this.lineLayouter.mainAxisMinSize;
         } else {
