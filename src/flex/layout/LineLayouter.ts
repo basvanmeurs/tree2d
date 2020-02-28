@@ -109,7 +109,7 @@ export default class LineLayouter {
     }
 
     _getAvailableMainAxisLayoutSpace() {
-        if (!this._layout.resizingMainAxis && this._layout.isMainAxisFitToContents()) {
+        if (!this._layout.isResizingMainAxis() && this._layout.isMainAxisFitToContents()) {
             return 0;
         } else {
             return this._mainAxisSize - this._curMainAxisPos;

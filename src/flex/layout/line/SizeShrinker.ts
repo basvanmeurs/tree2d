@@ -1,21 +1,21 @@
 import LineLayout from "./LineLayout";
 
 export default class SizeShrinker {
-    private _amountRemaining: number = 0;
-    private _shrunkSize: number = 0;
+    private amountRemaining: number = 0;
+    private shrunkSize: number = 0;
 
-    constructor(private _line: LineLayout) {}
+    constructor(private line: LineLayout) {}
 
     shrink(amount: number) {
-        this._shrunkSize = 0;
+        this.shrunkSize = 0;
 
-        this._amountRemaining = amount;
-        let totalShrinkAmount = this._getTotalShrinkAmount();
+        this.amountRemaining = amount;
+        let totalShrinkAmount = this.getTotalShrinkAmount();
         if (totalShrinkAmount) {
-            const items = this._line.items;
+            const items = this.line.items;
             do {
-                const amountPerShrink = this._amountRemaining / totalShrinkAmount;
-                for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
+                const amountPerShrink = this.amountRemaining / totalShrinkAmount;
+                for (let i = this.line.startIndex; i <= this.line.endIndex; i++) {
                     const item = items[i];
                     const flexItem = item.flexItem!;
                     const shrinkAmount = flexItem.shrink;
@@ -37,23 +37,23 @@ export default class SizeShrinker {
                             const finalSize = size - shrink;
                             flexItem._resizeMainAxis(finalSize);
 
-                            this._shrunkSize += shrink;
-                            this._amountRemaining -= shrink;
+                            this.shrunkSize += shrink;
+                            this.amountRemaining -= shrink;
 
-                            if (Math.abs(this._amountRemaining) < 10e-6) {
+                            if (Math.abs(this.amountRemaining) < 10e-6) {
                                 return;
                             }
                         }
                     }
                 }
-            } while (totalShrinkAmount && Math.abs(this._amountRemaining) > 10e-6);
+            } while (totalShrinkAmount && Math.abs(this.amountRemaining) > 10e-6);
         }
     }
 
-    _getTotalShrinkAmount() {
+    private getTotalShrinkAmount() {
         let total = 0;
-        const items = this._line.items;
-        for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
+        const items = this.line.items;
+        for (let i = this.line.startIndex; i <= this.line.endIndex; i++) {
             const item = items[i];
             const flexItem = item.flexItem!;
 
@@ -71,6 +71,6 @@ export default class SizeShrinker {
     }
 
     getShrunkSize() {
-        return this._shrunkSize;
+        return this.shrunkSize;
     }
 }

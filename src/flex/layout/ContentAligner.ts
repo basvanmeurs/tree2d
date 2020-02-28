@@ -2,27 +2,30 @@ import SpacingCalculator from "./SpacingCalculator";
 import FlexLayouter from "./FlexLayouter";
 
 export default class ContentAligner {
-    private _totalCrossAxisSize: number = 0;
 
-    constructor(private _layout: FlexLayouter) {}
+    private totalCrossAxisSize: number = 0;
 
-    get _lines() {
-        return this._layout._lines;
+    constructor(private layout: FlexLayouter) {
+        this.init();
     }
 
-    init() {
-        this._totalCrossAxisSize = this._getTotalCrossAxisSize();
+    private init() {
+        this.totalCrossAxisSize = this.calcTotalCrossAxisSize();
+    }
+
+    private get lines() {
+        return this.layout.getLines()!;
     }
 
     align() {
-        const crossAxisSize = this._layout.crossAxisSize;
-        const remainingSpace = crossAxisSize - this._totalCrossAxisSize;
+        const crossAxisSize = this.layout.crossAxisSize;
+        const remainingSpace = crossAxisSize - this.totalCrossAxisSize;
 
-        const { spacingBefore, spacingBetween } = this._getSpacing(remainingSpace);
+        const { spacingBefore, spacingBetween } = this.getSpacing(remainingSpace);
 
-        const lines = this._lines!;
+        const lines = this.lines;
 
-        const mode = this._layout._flexContainer.alignContent;
+        const mode = this.layout.container.alignContent;
         let growSize = 0;
         if (mode === "stretch" && lines.length && remainingSpace > 0) {
             growSize = remainingSpace / lines.length;
@@ -40,7 +43,7 @@ export default class ContentAligner {
 
             aligner.align();
 
-            if (aligner.recursiveResizeOccured) {
+            if (aligner.getRecursiveResizeOccured()) {
                 lines[i].setItemPositions();
             }
 
@@ -49,12 +52,12 @@ export default class ContentAligner {
         }
     }
 
-    get totalCrossAxisSize() {
-        return this._totalCrossAxisSize;
+    getTotalCrossAxisSize() {
+        return this.totalCrossAxisSize;
     }
 
-    _getTotalCrossAxisSize() {
-        const lines = this._lines!;
+    private calcTotalCrossAxisSize() {
+        const lines = this.lines;
         let total = 0;
         for (let i = 0, n = lines.length; i < n; i++) {
             const line = lines[i];
@@ -63,9 +66,9 @@ export default class ContentAligner {
         return total;
     }
 
-    _getSpacing(remainingSpace: number) {
-        const mode = this._layout._flexContainer.alignContent;
-        const numberOfItems = this._lines!.length;
+    private getSpacing(remainingSpace: number) {
+        const mode = this.layout.container.alignContent;
+        const numberOfItems = this.lines.length;
         return SpacingCalculator.getSpacing(mode, numberOfItems, remainingSpace);
     }
 }

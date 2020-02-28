@@ -257,7 +257,7 @@ describe("relative", function() {
                 leaf.h = h => h * 1;
                 leaf.r = [0, 0, 32, 8];
                 return { layouts: [leaf, level2] };
-            });
+            }, true);
 
             addUpdateTest("update level2", () => {
                 level2.w = w => w * 0.8;

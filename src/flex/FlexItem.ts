@@ -22,11 +22,7 @@ export default class FlexItem {
     _marginRight: number = 0;
     _marginBottom: number = 0;
 
-    constructor(private _item: FlexNode) {}
-
-    get item() {
-        return this._item;
-    }
+    constructor(public readonly node: FlexNode) {}
 
     get grow() {
         return this._grow;
@@ -56,7 +52,7 @@ export default class FlexItem {
     }
 
     _getDefaultShrink() {
-        if (this.item.isFlexEnabled()) {
+        if (this.node.isFlexEnabled()) {
             return 1;
         } else {
             // All non-flex containers are absolutely positioned items with fixed dimensions, and by default not shrinkable.
@@ -86,7 +82,7 @@ export default class FlexItem {
 
     set minWidth(v) {
         this._minWidth = Math.max(0, v);
-        this._item.forceLayout(true, false);
+        this.node.forceLayout(true, false);
     }
 
     get minHeight() {
@@ -95,7 +91,7 @@ export default class FlexItem {
 
     set minHeight(v) {
         this._minHeight = Math.max(0, v);
-        this._item.forceLayout(false, true);
+        this.node.forceLayout(false, true);
     }
 
     get maxWidth() {
@@ -104,7 +100,7 @@ export default class FlexItem {
 
     set maxWidth(v) {
         this._maxWidth = Math.max(0, v);
-        this._item.forceLayout(true, false);
+        this.node.forceLayout(true, false);
     }
 
     get maxHeight() {
@@ -113,7 +109,7 @@ export default class FlexItem {
 
     set maxHeight(v) {
         this._maxHeight = Math.max(0, v);
-        this._item.forceLayout(false, true);
+        this.node.forceLayout(false, true);
     }
 
     /**
@@ -193,25 +189,25 @@ export default class FlexItem {
     }
 
     _resetHorizontalAxisLayoutSize() {
-        let w = FlexUtils.getRelAxisSize(this.item, true);
+        let w = this.node.getRelAxisSize(true);
         if (this._minWidth) {
             w = Math.max(this._minWidth, w);
         }
         if (this._maxWidth) {
             w = Math.min(this._maxWidth, w);
         }
-        FlexUtils.setAxisLayoutSize(this.item, true, w);
+        this.node.setAxisLayoutSize(true, w);
     }
 
     _resetVerticalAxisLayoutSize() {
-        let h = FlexUtils.getRelAxisSize(this.item, false);
+        let h = this.node.getRelAxisSize(false);
         if (this._minHeight) {
             h = Math.max(this._minHeight, h);
         }
         if (this._maxHeight) {
             h = Math.min(this._maxHeight, h);
         }
-        FlexUtils.setAxisLayoutSize(this.item, false, h);
+        this.node.setAxisLayoutSize(false, h);
     }
 
     _getCrossAxisMinSizeSetting() {
@@ -243,63 +239,63 @@ export default class FlexItem {
     }
 
     _getMainAxisMinSize() {
-        return FlexUtils.getAxisMinSize(this.item, this.ctr!.horizontal);
+        return FlexUtils.getAxisMinSize(this.node, this.ctr!.horizontal);
     }
 
     _getCrossAxisMinSize() {
-        return FlexUtils.getAxisMinSize(this.item, !this.ctr!.horizontal);
+        return FlexUtils.getAxisMinSize(this.node, !this.ctr!.horizontal);
     }
 
     _getMainAxisLayoutSize() {
-        return FlexUtils.getAxisLayoutSize(this.item, this.ctr!.horizontal);
+        return this.node.getAxisLayoutSize(this.ctr!.horizontal);
     }
 
     _getMainAxisLayoutPos() {
-        return FlexUtils.getAxisLayoutPos(this.item, this.ctr!.horizontal);
+        return this.node.getAxisLayoutPos(this.ctr!.horizontal);
     }
 
     _setMainAxisLayoutPos(pos: number) {
-        return FlexUtils.setAxisLayoutPos(this.item, this.ctr!.horizontal, pos);
+        return this.node.setAxisLayoutPos(this.ctr!.horizontal, pos);
     }
 
     _setCrossAxisLayoutPos(pos: number) {
-        return FlexUtils.setAxisLayoutPos(this.item, !this.ctr!.horizontal, pos);
+        return this.node.setAxisLayoutPos(!this.ctr!.horizontal, pos);
     }
 
     _getCrossAxisLayoutSize() {
-        return FlexUtils.getAxisLayoutSize(this.item, !this.ctr!.horizontal);
+        return this.node.getAxisLayoutSize(!this.ctr!.horizontal);
     }
 
     _resizeCrossAxis(size: number) {
-        return FlexUtils.resizeAxis(this.item, !this.ctr!.horizontal, size);
+        return FlexUtils.resizeAxis(this.node, !this.ctr!.horizontal, size);
     }
 
     _resizeMainAxis(size: number) {
-        return FlexUtils.resizeAxis(this.item, this.ctr!.horizontal, size);
+        return FlexUtils.resizeAxis(this.node, this.ctr!.horizontal, size);
     }
 
     _getMainAxisPadding() {
-        return FlexUtils.getTotalPadding(this.item, this.ctr!.horizontal);
+        return this.node.getTotalPadding(this.ctr!.horizontal);
     }
 
     _getCrossAxisPadding() {
-        return FlexUtils.getTotalPadding(this.item, !this.ctr!.horizontal);
+        return this.node.getTotalPadding(!this.ctr!.horizontal);
     }
 
     _getMainAxisMargin() {
-        return FlexUtils.getTotalMargin(this.item, this.ctr!.horizontal);
+        return FlexUtils.getTotalMargin(this.node, this.ctr!.horizontal);
     }
 
     _getCrossAxisMargin() {
-        return FlexUtils.getTotalMargin(this.item, !this.ctr!.horizontal);
+        return FlexUtils.getTotalMargin(this.node, !this.ctr!.horizontal);
     }
 
     _getHorizontalMarginOffset() {
-        return FlexUtils.getMarginOffset(this.item, true);
+        return FlexUtils.getMarginOffset(this.node, true);
     }
 
     _getVerticalMarginOffset() {
-        return FlexUtils.getMarginOffset(this.item, false);
+        return FlexUtils.getMarginOffset(this.node, false);
     }
 
     _getMainAxisMinSizeWithPaddingAndMargin() {
@@ -319,10 +315,10 @@ export default class FlexItem {
     }
 
     _hasFixedCrossAxisSize() {
-        return !FlexUtils.isZeroAxisSize(this.item, !this.ctr!.horizontal);
+        return !this.node.isZeroAxisSize(!this.ctr!.horizontal);
     }
 
     _hasRelCrossAxisSize() {
-        return !!(this.ctr!.horizontal ? this.item.sourceFuncH : this.item.sourceFuncW);
+        return !!(this.ctr!.horizontal ? this.node.sourceFuncH : this.node.sourceFuncW);
     }
 }

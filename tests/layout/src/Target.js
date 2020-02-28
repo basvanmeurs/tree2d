@@ -5,7 +5,7 @@ export default class Target {
     constructor() {
         this._children = [];
 
-        this._parent = null;
+        this._parent = undefined;
 
         this._x = 0;
         this._y = 0;
@@ -19,10 +19,10 @@ export default class Target {
 
         this._optFlags = 0;
 
-        this._funcX = null;
-        this._funcY = null;
-        this._funcW = null;
-        this._funcH = null;
+        this._funcX = undefined;
+        this._funcY = undefined;
+        this._funcW = undefined;
+        this._funcH = undefined;
 
         this._visible = true;
 

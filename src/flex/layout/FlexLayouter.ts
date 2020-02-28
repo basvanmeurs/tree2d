@@ -9,67 +9,62 @@ import FlexNode from "../FlexNode";
  * Layouts a flex container (and descendants).
  */
 export default class FlexLayouter {
-    private _lineLayouter: LineLayouter = new LineLayouter(this);
+    private lineLayouter: LineLayouter = new LineLayouter(this);
 
-    private _resizingMainAxis: boolean = false;
-    private _resizingCrossAxis: boolean = false;
+    private resizingMainAxis: boolean = false;
+    private resizingCrossAxis: boolean = false;
 
-    private _cachedMainAxisSizeAfterLayout: number = 0;
-    private _cachedCrossAxisSizeAfterLayout: number = 0;
+    private cachedMainAxisSizeAfterLayout: number = 0;
+    private cachedCrossAxisSizeAfterLayout: number = 0;
 
-    private _shrunk: boolean = false;
+    private shrunk: boolean = false;
 
-    private _totalCrossAxisSize: any;
+    private totalCrossAxisSize: number;
 
-    constructor(public _flexContainer: FlexContainer) {}
-
-    get shrunk() {
-        return this._shrunk;
-    }
-
-    get recalc() {
-        return this.item.recalc;
-    }
+    constructor(public container: FlexContainer) {}
 
     layoutTree() {
-        const isSubTree = !!this.item.flexParent;
-        if (isSubTree) {
-            // Use the dimensions set by the parent flex tree.
-            this._updateSubTreeLayout();
+        if (this.isSubTree()) {
+            // This can occur if only a part of the flex hierarchy needs to be updated.
+            this.updateSubTreeLayout();
         } else {
             this.updateTreeLayout();
         }
         this.updateItemCoords();
     }
 
+    private isSubTree() {
+        return !!this.item.flexParent;
+    }
+
     updateTreeLayout() {
         if (this.recalc) {
-            this._performUpdateLayoutTree();
+            this.performUpdateLayoutTree();
         } else {
-            this._performUpdateLayoutTreeFromCache();
+            this.performUpdateLayoutTreeFromCache();
         }
     }
 
-    _performUpdateLayoutTree() {
-        this._setInitialAxisSizes();
-        this._layoutAxes();
-        this._refreshLayoutCache();
+    private performUpdateLayoutTree() {
+        this.initializeAxisSizes();
+        this.layoutAxes();
+        this.setLayoutCache();
     }
 
-    _refreshLayoutCache() {
-        this._cachedMainAxisSizeAfterLayout = this.mainAxisSize;
-        this._cachedCrossAxisSizeAfterLayout = this.crossAxisSize;
+    private setLayoutCache() {
+        this.cachedMainAxisSizeAfterLayout = this.mainAxisSize;
+        this.cachedCrossAxisSizeAfterLayout = this.crossAxisSize;
     }
 
-    _performUpdateLayoutTreeFromCache() {
+    private performUpdateLayoutTreeFromCache() {
         const sizeMightHaveChanged = this.item.sourceFuncW || this.item.sourceFuncH;
         if (sizeMightHaveChanged) {
             // Update after all.
             this.item.enableLocalRecalcFlag();
-            this._performUpdateLayoutTree();
+            this.performUpdateLayoutTree();
         } else {
-            this.mainAxisSize = this._cachedMainAxisSizeAfterLayout;
-            this.crossAxisSize = this._cachedCrossAxisSizeAfterLayout;
+            this.mainAxisSize = this.cachedMainAxisSizeAfterLayout;
+            this.crossAxisSize = this.cachedCrossAxisSizeAfterLayout;
         }
     }
 
@@ -78,82 +73,71 @@ export default class FlexLayouter {
         updater.finalize();
     }
 
-    _updateSubTreeLayout() {
+    private updateSubTreeLayout() {
         // The dimensions of this container are guaranteed not to have changed.
         // That's why we can safely 'reuse' those and re-layout the contents.
         const crossAxisSize = this.crossAxisSize;
-        this._layoutMainAxis();
+        this.layoutMainAxis();
         this.performResizeCrossAxis(crossAxisSize);
     }
 
-    _setInitialAxisSizes() {
+    private initializeAxisSizes() {
         if (this.item.isFlexItemEnabled()) {
             if (this.item.flexItem) {
                 this.item.flexItem._resetLayoutSize();
             }
         } else {
-            this.mainAxisSize = this._getMainAxisBasis();
-            this.crossAxisSize = this._getCrossAxisBasis();
+            this.mainAxisSize = this.getMainAxisBasis();
+            this.crossAxisSize = this.getCrossAxisBasis();
         }
-        this._resizingMainAxis = false;
-        this._resizingCrossAxis = false;
-        this._shrunk = false;
+        this.resizingMainAxis = false;
+        this.resizingCrossAxis = false;
+        this.shrunk = false;
     }
 
-    _layoutAxes() {
-        this._layoutMainAxis();
-        this._layoutCrossAxis();
+    private layoutAxes() {
+        this.layoutMainAxis();
+        this.layoutCrossAxis();
     }
 
-    /**
-     * @pre mainAxisSize should exclude padding.
-     */
-    _layoutMainAxis() {
-        this._layoutLines();
-        this._fitMainAxisSizeToContents();
+    private layoutMainAxis() {
+        this.lineLayouter.layoutLines();
+        this.fitMainAxisSizeToContents();
     }
 
-    _layoutLines() {
-        this._lineLayouter.layoutLines();
+    getLines() {
+        return this.lineLayouter.lines;
     }
 
-    get _lines() {
-        return this._lineLayouter.lines;
-    }
-
-    _fitMainAxisSizeToContents() {
-        if (!this._resizingMainAxis) {
+    private fitMainAxisSizeToContents() {
+        if (!this.resizingMainAxis) {
             if (this.isMainAxisFitToContents()) {
-                this.mainAxisSize = this._lineLayouter.mainAxisContentSize;
+                this.mainAxisSize = this.lineLayouter.mainAxisContentSize;
             }
         }
     }
 
-    /**
-     * @pre crossAxisSize should exclude padding.
-     */
-    _layoutCrossAxis() {
+    private layoutCrossAxis() {
         const aligner = new ContentAligner(this);
-        aligner.init();
-        this._totalCrossAxisSize = aligner.totalCrossAxisSize;
-        this._fitCrossAxisSizeToContents();
+        this.totalCrossAxisSize = aligner.getTotalCrossAxisSize();
+        this.fitCrossAxisSizeToContents();
         aligner.align();
     }
 
-    _fitCrossAxisSizeToContents() {
-        if (!this._resizingCrossAxis) {
+    private fitCrossAxisSizeToContents() {
+        if (!this.resizingCrossAxis) {
             if (this.isCrossAxisFitToContents()) {
-                this.crossAxisSize = this._totalCrossAxisSize;
+                this.crossAxisSize = this.totalCrossAxisSize;
             }
         }
     }
 
     isWrapping() {
-        return this._flexContainer.wrap;
+        return this.container.wrap;
     }
 
     isAxisFitToContents(horizontal: boolean) {
-        if (this._horizontal === horizontal) {
+        if (this.horizontal === horizontal) {
             return this.isMainAxisFitToContents();
         } else {
             return this.isCrossAxisFitToContents();
@@ -161,35 +145,27 @@ export default class FlexLayouter {
     }
 
     isMainAxisFitToContents() {
-        return !this.isWrapping() && !this._hasFixedMainAxisBasis();
+        return !this.isWrapping() && !this.hasFixedMainAxisBasis();
     }
 
     isCrossAxisFitToContents() {
-        return !this._hasFixedCrossAxisBasis();
+        return !this.hasFixedCrossAxisBasis();
     }
 
-    _hasFixedMainAxisBasis() {
-        return !FlexUtils.isZeroAxisSize(this.item, this._horizontal);
+    private hasFixedMainAxisBasis() {
+        return !this.item.isZeroAxisSize(this.horizontal);
     }
 
-    _hasFixedCrossAxisBasis() {
-        return !FlexUtils.isZeroAxisSize(this.item, !this._horizontal);
+    private hasFixedCrossAxisBasis() {
+        return !this.item.isZeroAxisSize(!this.horizontal);
     }
 
     getAxisMinSize(horizontal: boolean) {
-        if (this._horizontal === horizontal) {
-            return this._getMainAxisMinSize();
+        if (this.horizontal === horizontal) {
+            return this.lineLayouter.mainAxisMinSize;
         } else {
-            return this._getCrossAxisMinSize();
+            return this.lineLayouter.crossAxisMinSize;
         }
-    }
-
-    _getMainAxisMinSize() {
-        return this._lineLayouter.mainAxisMinSize;
-    }
-
-    _getCrossAxisMinSize() {
-        return this._lineLayouter.crossAxisMinSize;
     }
 
     resizeMainAxis(size: number) {
@@ -197,9 +173,9 @@ export default class FlexLayouter {
             if (this.recalc > 0) {
                 this.performResizeMainAxis(size);
             } else {
-                if (this._checkValidCacheMainAxisResize(size)) {
+                if (this.checkValidCacheMainAxisResize(size)) {
                     this.mainAxisSize = size;
-                    this._fitCrossAxisSizeToContents();
+                    this.fitCrossAxisSizeToContents();
                 } else {
                     // Cache miss.
                     this.item.enableLocalRecalcFlag();
@@ -209,7 +185,7 @@ export default class FlexLayouter {
         }
     }
 
-    _checkValidCacheMainAxisResize(size: number) {
+    private checkValidCacheMainAxisResize(size: number) {
         const isFinalMainAxisSize = size === this.subjectMainAxisSize;
         if (isFinalMainAxisSize) {
             return true;
@@ -222,13 +198,13 @@ export default class FlexLayouter {
     }
 
     performResizeMainAxis(size: number) {
-        this._shrunk = size < this.mainAxisSize;
+        this.shrunk = size < this.mainAxisSize;
 
         this.mainAxisSize = size;
 
-        this._resizingMainAxis = true;
-        this._layoutAxes();
-        this._resizingMainAxis = false;
+        this.resizingMainAxis = true;
+        this.layoutAxes();
+        this.resizingMainAxis = false;
     }
 
     resizeCrossAxis(size: number) {
@@ -244,88 +220,74 @@ export default class FlexLayouter {
     performResizeCrossAxis(size: number) {
         this.crossAxisSize = size;
 
-        this._resizingCrossAxis = true;
-        this._layoutCrossAxis();
-        this._resizingCrossAxis = false;
+        this.resizingCrossAxis = true;
+        this.layoutCrossAxis();
+        this.resizingCrossAxis = false;
     }
 
-    get subjectMainAxisSize() {
-        return this._horizontal ? this.item.subject.getLayoutW() : this.item.subject.getLayoutH();
-    }
-
-    get subjectCrossAxisSize() {
-        return this._horizontal ? this.item.subject.getLayoutH() : this.item.subject.getLayoutW();
+    private get subjectMainAxisSize() {
+        return this.horizontal ? this.item.subject.getLayoutW() : this.item.subject.getLayoutH();
     }
 
     getParentFlexContainer() {
         return this.item.isFlexItemEnabled() ? this.item.flexItem!.ctr : undefined;
     }
 
-    _getHorizontalPadding() {
-        return FlexUtils.getTotalPadding(this.item, true);
+    private getMainAxisBasis() {
+        return this.item.getRelAxisSize(this.horizontal);
     }
 
-    _getVerticalPadding() {
-        return FlexUtils.getTotalPadding(this.item, false);
+    private getCrossAxisBasis() {
+        return this.item.getRelAxisSize(!this.horizontal);
     }
 
-    _getHorizontalPaddingOffset() {
-        return FlexUtils.getPaddingOffset(this.item, true);
+    get horizontal() {
+        return this.container.horizontal;
     }
 
-    _getVerticalPaddingOffset() {
-        return FlexUtils.getPaddingOffset(this.item, false);
-    }
-
-    _getMainAxisBasis() {
-        return FlexUtils.getRelAxisSize(this.item, this._horizontal);
-    }
-
-    _getCrossAxisBasis() {
-        return FlexUtils.getRelAxisSize(this.item, !this._horizontal);
-    }
-
-    get _horizontal() {
-        return this._flexContainer.horizontal;
-    }
-
-    get _reverse() {
-        return this._flexContainer.reverse;
+    get reverse() {
+        return this.container.reverse;
     }
 
     get item() {
-        return this._flexContainer.item;
+        return this.container.node;
     }
 
     get items(): FlexNode[] {
         return this.item.items;
     }
 
-    get resizingMainAxis() {
-        return this._resizingMainAxis;
+    isResizingMainAxis() {
+        return this.resizingMainAxis;
     }
 
-    get resizingCrossAxis() {
-        return this._resizingCrossAxis;
-    }
-
-    get numberOfItems() {
-        return this.items.length;
+    isResizingCrossAxis() {
+        return this.resizingCrossAxis;
     }
 
     get mainAxisSize() {
-        return FlexUtils.getAxisLayoutSize(this.item, this._horizontal);
+        return this.item.getAxisLayoutSize(this.horizontal);
     }
 
     set mainAxisSize(v) {
-        FlexUtils.setAxisLayoutSize(this.item, this._horizontal, v);
+        this.item.setAxisLayoutSize(this.horizontal, v);
     }
 
     get crossAxisSize() {
-        return FlexUtils.getAxisLayoutSize(this.item, !this._horizontal);
+        return this.item.getAxisLayoutSize(!this.horizontal);
     }
 
     set crossAxisSize(v) {
-        FlexUtils.setAxisLayoutSize(this.item, !this._horizontal, v);
+        this.item.setAxisLayoutSize(!this.horizontal, v);
     }
+
+    hasShrunk() {
+        return this.shrunk;
+    }
+
+    get recalc() {
+        return this.item.recalc;
+    }
+
+
 }

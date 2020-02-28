@@ -91,7 +91,7 @@ export default class FlexTestUtils {
         return new Promise((resolve, reject) => {
             const collector = new AnnotatedStructureMismatchCollector(root);
             const mismatches = collector.getMismatches();
-            if (options && options.showHtml) {
+            if (options && options.resultVisible) {
                 this._addVisibleTestResult(root);
             }
             if (mismatches.length) {
@@ -108,12 +108,12 @@ export default class FlexTestUtils {
         const missing = [...expectedSet].filter(x => !updatedSet.has(x));
         chai.assert(
             !missing.length,
-            "has missing updated targets: " + missing.map(target => target._target.getLocationString())
+            "has missing updated targets: " + missing.map(target => target.subject.getLocationString())
         );
         const unexpected = [...updatedSet].filter(x => !expectedSet.has(x));
         chai.assert(
             !unexpected.length,
-            "has unexpected updated targets: " + unexpected.map(target => target._target.getLocationString())
+            "has unexpected updated targets: " + unexpected.map(target => target.subject.getLocationString())
         );
 
         const sameLength = expectedTargets.length === updatedTargets.length;
@@ -134,21 +134,21 @@ export default class FlexTestUtils {
 
                 let layoutSpy;
                 if (tests && tests.layouts) {
-                    layoutSpy = sinon.spy(FlexLayouter.prototype, "_layoutMainAxis");
+                    layoutSpy = sinon.spy(FlexLayouter.prototype, "layoutMainAxis");
                 }
 
                 root.update();
                 return this.validateLayout(root, { resultVisible: show })
                     .then(() => {
                         if (tests && tests.layouts) {
-                            const updatedTargets = layoutSpy.thisValues.map(flexLayout => flexLayout.item);
+                            const updatedTargets = layoutSpy.thisValues.map(flexLayout => flexLayout.container.node);
                             const expectedTargets = tests.layouts.map(target => target._layout);
                             this.checkUpdatedTargets(updatedTargets, expectedTargets);
                         }
                     })
                     .finally(() => {
                         if (tests && tests.layouts) {
-                            FlexLayouter.prototype._layoutMainAxis.restore();
+                            FlexLayouter.prototype.layoutMainAxis.restore();
                         }
                     });
             });
@@ -163,21 +163,21 @@ export default class FlexTestUtils {
 
                 let layoutSpy;
                 if (tests && tests.layouts) {
-                    layoutSpy = sinon.spy(FlexLayouter.prototype, "_layoutMainAxis");
+                    layoutSpy = sinon.spy(FlexLayouter.prototype, "layoutMainAxis");
                 }
 
                 root.update();
                 return this.validateAnnotatedFlex(root, { resultVisible: show })
                     .then(() => {
                         if (tests && tests.layouts) {
-                            const updatedTargets = layoutSpy.thisValues.map(flexLayout => flexLayout.item);
+                            const updatedTargets = layoutSpy.thisValues.map(flexLayout => flexLayout.container.node);
                             const expectedTargets = tests.layouts.map(target => target._layout);
                             this.checkUpdatedTargets(updatedTargets, expectedTargets);
                         }
                     })
                     .finally(() => {
                         if (tests && tests.layouts) {
-                            FlexLayouter.prototype._layoutMainAxis.restore();
+                            FlexLayouter.prototype.layoutMainAxis.restore();
                         }
                     });
             });

@@ -7,15 +7,19 @@ import FlexNode from "../../FlexNode";
 
 export default class LineLayout {
     public items: FlexNode[];
-    private _crossAxisMaxLayoutSize: number;
+    private crossAxisMaxLayoutSize: number;
 
     constructor(
-        public _layout: FlexLayouter,
+        private layout: FlexLayouter,
         public startIndex: number,
         public endIndex: number,
-        public _availableSpace: number
+        public availableSpace: number
     ) {
-        this.items = _layout.items;
+        this.items = layout.items;
+    }
+
+    getLayout() {
+        return this.layout;
     }
 
     performLayout() {
@@ -25,23 +29,23 @@ export default class LineLayout {
     }
 
     _setItemSizes() {
-        if (this._availableSpace > 0) {
-            this._growItemSizes(this._availableSpace);
-        } else if (this._availableSpace < 0) {
-            this._shrinkItemSizes(-this._availableSpace);
+        if (this.availableSpace > 0) {
+            this._growItemSizes(this.availableSpace);
+        } else if (this.availableSpace < 0) {
+            this._shrinkItemSizes(-this.availableSpace);
         }
     }
 
     _growItemSizes(amount: number) {
         const grower = new SizeGrower(this);
         grower.grow(amount);
-        this._availableSpace -= grower.getGrownSize();
+        this.availableSpace -= grower.getGrownSize();
     }
 
     _shrinkItemSizes(amount: number) {
         const shrinker = new SizeShrinker(this);
         shrinker.shrink(amount);
-        this._availableSpace += shrinker.getShrunkSize();
+        this.availableSpace += shrinker.getShrunkSize();
     }
 
     setItemPositions() {
@@ -71,17 +75,17 @@ export default class LineLayout {
     }
 
     get crossAxisLayoutSize() {
-        const noSpecifiedCrossAxisSize = this._layout.isCrossAxisFitToContents() && !this._layout.resizingCrossAxis;
-        const shouldFitToContents = this._layout.isWrapping() || noSpecifiedCrossAxisSize;
+        const noSpecifiedCrossAxisSize = this.layout.isCrossAxisFitToContents() && !this.layout.isResizingCrossAxis();
+        const shouldFitToContents = this.layout.isWrapping() || noSpecifiedCrossAxisSize;
         if (shouldFitToContents) {
-            return this._crossAxisMaxLayoutSize;
+            return this.crossAxisMaxLayoutSize;
         } else {
-            return this._layout.crossAxisSize;
+            return this.layout.crossAxisSize;
         }
     }
 
     _calcCrossAxisMaxLayoutSize() {
-        this._crossAxisMaxLayoutSize = this._getCrossAxisMaxLayoutSize();
+        this.crossAxisMaxLayoutSize = this._getCrossAxisMaxLayoutSize();
     }
 
     _getCrossAxisMaxLayoutSize() {

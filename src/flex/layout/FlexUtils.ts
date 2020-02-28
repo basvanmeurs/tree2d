@@ -1,93 +1,14 @@
 import FlexNode from "../FlexNode";
 
 export default class FlexUtils {
-    static getParentAxisSizeWithPadding(item: FlexNode, horizontal: boolean) {
-        const flexParent = item.getParent();
-        if (!flexParent) {
-            return 0;
-        } else {
-            if (flexParent.isFlexEnabled()) {
-                // Use pending layout size.
-                return this.getAxisLayoutSize(flexParent, horizontal) + this.getTotalPadding(flexParent, horizontal);
-            } else {
-                // Use layouted size.
-                const parentSubject = flexParent.subject;
-                return horizontal ? parentSubject.getLayoutW() : parentSubject.getLayoutH();
-            }
-        }
-    }
 
-    static getRelAxisSize(item: FlexNode, horizontal: boolean) {
-        if (horizontal) {
-            if (item.sourceFuncW) {
-                if (this._allowRelAxisSizeFunction(item, true)) {
-                    return item.sourceFuncW(this.getParentAxisSizeWithPadding(item, true));
-                } else {
-                    return 0;
-                }
-            } else {
-                return item.subject.getSourceW();
-            }
-        } else {
-            if (item.sourceFuncH) {
-                if (this._allowRelAxisSizeFunction(item, false)) {
-                    return item.sourceFuncH(this.getParentAxisSizeWithPadding(item, false));
-                } else {
-                    return 0;
-                }
-            } else {
-                return item.subject.getSourceH();
-            }
-        }
-    }
-
-    static _allowRelAxisSizeFunction(item: FlexNode, horizontal: boolean) {
-        const flexParent = item.flexParent;
-        if (flexParent && flexParent._flex!.layout.isAxisFitToContents(horizontal)) {
-            // We don't allow relative width on fit-to-contents because it leads to conflicts.
-            return false;
-        }
-        return true;
-    }
-
-    static isZeroAxisSize(item: FlexNode, horizontal: boolean) {
-        if (horizontal) {
-            return !item.subject.getSourceW() && !item.sourceFuncW;
-        } else {
-            return !item.subject.getSourceH() && !item.sourceFuncH;
-        }
-    }
-
-    static getAxisLayoutPos(item: FlexNode, horizontal: boolean) {
-        return horizontal ? item.x : item.y;
-    }
-
-    static getAxisLayoutSize(item: FlexNode, horizontal: boolean) {
-        return horizontal ? item.w : item.h;
-    }
-
-    static setAxisLayoutPos(item: FlexNode, horizontal: boolean, pos: number) {
-        if (horizontal) {
-            item.x = pos;
-        } else {
-            item.y = pos;
-        }
-    }
-
-    static setAxisLayoutSize(item: FlexNode, horizontal: boolean, size: number) {
-        if (horizontal) {
-            item.w = size;
-        } else {
-            item.h = size;
-        }
-    }
 
     static getAxisMinSize(item: FlexNode, horizontal: boolean) {
         let minSize = this.getPlainAxisMinSize(item, horizontal);
 
         let flexItemMinSize = 0;
         if (item.isFlexItemEnabled()) {
-            flexItemMinSize = item._flexItem!._getMinSizeSetting(horizontal);
+            flexItemMinSize = item.flexItem!._getMinSizeSetting(horizontal);
         }
 
         const hasLimitedMinSize = flexItemMinSize > 0;
@@ -99,33 +20,33 @@ export default class FlexUtils {
 
     static getPlainAxisMinSize(item: FlexNode, horizontal: boolean) {
         if (item.isFlexEnabled()) {
-            return item._flex!.layout.getAxisMinSize(horizontal);
+            return item.flex!.layout.getAxisMinSize(horizontal);
         } else {
-            const isShrinkable = item._flexItem!.shrink !== 0;
+            const isShrinkable = item.flexItem!.shrink !== 0;
             if (isShrinkable) {
                 return 0;
             } else {
-                return this.getRelAxisSize(item, horizontal);
+                return item.getRelAxisSize(horizontal);
             }
         }
     }
 
     static resizeAxis(item: FlexNode, horizontal: boolean, size: number) {
         if (item.isFlexEnabled()) {
-            const isMainAxis = item._flex!.horizontal === horizontal;
+            const isMainAxis = item.flex!.horizontal === horizontal;
             if (isMainAxis) {
-                item._flex!.layout.resizeMainAxis(size);
+                item.flex!.layout.resizeMainAxis(size);
             } else {
-                item._flex!.layout.resizeCrossAxis(size);
+                item.flex!.layout.resizeCrossAxis(size);
             }
         } else {
-            this.setAxisLayoutSize(item, horizontal, size);
+            item.setAxisLayoutSize(horizontal, size);
         }
     }
 
     static getPaddingOffset(item: FlexNode, horizontal: boolean) {
         if (item.isFlexEnabled()) {
-            const flex = item._flex!;
+            const flex = item.flex!;
             if (horizontal) {
                 return flex.paddingLeft;
             } else {
@@ -136,21 +57,8 @@ export default class FlexUtils {
         }
     }
 
-    static getTotalPadding(item: FlexNode, horizontal: boolean) {
-        if (item.isFlexEnabled()) {
-            const flex = item._flex!;
-            if (horizontal) {
-                return flex.paddingRight + flex.paddingLeft;
-            } else {
-                return flex.paddingTop + flex.paddingBottom;
-            }
-        } else {
-            return 0;
-        }
-    }
-
     static getMarginOffset(item: FlexNode, horizontal: boolean) {
-        const flexItem = item._flexItem!;
+        const flexItem = item.flexItem!;
         if (flexItem) {
             if (horizontal) {
                 return flexItem.marginLeft;
@@ -163,7 +71,7 @@ export default class FlexUtils {
     }
 
     static getTotalMargin(item: FlexNode, horizontal: boolean) {
-        const flexItem = item._flexItem!;
+        const flexItem = item.flexItem!;
         if (flexItem) {
             if (horizontal) {
                 return flexItem.marginRight + flexItem.marginLeft;

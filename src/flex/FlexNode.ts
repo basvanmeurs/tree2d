@@ -22,11 +22,11 @@ export default class FlexNode {
     public w: number = 0;
     public h: number = 0;
 
-    public _flex?: FlexContainer;
-    public _flexItem?: FlexItem = undefined;
-    public _flexItemDisabled: boolean = false;
+    private _flex?: FlexContainer;
+    private _flexItem?: FlexItem = undefined;
+    private _flexItemDisabled: boolean = false;
 
-    public _items?: FlexNode[] = undefined;
+    private _items?: FlexNode[] = undefined;
 
     constructor(public readonly subject: FlexSubject) {}
 
@@ -254,10 +254,10 @@ export default class FlexNode {
         let sourceX = subject.getSourceX();
         let sourceY = subject.getSourceY();
         if (this.sourceFuncX) {
-            sourceX = this.sourceFuncX(FlexUtils.getParentAxisSizeWithPadding(this, true));
+            sourceX = this.sourceFuncX(this.getParentAxisSizeWithPadding(true));
         }
         if (this.sourceFuncY) {
-            sourceY = this.sourceFuncY(FlexUtils.getParentAxisSizeWithPadding(this, false));
+            sourceY = this.sourceFuncY(this.getParentAxisSizeWithPadding(false));
         }
 
         if (this.isFlexItemEnabled()) {
@@ -327,8 +327,8 @@ export default class FlexNode {
     private _getRecalcFromChangedChildRecalc(childRecalc: number) {
         const layout = this._flex!.layout;
 
-        const mainAxisRecalcFlag = layout._horizontal ? 1 : 2;
-        const crossAxisRecalcFlag = layout._horizontal ? 2 : 1;
+        const mainAxisRecalcFlag = layout.horizontal ? 1 : 2;
+        const crossAxisRecalcFlag = layout.horizontal ? 2 : 1;
 
         const crossAxisDimensionsChangedInChild = childRecalc & crossAxisRecalcFlag;
         if (!crossAxisDimensionsChangedInChild) {
@@ -348,10 +348,10 @@ export default class FlexNode {
         let isWidthDynamic = layout.isAxisFitToContents(true);
         let isHeightDynamic = layout.isAxisFitToContents(false);
 
-        if (layout.shrunk) {
+        if (layout.hasShrunk()) {
             // If during previous layout this container was 'shrunk', any changes may change the 'min axis size' of the
             // contents, leading to a different axis size on this container even when it was not 'fit to contents'.
-            if (layout._horizontal) {
+            if (layout.horizontal) {
                 isWidthDynamic = true;
             } else {
                 isHeightDynamic = true;
@@ -398,4 +398,102 @@ export default class FlexNode {
     get sourceFuncH() {
         return this.subject.getSourceFuncH();
     }
+
+    getAxisLayoutSize(horizontal: boolean) {
+        return horizontal ? this.w : this.h;
+    }
+
+    setAxisLayoutSize(horizontal: boolean, size: number) {
+        if (horizontal) {
+            this.w = size;
+        } else {
+            this.h = size;
+        }
+    }
+
+    getAxisLayoutPos(horizontal: boolean) {
+        return horizontal ? this.x : this.y;
+    }
+
+    setAxisLayoutPos(horizontal: boolean, pos: number) {
+        if (horizontal) {
+            this.x = pos;
+        } else {
+            this.y = pos;
+        }
+    }
+
+    getParentAxisSizeWithPadding(horizontal: boolean) {
+        const flexParent = this.getParent();
+        if (!flexParent) {
+            return 0;
+        } else {
+            if (flexParent.isFlexEnabled()) {
+                // Use pending layout size.
+                return flexParent.getAxisLayoutSize(horizontal) + flexParent.getTotalPadding(horizontal);
+            } else {
+                // Use layouted size.
+                const parentSubject = flexParent.subject;
+                return horizontal ? parentSubject.getLayoutW() : parentSubject.getLayoutH();
+            }
+        }
+    }
+
+    getTotalPadding(horizontal: boolean) {
+        if (this.isFlexEnabled()) {
+            const flex = this.flex!;
+            if (horizontal) {
+                return flex.paddingRight + flex.paddingLeft;
+            } else {
+                return flex.paddingTop + flex.paddingBottom;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    getRelAxisSize(horizontal: boolean) {
+        if (horizontal) {
+            if (this.sourceFuncW) {
+                if (this.allowRelAxisSizeFunction(true)) {
+                    return this.sourceFuncW(this.getParentAxisSizeWithPadding(true));
+                } else {
+                    return 0;
+                }
+            } else {
+                return this.subject.getSourceW();
+            }
+        } else {
+            if (this.sourceFuncH) {
+                if (this.allowRelAxisSizeFunction(false)) {
+                    return this.sourceFuncH(this.getParentAxisSizeWithPadding(false));
+                } else {
+                    return 0;
+                }
+            } else {
+                return this.subject.getSourceH();
+            }
+        }
+    }
+
+    private allowRelAxisSizeFunction(horizontal: boolean) {
+        const flexParent = this.flexParent;
+        if (flexParent && flexParent.flex!.layout.isAxisFitToContents(horizontal)) {
+            // We don't allow relative width on fit-to-contents because it leads to conflicts.
+            return false;
+        }
+        return true;
+    }
+
+    isZeroAxisSize(horizontal: boolean) {
+        if (horizontal) {
+            return !this.subject.getSourceW() && !this.sourceFuncW;
+        } else {
+            return !this.subject.getSourceH() && !this.sourceFuncH;
+        }
+    }
+
+
+
+
 }

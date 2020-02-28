@@ -1,6 +1,7 @@
 import Layout from "./layout/FlexLayouter";
 import FlexNode from "./FlexNode";
 import { SpacingMode } from "./layout/SpacingCalculator";
+import FlexUtils from "./layout/FlexUtils";
 
 export type AlignItemsMode = "flex-start" | "flex-end" | "center" | "stretch";
 
@@ -29,14 +30,14 @@ export default class FlexContainer {
     private _paddingRight: number = 0;
     private _paddingBottom: number = 0;
 
-    constructor(public readonly item: FlexNode) {}
+    constructor(public readonly node: FlexNode) {}
 
     private _changedDimensions() {
-        this.item.forceLayout();
+        this.node.forceLayout();
     }
 
     changedContents() {
-        this.item.changedContents();
+        this.node.changedContents();
     }
 
     get direction() {
@@ -142,4 +143,21 @@ export default class FlexContainer {
     get paddingBottom() {
         return this._paddingBottom;
     }
+
+    getHorizontalPadding() {
+        return this.node.getTotalPadding(true);
+    }
+
+    getVerticalPadding() {
+        return this.node.getTotalPadding(false);
+    }
+
+    getHorizontalPaddingOffset() {
+        return FlexUtils.getPaddingOffset(this.node, true);
+    }
+
+    getVerticalPaddingOffset() {
+        return FlexUtils.getPaddingOffset(this.node, false);
+    }
+
 }

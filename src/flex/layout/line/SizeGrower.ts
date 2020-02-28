@@ -1,21 +1,21 @@
 import LineLayout from "./LineLayout";
 
 export default class SizeGrower {
-    private _amountRemaining: number = 0;
-    private _grownSize: number = 0;
+    private amountRemaining: number = 0;
+    private grownSize: number = 0;
 
-    constructor(private _line: LineLayout) {}
+    constructor(private line: LineLayout) {}
 
     grow(amount: number) {
-        this._grownSize = 0;
+        this.grownSize = 0;
 
-        this._amountRemaining = amount;
-        let totalGrowAmount = this._getTotalGrowAmount();
+        this.amountRemaining = amount;
+        let totalGrowAmount = this.getTotalGrowAmount();
         if (totalGrowAmount) {
-            const items = this._line.items;
+            const items = this.line.items;
             do {
-                const amountPerGrow = this._amountRemaining / totalGrowAmount;
-                for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
+                const amountPerGrow = this.amountRemaining / totalGrowAmount;
+                for (let i = this.line.startIndex; i <= this.line.endIndex; i++) {
                     const item = items[i];
                     const flexItem = item.flexItem!;
                     const growAmount = flexItem.grow;
@@ -44,23 +44,23 @@ export default class SizeGrower {
                             const finalSize = size + grow;
                             flexItem._resizeMainAxis(finalSize);
 
-                            this._grownSize += grow;
-                            this._amountRemaining -= grow;
+                            this.grownSize += grow;
+                            this.amountRemaining -= grow;
 
-                            if (Math.abs(this._amountRemaining) < 10e-6) {
+                            if (Math.abs(this.amountRemaining) < 10e-6) {
                                 return;
                             }
                         }
                     }
                 }
-            } while (totalGrowAmount && Math.abs(this._amountRemaining) > 10e-6);
+            } while (totalGrowAmount && Math.abs(this.amountRemaining) > 10e-6);
         }
     }
 
-    _getTotalGrowAmount() {
+    private getTotalGrowAmount() {
         let total = 0;
-        const items = this._line.items;
-        for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
+        const items = this.line.items;
+        for (let i = this.line.startIndex; i <= this.line.endIndex; i++) {
             const item = items[i];
             const flexItem = item.flexItem!;
 
@@ -78,6 +78,6 @@ export default class SizeGrower {
     }
 
     getGrownSize() {
-        return this._grownSize;
+        return this.grownSize;
     }
 }

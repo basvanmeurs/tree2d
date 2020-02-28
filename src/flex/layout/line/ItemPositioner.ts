@@ -2,19 +2,19 @@ import SpacingCalculator from "../SpacingCalculator";
 import LineLayout from "./LineLayout";
 
 export default class ItemPositioner {
-    constructor(private _line: LineLayout) {}
+    constructor(private line: LineLayout) {}
 
-    get _layout() {
-        return this._line._layout;
+    private get _layout() {
+        return this.line.getLayout();
     }
 
     position() {
-        const { spacingBefore, spacingBetween } = this._getSpacing();
+        const { spacingBefore, spacingBetween } = this.getSpacing();
 
         let currentPos = spacingBefore;
 
-        const items = this._line.items;
-        for (let i = this._line.startIndex; i <= this._line.endIndex; i++) {
+        const items = this.line.items;
+        for (let i = this.line.startIndex; i <= this.line.endIndex; i++) {
             const item = items[i];
 
             item.flexItem!._setMainAxisLayoutPos(currentPos);
@@ -23,10 +23,10 @@ export default class ItemPositioner {
         }
     }
 
-    _getSpacing() {
-        const remainingSpace = this._line._availableSpace;
-        const mode = this._layout._flexContainer.justifyContent;
-        const numberOfItems = this._line.numberOfItems;
+    private getSpacing() {
+        const remainingSpace = this.line.availableSpace;
+        const mode = this._layout.container.justifyContent;
+        const numberOfItems = this.line.numberOfItems;
 
         return SpacingCalculator.getSpacing(mode, numberOfItems, remainingSpace);
     }
