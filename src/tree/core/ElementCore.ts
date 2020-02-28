@@ -1,4 +1,4 @@
-import FlexTarget from "../../flex/FlexTarget";
+import FlexNode from "../../flex/FlexNode";
 import Element from "../Element";
 
 export default class ElementCore implements FlexSubject {
@@ -152,7 +152,7 @@ export default class ElementCore implements FlexSubject {
     private render: Function = this._renderSimple;
 
     // Flex layouting if enabled.
-    private _layout?: FlexTarget;
+    private _layout?: FlexNode;
 
     private _stashedTexCoords?: number[];
     private _stashedColors?: number[];
@@ -2151,12 +2151,12 @@ export default class ElementCore implements FlexSubject {
         return [w.px + w.ta * relX + w.tb * relY, w.py + w.tc * relX + w.td * relY];
     }
 
-    get layout(): FlexTarget {
+    get layout(): FlexNode {
         this._ensureLayout();
         return this._layout!;
     }
 
-    getLayout(): FlexTarget {
+    getLayout(): FlexNode {
         return this.layout;
     }
 
@@ -2176,7 +2176,7 @@ export default class ElementCore implements FlexSubject {
 
     private _ensureLayout() {
         if (!this._layout) {
-            this._layout = new FlexTarget(this);
+            this._layout = new FlexNode(this);
         }
     }
 

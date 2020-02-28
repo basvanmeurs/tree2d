@@ -1,6 +1,6 @@
 import FlexUtils from "./FlexUtils.js";
 import FlexContainer, { AlignItemsMode } from "./FlexContainer";
-import FlexTarget from "./FlexTarget";
+import FlexNode from "./FlexNode";
 
 export default class FlexItem {
     public static readonly SHRINK_AUTO = -1;
@@ -22,7 +22,7 @@ export default class FlexItem {
     _marginRight: number = 0;
     _marginBottom: number = 0;
 
-    constructor(private _item: FlexTarget) {}
+    constructor(private _item: FlexNode) {}
 
     get item() {
         return this._item;

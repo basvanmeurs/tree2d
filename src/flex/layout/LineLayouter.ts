@@ -1,6 +1,6 @@
 import LineLayout from "./line/LineLayout";
 import FlexLayouter from "./FlexLayouter";
-import FlexTarget from "../FlexTarget";
+import FlexNode from "../FlexNode";
 
 /**
  * Distributes items over layout lines.
@@ -71,7 +71,7 @@ export default class LineLayouter {
         }
     }
 
-    _layoutFlexItem(item: FlexTarget) {
+    _layoutFlexItem(item: FlexNode) {
         if (item.isFlexEnabled()) {
             item.flexLayout!.updateTreeLayout();
         } else {

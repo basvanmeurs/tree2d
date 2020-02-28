@@ -3,10 +3,10 @@ import SizeGrower from "./SizeGrower";
 import ItemPositioner from "./ItemPositioner";
 import ItemAligner from "./ItemAligner";
 import FlexLayouter from "../FlexLayouter";
-import FlexTarget from "../../FlexTarget";
+import FlexNode from "../../FlexNode";
 
 export default class LineLayout {
-    public items: FlexTarget[];
+    public items: FlexNode[];
     private _crossAxisMaxLayoutSize: number;
 
     constructor(

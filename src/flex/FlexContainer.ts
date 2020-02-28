@@ -1,5 +1,5 @@
 import Layout from "./layout/FlexLayouter";
-import FlexTarget from "./FlexTarget";
+import FlexNode from "./FlexNode";
 import { SpacingMode } from "./layout/SpacingCalculator";
 
 export type AlignItemsMode = "flex-start" | "flex-end" | "center" | "stretch";
@@ -29,7 +29,7 @@ export default class FlexContainer {
     private _paddingRight: number = 0;
     private _paddingBottom: number = 0;
 
-    constructor(public readonly item: FlexTarget) {}
+    constructor(public readonly item: FlexNode) {}
 
     private _changedDimensions() {
         this.item.forceLayout();

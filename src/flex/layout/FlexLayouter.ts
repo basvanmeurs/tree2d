@@ -3,7 +3,7 @@ import FlexUtils from "../FlexUtils.js";
 import LineLayouter from "./LineLayouter";
 import ItemCoordinatesUpdater from "./ItemCoordinatesUpdater";
 import FlexContainer from "../FlexContainer";
-import FlexTarget from "../FlexTarget";
+import FlexNode from "../FlexNode";
 
 /**
  * Layouts a flex container (and descendants).
@@ -297,7 +297,7 @@ export default class FlexLayouter {
         return this._flexContainer.item;
     }
 
-    get items(): FlexTarget[] {
+    get items(): FlexNode[] {
         return this.item.items;
     }
 

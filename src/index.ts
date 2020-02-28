@@ -44,7 +44,7 @@ import C2dBlurShader from "./renderer/c2d/shaders/BlurShader";
 
 import Stage from "./tree/Stage";
 
-import FlexTarget from "./flex/FlexTarget";
+import FlexNode from "./flex/FlexNode";
 import FlexLayouter from "./flex/layout/FlexLayouter";
 import FlexContainer from "./flex/FlexContainer";
 
@@ -59,7 +59,7 @@ const index = {
     ElementTexturizer,
     Texture,
     EventEmitter,
-    FlexTarget,
+    FlexTarget: FlexNode,
     FlexLayout: FlexLayouter,
     FlexContainer,
     shaders: {

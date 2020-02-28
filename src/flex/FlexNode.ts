@@ -6,7 +6,7 @@ import { FlexSubject } from "./FlexSubject";
 /**
  * This is the connection between the render tree with the layout tree of this flex container/item.
  */
-export default class FlexTarget {
+export default class FlexNode {
     /**
      * Possible values (only in case of container):
      * bit 0: has changed or contains items with changes
@@ -26,7 +26,7 @@ export default class FlexTarget {
     public _flexItem?: FlexItem = undefined;
     public _flexItemDisabled: boolean = false;
 
-    public _items?: FlexTarget[] = undefined;
+    public _items?: FlexNode[] = undefined;
 
     constructor(public readonly subject: FlexSubject) {}
 
@@ -194,7 +194,7 @@ export default class FlexTarget {
         this._checkEnabled();
     }
 
-    getParent(): FlexTarget | undefined {
+    getParent(): FlexNode | undefined {
         const parent = this.subject.getParent();
         if (!parent) {
             return undefined;
@@ -203,7 +203,7 @@ export default class FlexTarget {
         }
     }
 
-    get flexParent(): FlexTarget | undefined {
+    get flexParent(): FlexNode | undefined {
         if (this._flexItemDisabled) {
             return undefined;
         }
@@ -229,7 +229,7 @@ export default class FlexTarget {
         return this._items;
     }
 
-    private _getFlexItems(): FlexTarget[] {
+    private _getFlexItems(): FlexNode[] {
         const items = [];
         const children = this.subject.getChildren();
         if (children) {

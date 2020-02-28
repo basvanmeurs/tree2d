@@ -1,7 +1,7 @@
-import FlexTarget from "./FlexTarget";
+import FlexNode from "./FlexNode";
 
 export default class FlexUtils {
-    static getParentAxisSizeWithPadding(item: FlexTarget, horizontal: boolean) {
+    static getParentAxisSizeWithPadding(item: FlexNode, horizontal: boolean) {
         const flexParent = item.getParent();
         if (!flexParent) {
             return 0;
@@ -17,7 +17,7 @@ export default class FlexUtils {
         }
     }
 
-    static getRelAxisSize(item: FlexTarget, horizontal: boolean) {
+    static getRelAxisSize(item: FlexNode, horizontal: boolean) {
         if (horizontal) {
             if (item.funcW) {
                 if (this._allowRelAxisSizeFunction(item, true)) {
@@ -41,7 +41,7 @@ export default class FlexUtils {
         }
     }
 
-    static _allowRelAxisSizeFunction(item: FlexTarget, horizontal: boolean) {
+    static _allowRelAxisSizeFunction(item: FlexNode, horizontal: boolean) {
         const flexParent = item.flexParent;
         if (flexParent && flexParent._flex!.layout.isAxisFitToContents(horizontal)) {
             // We don't allow relative width on fit-to-contents because it leads to conflicts.
@@ -50,7 +50,7 @@ export default class FlexUtils {
         return true;
     }
 
-    static isZeroAxisSize(item: FlexTarget, horizontal: boolean) {
+    static isZeroAxisSize(item: FlexNode, horizontal: boolean) {
         if (horizontal) {
             return !item.subject.getSourceW() && !item.funcW;
         } else {
@@ -58,15 +58,15 @@ export default class FlexUtils {
         }
     }
 
-    static getAxisLayoutPos(item: FlexTarget, horizontal: boolean) {
+    static getAxisLayoutPos(item: FlexNode, horizontal: boolean) {
         return horizontal ? item.x : item.y;
     }
 
-    static getAxisLayoutSize(item: FlexTarget, horizontal: boolean) {
+    static getAxisLayoutSize(item: FlexNode, horizontal: boolean) {
         return horizontal ? item.w : item.h;
     }
 
-    static setAxisLayoutPos(item: FlexTarget, horizontal: boolean, pos: number) {
+    static setAxisLayoutPos(item: FlexNode, horizontal: boolean, pos: number) {
         if (horizontal) {
             item.x = pos;
         } else {
@@ -74,7 +74,7 @@ export default class FlexUtils {
         }
     }
 
-    static setAxisLayoutSize(item: FlexTarget, horizontal: boolean, size: number) {
+    static setAxisLayoutSize(item: FlexNode, horizontal: boolean, size: number) {
         if (horizontal) {
             item.w = size;
         } else {
@@ -82,7 +82,7 @@ export default class FlexUtils {
         }
     }
 
-    static getAxisMinSize(item: FlexTarget, horizontal: boolean) {
+    static getAxisMinSize(item: FlexNode, horizontal: boolean) {
         let minSize = this.getPlainAxisMinSize(item, horizontal);
 
         let flexItemMinSize = 0;
@@ -97,7 +97,7 @@ export default class FlexUtils {
         return minSize;
     }
 
-    static getPlainAxisMinSize(item: FlexTarget, horizontal: boolean) {
+    static getPlainAxisMinSize(item: FlexNode, horizontal: boolean) {
         if (item.isFlexEnabled()) {
             return item._flex!.layout.getAxisMinSize(horizontal);
         } else {
@@ -110,7 +110,7 @@ export default class FlexUtils {
         }
     }
 
-    static resizeAxis(item: FlexTarget, horizontal: boolean, size: number) {
+    static resizeAxis(item: FlexNode, horizontal: boolean, size: number) {
         if (item.isFlexEnabled()) {
             const isMainAxis = item._flex!.horizontal === horizontal;
             if (isMainAxis) {
@@ -123,7 +123,7 @@ export default class FlexUtils {
         }
     }
 
-    static getPaddingOffset(item: FlexTarget, horizontal: boolean) {
+    static getPaddingOffset(item: FlexNode, horizontal: boolean) {
         if (item.isFlexEnabled()) {
             const flex = item._flex!;
             if (horizontal) {
@@ -136,7 +136,7 @@ export default class FlexUtils {
         }
     }
 
-    static getTotalPadding(item: FlexTarget, horizontal: boolean) {
+    static getTotalPadding(item: FlexNode, horizontal: boolean) {
         if (item.isFlexEnabled()) {
             const flex = item._flex!;
             if (horizontal) {
@@ -149,7 +149,7 @@ export default class FlexUtils {
         }
     }
 
-    static getMarginOffset(item: FlexTarget, horizontal: boolean) {
+    static getMarginOffset(item: FlexNode, horizontal: boolean) {
         const flexItem = item._flexItem!;
         if (flexItem) {
             if (horizontal) {
@@ -162,7 +162,7 @@ export default class FlexUtils {
         }
     }
 
-    static getTotalMargin(item: FlexTarget, horizontal: boolean) {
+    static getTotalMargin(item: FlexNode, horizontal: boolean) {
         const flexItem = item._flexItem!;
         if (flexItem) {
             if (horizontal) {

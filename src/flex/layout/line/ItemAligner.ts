@@ -1,6 +1,6 @@
 import LineLayout from "./LineLayout";
 import { AlignItemsMode } from "../../FlexContainer";
-import FlexTarget from "../../FlexTarget";
+import FlexNode from "../../FlexNode";
 import FlexItem from "../../FlexItem";
 
 export default class ItemAligner {
@@ -45,7 +45,7 @@ export default class ItemAligner {
         return this._recursiveResizeOccured;
     }
 
-    _alignItem(item: FlexTarget) {
+    _alignItem(item: FlexNode) {
         const flexItem = item.flexItem!;
         let align = flexItem.alignSelf || this._alignItemsSetting;
 

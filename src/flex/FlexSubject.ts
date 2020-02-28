@@ -1,8 +1,8 @@
-import FlexTarget from "./FlexTarget";
+import FlexNode from "./FlexNode";
 
 export interface FlexSubject {
     getChildren(): FlexSubject[] | undefined;
-    getLayout(): FlexTarget;
+    getLayout(): FlexNode;
     getParent(): FlexSubject | undefined;
     enableFlexLayout(): void;
     disableFlexLayout(): void;
