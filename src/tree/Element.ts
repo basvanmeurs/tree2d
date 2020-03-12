@@ -383,7 +383,7 @@ class Element {
     }
 
     textureIsLoaded(): boolean {
-        return this.__texture && this.__texture.isLoaded();
+        return this.__texture ? this.__texture.isLoaded() : false;
     }
 
     loadTexture(): void {
@@ -402,16 +402,16 @@ class Element {
         // txError event should automatically be re-triggered when a element becomes active.
         const loadError = this.__texture!.loadError;
         if (loadError) {
-            this._onTextureError(loadError, this.__texture!._source);
+            this._onTextureError(loadError, this.__texture!.source);
         }
     }
 
     private _enableTexture(): void {
         if (this.__texture!.isLoaded()) {
-            this._setDisplayedTexture(this.__texture);
+            this.setDisplayedTexture(this.__texture);
         } else {
             // We don't want to retain the old image as it wasn't visible anyway.
-            this._setDisplayedTexture(undefined);
+            this.setDisplayedTexture(undefined);
 
             this._enableTextureError();
         }
@@ -420,26 +420,23 @@ class Element {
     private _disableTexture(): void {
         // We disable the displayed texture because, when the texture changes while invisible, we should use that w, h,
         // mw, mh for checking within bounds.
-        this._setDisplayedTexture(undefined);
+        this.setDisplayedTexture(undefined);
     }
 
-    get texture(): Texture | undefined {
+    get texture(): Texture | TextureSource | undefined {
         return this.__texture;
     }
 
-    set texture(v: Texture | undefined) {
+    set texture(v: Texture | TextureSource | undefined) {
         let texture;
         if (!v) {
             texture = undefined;
         } else {
-            if (v.isTexture) {
-                texture = v;
-            } else if (v instanceof TextureSource) {
+            if (v instanceof TextureSource) {
                 texture = new SourceTexture(this.stage);
                 texture.textureSource = v;
             } else {
-                console.error("Please specify a texture type.");
-                return;
+                texture = v;
             }
         }
 
@@ -453,7 +450,7 @@ class Element {
 
                     if (this.isWithinBoundsMargin()) {
                         if (this.__texture.isLoaded()) {
-                            this._setDisplayedTexture(this.__texture);
+                            this.setDisplayedTexture(this.__texture);
                         } else {
                             this._enableTextureError();
                         }
@@ -461,7 +458,7 @@ class Element {
                 }
             } else {
                 // Make sure that current texture is cleared when the texture is explicitly set to undefined.
-                this._setDisplayedTexture(undefined);
+                this.setDisplayedTexture(undefined);
             }
 
             if (prevTexture && prevTexture !== this.__displayedTexture) {
@@ -476,7 +473,7 @@ class Element {
         return this.__displayedTexture;
     }
 
-    private _setDisplayedTexture(v: Texture | undefined) {
+    setDisplayedTexture(v: Texture | undefined) {
         const prevTexture = this.__displayedTexture;
 
         if (prevTexture && v !== prevTexture) {
@@ -515,7 +512,7 @@ class Element {
         // This function is called when element is enabled, but we only want to set displayed texture for active elements.
         if (this.active) {
             // We may be dealing with a texture reloading, so we must force update.
-            this._setDisplayedTexture(this.__texture);
+            this.setDisplayedTexture(this.__texture);
         }
     }
 

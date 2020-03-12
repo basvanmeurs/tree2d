@@ -91,7 +91,7 @@ export default class DitheringShader extends DefaultShader {
             this.getVertexAttribPointerOffset(operation)
         );
 
-        const glTexture = this._noiseTexture.source.nativeTexture;
+        const glTexture = this._noiseTexture.source!.nativeTexture;
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
         gl.activeTexture(gl.TEXTURE0);

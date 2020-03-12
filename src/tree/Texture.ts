@@ -1,102 +1,53 @@
+import Stage from "./Stage";
+import Element from "./Element";
+
 export default class Texture {
+    private manager = this.stage.textureManager;
+
+    private id: number = Texture.id++;
+
+    public static id = 0;
+
+    // All enabled elements that use this texture object (either as texture or displayedTexture).
+    private elements = new Set<Element>();
+
+    // The number of enabled elements that are active.
+    private _activeCount: number = 0;
+
+    private _source?: TextureSource;
+
     /**
-     * @param {Stage} stage
+     * A resize mode can be set to cover or contain a certain area.
+     * It will reset the texture clipping settings.
+     * Vice versa, when manual texture clipping is performed, the resizeMode is reset.
      */
-    constructor(stage) {
-        this.stage = stage;
+    private _resizeMode?: ResizeMode = undefined;
 
-        this.manager = this.stage.textureManager;
+    // Texture clipping coordinates.
+    private _x: number = 0;
+    private _y: number = 0;
+    private _w: number = 0;
+    private _h: number = 0;
 
-        this.id = Texture.id++;
+    // Render precision (0.5 = fuzzy, 1 = normal, 2 = sharp even when scaled twice, etc.).
+    private _precision: number = 1;
 
-        /**
-         * All enabled elements that use this texture object (either as texture or displayedTexture).
-         * @type {Set<Element>}
-         */
-        this.elements = new Set();
+    /**
+     * The (maximum) expected texture source dimensions. Used for within bounds determination while texture is not yet loaded.
+     * If not set, 2048 is used by ElementCore.update.
+     */
+    private mw: number = 0;
+    private mh: number = 0;
 
-        /**
-         * The number of enabled elements that are active.
-         * @type {number}
-         */
-        this._activeCount = 0;
+    // Flag that indicates that this texture uses clipping.
+    private clipping: boolean = false;
 
-        /**
-         * The associated texture source.
-         * Should not be changed.
-         * @type {TextureSource}
-         */
-        this._source = null;
+    // Indicates whether this texture must update (when it becomes used again).
+    private _mustUpdate: boolean = true;
 
-        /**
-         * A resize mode can be set to cover or contain a certain area.
-         * It will reset the texture clipping settings.
-         * When manual texture clipping is performed, the resizeMode is reset.
-         * @type {{type: string, width: number, height: number}}
-         * @private
-         */
-        this._resizeMode = null;
+    constructor(private stage: Stage) {}
 
-        /**
-         * The texture clipping x-offset.
-         * @type {number}
-         */
-        this._x = 0;
-
-        /**
-         * The texture clipping y-offset.
-         * @type {number}
-         */
-        this._y = 0;
-
-        /**
-         * The texture clipping width. If 0 then full width.
-         * @type {number}
-         */
-        this._w = 0;
-
-        /**
-         * The texture clipping height. If 0 then full height.
-         * @type {number}
-         */
-        this._h = 0;
-
-        /**
-         * Render precision (0.5 = fuzzy, 1 = normal, 2 = sharp even when scaled twice, etc.).
-         * @type {number}
-         * @private
-         */
-        this._precision = 1;
-
-        /**
-         * The (maximum) expected texture source width. Used for within bounds determination while texture is not yet loaded.
-         * If not set, 2048 is used by ElementCore.update.
-         * @type {number}
-         */
-        this.mw = 0;
-
-        /**
-         * The (maximum) expected texture source height. Used for within bounds determination while texture is not yet loaded.
-         * If not set, 2048 is used by ElementCore.update.
-         * @type {number}
-         */
-        this.mh = 0;
-
-        /**
-         * Indicates if Texture.prototype.texture uses clipping.
-         * @type {boolean}
-         */
-        this.clipping = false;
-
-        /**
-         * Indicates whether this texture must update (when it becomes used again).
-         * @type {boolean}
-         * @private
-         */
-        this._mustUpdate = true;
-    }
-
-    get source() {
+    get source(): TextureSource | undefined {
         if (this._mustUpdate || this.stage.hasUpdateSourceTexture(this)) {
             this._performUpdateSource(true);
             this.stage.removeUpdateSourceTexture(this);
@@ -104,7 +55,7 @@ export default class Texture {
         return this._source;
     }
 
-    addElement(v) {
+    addElement(v: Element) {
         if (!this.elements.has(v)) {
             this.elements.add(v);
 
@@ -120,7 +71,7 @@ export default class Texture {
         }
     }
 
-    removeElement(v) {
+    removeElement(v: Element) {
         if (this.elements.delete(v)) {
             if (this.elements.size === 0) {
                 if (this._source) {
@@ -178,7 +129,7 @@ export default class Texture {
         // When this source became unused and cleaned up, it may have disappeared from the reusable texture map.
         // In the meantime another texture may have been generated loaded with the same lookup id.
         // If this is the case, use that one instead to make sure only one active texture source per lookup id exists.
-        const source = this.source;
+        const source = this.source!;
         if (!source.isLoaded()) {
             const reusable = this._getReusableTextureSource();
             if (reusable && reusable.isLoaded() && reusable !== source) {
@@ -191,7 +142,7 @@ export default class Texture {
         }
     }
 
-    becomesUnused() {
+    private becomesUnused() {
         if (this.source) {
             this.source.decActiveTextureCount();
         }
@@ -201,33 +152,18 @@ export default class Texture {
         return this._activeCount > 0;
     }
 
-    /**
-     * Returns the lookup id for the current texture settings, to be able to reuse it.
-     * @returns {string|null}
-     */
-    _getLookupId() {
+    // Returns the lookup id for the current texture settings, to be able to reuse it.
+    private _getLookupId(): string | undefined {
         // Default: do not reuse texture.
-        return null;
+        return undefined;
     }
 
     /**
      * Generates a loader function that is able to generate the texture for the current settings of this texture.
-     * It should return a function that receives a single callback argument.
-     * That callback should be called with the following arguments:
-     *   - err
-     *   - options: object
-     *     - source: ArrayBuffer|WebGlTexture|ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement|ImageBitmap
-     *     - w: Number
-     *     - h: Number
-     *     - permanent: Boolean
-     *     - hasAlpha: boolean
-     *     - permultiplyAlpha: boolean
-     *     - flipBlueRed: boolean
-     *     - renderInfo: object
      * The loader itself may return a Function that is called when loading of the texture is cancelled. This can be used
      * to stop fetching an image when it is no longer in element, for example.
      */
-    _getSourceLoader() {
+    _getSourceLoader(): TextureSourceLoader {
         throw new Error("Texture.generate must be implemented.");
     }
 
@@ -237,9 +173,8 @@ export default class Texture {
 
     /**
      * If texture is not 'valid', no source can be created for it.
-     * @returns {boolean}
      */
-    _getIsValid() {
+    private _getIsValid(): boolean {
         return true;
     }
 
@@ -255,14 +190,14 @@ export default class Texture {
         }
     }
 
-    _updateSource() {
+    private _updateSource() {
         // We delay all updateSource calls to the next drawFrame, so that we can bundle them.
         // Otherwise we may reload a texture more often than necessary, when, for example, patching multiple text
         // properties.
         this.stage.addUpdateSourceTexture(this);
     }
 
-    _performUpdateSource(force = false) {
+    private _performUpdateSource(force = false) {
         // If, in the meantime, the texture was no longer used, just remember that it must update until it becomes used
         // again.
         if (force || this.isUsed()) {
@@ -272,8 +207,8 @@ export default class Texture {
         }
     }
 
-    _getTextureSource() {
-        let source = null;
+    private _getTextureSource(): TextureSource | undefined {
+        let source = undefined;
         if (this._getIsValid()) {
             const lookupId = this._getLookupId();
             source = this._getReusableTextureSource(lookupId);
@@ -284,16 +219,16 @@ export default class Texture {
         return source;
     }
 
-    _getReusableTextureSource(lookupId = this._getLookupId()) {
+    private _getReusableTextureSource(lookupId = this._getLookupId()): TextureSource | undefined {
         if (this._getIsValid()) {
             if (lookupId) {
                 return this.manager.getReusableTextureSource(lookupId);
             }
         }
-        return null;
+        return undefined;
     }
 
-    _replaceTextureSource(newSource = null) {
+    private _replaceTextureSource(newSource: TextureSource | undefined) {
         const oldSource = this._source;
 
         this._source = newSource;
@@ -326,7 +261,7 @@ export default class Texture {
 
                     this.elements.forEach(element => {
                         if (element.active) {
-                            element._setDisplayedTexture(this);
+                            element.setDisplayedTexture(this);
                         }
                     });
                 } else {
@@ -342,7 +277,7 @@ export default class Texture {
             } else {
                 this.elements.forEach(element => {
                     if (element.active) {
-                        element._setDisplayedTexture(null);
+                        element.setDisplayedTexture(undefined);
                     }
                 });
             }
@@ -359,11 +294,11 @@ export default class Texture {
     }
 
     isLoaded() {
-        return this._source && this._source.isLoaded();
+        return this._source ? this._source.isLoaded() : false;
     }
 
-    get loadError() {
-        return this._source && this._source.loadError;
+    get loadError(): any {
+        return this._source ? this._source.loadError : undefined;
     }
 
     free() {
@@ -372,54 +307,62 @@ export default class Texture {
         }
     }
 
-    set resizeMode({ type = "cover", w = 0, h = 0, clipX = 0.5, clipY = 0.5 }) {
-        this._resizeMode = { type, w, h, clipX, clipY };
-        if (this.isLoaded()) {
-            this._applyResizeMode();
+    set resizeMode(resizeMode: ResizeMode | undefined) {
+        if (resizeMode) {
+            this._resizeMode = resizeMode;
+            if (this.isLoaded()) {
+                this._applyResizeMode();
+            }
+        } else {
+            this.disableClipping();
         }
     }
 
-    get resizeMode() {
+    get resizeMode(): ResizeMode | undefined {
         return this._resizeMode;
     }
 
-    _clearResizeMode() {
-        this._resizeMode = null;
+    private _clearResizeMode() {
+        this._resizeMode = undefined;
     }
 
-    _applyResizeMode() {
-        if (this._resizeMode.type === "cover") {
+    private _applyResizeMode() {
+        if (this._resizeMode!.type === "cover") {
             this._applyResizeCover();
-        } else if (this._resizeMode.type === "contain") {
+        } else if (this._resizeMode!.type === "contain") {
             this._applyResizeContain();
         }
         this._updatePrecision();
         this._updateClipping();
     }
 
-    _applyResizeCover() {
-        const scaleX = this._resizeMode.w / this._source.w;
-        const scaleY = this._resizeMode.h / this._source.h;
+    private _applyResizeCover() {
+        const resizeMode = this._resizeMode!;
+        const source = this._source!;
+        const scaleX = resizeMode.w / source.w;
+        const scaleY = resizeMode.h / source.h;
         const scale = Math.max(scaleX, scaleY);
         if (!scale) return;
         this._precision = 1 / scale;
         if (scaleX && scaleX < scale) {
-            const desiredSize = this._precision * this._resizeMode.w;
-            const choppedOffPixels = this._source.w - desiredSize;
-            this._x = choppedOffPixels * this._resizeMode.clipX;
-            this._w = this._source.w - choppedOffPixels;
+            const desiredSize = this._precision * resizeMode.w;
+            const choppedOffPixels = source.w - desiredSize;
+            this._x = choppedOffPixels * resizeMode.x;
+            this._w = source.w - choppedOffPixels;
         }
         if (scaleY && scaleY < scale) {
-            const desiredSize = this._precision * this._resizeMode.h;
-            const choppedOffPixels = this._source.h - desiredSize;
-            this._y = choppedOffPixels * this._resizeMode.clipY;
-            this._h = this._source.h - choppedOffPixels;
+            const desiredSize = this._precision * resizeMode.h;
+            const choppedOffPixels = source.h - desiredSize;
+            this._y = choppedOffPixels * resizeMode.y;
+            this._h = source.h - choppedOffPixels;
         }
     }
 
-    _applyResizeContain() {
-        const scaleX = this._resizeMode.w / this._source.w;
-        const scaleY = this._resizeMode.h / this._source.h;
+    private _applyResizeContain() {
+        const resizeMode = this._resizeMode!;
+        const source = this._source!;
+        const scaleX = resizeMode.w / source.w;
+        const scaleY = resizeMode.h / source.h;
         let scale = scaleX;
         if (!scale || scaleY < scale) {
             scale = scaleY;
@@ -428,7 +371,7 @@ export default class Texture {
         this._precision = 1 / scale;
     }
 
-    enableClipping(x, y, w, h) {
+    enableClipping(x: number, y: number, w: number, h: number) {
         this._clearResizeMode();
 
         x *= this._precision;
@@ -441,47 +384,43 @@ export default class Texture {
             this._w = w;
             this._h = h;
 
-            this._updateClipping(true);
+            this._updateClipping();
         }
     }
 
     disableClipping() {
         this._clearResizeMode();
 
-        if (this._x || this._y || this._w || this._h) {
-            this._x = 0;
-            this._y = 0;
-            this._w = 0;
-            this._h = 0;
+        this._x = 0;
+        this._y = 0;
+        this._w = 0;
+        this._h = 0;
 
-            this._updateClipping();
-        }
+        this._updateClipping();
     }
 
-    _updateClipping() {
+    private _updateClipping() {
         this.clipping = !!(this._x || this._y || this._w || this._h);
 
-        const self = this;
-        this.elements.forEach(function(element) {
+        this.elements.forEach(element => {
             // Ignore if not the currently displayed texture.
-            if (element.displayedTexture === self) {
+            if (element.displayedTexture === this) {
                 element.onDisplayedTextureClippingChanged();
             }
         });
     }
 
-    _updatePrecision() {
-        const self = this;
-        this.elements.forEach(function(element) {
+    private _updatePrecision() {
+        this.elements.forEach(element => {
             // Ignore if not the currently displayed texture.
-            if (element.displayedTexture === self) {
+            if (element.displayedTexture === this) {
                 element.onPrecisionChanged();
             }
         });
     }
 
-    getNonDefaults() {
-        const nonDefaults = {};
+    getNonDefaults(): any {
+        const nonDefaults : any = {};
         nonDefaults["type"] = this.constructor.name;
         if (this.x !== 0) nonDefaults["x"] = this.x;
         if (this.y !== 0) nonDefaults["y"] = this.y;
@@ -510,6 +449,7 @@ export default class Texture {
     get x() {
         return this._x / this._precision;
     }
+
     set x(v) {
         this._clearResizeMode();
         v = v * this._precision;
@@ -522,6 +462,7 @@ export default class Texture {
     get y() {
         return this._y / this._precision;
     }
+
     set y(v) {
         this._clearResizeMode();
         v = v * this._precision;
@@ -592,13 +533,36 @@ export default class Texture {
         return (this._h || (this._source ? this._source.getRenderHeight() - this._y : 0)) / this._precision;
     }
 
-    patch(settings) {
-        Patcher.patchObject(this, settings);
-    }
 }
 
-Texture.prototype.isTexture = true;
+export type ResizeMode = {
+    type: "cover" | "contain";
+    w: number;
+    h: number;
+    x: number;
+    y: number;
+};
 
-Texture.id = 0;
+export type TextureSourceLoader = () => TextureSourceCallback;
+export type TextureSourceCancelFunction = () => void;
+export type TextureSourceCallback = (error: string, options: TextureSourceOptions) => TextureSourceCancelFunction;
+export type TextureSourceOptions = {
+    source:
+        | ArrayBuffer
+        | WebGLTexture
+        | ImageData
+        | HTMLImageElement
+        | HTMLCanvasElement
+        | HTMLVideoElement
+        | ImageBitmap;
+    w: number;
+    h: number;
+    permanent?: boolean;
+    hasAlpha?: boolean;
+    premultiplyAlpha?: boolean;
+    flipBlueRed?: boolean;
+    renderInfo: any;
+};
 
 import Patcher from "../patch/Patcher";
+import TextureSource from "./TextureSource";
