@@ -402,7 +402,7 @@ class Element {
         // txError event should automatically be re-triggered when a element becomes active.
         const loadError = this.__texture!.loadError;
         if (loadError) {
-            this._onTextureError(loadError, this.__texture!.source);
+            this._onTextureError(loadError, this.__texture!.getSource());
         }
     }
 
@@ -484,7 +484,7 @@ class Element {
         }
 
         const prevSource = this.__core.displayedTextureSource ? this.__core.displayedTextureSource : undefined;
-        const sourceChanged = (v ? v._source : undefined) !== prevSource;
+        const sourceChanged = (v ? v.getSource() : undefined) !== prevSource;
 
         this.__displayedTexture = v;
         this._updateTextureDimensions();
@@ -493,7 +493,7 @@ class Element {
             if (sourceChanged) {
                 // We don't need to reference the displayed texture because it was already referenced (this.texture === this.displayedTexture).
                 this._updateTextureCoords();
-                this.__core.setDisplayedTextureSource(this.__displayedTexture._source);
+                this.__core.setDisplayedTextureSource(this.__displayedTexture.getSource());
             }
         } else {
             this.__core.setDisplayedTextureSource(undefined);
@@ -517,7 +517,7 @@ class Element {
     }
 
     onTextureSourceLoadError(loadError: any): void {
-        this._onTextureError(loadError, this.__texture!._source);
+        this._onTextureError(loadError, this.__texture!.getSource());
     }
 
     forceRenderUpdate(): void {
@@ -563,9 +563,9 @@ class Element {
     }
 
     private _updateTextureCoords(): void {
-        if (this.displayedTexture && this.displayedTexture._source) {
+        if (this.displayedTexture && this.displayedTexture.getSource()) {
             const displayedTexture = this.displayedTexture;
-            const displayedTextureSource = this.displayedTexture._source;
+            const displayedTextureSource = this.displayedTexture.getSource();
 
             let tx1 = 0,
                 ty1 = 0,

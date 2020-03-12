@@ -55,6 +55,10 @@ export default class Texture {
         return this._source;
     }
 
+    getSource(): TextureSource | undefined {
+        return this._source;
+    }
+
     addElement(v: Element) {
         if (!this.elements.has(v)) {
             this.elements.add(v);
@@ -420,7 +424,7 @@ export default class Texture {
     }
 
     getNonDefaults(): any {
-        const nonDefaults : any = {};
+        const nonDefaults: any = {};
         nonDefaults["type"] = this.constructor.name;
         if (this.x !== 0) nonDefaults["x"] = this.x;
         if (this.y !== 0) nonDefaults["y"] = this.y;
@@ -532,7 +536,6 @@ export default class Texture {
 
         return (this._h || (this._source ? this._source.getRenderHeight() - this._y : 0)) / this._precision;
     }
-
 }
 
 export type ResizeMode = {
