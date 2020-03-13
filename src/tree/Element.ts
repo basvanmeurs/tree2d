@@ -423,21 +423,16 @@ class Element {
         this.setDisplayedTexture(undefined);
     }
 
-    get texture(): Texture | TextureSource | undefined {
+    get texture(): Texture | undefined {
         return this.__texture;
     }
 
-    set texture(v: Texture | TextureSource | undefined) {
+    set texture(v: Texture | undefined) {
         let texture;
         if (!v) {
             texture = undefined;
         } else {
-            if (v instanceof TextureSource) {
-                texture = new SourceTexture(this.stage);
-                texture.textureSource = v;
-            } else {
-                texture = v;
-            }
+            texture = v;
         }
 
         const prevTexture = this.__texture;
@@ -563,49 +558,51 @@ class Element {
     }
 
     private _updateTextureCoords(): void {
-        if (this.displayedTexture && this.displayedTexture.getSource()) {
+        if (this.displayedTexture) {
             const displayedTexture = this.displayedTexture;
             const displayedTextureSource = this.displayedTexture.getSource();
 
-            let tx1 = 0,
-                ty1 = 0,
-                tx2 = 1.0,
-                ty2 = 1.0;
-            if (displayedTexture.clipping) {
-                // Apply texture clipping.
-                const w = displayedTextureSource.getRenderWidth();
-                const h = displayedTextureSource.getRenderHeight();
-                let iw, ih, rw, rh;
-                iw = 1 / w;
-                ih = 1 / h;
+            if (displayedTextureSource) {
+                let tx1 = 0,
+                    ty1 = 0,
+                    tx2 = 1.0,
+                    ty2 = 1.0;
+                if (displayedTexture.hasClipping()) {
+                    // Apply texture clipping.
+                    const w = displayedTextureSource.getRenderWidth();
+                    const h = displayedTextureSource.getRenderHeight();
+                    let iw, ih, rw, rh;
+                    iw = 1 / w;
+                    ih = 1 / h;
 
-                if (displayedTexture.pw) {
-                    rw = displayedTexture.pw * iw;
-                } else {
-                    rw = (w - displayedTexture.px) * iw;
+                    if (displayedTexture.pw) {
+                        rw = displayedTexture.pw * iw;
+                    } else {
+                        rw = (w - displayedTexture.px) * iw;
+                    }
+
+                    if (displayedTexture.ph) {
+                        rh = displayedTexture.ph * ih;
+                    } else {
+                        rh = (h - displayedTexture.py) * ih;
+                    }
+
+                    iw *= displayedTexture.px;
+                    ih *= displayedTexture.py;
+
+                    tx1 = iw;
+                    ty1 = ih;
+                    tx2 = tx2 * rw + iw;
+                    ty2 = ty2 * rh + ih;
+
+                    tx1 = Math.max(0, tx1);
+                    ty1 = Math.max(0, ty1);
+                    tx2 = Math.min(1, tx2);
+                    ty2 = Math.min(1, ty2);
                 }
 
-                if (displayedTexture.ph) {
-                    rh = displayedTexture.ph * ih;
-                } else {
-                    rh = (h - displayedTexture.py) * ih;
-                }
-
-                iw *= displayedTexture.px;
-                ih *= displayedTexture.py;
-
-                tx1 = iw;
-                ty1 = ih;
-                tx2 = tx2 * rw + iw;
-                ty2 = ty2 * rh + ih;
-
-                tx1 = Math.max(0, tx1);
-                ty1 = Math.max(0, ty1);
-                tx2 = Math.min(1, tx2);
-                ty2 = Math.min(1, ty2);
+                this.__core.setTextureCoords(tx1, ty1, tx2, ty2);
             }
-
-            this.__core.setTextureCoords(tx1, ty1, tx2, ty2);
         }
     }
 
@@ -1105,7 +1102,7 @@ class Element {
 
     get src() {
         if (this.texture && this.texture instanceof ImageTexture) {
-            return this.texture._src;
+            return this.texture.src;
         } else {
             return undefined;
         }
@@ -1253,11 +1250,11 @@ class Element {
     private get _flex() {
         return this.__core.layout.flex;
     }
-    
+
     private get _flexItem() {
         return this.__core.layout.flexItem;
     }
-    
+
     set flex(v: boolean) {
         this._flex.enabled = v;
     }
@@ -1353,7 +1350,6 @@ class Element {
     set maxHeight(v: number) {
         this._flexItem.maxHeight = v;
     }
-
 }
 
 import Texture from "./Texture";
@@ -1365,6 +1361,6 @@ import Stage from "./Stage";
 import ElementTexturizer from "./core/ElementTexturizer";
 import ElementListeners from "./ElementListeners";
 import TextureSource from "./TextureSource";
-import {AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode} from "../flex/FlexContainer";
+import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from "../flex/FlexContainer";
 
 export default Element;

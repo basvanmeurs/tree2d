@@ -1,19 +1,14 @@
 import StageUtils from "../../tree/StageUtils";
 import Stage from "../../tree/Stage";
-import {TextSettings} from "./TextSettings";
+import { TextSettings } from "./TextSettings";
 
-type LinesInfo = {lines: string[], lineWidths: number[], maxWidth: number};
+type LinesInfo = { lines: string[]; lineWidths: number[]; maxWidth: number };
 
 export default class TextTextureRenderer {
-    
     private _context = this.canvas.getContext("2d")!;
     public renderInfo: any;
-    
-    constructor(
-        private stage: Stage, 
-        private canvas: HTMLCanvasElement, 
-        private settings: Partial<TextSettings>) {
-    }
+
+    constructor(private stage: Stage, private canvas: HTMLCanvasElement, private settings: Partial<TextSettings>) {}
 
     private getPrecision() {
         return this.settings.precision || this.stage.getOption("precision");
@@ -44,7 +39,7 @@ export default class TextTextureRenderer {
                 if (fontFaceName === "serif" || fontFaceName === "sans-serif") {
                     return fontFaceName;
                 } else {
-                    return `"${fontFaceName}"`
+                    return `"${fontFaceName}"`;
                 }
             });
         } else {
@@ -86,29 +81,32 @@ export default class TextTextureRenderer {
         });
     }
 
-    _draw() {
-        const renderInfo : any = {};
+    private _draw() {
+        const renderInfo: any = {};
 
         const precision = this.getPrecision();
 
         let {
-            text = "",
             fontSize = 40,
             wordWrapWidth = 0,
             lineHeight,
-            textAlign = "left",
             offsetY = 0,
-            maxLines = 0,
-            textColor = 0xFFFFFFFF,
-            shadow = false,
-            shadowColor = 0xFF000000,
-            shadowOffsetX = 0,
-            shadowOffsetY = 0,
-            shadowBlur = 5,
             cutSx = 0,
             cutEx = 0,
             cutSy = 0,
-            cutEy = 0            
+            cutEy = 0
+        } = this.settings;
+
+        const {
+            text = "",
+            textAlign = "left",
+            maxLines = 0,
+            textColor = 0xffffffff,
+            shadow = false,
+            shadowColor = 0xff000000,
+            shadowOffsetX = 0,
+            shadowOffsetY = 0,
+            shadowBlur = 5
         } = this.settings;
 
         fontSize = fontSize * precision;
@@ -125,8 +123,7 @@ export default class TextTextureRenderer {
 
         // word wrap
         // preserve original text
-        let linesInfo : LinesInfo;
-        linesInfo = this.wrapText(text, wordWrapWidth);
+        const linesInfo: LinesInfo = this.wrapText(text, wordWrapWidth);
         let lines = linesInfo.lines;
 
         if (maxLines && lines.length > maxLines) {
@@ -140,24 +137,20 @@ export default class TextTextureRenderer {
         }
 
         // calculate text width
-        let maxLineWidth = linesInfo.maxWidth;
+        const maxLineWidth = linesInfo.maxWidth;
+        const lineWidths = linesInfo.lineWidths;
 
-        renderInfo.lineWidths = linesInfo.lineWidths;
+        renderInfo.lineWidths = lineWidths;
         renderInfo.maxWidth = maxLineWidth;
 
         // Auto-set width to max text length.
-        const width = maxLineWidth;
+        let width = maxLineWidth;
         const innerWidth = maxLineWidth;
 
         // calculate text height
         lineHeight = lineHeight || fontSize;
 
-        let height;
-        if (h) {
-            height = h;
-        } else {
-            height = lineHeight * (lines.length - 1) + 0.5 * fontSize + Math.max(lineHeight, fontSize) + offsetY;
-        }
+        let height = lineHeight * (lines.length - 1) + 0.5 * fontSize + Math.max(lineHeight, fontSize) + offsetY;
 
         if (offsetY === null) {
             offsetY = fontSize;
@@ -168,15 +161,9 @@ export default class TextTextureRenderer {
         renderInfo.lines = lines;
         renderInfo.precision = precision;
 
-        if (!width) {
-            // To prevent canvas errors.
-            width = 1;
-        }
-
-        if (!height) {
-            // To prevent canvas errors.
-            height = 1;
-        }
+        // To prevent canvas errors.
+        if (!width) width = 1;
+        if (!height) height = 1;
 
         if (cutSx || cutEx) {
             width = Math.min(width, cutEx - cutSx);
@@ -194,10 +181,7 @@ export default class TextTextureRenderer {
         this.setFontProperties();
 
         if (fontSize >= 128) {
-            // WpeWebKit bug: must force compositing because cairo-traps-compositor will not work with text first.
-            this._context.globalAlpha = 0.01;
             this._context.fillRect(0, 0, 0.01, 0.01);
-            this._context.globalAlpha = 1.0;
         }
 
         if (cutSx || cutSy) {
@@ -219,11 +203,9 @@ export default class TextTextureRenderer {
             } else if (textAlign === "center") {
                 linePositionX += (innerWidth - lineWidths[i]) / 2;
             }
-            linePositionX += paddingLeft;
 
             drawLines.push({ text: lines[i], x: linePositionX, y: linePositionY, w: lineWidths[i] });
         }
-
 
         // Text shadow.
         if (shadow) {
@@ -252,12 +234,12 @@ export default class TextTextureRenderer {
      * Applies newlines to a string to have it optimally fit into the horizontal
      * bounds set by the Text object's wordWrapWidth property.
      */
-    private wrapText(text: string, wordWrapWidth: number) : LinesInfo {
+    private wrapText(text: string, wordWrapWidth: number): LinesInfo {
         // Greedy wrapping algorithm that will wrap words as the line grows longer.
         // than its horizontal bounds.
         const lineItems = text.split(/\r?\n/g);
-        const lines : string[] = [];
-        const lineWidths : number[] = [];
+        const lines: string[] = [];
+        const lineWidths: number[] = [];
         let maxWidth = 0;
         const spaceWidth = wordWrapWidth ? this._context.measureText(" ").width : 0;
         for (let i = 0; i < lineItems.length; i++) {
@@ -268,7 +250,7 @@ export default class TextTextureRenderer {
                 const n = words.length;
                 for (let j = 0; j < n; j++) {
                     const wordWidth = this._context.measureText(words[j]).width;
-                    const overflow = ((lineWidth + wordWidth) > wordWrapWidth);
+                    const overflow = lineWidth + wordWidth > wordWrapWidth;
                     const isLastWord = j === n - 1;
                     if (overflow || isLastWord) {
                         lines.push(result);
@@ -288,17 +270,17 @@ export default class TextTextureRenderer {
             }
         }
 
-        return { lines, lineWidths, maxWidth};
+        return { lines, lineWidths, maxWidth };
     }
 }
 
-function getDocumentFonts() : FontFaceSet|undefined {
+function getDocumentFonts(): FontFaceSet | undefined {
     return (document as any).fonts;
 }
 
 type CSSOMString = string;
-type FontFaceLoadStatus = 'unloaded'|'loading'|'loaded'|'error';
-type FontFaceSetStatus = 'loading'|'loaded';
+type FontFaceLoadStatus = "unloaded" | "loading" | "loaded" | "error";
+type FontFaceSetStatus = "loading" | "loaded";
 
 interface FontFace {
     family: CSSOMString;
@@ -318,7 +300,6 @@ interface FontFace {
 interface FontFaceSet {
     readonly status: FontFaceSetStatus;
     readonly ready: Promise<FontFaceSet>;
-    check(font: string, text?: string): Boolean;
-    load(font: string, text?: string): Promise<FontFace[]>
+    check(font: string, text?: string): boolean;
+    load(font: string, text?: string): Promise<FontFace[]>;
 }
-

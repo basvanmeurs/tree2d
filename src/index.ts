@@ -6,7 +6,6 @@ import ElementCore from "./tree/core/ElementCore";
 import ElementTexturizer from "./tree/core/ElementTexturizer";
 import Texture from "./tree/Texture";
 
-import Tools from "./tools/Tools";
 import ObjMerger from "./tools/ObjMerger";
 import ObjectListProxy from "./tools/ObjectListProxy";
 import ObjectListWrapper from "./tools/ObjectListWrapper";
@@ -16,11 +15,9 @@ import NoiseTexture from "./textures/NoiseTexture";
 import TextTexture from "./textures/text/TextTexture";
 import ImageTexture from "./textures/ImageTexture";
 import HtmlTexture from "./textures/HtmlTexture";
-import StaticTexture from "./textures/StaticTexture";
-import FactoryTexture from "./textures/StaticCanvasTexture";
+import RoundRectTexture from "./textures/RoundRectTexture";
+import ShadowRectTexture from "./textures/ShadowRectTexture";
 import SourceTexture from "./textures/SourceTexture";
-
-import EventEmitter from "./EventEmitter";
 
 import WebGLShader from "./renderer/webgl/WebGLShader";
 import WebGLDefaultShader from "./renderer/webgl/shaders/DefaultShader";
@@ -53,12 +50,10 @@ const index = {
     Utils,
     StageUtils,
     Element,
-    Tools,
     Stage,
     ElementCore,
     ElementTexturizer,
     Texture,
-    EventEmitter,
     FlexNode,
     FlexLayouter,
     FlexContainer,
@@ -90,8 +85,8 @@ const index = {
         TextTexture,
         ImageTexture,
         HtmlTexture,
-        StaticTexture,
-        StaticCanvasTexture: FactoryTexture,
+        RoundRectTexture,
+        ShadowRectTexture,
         SourceTexture
     },
     tools: {

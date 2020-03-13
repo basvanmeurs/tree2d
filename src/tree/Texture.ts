@@ -36,8 +36,8 @@ export default class Texture {
      * The (maximum) expected texture source dimensions. Used for within bounds determination while texture is not yet loaded.
      * If not set, 2048 is used by ElementCore.update.
      */
-    private mw: number = 0;
-    private mh: number = 0;
+    public mw: number = 0;
+    public mh: number = 0;
 
     // Flag that indicates that this texture uses clipping.
     private clipping: boolean = false;
@@ -403,6 +403,10 @@ export default class Texture {
         this._updateClipping();
     }
 
+    hasClipping() {
+        return this.clipping;
+    }
+
     private _updateClipping() {
         this.clipping = !!(this._x || this._y || this._w || this._h);
 
@@ -547,7 +551,10 @@ export type ResizeMode = {
 };
 
 export type TextureSourceLoader = (cb: TextureSourceCallback) => void;
-export type TextureSourceCallback = (error: Error|undefined, options?: TextureSourceOptions) => TextureSourceCancelFunction|void;
+export type TextureSourceCallback = (
+    error: Error | undefined,
+    options?: TextureSourceOptions
+) => TextureSourceCancelFunction | void;
 export type TextureSourceCancelFunction = () => void;
 export type TextureSourceOptions = {
     source:

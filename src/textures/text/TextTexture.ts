@@ -125,17 +125,6 @@ export default class TextTexture extends Texture {
         }
     }
 
-    get maxLinesSuffix() {
-        return this.settings.maxLinesSuffix;
-    }
-
-    set maxLinesSuffix(v) {
-        if (this.settings.maxLinesSuffix !== v) {
-            this.settings.maxLinesSuffix = v;
-            this._changed();
-        }
-    }
-
     get textColor() {
         return this.settings.textColor;
     }
