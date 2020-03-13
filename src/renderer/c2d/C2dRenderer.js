@@ -6,7 +6,6 @@ import DefaultShader from "./shaders/DefaultShader";
 import C2dShader from "./C2dShader";
 import Renderer from "../Renderer";
 import TextureTintManager from "./C2dTextureTintManager";
-import {Constructor} from "../../util/types";
 import Shader from "../../tree/Shader";
 
 export default class C2dRenderer extends Renderer {

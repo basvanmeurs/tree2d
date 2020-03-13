@@ -239,7 +239,7 @@ export default class TextureSource {
 
         this.permanent = !!options.permanent;
 
-        if (options && options.imageRef) this._imageRef = options.imageRef;
+
 
         if (this._isNativeTexture(source)) {
             // Texture managed by caller.

@@ -47,7 +47,7 @@ export default class TextTextureRenderer {
         }
     }
 
-    _load(): Promise<void> {
+    _load(): Promise<void>|undefined {
         const documentFonts = getDocumentFonts();
         if (documentFonts) {
             const fontSetting = this._getFontSetting();
@@ -70,14 +70,18 @@ export default class TextTextureRenderer {
                 console.warn("Can't check font loading for " + fontSetting);
             }
         }
-        return Promise.resolve();
     }
 
-    draw() {
+    draw(): Promise<void>|undefined {
+        // We do not use a promise if possible to be able to load the texture during the current drawFrame cycle.
         const loadPromise = this._load();
-        return loadPromise.then(() => {
-            return this._draw();
-        });
+        if (!loadPromise) {
+            this._draw();
+        } else {
+            return loadPromise.then(() => {
+                this._draw();
+            });
+        }
     }
 
     private _draw() {
@@ -246,16 +250,24 @@ export default class TextTextureRenderer {
                 for (let j = 0; j < n; j++) {
                     const wordWidth = this._context.measureText(words[j]).width;
                     const overflow = lineWidth + wordWidth > wordWrapWidth;
-                    const isLastWord = j === n - 1;
-                    if (overflow || isLastWord) {
+                    if (overflow) {
                         lines.push(result);
                         lineWidths.push(lineWidth);
                         maxWidth = Math.max(maxWidth, lineWidth);
                         lineWidth = wordWidth + spaceWidth;
+                        result = words[j];
                     } else {
-                        result += " " + words[j];
+                        if (result) {
+                            result += " ";
+                        }
+                        result += words[j];
                         lineWidth += wordWidth + spaceWidth;
                     }
+                }
+                if (n) {
+                    lines.push(result);
+                    lineWidths.push(lineWidth);
+                    maxWidth = Math.max(maxWidth, lineWidth);
                 }
             } else {
                 const line = lineItems[i];

@@ -344,31 +344,25 @@ export default class TextTexture extends Texture {
             const renderer = new TextTextureRenderer(this.stage, canvas, args);
             const p = renderer.draw();
 
-            p.then(() => {
-                // const canvas = document.createElement('canvas');
-                // canvas.width  = 128;
-                // canvas.height = 128;
-                const ctx = canvas.getContext("2d")!;
-                ctx.fillStyle="red";
-                ctx.fillRect(0,0,10,10);
-                cb(undefined, {source: canvas})
-            //     const canvas = document.createElement('canvas');
-            //     canvas.width  =100;
-            //     canvas.height = 100;
-            //     const ctx = canvas.getContext(
-            //         "2d")!;
-            //     ctx.fillStyle="blue";
-            //     ctx.fillRect(0,0,50,50);
-            //     cb(
-            //         undefined,
-            //         Object.assign(
-            //             { renderInfo: renderer.renderInfo },
-            //             this.stage.platform.getTextureOptionsForDrawingCanvas(canvas)
-            //         )
-            //     );
-            }).catch(err => {
-                cb(err);
-            });
+            const respond = () => {
+                cb(
+                    undefined,
+                    Object.assign(
+                        { renderInfo: renderer.renderInfo },
+                        this.stage.platform.getTextureOptionsForDrawingCanvas(canvas)
+                    )
+                );
+            };
+
+            if (p) {
+                p.then(() => {
+                    respond();
+                }).catch(err => {
+                    cb(err);
+                });
+            } else {
+                respond();
+            }
         };
     }
 
