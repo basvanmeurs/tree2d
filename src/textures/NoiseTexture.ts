@@ -26,7 +26,16 @@ export default class NoiseTexture extends Texture {
                 texParams[gl.TEXTURE_MAG_FILTER] = gl.NEAREST;
             }
 
-            cb(undefined, { source: noise, width: 128, height: 128, texParams: texParams });
+            const canvas = document.createElement('canvas');
+            canvas.width  = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext("2d")!;
+            ctx.fillStyle="red";
+            ctx.fillRect(0,0,50,200);
+            cb(undefined, {source: canvas, width: 100, height: 100})
+            //
+            // cb(undefined, { source: canvas, width: 100, height: 100 });
+            //cb(undefined, { source: noise, width: 128, height: 128, texParams: texParams });
         };
     }
 

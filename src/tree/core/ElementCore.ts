@@ -221,12 +221,12 @@ export default class ElementCore implements FlexSubject {
         if (Utils.isFunction(v)) {
             this.funcY = v as FunctionY;
         } else {
-            this._disableFuncX();
+            this._disableFuncY();
             const dy = (v as number) - this._sy;
             if (dy) {
                 this._sy = v as number;
                 this._y += dy;
-                this._updateLocalTranslateDelta(dy, 0);
+                this._updateLocalTranslateDelta(0, dy);
             }
         }
     }
@@ -728,18 +728,32 @@ export default class ElementCore implements FlexSubject {
     }
 
     private _updateBaseDimensions() {
+
         if (this._funcW || this._funcH) {
             this._triggerRecalcTranslate();
-        } else {
-            const w = this._sw || this._tw;
-            const h = this._sh || this._th;
+        }
 
-            if (this.hasFlexLayout()) {
-                // Notify layout.
-                this.layout.updatedSourceW();
-                this.layout.updatedSourceH();
-            } else {
-                this.setLayoutDimensions(w, h);
+        const w = this._sw || this._tw;
+        const h = this._sh || this._th;
+
+        if (this.hasFlexLayout()) {
+            // Notify layout.
+            this.layout.updatedSourceW();
+            this.layout.updatedSourceH();
+        } else {
+            if ((!this.funcW && this._w !== w) || (!this.funcH && this._h !== h)) {
+
+                if (!this.funcW) {
+                    this._w = w;
+                }
+
+                if (!this.funcH) {
+                    this._h = h;
+                }
+
+                // Due to width/height change: update the translation vector.
+                this._updateLocalTranslate();
+                this.onDimensionsChanged();
             }
         }
     }

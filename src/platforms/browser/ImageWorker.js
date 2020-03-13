@@ -194,10 +194,6 @@ const createWorker = function() {
         this.items.delete(item.id);
     };
 
-    ImageWorkerServer.isWPEBrowser = function() {
-        return navigator.userAgent.indexOf("WPE") !== -1;
-    };
-
     function ImageWorkerServerItem(id, src) {
         this._onError = undefined;
         this._onFinish = undefined;
@@ -271,14 +267,7 @@ const createWorker = function() {
     };
 
     ImageWorkerServerItem.prototype._hasAlphaChannel = function() {
-        if (ImageWorkerServer.isWPEBrowser()) {
-            // When using unaccelerated rendering image (https://github.com/WebPlatformForEmbedded/WPEWebKit/blob/wpe-20170728/Source/WebCore/html/ImageBitmap.cpp#L52),
-            // everything including JPG images are in RGBA format. Upload is way faster when using an alpha channel.
-            // @todo: after hardware acceleration is fixed and re-enabled, JPG should be uploaded in RGB to get the best possible performance and memory usage.
-            return true;
-        } else {
-            return this._mimeType.indexOf("image/png") !== -1;
-        }
+        return this._mimeType.indexOf("image/png") !== -1;
     };
 
     ImageWorkerServerItem.prototype.cancel = function() {

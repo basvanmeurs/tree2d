@@ -214,13 +214,7 @@ export default class TextureSource {
                         // Emit txError.
                         this.onError(err);
                     } else if (options && options.source) {
-                        if (!this.stage.isUpdatingFrame() && !forceSync && options.throttle !== false) {
-                            const textureThrottler = this.stage.textureThrottler;
-                            this._cancelCb = textureThrottler.genericCancelCb;
-                            textureThrottler.add(this, options);
-                        } else {
-                            this.processLoadedSource(options);
-                        }
+                        this.processLoadedSource(options);
                     }
                 }
             }, this);
@@ -235,8 +229,8 @@ export default class TextureSource {
     setSource(options) {
         const source = options.source;
 
-        this.w = source.width || (options && options.w) || 0;
-        this.h = source.height || (options && options.h) || 0;
+        this.w = source.width || (options && options.width) || 0;
+        this.h = source.height || (options && options.height) || 0;
 
         if (options && options.renderInfo) {
             // Assign to id in cache so that it can be reused.

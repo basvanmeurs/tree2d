@@ -1,5 +1,8 @@
 import CoreContext from "./core/CoreContext";
 import ElementCore from "./core/ElementCore";
+import WebGLShader from "../renderer/webgl/WebGLShader";
+import {Constructor} from "../util/types";
+import C2dShader from "../renderer/c2d/C2dShader";
 
 export default class Shader {
     protected ctx: CoreContext;
@@ -11,11 +14,11 @@ export default class Shader {
         this.ctx = coreContext;
     }
 
-    static getWebGL() {
+    static getWebGL(): Constructor<WebGLShader>|undefined {
         return undefined;
     }
 
-    static getC2d() {
+    static getC2d(): Constructor<C2dShader>|undefined {
         return undefined;
     }
 

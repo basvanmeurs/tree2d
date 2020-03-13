@@ -50,10 +50,8 @@ export default class WebGLRenderer extends Renderer {
         return WebGLShader;
     }
 
-    protected _getShaderAlternative(shaderType: Constructor<Shader>) {
-        return (
-            (shaderType.constructor as typeof Shader).getWebGL && (shaderType.constructor as typeof Shader).getWebGL()
-        );
+    protected _getShaderAlternative(shaderType: Constructor<Shader>): Constructor<Shader>|undefined {
+        return (shaderType as any).getWebGL();
     }
 
     createCoreQuadList(ctx: CoreContext) {

@@ -74,7 +74,6 @@ export default class TextTextureRenderer {
     }
 
     draw() {
-        // We do not use a promise so that loading is performed syncronous when possible.
         const loadPromise = this._load();
         return loadPromise.then(() => {
             return this._draw();
@@ -90,7 +89,7 @@ export default class TextTextureRenderer {
             fontSize = 40,
             wordWrapWidth = 0,
             lineHeight,
-            offsetY = 0,
+            offsetY,
             cutSx = 0,
             cutEx = 0,
             cutSy = 0,
@@ -107,11 +106,11 @@ export default class TextTextureRenderer {
             shadowOffsetX = 0,
             shadowOffsetY = 0,
             shadowBlur = 5
-        } = this.settings;
+        } = this.settings
 
         fontSize = fontSize * precision;
-        offsetY = offsetY * precision;
         lineHeight = lineHeight ? lineHeight * precision : lineHeight;
+        offsetY = offsetY ? offsetY * precision : offsetY;
         wordWrapWidth = wordWrapWidth * precision;
         cutSx = cutSx * precision;
         cutEx = cutEx * precision;
@@ -150,11 +149,11 @@ export default class TextTextureRenderer {
         // calculate text height
         lineHeight = lineHeight || fontSize;
 
-        let height = lineHeight * (lines.length - 1) + 0.5 * fontSize + Math.max(lineHeight, fontSize) + offsetY;
-
-        if (offsetY === null) {
+        if (offsetY === undefined) {
             offsetY = fontSize;
         }
+
+        let height = lineHeight * (lines.length - 1) + 0.5 * fontSize + Math.max(lineHeight, fontSize) + offsetY;
 
         renderInfo.w = width;
         renderInfo.h = height;
@@ -179,10 +178,6 @@ export default class TextTextureRenderer {
 
         // Canvas context has been reset.
         this.setFontProperties();
-
-        if (fontSize >= 128) {
-            this._context.fillRect(0, 0, 0.01, 0.01);
-        }
 
         if (cutSx || cutSy) {
             this._context.translate(-cutSx, -cutSy);

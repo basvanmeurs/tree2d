@@ -3,18 +3,15 @@
  * Copyright Metrological, 2017;
  */
 
-import EventEmitter from "../EventEmitter";
 import Utils from "./Utils";
 import Patcher from "../patch/Patcher";
 import WebGLRenderer from "../renderer/webgl/WebGLRenderer";
 import C2dRenderer from "../renderer/c2d/C2dRenderer";
 import PlatformLoader from "../platforms/PlatformLoader";
-import WebGLStateManager from "../tools/WebGLStateManager";
 import Shader from "./Shader";
 
-export default class Stage extends EventEmitter {
+export default class Stage {
     constructor(options = {}) {
-        super();
         this._setOptions(options);
 
         this._usedMemory = 0;
@@ -46,15 +43,6 @@ export default class Stage extends EventEmitter {
             }
         }
 
-        if (this.gl) {
-            // Wrap in WebGLStateManager.
-            // This prevents unnecessary double WebGL commands from being executed, and allows context switching.
-            // Context switching is necessary when reusing the same context for Three.js.
-            // Note that the user must make sure that the WebGL context is untouched before creating the application,
-            //  when manually passing over a canvas or context in the options.
-            WebGLStateManager.enable(this.gl, "lightning");
-        }
-
         this._mode = this.gl ? 0 : 1;
 
         // Override width and height.
@@ -74,7 +62,6 @@ export default class Stage extends EventEmitter {
         this.frameCounter = 0;
 
         this.textureManager = new TextureManager(this);
-        this.textureThrottler = new TextureThrottler(this);
 
         this.startTime = 0;
         this.currentTime = 0;
@@ -225,7 +212,7 @@ export default class Stage extends EventEmitter {
             this.dt = !this.startTime ? 0.02 : 0.001 * (this.currentTime - this.startTime);
         }
 
-        this.emit("frameStart");
+        this.onFrameStart();
 
         if (this._updateSourceTextures.size) {
             this._updateSourceTextures.forEach(texture => {
@@ -234,13 +221,9 @@ export default class Stage extends EventEmitter {
             this._updateSourceTextures = new Set();
         }
 
-        this.emit("update");
+        this.onUpdate();
 
         const changes = this.ctx.hasRenderUpdates();
-
-        // Update may cause textures to be loaded in sync, so by processing them here we may be able to show them
-        // during the current frame already.
-        this.textureThrottler.processSome();
 
         if (changes) {
             this._updatingFrame = true;
@@ -251,7 +234,7 @@ export default class Stage extends EventEmitter {
 
         this.platform.nextFrame(changes);
 
-        this.emit("frameEnd");
+        this.onFrameEnd();
 
         this.frameCounter++;
     }
@@ -388,11 +371,21 @@ export default class Stage extends EventEmitter {
     update() {
         this.ctx.update();
     }
+
+    onFrameStart() {
+    }
+
+    onUpdate() {
+
+    }
+
+    onFrameEnd() {
+
+    }
 }
 
 import Element from "./Element";
 import StageUtils from "./StageUtils";
 import TextureManager from "./TextureManager";
-import TextureThrottler from "./TextureThrottler";
 import CoreContext from "./core/CoreContext";
 import RectangleTexture from "../textures/RectangleTexture";

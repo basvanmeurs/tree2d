@@ -41,13 +41,12 @@ export default class WebPlatform {
     }
 
     loop() {
-        const self = this;
-        const lp = function() {
-            self._awaitingLoop = false;
-            if (self._looping) {
-                self.stage.drawFrame();
+        const lp = () => {
+            this._awaitingLoop = false;
+            if (this._looping) {
+                this.stage.drawFrame();
                 requestAnimationFrame(lp);
-                self._awaitingLoop = true;
+                this._awaitingLoop = true;
             }
         };
         requestAnimationFrame(lp);

@@ -6,6 +6,8 @@ import DefaultShader from "./shaders/DefaultShader";
 import C2dShader from "./C2dShader";
 import Renderer from "../Renderer";
 import TextureTintManager from "./C2dTextureTintManager";
+import {Constructor} from "../../util/types";
+import Shader from "../../tree/Shader";
 
 export default class C2dRenderer extends Renderer {
     constructor(stage) {
@@ -29,7 +31,7 @@ export default class C2dRenderer extends Renderer {
     }
 
     _getShaderAlternative(shaderType) {
-        return shaderType.getC2d && shaderType.getC2d();
+        return shaderType.getC2d();
     }
 
     createCoreQuadList(ctx) {
@@ -72,7 +74,7 @@ export default class C2dRenderer extends Renderer {
             canvas.width = options.w;
             canvas.height = options.h;
 
-            const imageData = new ImageData(new Uint8ClampedArray(options.source.buffer), options.w, options.h);
+            const imageData = new ImageData(new Uint8ClampedArray(options.source.buffer), options.width, options.height);
             canvas.getContext("2d").putImageData(imageData, 0, 0);
             return canvas;
         }

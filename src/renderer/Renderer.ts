@@ -41,8 +41,8 @@ export default abstract class Renderer {
 
     abstract _getShaderBaseType(): Constructor<Shader>;
 
-    protected _getShaderAlternative(shaderType: Constructor<Shader>): Shader | undefined {
-        return this.getDefaultShader();
+    protected _getShaderAlternative(shaderType: Constructor<Shader>): Constructor<Shader> | undefined {
+        return undefined
     }
 
     copyRenderTexture(

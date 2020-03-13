@@ -25,19 +25,16 @@ describe("textures", function() {
             this._invalid = v;
         }
 
-        set throttle(bool) {
-            this._throttle = bool;
-        }
-
         _getIsValid() {
             return !this._invalid;
         }
 
         _getSourceLoader() {
             return cb => {
-                const canvas = lng.Tools.createRoundRect(this.stage, 100, 100, [30, 30, 30, 30]);
+                const canvas = this.stage.getDrawingCanvas();
+                lng.textures.RoundRectTexture.drawOnCanvas(canvas, {w: 100, h: 100, radius: [30, 30, 30, 30]});
                 const opts = Object.assign(
-                    { throttle: this._throttle },
+                    { },
                     this.stage.platform.getTextureOptionsForDrawingCanvas(canvas)
                 );
                 if (this._async) {
@@ -45,13 +42,13 @@ describe("textures", function() {
                         if (this._error) {
                             return cb(this._error);
                         }
-                        cb(null, opts);
+                        cb(undefined, opts);
                     };
                 } else {
                     if (this._error) {
                         return cb(this._error);
                     }
-                    cb(null, opts);
+                    cb(undefined, opts);
                 }
             };
         }
@@ -159,7 +156,7 @@ describe("textures", function() {
         });
 
         describe("async", () => {
-            it("should load after async [without throttling]", () => {
+            it("should load after async", () => {
                 const element = stage.createElement({
                     children: {
                         Item: {x: 550, texture: {type: TestTexture, async: true}}
@@ -168,7 +165,6 @@ describe("textures", function() {
 
                 root.children = [element];
                 const texture = element.getByRef("Item").texture;
-                texture.throttle = false;
 
                 stage.drawFrame();
                 chai.assert(!texture.isLoaded(), "Texture must not be loaded");
@@ -370,7 +366,7 @@ describe("textures", function() {
         });
 
         describe("visible after cancel", () => {
-            it("should recover load [without throttling]", () => {
+            it("should recover load", () => {
                 const element = stage.createElement({
                     children: {
                         Item: { x: 550, texture: { type: TestTexture, async: true } }
@@ -379,7 +375,6 @@ describe("textures", function() {
 
                 root.children = [element];
                 const texture = element.getByRef("Item").texture;
-                texture.throttle = false;
 
                 stage.drawFrame();
                 chai.assert(!texture.isLoaded(), "Texture must not yet be loaded");
@@ -425,7 +420,7 @@ describe("textures", function() {
         });
 
         describe("visible after cancel (previous load fired)", () => {
-            it("should recover load [without throttling]", () => {
+            it("should recover load", () => {
                 const element = stage.createElement({
                     children: {
                         Item: { x: 550, texture: { type: TestTexture, async: true } }
@@ -435,7 +430,6 @@ describe("textures", function() {
                 root.children = [element];
                 const item = element.getByRef("Item");
                 const texture = item.texture;
-                texture.throttle = false;
 
                 stage.drawFrame();
                 chai.assert(!texture.isLoaded(), "Texture must not yet be loaded");
@@ -482,7 +476,7 @@ describe("textures", function() {
         });
 
         describe("visible after cancel (both loads fired)", () => {
-            it("should recover load [without throttling]", () => {
+            it("should recover load", () => {
                 const element = stage.createElement({
                     children: {
                         Item: { x: 550, texture: { type: TestTexture, async: true } }
@@ -492,7 +486,6 @@ describe("textures", function() {
                 root.children = [element];
                 const item = element.getByRef("Item")
                 const texture = item.texture;
-                texture.throttle = false;
 
                 stage.drawFrame();
                 chai.assert(!texture.isLoaded(), "Texture must not yet be loaded");
@@ -513,7 +506,7 @@ describe("textures", function() {
 
             let item, element;
 
-            it("should recover load [with throttling]", () => {
+            it("should recover load", () => {
                 element = stage.createElement({
                     children: {
                         Item: { x: 550, texture: { type: TestTexture, async: true } }

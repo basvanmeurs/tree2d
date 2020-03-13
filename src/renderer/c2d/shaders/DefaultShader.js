@@ -42,7 +42,7 @@ export default class DefaultShader extends C2dShader {
 
                 ctx.globalAlpha = rc.alpha;
                 this._beforeDrawEl(info);
-                ctx.fillRect(0, 0, vc.w, vc.h);
+                ctx.fillRect(0, 0, vc.getLayoutW(), vc.getLayoutH());
                 this._afterDrawEl(info);
                 ctx.globalAlpha = 1.0;
             } else {
@@ -82,10 +82,10 @@ export default class DefaultShader extends C2dShader {
 
                     // Actually draw result.
                     ctx.fillStyle = "white";
-                    ctx.drawImage(tintTexture, sourceX, sourceY, sourceW, sourceH, 0, 0, vc.w, vc.h);
+                    ctx.drawImage(tintTexture, sourceX, sourceY, sourceW, sourceH, 0, 0, vc.getLayoutW(), vc.getLayoutH());
                 } else {
                     ctx.fillStyle = "white";
-                    ctx.drawImage(tx, sourceX, sourceY, sourceW, sourceH, 0, 0, vc.w, vc.h);
+                    ctx.drawImage(tx, sourceX, sourceY, sourceW, sourceH, 0, 0, vc.getLayoutW(), vc.getLayoutH());
                 }
                 this._afterDrawEl(info);
                 ctx.globalAlpha = 1.0;
