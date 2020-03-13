@@ -346,7 +346,7 @@ export default class TextureSource {
     }
 
     _isNativeTexture(source) {
-        return Utils.isNode ? source.constructor.name === "WebGLTexture" : source instanceof WebGLTexture;
+        return source instanceof WebGLTexture;
     }
 }
 

@@ -168,7 +168,3 @@ export default class Utils {
         return charcode >= 65 && charcode <= 90;
     }
 }
-
-Utils.isNode = typeof window === "undefined";
-Utils.isWeb = typeof window !== "undefined";
-Utils.isWPE = Utils.isWeb && navigator.userAgent.indexOf("WPE") !== -1;

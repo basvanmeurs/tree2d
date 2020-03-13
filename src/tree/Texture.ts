@@ -570,7 +570,6 @@ export type TextureSourceOptions = {
     permanent?: boolean;
     hasAlpha?: boolean;
     premultiplyAlpha?: boolean;
-    flipBlueRed?: boolean;
     renderInfo?: any;
     texParams?: Record<GLenum, GLenum>;
 };

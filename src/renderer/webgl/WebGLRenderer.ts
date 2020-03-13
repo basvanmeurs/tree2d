@@ -118,7 +118,6 @@ export default class WebGLRenderer extends Renderer {
         textureSource: TextureSource,
         options: {
             premultiplyAlpha?: boolean;
-            flipBlueRed?: boolean;
             hasAlpha?: boolean;
             texParams?: TexParams;
             texOptions: {
@@ -136,7 +135,6 @@ export default class WebGLRenderer extends Renderer {
         const format = {
             premultiplyAlpha: true,
             hasAlpha: true,
-            flipBlueRed: false,
             texParams: {} as TexParams,
             texOptions: {
                 format: 0,
@@ -147,10 +145,6 @@ export default class WebGLRenderer extends Renderer {
 
         if (options && options.premultiplyAlpha !== undefined) {
             format.premultiplyAlpha = options.premultiplyAlpha;
-        }
-
-        if (options && options.flipBlueRed !== undefined) {
-            format.flipBlueRed = options.flipBlueRed;
         }
 
         if (options && options.hasAlpha !== undefined) {
@@ -168,10 +162,6 @@ export default class WebGLRenderer extends Renderer {
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, format.premultiplyAlpha);
-
-        if (Utils.isNode) {
-            gl.pixelStorei(gl.UNPACK_FLIP_BLUE_RED, format.flipBlueRed);
-        }
 
         const texParams = format.texParams;
         if (!texParams[gl.TEXTURE_MAG_FILTER]) texParams[gl.TEXTURE_MAG_FILTER] = gl.LINEAR;

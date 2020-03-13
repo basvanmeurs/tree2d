@@ -38,7 +38,7 @@ export default class Stage extends EventEmitter {
                 this.c2d = context;
             }
         } else {
-            if (Utils.isWeb && (!Stage.isWebglSupported() || this.getOption("canvas2d"))) {
+            if (!Stage.isWebglSupported() || this.getOption("canvas2d")) {
                 console.log("Using canvas2d renderer");
                 this.c2d = this.platform.createCanvasContext(this.getOption("w"), this.getOption("h"));
             } else {
@@ -99,10 +99,6 @@ export default class Stage extends EventEmitter {
     }
 
     static isWebglSupported() {
-        if (Utils.isNode) {
-            return true;
-        }
-
         try {
             return !!window.WebGLRenderingContext;
         } catch (e) {
