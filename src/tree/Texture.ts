@@ -45,7 +45,7 @@ export default class Texture {
     // Indicates whether this texture must update (when it becomes used again).
     private _mustUpdate: boolean = true;
 
-    constructor(private stage: Stage) {}
+    constructor(protected stage: Stage) {}
 
     get source(): TextureSource | undefined {
         if (this._mustUpdate || this.stage.hasUpdateSourceTexture(this)) {
@@ -157,7 +157,7 @@ export default class Texture {
     }
 
     // Returns the lookup id for the current texture settings, to be able to reuse it.
-    private _getLookupId(): string | undefined {
+    protected _getLookupId(): string | undefined {
         // Default: do not reuse texture.
         return undefined;
     }
@@ -167,7 +167,7 @@ export default class Texture {
      * The loader itself may return a Function that is called when loading of the texture is cancelled. This can be used
      * to stop fetching an image when it is no longer in element, for example.
      */
-    _getSourceLoader(): TextureSourceLoader {
+    protected _getSourceLoader(): TextureSourceLoader {
         throw new Error("Texture.generate must be implemented.");
     }
 
@@ -178,7 +178,7 @@ export default class Texture {
     /**
      * If texture is not 'valid', no source can be created for it.
      */
-    private _getIsValid(): boolean {
+    protected _getIsValid(): boolean {
         return true;
     }
 
@@ -546,9 +546,9 @@ export type ResizeMode = {
     y: number;
 };
 
-export type TextureSourceLoader = () => TextureSourceCallback;
+export type TextureSourceLoader = (cb: TextureSourceCallback) => void;
+export type TextureSourceCallback = (error: Error|undefined, options?: TextureSourceOptions) => TextureSourceCancelFunction|void;
 export type TextureSourceCancelFunction = () => void;
-export type TextureSourceCallback = (error: string, options: TextureSourceOptions) => TextureSourceCancelFunction;
 export type TextureSourceOptions = {
     source:
         | ArrayBuffer
@@ -558,14 +558,14 @@ export type TextureSourceOptions = {
         | HTMLCanvasElement
         | HTMLVideoElement
         | ImageBitmap;
-    w: number;
-    h: number;
+    width?: number;
+    height?: number;
     permanent?: boolean;
     hasAlpha?: boolean;
     premultiplyAlpha?: boolean;
     flipBlueRed?: boolean;
-    renderInfo: any;
+    renderInfo?: any;
+    texParams?: Record<GLenum, GLenum>;
 };
 
-import Patcher from "../patch/Patcher";
 import TextureSource from "./TextureSource";

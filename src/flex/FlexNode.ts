@@ -51,20 +51,20 @@ export default class FlexNode {
 
     setFlexEnabled(v: boolean) {
         if (v) {
-            this._enableFlex();
+            this.enableFlex();
         } else {
-            this._disableFlex();
+            this.disableFlex();
         }
     }
 
-    private _enableFlex() {
+    private enableFlex() {
         this.forceLayout();
-        this._enableChildrenAsFlexItems();
+        this.enableChildrenAsFlexItems();
     }
 
-    private _disableFlex() {
+    private disableFlex() {
         this.forceLayout();
-        this._disableChildrenAsFlexItems();
+        this.disableChildrenAsFlexItems();
         this.restoreLayoutIfNonFlex();
     }
 
@@ -77,45 +77,45 @@ export default class FlexNode {
     }
 
     get flexItem(): FlexItem {
-        this._ensureFlexItem();
+        this.ensureFlexItem();
         return this._flexItem!;
     }
 
-    private _ensureFlexItem() {
+    private ensureFlexItem() {
         if (!this._flexItem) {
             this._flexItem = new FlexItem(this);
         }
     }
 
-    private _enableChildrenAsFlexItems() {
+    private enableChildrenAsFlexItems() {
         const children = this.subject.getChildren();
         if (children) {
             for (let i = 0, n = children.length; i < n; i++) {
                 const child = children[i];
-                child.getLayout()._enableFlexItem();
+                child.getLayout().enableFlexItem();
             }
         }
     }
 
-    private _disableChildrenAsFlexItems() {
+    private disableChildrenAsFlexItems() {
         const children = this.subject.getChildren();
         if (children) {
             for (let i = 0, n = children.length; i < n; i++) {
                 const child = children[i];
-                child.getLayout()._disableFlexItem();
+                child.getLayout().disableFlexItem();
             }
         }
     }
 
-    private _enableFlexItem() {
-        this._ensureFlexItem();
+    private enableFlexItem() {
+        this.ensureFlexItem();
         const flexParent = this.subject!.getParent()!.getLayout();
         this._flexItem!.setContainer(flexParent._flex);
         flexParent.changedContents();
         this.restoreLayoutIfNonFlex();
     }
 
-    private _disableFlexItem() {
+    private disableFlexItem() {
         if (this._flexItem) {
             this._flexItem.setContainer(undefined);
         }
@@ -123,10 +123,10 @@ export default class FlexNode {
         // We keep the flexItem object because it may contain custom settings.
         this.restoreLayoutIfNonFlex();
 
-        this._resetOffsets();
+        this.resetOffsets();
     }
 
-    private _resetOffsets() {
+    private resetOffsets() {
         this.x = this.subject.getSourceX();
         this.y = this.subject.getSourceY();
     }
@@ -135,13 +135,13 @@ export default class FlexNode {
         const enabled = this.isEnabled();
         if (this._enabled !== enabled) {
             if (!enabled) {
-                this._disable();
+                this.disable();
             }
             this._enabled = enabled;
         }
     }
 
-    private _disable() {
+    private disable() {
         this.restoreSubjectToNonFlex();
     }
 
@@ -161,7 +161,7 @@ export default class FlexNode {
         }
 
         if (to && to.getLayout().isFlexEnabled()) {
-            this._enableFlexItem();
+            this.enableFlexItem();
             to.getLayout().changedChildren();
         }
 
@@ -198,12 +198,12 @@ export default class FlexNode {
 
     get items() {
         if (!this._items) {
-            this._items = this._getFlexItems();
+            this._items = this.getFlexItems();
         }
         return this._items;
     }
 
-    private _getFlexItems(): FlexNode[] {
+    private getFlexItems(): FlexNode[] {
         const items = [];
         const children = this.subject.getChildren();
         if (children) {
@@ -220,11 +220,11 @@ export default class FlexNode {
     }
 
     public changedChildren() {
-        this._clearFlexItemsCache();
+        this.clearFlexItemsCache();
         this.changedContents();
     }
 
-    private _clearFlexItemsCache() {
+    private clearFlexItemsCache() {
         this._items = undefined;
     }
 
@@ -250,18 +250,18 @@ export default class FlexNode {
     }
 
     forceLayout(changeWidth = true, changeHeight = true) {
-        this._updateRecalc(changeWidth, changeHeight);
+        this.updateRecalc(changeWidth, changeHeight);
     }
 
     changedContents() {
-        this._updateRecalc();
+        this.updateRecalc();
     }
 
     isChanged() {
         return this._recalc > 0;
     }
 
-    private _updateRecalc(changeExternalWidth = false, changeExternalHeight = false) {
+    private updateRecalc(changeExternalWidth = false, changeExternalHeight = false) {
         if (this.isFlexEnabled()) {
             const layout = this._flex!.layout;
 
@@ -275,7 +275,7 @@ export default class FlexNode {
         this._recalc |= recalc;
         if (newRecalcFlags > 1) {
             if (this.flexParent) {
-                this.flexParent._updateRecalcBottomUp(recalc);
+                this.flexParent.updateRecalcBottomUp(recalc);
             } else {
                 this.subject.triggerLayout();
             }
@@ -288,14 +288,14 @@ export default class FlexNode {
         return (7 - this._recalc) & flags;
     }
 
-    private _updateRecalcBottomUp(childRecalc: number) {
+    private updateRecalcBottomUp(childRecalc: number) {
         const newRecalc = this._getRecalcFromChangedChildRecalc(childRecalc);
         const newRecalcFlags = this.getNewRecalcFlags(newRecalc);
         this._recalc |= newRecalc;
         if (newRecalcFlags > 1) {
             const flexParent = this.flexParent;
             if (flexParent) {
-                flexParent._updateRecalcBottomUp(newRecalc);
+                flexParent.updateRecalcBottomUp(newRecalc);
             } else {
                 this.subject.triggerLayout();
             }

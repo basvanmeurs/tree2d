@@ -1,11 +1,12 @@
-import Texture from "../tree/Texture";
+import Texture, {TextureSourceLoader} from "../tree/Texture";
 
 export default class NoiseTexture extends Texture {
-    _getLookupId() {
+
+    protected _getLookupId() {
         return "__noise";
     }
 
-    _getSourceLoader() {
+    protected _getSourceLoader(): TextureSourceLoader {
         const gl = this.stage.gl;
         return function(cb) {
             const noise = new Uint8Array(128 * 128 * 4);
@@ -16,7 +17,7 @@ export default class NoiseTexture extends Texture {
                 noise[i + 2] = v;
                 noise[i + 3] = 255;
             }
-            const texParams = {};
+            const texParams: Record<GLenum, GLenum> = {};
 
             if (gl) {
                 texParams[gl.TEXTURE_WRAP_S] = gl.REPEAT;
@@ -25,7 +26,8 @@ export default class NoiseTexture extends Texture {
                 texParams[gl.TEXTURE_MAG_FILTER] = gl.NEAREST;
             }
 
-            cb(null, { source: noise, w: 128, h: 128, texParams: texParams });
+            cb(undefined, { source: noise, width: 128, height: 128, texParams: texParams });
         };
     }
+
 }

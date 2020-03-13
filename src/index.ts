@@ -13,11 +13,11 @@ import ObjectListWrapper from "./tools/ObjectListWrapper";
 
 import RectangleTexture from "./textures/RectangleTexture";
 import NoiseTexture from "./textures/NoiseTexture";
-import TextTexture from "./textures/TextTexture";
+import TextTexture from "./textures/text/TextTexture";
 import ImageTexture from "./textures/ImageTexture";
 import HtmlTexture from "./textures/HtmlTexture";
 import StaticTexture from "./textures/StaticTexture";
-import StaticCanvasTexture from "./textures/StaticCanvasTexture";
+import FactoryTexture from "./textures/StaticCanvasTexture";
 import SourceTexture from "./textures/SourceTexture";
 
 import EventEmitter from "./EventEmitter";
@@ -91,7 +91,7 @@ const index = {
         ImageTexture,
         HtmlTexture,
         StaticTexture,
-        StaticCanvasTexture,
+        StaticCanvasTexture: FactoryTexture,
         SourceTexture
     },
     tools: {

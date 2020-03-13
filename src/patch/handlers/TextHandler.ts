@@ -1,5 +1,5 @@
 import Handler from "./Handler";
-import TextTexture from "../../textures/TextTexture";
+import TextTexture from "../../textures/text/TextTexture";
 import Utils from "../../tree/Utils";
 import Patcher from "../Patcher";
 

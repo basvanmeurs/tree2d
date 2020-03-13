@@ -1,12 +1,9 @@
-import Texture from "../tree/Texture";
+import Texture, {TextureSourceLoader} from "../tree/Texture";
 
 export default class ImageTexture extends Texture {
-    constructor(stage) {
-        super(stage);
 
-        this._src = undefined;
-        this._hasAlpha = false;
-    }
+    private _src?: string;
+    private _hasAlpha: boolean = false;
 
     get src() {
         return this._src;
@@ -30,16 +27,16 @@ export default class ImageTexture extends Texture {
         }
     }
 
-    _getIsValid() {
+    protected _getIsValid() {
         return !!this._src;
     }
 
-    _getLookupId() {
+    protected _getLookupId() {
         return this._src;
     }
 
-    _getSourceLoader() {
-        let src = this._src;
+    protected _getSourceLoader(): TextureSourceLoader {
+        let src = this._src!;
         const hasAlpha = this._hasAlpha;
         if (this.stage.getOption("srcBasePath")) {
             const fc = src.charCodeAt(0);
@@ -61,4 +58,5 @@ export default class ImageTexture extends Texture {
         }
         return obj;
     }
+
 }

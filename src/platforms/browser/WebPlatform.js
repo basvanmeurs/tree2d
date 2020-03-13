@@ -85,7 +85,7 @@ export default class WebPlatform {
             // WPE-specific image parser.
             const image = this._imageWorker.create(src);
             image.onError = function(err) {
-                return cb("Image load error");
+                return cb(new Error("Image load error: " + err.toString()));
             };
             image.onLoad = function({ imageBitmap, hasAlphaChannel }) {
                 cb(null, {

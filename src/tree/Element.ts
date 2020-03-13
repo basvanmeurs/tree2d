@@ -1358,7 +1358,7 @@ class Element {
 
 import Texture from "./Texture";
 import ImageTexture from "../textures/ImageTexture";
-import TextTexture from "../textures/TextTexture";
+import TextTexture from "../textures/text/TextTexture";
 import SourceTexture from "../textures/SourceTexture";
 import ElementChildList from "./ElementChildList";
 import Stage from "./Stage";

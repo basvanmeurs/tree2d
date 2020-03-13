@@ -1,11 +1,12 @@
-import Texture from "../tree/Texture";
+import Texture, {TextureSourceCallback, TextureSourceLoader} from "../tree/Texture";
 
 export default class HtmlTexture extends Texture {
-    constructor(stage) {
-        super(stage);
-        this._htmlElement = undefined;
-        this._scale = 1;
-    }
+
+    private _htmlElement? : HTMLElement;
+
+    private _scale = 1;
+
+    private static _preloadArea?: HTMLDivElement;
 
     set htmlElement(v) {
         this._htmlElement = v;
@@ -31,27 +32,30 @@ export default class HtmlTexture extends Texture {
         } else {
             const d = document.createElement("div");
             d.innerHTML = "<div>" + v + "</div>";
-            this.htmlElement = d.firstElementChild;
+            if (d.firstElementChild) {
+                this.htmlElement = (d.firstElementChild as HTMLElement);
+            }
         }
     }
 
     get html() {
-        return this._htmlElement.innerHTML;
+        return this._htmlElement ? this._htmlElement.innerHTML : "";
     }
 
-    _getIsValid() {
-        return this.htmlElement;
+    protected _getIsValid() {
+        return !!this.htmlElement;
     }
 
-    _getLookupId() {
-        return this._scale + ":" + this._htmlElement.innerHTML;
+    protected _getLookupId() {
+        return this._scale + ":" + this.html;
     }
 
-    _getSourceLoader() {
-        const htmlElement = this._htmlElement;
+    _getSourceLoader(): TextureSourceLoader {
+        const htmlElement = this._htmlElement!;
         const scale = this._scale;
-        return function(cb) {
-            if (!window.html2canvas) {
+        return function(cb: TextureSourceCallback) {
+            const html2canvas: any = (window as any).html2canvas;
+            if (!(window as any).html2canvas) {
                 return cb(new Error("Please include html2canvas (https://html2canvas.hertzen.com/)"));
             }
 
@@ -59,14 +63,14 @@ export default class HtmlTexture extends Texture {
             area.appendChild(htmlElement);
 
             html2canvas(htmlElement, { backgroundColor: null, scale: scale })
-                .then(function(canvas) {
+                .then(function(canvas: HTMLCanvasElement) {
                     area.removeChild(htmlElement);
                     if (canvas.height === 0) {
                         return cb(new Error("Canvas height is 0"));
                     }
-                    cb(null, { source: canvas, width: canvas.width, height: canvas.height });
+                    cb(undefined, { source: canvas, width: canvas.width, height: canvas.height });
                 })
-                .catch(e => {
+                .catch((e: any) => {
                     console.error(e);
                 });
         };
@@ -80,7 +84,7 @@ export default class HtmlTexture extends Texture {
                 // Use a shadow DOM if possible to prevent styling from interfering.
                 this._preloadArea.attachShadow({ mode: "closed" });
             }
-            this._preloadArea.style.opacity = 0;
+            this._preloadArea.style.opacity = '0';
             this._preloadArea.style.pointerEvents = "none";
             this._preloadArea.style.position = "fixed";
             this._preloadArea.style.display = "block";

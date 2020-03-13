@@ -10,88 +10,88 @@ describe("layout", () => {
         let root;
 
         const getRoot = () => root;
-        const addUpdateTest = (name, setup, show = false) => {
+        const addUpdateTest = (name, setup, show = true) => {
             flexTestUtils.addUpdateTest(getRoot, name, setup, show);
         };
 
-        describe("deferred/smart updates", () => {
-            let subject, sibling;
-            before(() => {
-                const structure = {
-                    w: 500,
-                    h: 500,
-                    flex: { enabled: true, direction: "column", padding: 5 },
-                    children: [
-                        {
-                            w: 0,
-                            h: 50,
-                            flex: { enabled: true },
-                            flexItem: { grow: 1 },
-                            sibling: true
-                        },
-                        {
-                            w: 100,
-                            h: 100,
-                            flex: { enabled: true, direction: "column" },
-                            subject: true,
-                            flexItem: { grow: 2 },
-                            children: [{ w: 90, h: 100, flexItem: { grow: 1 }, sub: true }]
-                        }
-                    ]
-                };
-                root = flexTestUtils.buildFlexFromStructure(structure);
-                root.update();
-
-                sibling = root.children[0];
-                subject = root.children[1];
-            });
-
-            describe("initial", () => {
-                it("layouts", () => {
-                    return flexTestUtils.validateLayout(root);
-                });
-            });
-
-            addUpdateTest("no changes", () => {
-                return { layouts: [] };
-            });
-
-            addUpdateTest("update from within fixed-size container", () => {
-                subject.children[0].w = 100;
-                return { layouts: [subject] };
-            });
-
-            addUpdateTest("change dims of fixed-size container", () => {
-                subject.h = 130;
-                return { layouts: [root, sibling, sibling, subject] };
-            });
-
-            addUpdateTest("change from root", () => {
-                root.w = 600;
-                return { layouts: [root, sibling] };
-            });
-
-            addUpdateTest("change to dynamic width", () => {
-                subject.w = 0;
-                return { layouts: [root, subject, subject] };
-            });
-
-            addUpdateTest("change from root", () => {
-                root.w = 700;
-                return { layouts: [root, sibling, subject] };
-            });
-
-            addUpdateTest("change offset of root", () => {
-                root.x = 200;
-                return { layouts: [] };
-            });
-
-            addUpdateTest("change offset of subject", () => {
-                subject.x = 2;
-                subject.y = 2;
-                return { layouts: [] };
-            });
-        });
+        // describe("deferred/smart updates", () => {
+        //     let subject, sibling;
+        //     before(() => {
+        //         const structure = {
+        //             w: 500,
+        //             h: 500,
+        //             flex: { enabled: true, direction: "column", padding: 5 },
+        //             children: [
+        //                 {
+        //                     w: 0,
+        //                     h: 50,
+        //                     flex: { enabled: true },
+        //                     flexItem: { grow: 1 },
+        //                     sibling: true
+        //                 },
+        //                 {
+        //                     w: 100,
+        //                     h: 100,
+        //                     flex: { enabled: true, direction: "column" },
+        //                     subject: true,
+        //                     flexItem: { grow: 2 },
+        //                     children: [{ w: 90, h: 100, flexItem: { grow: 1 }, sub: true }]
+        //                 }
+        //             ]
+        //         };
+        //         root = flexTestUtils.buildFlexFromStructure(structure);
+        //         root.update();
+        //
+        //         sibling = root.children[0];
+        //         subject = root.children[1];
+        //     });
+        //
+        //     describe("initial", () => {
+        //         it("layouts", () => {
+        //             return flexTestUtils.validateLayout(root);
+        //         });
+        //     });
+        //
+        //     addUpdateTest("no changes", () => {
+        //         return { layouts: [] };
+        //     });
+        //
+        //     addUpdateTest("update from within fixed-size container", () => {
+        //         subject.children[0].w = 100;
+        //         return { layouts: [subject] };
+        //     });
+        //
+        //     addUpdateTest("change dims of fixed-size container", () => {
+        //         subject.h = 130;
+        //         return { layouts: [root, sibling, sibling, subject] };
+        //     });
+        //
+        //     addUpdateTest("change from root", () => {
+        //         root.w = 600;
+        //         return { layouts: [root, sibling] };
+        //     });
+        //
+        //     addUpdateTest("change to dynamic width", () => {
+        //         subject.w = 0;
+        //         return { layouts: [root, subject, subject] };
+        //     });
+        //
+        //     addUpdateTest("change from root", () => {
+        //         root.w = 700;
+        //         return { layouts: [root, sibling, subject] };
+        //     });
+        //
+        //     addUpdateTest("change offset of root", () => {
+        //         root.x = 200;
+        //         return { layouts: [] };
+        //     });
+        //
+        //     addUpdateTest("change offset of subject", () => {
+        //         subject.x = 2;
+        //         subject.y = 2;
+        //         return { layouts: [] };
+        //     });
+        // });
 
         describe("mutations", () => {
             before(() => {
