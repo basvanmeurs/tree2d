@@ -8,8 +8,14 @@
 <body>
     <script>
         window.onload = () => {
-            const options = {w: 900, h: 900, clearColor: 0xFF000000, canvas2d: false, useImageWorker: false};
-            const stage = new lng.Stage(options);
+            const canvas = document.createElement('canvas');
+            canvas.width = 900;
+            canvas.height = 900;
+            document.body.appendChild(canvas);
+
+
+            const options = {clearColor: 0xFF000000, canvas2d: false, useImageWorker: false};
+            const stage = new lng.Stage(canvas, options);
 //            const el = stage.createElement({texture: {type: lng.textures.RectangleTexture}, w: 100, h: 100, color: 0xFFFF0000});
 //            const el = stage.createElement({texture: {type: lng.textures.NoiseTexture, text: "hello world", fontSize: 46, fontStyle: 'bold'}, w: 100, h: 100, color: 0xFFFF0000})
             const el = stage.createElement({texture: {type: lng.textures.TextTexture, text: "hello world", fontSize: 46, fontStyle: 'bold'}, color: 0xFFFF0000})
@@ -19,7 +25,6 @@
             setInterval(() => {
                 el.y++;
             }, 100)
-            document.body.appendChild(stage.getCanvas());
         };
     </script>
 </body>

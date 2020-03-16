@@ -11,8 +11,15 @@ describe("Shaders", function() {
             }
         };
 
-        stageGL = new lng.Stage({ h: 100 });
-        stage2D = new lng.Stage({ h: 100, canvas2d: true });
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 100;
+        stageGL = new lng.Stage(canvas, { });
+
+        const canvas2 = document.createElement('canvas');
+        canvas2.width = 500;
+        canvas2.height = 100;
+        stage2D = new lng.Stage(canvas2,{ canvas2d: true });
 
         lng.Patcher.patchObject(stageGL.root, template);
         lng.Patcher.patchObject(stage2D.root, template);

@@ -38,13 +38,6 @@ export default class ImageTexture extends Texture {
     protected _getSourceLoader(): TextureSourceLoader {
         let src = this._src!;
         const hasAlpha = this._hasAlpha;
-        if (this.stage.getOption("srcBasePath")) {
-            const fc = src.charCodeAt(0);
-            if (src.indexOf("//") === -1 && ((fc >= 65 && fc <= 90) || (fc >= 97 && fc <= 122) || fc == 46)) {
-                // Alphabetical or dot: prepend base path.
-                src = this.stage.getOption("srcBasePath") + src;
-            }
-        }
 
         return cb => {
             return this.stage.platform.loadSrcTexture({ src: src, hasAlpha: hasAlpha }, cb);

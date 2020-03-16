@@ -11,7 +11,7 @@ export default class WebGLCoreQuadList extends CoreQuadList {
 
         // Allocate a fairly big chunk of memory that should be enough to support ~100000 (default) quads.
         // We do not (want to) handle memory overflow.
-        const byteSize = ctx.stage.getOption("bufferMemory");
+        const byteSize = ctx.stage.bufferMemory;
 
         this.dataLength = 0;
 

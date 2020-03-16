@@ -167,7 +167,7 @@ export default class TextureSource {
                     // Clear callback to avoid memory leaks.
                     this._cancelCb = undefined;
 
-                    if (this.manager.getStage().destroyed) {
+                    if (this.manager.getStage().isDestroyed()) {
                         // Ignore async load when stage is destroyed.
                         return;
                     }

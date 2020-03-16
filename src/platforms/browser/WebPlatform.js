@@ -10,7 +10,7 @@ export default class WebPlatform {
         this._looping = false;
         this._awaitingLoop = false;
 
-        if (this.stage.getOption("useImageWorker")) {
+        if (this.stage.useImageWorker) {
             if (!window.createImageBitmap || !window.Worker) {
                 console.warn(
                     "Can't use image worker because browser does not have createImageBitmap and Web Worker support"
@@ -128,13 +128,8 @@ export default class WebPlatform {
         return cancelCb;
     }
 
-    createWebGLContext(w, h) {
-        const canvas = this.stage.getOption("canvas") || document.createElement("canvas");
-
-        if (w && h) {
-            canvas.width = w;
-            canvas.height = h;
-        }
+    createWebGLContext() {
+        const canvas = this.stage.canvas;
 
         const opts = {
             alpha: true,
@@ -152,13 +147,8 @@ export default class WebPlatform {
         return gl;
     }
 
-    createCanvasContext(w, h) {
-        const canvas = this.stage.getOption("canvas") || document.createElement("canvas");
-
-        if (w && h) {
-            canvas.width = w;
-            canvas.height = h;
-        }
+    createCanvasContext() {
+        const canvas = this.stage.canvas;
 
         const c2d = canvas.getContext("2d");
         if (!c2d) {

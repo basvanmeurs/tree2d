@@ -11,7 +11,7 @@ export default class TextTextureRenderer {
     constructor(private stage: Stage, private canvas: HTMLCanvasElement, private settings: Partial<TextSettings>) {}
 
     private getPrecision() {
-        return this.settings.precision || this.stage.getOption("precision");
+        return this.settings.precision || this.stage.precision;
     }
 
     setFontProperties() {
@@ -31,7 +31,7 @@ export default class TextTextureRenderer {
     private _getFontFaces() {
         let fontFace = this.settings.fontFace;
         if (!fontFace) {
-            fontFace = this.stage.getOption("defaultFontFace");
+            fontFace = this.stage.defaultFontFace;
         }
 
         if (fontFace) {
@@ -177,7 +177,7 @@ export default class TextTextureRenderer {
         }
 
         // Add extra margin to prevent issue with clipped text when scaling.
-        this.canvas.width = Math.ceil(width + this.stage.getOption("textRenderIssueMargin"));
+        this.canvas.width = Math.ceil(width);
         this.canvas.height = Math.ceil(height);
 
         // Canvas context has been reset.

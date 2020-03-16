@@ -29,13 +29,20 @@ export default class CoreContext {
     }
 
     hasRenderUpdates() {
-        return !!this.root._parent._hasRenderUpdates;
+        return !!this.root.getParent().hasRenderUpdates();
+    }
+
+    _clearRenderUpdatesFlag() {
+        this.root.getParent().clearHasRenderUpdates();
+    }
+
+    setRenderUpdatesFlag() {
+        this.root.getParent().setHasRenderUpdates(1);
     }
 
     render() {
         // Clear flag to identify if anything changes before the next frame.
-        this.root._parent._hasRenderUpdates = 0;
-
+        this._clearRenderUpdatesFlag();
         this._render();
     }
 
@@ -70,19 +77,12 @@ export default class CoreContext {
 
     _update() {
         this.updateTreeOrder = 0;
-
         this.root.update();
     }
 
     _render() {
         // Obtain a sequence of the quad operations.
         this._fillRenderState();
-
-        if (this.stage.getOption("readPixelsBeforeDraw")) {
-            const pixels = new Uint8Array(4);
-            const gl = this.stage.gl;
-            gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-        }
 
         // Now run them with the render executor.
         this._performRender();
@@ -170,4 +170,5 @@ export default class CoreContext {
     forceZSort(elementCore) {
         this._zSorts.push(elementCore);
     }
+
 }

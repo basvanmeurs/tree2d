@@ -2,8 +2,10 @@ import Stage from "../tree/Stage";
 import CoreContext from "../tree/core/CoreContext";
 import Shader from "../tree/Shader";
 import { Constructor } from "../util/types";
-import Texture from "../tree/Texture";
+import { TextureSourceOptions } from "../tree/Texture";
 import { RenderTexture } from "./webgl/WebGLRenderer";
+import TextureSource from "../tree/TextureSource";
+import NativeTexture from "./NativeTexture";
 
 export default abstract class Renderer {
     _defaultShader?: Shader;
@@ -14,7 +16,7 @@ export default abstract class Renderer {
 
     abstract destroy(): void;
 
-    getDefaultShader(ctx = this.stage.ctx) {
+    getDefaultShader(ctx = this.stage.context) {
         if (!this._defaultShader) {
             this._defaultShader = this._createDefaultShader(ctx);
         }
@@ -42,7 +44,7 @@ export default abstract class Renderer {
     abstract _getShaderBaseType(): Constructor<Shader>;
 
     protected _getShaderAlternative(shaderType: Constructor<Shader>): Constructor<Shader> | undefined {
-        return undefined
+        return undefined;
     }
 
     copyRenderTexture(
@@ -59,4 +61,8 @@ export default abstract class Renderer {
     ) {
         console.warn("copyRenderTexture not supported by renderer");
     }
+
+    abstract freeTextureSource(textureSource: TextureSource): void;
+
+    abstract uploadTextureSource(textureSource: TextureSource, options: TextureSourceOptions): NativeTexture;
 }

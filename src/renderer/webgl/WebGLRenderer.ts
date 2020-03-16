@@ -16,17 +16,23 @@ import { Constructor } from "../../util/types";
 import ElementCore from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import WebGLShaderProgram from "./WebGLShaderProgram";
-import {TextureSourceOptions} from "../../tree/Texture";
+import { TextureSourceOptions } from "../../tree/Texture";
+import NativeTexture from "../NativeTexture";
 
-export interface RenderTexture extends WebGLTexture {
+export type NativeWebGLTexture = WebGLTexture &
+    NativeTexture & {
+        params: any;
+        options: any;
+    };
+
+export interface RenderTexture extends NativeWebGLTexture {
     id: number;
     f: number;
     ow: number;
     oh: number;
-    w: number;
-    h: number;
     precision: number;
     framebuffer: WebGLFramebuffer;
+    projection: Float32Array;
 }
 
 type TexParams = { [key: number]: GLenum };
@@ -51,7 +57,7 @@ export default class WebGLRenderer extends Renderer {
         return WebGLShader;
     }
 
-    protected _getShaderAlternative(shaderType: Constructor<Shader>): Constructor<Shader>|undefined {
+    protected _getShaderAlternative(shaderType: Constructor<Shader>): Constructor<Shader> | undefined {
         return (shaderType as any).getWebGL();
     }
 
@@ -80,7 +86,7 @@ export default class WebGLRenderer extends Renderer {
 
     createRenderTexture(w: number, h: number, pw: GLsizei, ph: GLsizei): RenderTexture {
         const gl = this.stage.gl;
-        const glTexture = gl.createTexture();
+        const glTexture: RenderTexture = gl.createTexture() as RenderTexture;
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pw, ph, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -98,7 +104,7 @@ export default class WebGLRenderer extends Renderer {
         glTexture.options = { format: gl.RGBA, internalFormat: gl.RGBA, type: gl.UNSIGNED_BYTE };
 
         // We need a specific framebuffer for every render texture.
-        glTexture.framebuffer = gl.createFramebuffer();
+        glTexture.framebuffer = gl.createFramebuffer()!;
         glTexture.projection = new Float32Array([2 / w, 2 / h]);
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, glTexture.framebuffer);
@@ -113,10 +119,7 @@ export default class WebGLRenderer extends Renderer {
         gl.deleteTexture(glTexture);
     }
 
-    uploadTextureSource(
-        textureSource: TextureSource,
-        options: TextureSourceOptions
-    ) {
+    uploadTextureSource(textureSource: TextureSource, options: TextureSourceOptions): NativeTexture {
         const gl = this.stage.gl;
 
         const source = options.source;
@@ -146,7 +149,7 @@ export default class WebGLRenderer extends Renderer {
 
         format.texParams = options.texParams || {};
 
-        const glTexture = gl.createTexture();
+        const glTexture = gl.createTexture() as NativeWebGLTexture;
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, format.premultiplyAlpha);

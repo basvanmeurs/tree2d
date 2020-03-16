@@ -48,9 +48,9 @@ export default class Texture {
     constructor(protected stage: Stage) {}
 
     get source(): TextureSource | undefined {
-        if (this._mustUpdate || this.stage.hasUpdateSourceTexture(this)) {
+        if (this._mustUpdate || this.stage.hasUpdateTexture(this)) {
             this._performUpdateSource(true);
-            this.stage.removeUpdateSourceTexture(this);
+            this.stage.removeUpdateTexture(this);
         }
         return this._source;
     }
@@ -202,10 +202,10 @@ export default class Texture {
         // We delay all updateSource calls to the next drawFrame, so that we can bundle them.
         // Otherwise we may reload a texture more often than necessary, when, for example, patching multiple text
         // properties.
-        this.stage.addUpdateSourceTexture(this);
+        this.stage.addUpdateTexture(this);
     }
 
-    private _performUpdateSource(force = false) {
+    _performUpdateSource(force = false) {
         // If, in the meantime, the texture was no longer used, just remember that it must update until it becomes used
         // again.
         if (force || this.isUsed()) {

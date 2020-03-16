@@ -5,7 +5,7 @@ import { Constructor } from "../../util/types";
 
 export class ShaderHandler extends SingleReferenceHandler {
     constructor(sourceType: Constructor<Element>, name: string) {
-        super(sourceType, name, Shader, obj => [obj.stage.ctx]);
+        super(sourceType, name, Shader, obj => [obj.stage.context]);
     }
 
     handle(obj: any, settings: any) {

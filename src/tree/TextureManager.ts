@@ -61,7 +61,7 @@ export default class TextureManager {
         nativeTexture.w = textureSource.w;
         nativeTexture.h = textureSource.h;
 
-        nativeTexture.update = this.stage.frameCounter;
+        nativeTexture.updateFrame = this.stage.frameCounter;
 
         this._uploadedTextureSources.push(textureSource);
 

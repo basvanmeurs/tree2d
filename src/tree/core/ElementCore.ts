@@ -160,7 +160,7 @@ export default class ElementCore implements FlexSubject {
     constructor(element: Element) {
         this._element = element;
 
-        this.ctx = element.stage.ctx;
+        this.ctx = element.stage.context;
 
         this.renderState = this.ctx.renderState;
     }
@@ -512,6 +512,14 @@ export default class ElementCore implements FlexSubject {
         this._setLocalAlpha(this._visible ? this._alpha : 0);
     }
 
+    hasRenderUpdates() {
+        return this._hasRenderUpdates > 0;
+    }
+
+    clearHasRenderUpdates() {
+        this._hasRenderUpdates = 0;
+    }
+
     /**
      * @param {number} type
      * 0: no updates
@@ -728,7 +736,6 @@ export default class ElementCore implements FlexSubject {
     }
 
     private _updateBaseDimensions() {
-
         if (this._funcW || this._funcH) {
             this._triggerRecalcTranslate();
         }
@@ -742,7 +749,6 @@ export default class ElementCore implements FlexSubject {
             this.layout.updatedSourceH();
         } else {
             if ((!this.funcW && this._w !== w) || (!this.funcH && this._h !== h)) {
-
                 if (!this.funcW) {
                     this._w = w;
                 }
@@ -1310,7 +1316,7 @@ export default class ElementCore implements FlexSubject {
     }
 
     isVisible() {
-        return (this._localAlpha > 1e-14);
+        return this._localAlpha > 1e-14;
     }
 
     get outOfBounds() {
@@ -2204,11 +2210,11 @@ export default class ElementCore implements FlexSubject {
         return this._layout && this._layout.isEnabled();
     }
 
-    getFlexContainer(): FlexContainer|undefined {
+    getFlexContainer(): FlexContainer | undefined {
         return this.layout.isFlexEnabled() ? this.layout.flex : undefined;
     }
 
-    getFlexItem(): FlexItem|undefined {
+    getFlexItem(): FlexItem | undefined {
         return this.layout.flexItem;
     }
 

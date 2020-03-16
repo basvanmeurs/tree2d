@@ -55,9 +55,11 @@ describe("textures", function() {
     }
 
     before(() => {
-        stage = new lng.Stage({ w: 500, h: 500, clearColor: 0xffff0000, autostart: false });
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 500;
+        stage = new lng.Stage(canvas,{ clearColor: 0xffff0000, autostart: false });
         root = stage.root;
-        document.body.appendChild(stage.getCanvas());
     });
 
     describe("load", () => {
