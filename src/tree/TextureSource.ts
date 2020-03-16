@@ -1,99 +1,60 @@
+import TextureManager from "./TextureManager";
+import Element from "./Element";
+
 export default class TextureSource {
-    constructor(manager, loader = null) {
-        this.id = TextureSource.id++;
+    private id: number = TextureSource.id++;
 
-        this.manager = manager;
+    private static id = 0;
 
-        this.stage = manager.stage;
+    // All enabled textures (textures that are used by visible elements).
+    private textures = new Set<Texture>();
 
-        /**
-         * All enabled textures (textures that are used by visible elements).
-         * @type {Set<Texture>}
-         */
-        this.textures = new Set();
+    // The number of active textures (textures that have at least one active element).
+    private _activeTextureCount: number = 0;
 
-        /**
-         * The number of active textures (textures that have at least one active element).
-         * @type {number}
-         * @private
-         */
-        this._activeTextureCount = 0;
+    // Reuse identifier.
+    private lookupId?: string;
 
-        /**
-         * The factory for the source of this texture.
-         * @type {Function}
-         */
-        this.loader = loader;
+    // If set, this.is called when the texture source is no longer displayed (activeTextureCount becomes 0).
+    private _cancelCb?: (ts: TextureSource) => void;
 
-        /**
-         * Identifier for reuse.
-         * @type {String}
-         */
-        this.lookupId = null;
+    // Loading since timestamp in millis.
+    private loadingSince: number = 0;
 
-        /**
-         * If set, this.is called when the texture source is no longer displayed (this.components.size becomes 0).
-         * @type {Function}
-         */
-        this._cancelCb = null;
+    public w: number = 0;
+    public h: number = 0;
 
-        /**
-         * Loading since timestamp in millis.
-         * @type {number}
-         */
-        this.loadingSince = 0;
+    public _nativeTexture?: any;
 
-        this.w = 0;
-        this.h = 0;
+    // If true, then this.texture source is never freed from memory during garbage collection.
+    public permanent: boolean;
 
-        this._nativeTexture = null;
+    // Texture-specific rendering info.
+    private renderInfo?: any;
 
-        /**
-         * If true, then this.texture source is never freed from memory during garbage collection.
-         * @type {boolean}
-         */
-        this.permanent = false;
+    // Render-to-texture reuse.
+    private _isResultTexture: boolean = !this.loader;
 
-        /**
-         * Sub-object with texture-specific rendering information.
-         * For images, contains the src property, for texts, contains handy rendering information.
-         * @type {Object}
-         */
-        this.renderInfo = null;
+    // Contains the load error, if the texture source could previously not be loaded.
+    private _loadError?: Error;
 
-        /**
-         * Generated for 'renderToTexture'.
-         * @type {boolean}
-         * @private
-         */
-        this._isResultTexture = !this.loader;
+    constructor(private manager: TextureManager, private loader?: TextureSourceLoader) {}
 
-        /**
-         * Contains the load error, if the texture source could previously not be loaded.
-         * @type {object}
-         * @private
-         */
-        this._loadError = null;
-
-        /**
-         *  Hold a reference to the javascript variable which contains the texture, this is not required for WebGL in WebBrowsers but is required for Spark runtime.
-         * @type {object}
-         * @private
-         */
-        this._imageRef = null;
+    private get stage(): Stage {
+        return this.manager.stage;
     }
 
-    get loadError() {
+    get loadError(): Error | undefined {
         return this._loadError;
     }
 
-    addTexture(v) {
+    addTexture(v: Texture) {
         if (!this.textures.has(v)) {
             this.textures.add(v);
         }
     }
 
-    removeTexture(v) {
+    removeTexture(v: Texture) {
         this.textures.delete(v);
     }
 
@@ -119,9 +80,9 @@ export default class TextureSource {
         this._isResultTexture = v;
     }
 
-    forEachEnabledElement(cb) {
+    forEachEnabledElement(cb: (element: Element) => void) {
         this.textures.forEach(texture => {
-            texture.elements.forEach(cb);
+            texture.getElements().forEach(element => cb(element));
         });
     }
 
@@ -129,9 +90,9 @@ export default class TextureSource {
         return this.textures.size > 0;
     }
 
-    forEachActiveElement(cb) {
+    forEachActiveElement(cb: (element: Element) => void) {
         this.textures.forEach(texture => {
-            texture.elements.forEach(element => {
+            texture.getElements().forEach(element => {
                 if (element.active) {
                     cb(element);
                 }
@@ -151,12 +112,12 @@ export default class TextureSource {
         return !this.permanent && !this.isUsed();
     }
 
-    becomesUsed() {
+    private becomesUsed() {
         // Even while the texture is being loaded, make sure it is on the lookup map so that others can reuse it.
         this.load();
     }
 
-    becomesUnused() {
+    private becomesUnused() {
         this.cancel();
     }
 
@@ -166,7 +127,7 @@ export default class TextureSource {
                 this._cancelCb(this);
 
                 // Clear callback to avoid memory leaks.
-                this._cancelCb = null;
+                this._cancelCb = undefined;
             }
             this.loadingSince = 0;
         }
@@ -191,20 +152,20 @@ export default class TextureSource {
         }
     }
 
-    load(forceSync = false) {
+    load() {
         // From the moment of loading (when a texture source becomes used by active elements)
         if (this.isResultTexture) {
             // Element result texture source, for which the loading is managed by the core.
             return;
         }
 
-        if (!this._nativeTexture && !this.isLoading()) {
+        if (this.loader && !this._nativeTexture && !this.isLoading()) {
             this.loadingSince = new Date().getTime();
-            this._cancelCb = this.loader((err, options) => {
+            const cancelCb = this.loader((err: Error | undefined, options?: TextureSourceOptions) => {
                 // Ignore loads that come in after a cancel.
                 if (this.isLoading()) {
                     // Clear callback to avoid memory leaks.
-                    this._cancelCb = null;
+                    this._cancelCb = undefined;
 
                     if (this.manager.stage.destroyed) {
                         // Ignore async load when stage is destroyed.
@@ -218,19 +179,21 @@ export default class TextureSource {
                     }
                 }
             }, this);
+
+            this._cancelCb = cancelCb ? cancelCb : undefined;
         }
     }
 
-    processLoadedSource(options) {
+    processLoadedSource(options: TextureSourceOptions) {
         this.loadingSince = 0;
         this.setSource(options);
     }
 
-    setSource(options) {
+    setSource(options: TextureSourceOptions) {
         const source = options.source;
 
-        this.w = source.width || (options && options.width) || 0;
-        this.h = source.height || (options && options.height) || 0;
+        this.w = (source as any).width || (options && options.width) || 0;
+        this.h = (source as any).height || (options && options.height) || 0;
 
         if (options && options.renderInfo) {
             // Assign to id in cache so that it can be reused.
@@ -239,23 +202,20 @@ export default class TextureSource {
 
         this.permanent = !!options.permanent;
 
-
-
         if (this._isNativeTexture(source)) {
             // Texture managed by caller.
             this._nativeTexture = source;
 
-            this.w = this.w || source.w;
-            this.h = this.h || source.h;
+            this.w = this.w || (source as any).w;
+            this.h = this.h || (source as any).h;
 
             // WebGLTexture objects are by default;
-            this.permanent = options.hasOwnProperty("permanent") ? options.permanent : true;
+            this.permanent = options.permanent === undefined ? false : options.permanent;
         } else {
             this.manager.uploadTextureSource(this, options);
         }
 
-        // Must be cleared when reload is succesful.
-        this._loadError = null;
+        this._loadError = undefined;
 
         this.onLoad();
     }
@@ -264,7 +224,7 @@ export default class TextureSource {
         return this._activeTextureCount > 0;
     }
 
-    onLoad() {
+    private onLoad() {
         if (this.isUsed()) {
             this.textures.forEach(texture => {
                 texture.onLoad();
@@ -288,7 +248,7 @@ export default class TextureSource {
 
     forceUpdateRenderCoords() {
         this.forEachActiveElement(function(element) {
-            element._updateTextureCoords();
+            element.updateTextureCoords();
         });
     }
 
@@ -298,35 +258,31 @@ export default class TextureSource {
 
     clearNativeTexture() {
         this._nativeTexture = null;
-        //also clear the reference to the texture variable.
-        this._imageRef = null;
     }
 
     /**
      * Used for result textures.
      */
-    replaceNativeTexture(newNativeTexture, w, h) {
+    replaceNativeTexture(newNativeTexture: any, w: number, h: number) {
         const prevNativeTexture = this._nativeTexture;
         // Loaded by core.
         this._nativeTexture = newNativeTexture;
         this.w = w;
         this.h = h;
 
-        if (!prevNativeTexture && this._nativeTexture) {
+        if (!prevNativeTexture && newNativeTexture) {
             this.forEachActiveElement(element => element.onTextureSourceLoaded());
         }
 
-        if (!this._nativeTexture) {
-            this.forEachActiveElement(element => element._setDisplayedTexture(null));
+        if (!newNativeTexture) {
+            this.forEachActiveElement(element => element.setDisplayedTexture(undefined));
         }
 
-        // Dimensions must be updated also on enabled elements, as it may force it to go within bounds.
-        this.forEachEnabledElement(element => element._updateDimensions());
-
-        // Notice that the sprite map must never contain render textures.
+        // Dimensions may be changed.
+        this.forEachEnabledElement(element => element._updateTextureDimensions());
     }
 
-    onError(e) {
+    onError(e: Error) {
         this._loadError = e;
         this.loadingSince = 0;
         console.error("texture load error", e, this.lookupId);
@@ -339,13 +295,10 @@ export default class TextureSource {
         }
     }
 
-    _isNativeTexture(source) {
+    _isNativeTexture(source: any) {
         return source instanceof WebGLTexture;
     }
 }
 
-TextureSource.prototype.isTextureSource = true;
-
-TextureSource.id = 1;
-
-import Utils from "./Utils";
+import Texture, { TextureSourceLoader, TextureSourceOptions } from "./Texture";
+import Stage from "./Stage";

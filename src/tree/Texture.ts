@@ -89,6 +89,10 @@ export default class Texture {
         }
     }
 
+    getElements() {
+        return this.elements;
+    }
+
     incActiveCount() {
         // Ensure that texture source's activeCount has transferred ownership.
         const source = this.source;
@@ -292,7 +296,7 @@ export default class Texture {
         // Make sure that source is up to date.
         if (this.source) {
             if (!this.isLoaded()) {
-                this.source.load(true);
+                this.source.load();
             }
         }
     }
@@ -550,11 +554,11 @@ export type ResizeMode = {
     y: number;
 };
 
-export type TextureSourceLoader = (cb: TextureSourceCallback) => void;
-export type TextureSourceCallback = (
-    error: Error | undefined,
-    options?: TextureSourceOptions
+export type TextureSourceLoader = (
+    cb: TextureSourceCallback,
+    textureSource: TextureSource
 ) => TextureSourceCancelFunction | void;
+export type TextureSourceCallback = (error: Error | undefined, options?: TextureSourceOptions) => void;
 export type TextureSourceCancelFunction = () => void;
 export type TextureSourceOptions = {
     source:

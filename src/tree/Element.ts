@@ -186,7 +186,7 @@ class Element {
 
         // Force re-check of texture because dimensions might have changed (cutting).
         this._updateTextureDimensions();
-        this._updateTextureCoords();
+        this.updateTextureCoords();
 
         if (this.__texture) {
             this.__texture.addElement(this);
@@ -487,7 +487,7 @@ class Element {
         if (this.__displayedTexture) {
             if (sourceChanged) {
                 // We don't need to reference the displayed texture because it was already referenced (this.texture === this.displayedTexture).
-                this._updateTextureCoords();
+                this.updateTextureCoords();
                 this.__core.setDisplayedTextureSource(this.__displayedTexture.getSource());
             }
         } else {
@@ -521,14 +521,14 @@ class Element {
 
     onDisplayedTextureClippingChanged(): void {
         this._updateTextureDimensions();
-        this._updateTextureCoords();
+        this.updateTextureCoords();
     }
 
     onPrecisionChanged(): void {
         this._updateTextureDimensions();
     }
 
-    private _updateTextureDimensions(): void {
+    _updateTextureDimensions(): void {
         let w = 0,
             h = 0;
         if (this.__displayedTexture) {
@@ -557,7 +557,7 @@ class Element {
         this.__core.setTextureDimensions(w, h, unknownSize);
     }
 
-    private _updateTextureCoords(): void {
+    public updateTextureCoords(): void {
         if (this.displayedTexture) {
             const displayedTexture = this.displayedTexture;
             const displayedTextureSource = this.displayedTexture.getSource();
