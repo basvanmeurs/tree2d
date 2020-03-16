@@ -2,14 +2,14 @@ import C2dShader from "../C2dShader";
 import ColorUtils from "../../../tree/ColorUtils";
 
 export default class DefaultShader extends C2dShader {
-    constructor(ctx) {
-        super(ctx);
-        this._rectangleTexture = ctx.stage.rectangleTexture.source.nativeTexture;
-        this._tintManager = this.ctx.stage.renderer.tintManager;
+    constructor(context) {
+        super(context);
+        this._rectangleTexture = context.stage.rectangleTexture.source.nativeTexture;
+        this._tintManager = this.context.stage.renderer.tintManager;
     }
 
     draw(operation, target) {
-        const ctx = target.ctx;
+        const context = target.context;
         const length = operation.length;
         for (let i = 0; i < length; i++) {
             const tx = operation.getTexture(i);
@@ -19,8 +19,8 @@ export default class DefaultShader extends C2dShader {
             const stc = operation.getSimpleTc(i);
 
             //@todo: try to optimize out per-draw transform setting. split translate, transform.
-            const precision = this.ctx.stage.getRenderPrecision();
-            ctx.setTransform(
+            const precision = this.context.stage.getRenderPrecision();
+            context.setTransform(
                 rc.ta * precision,
                 rc.tc * precision,
                 rc.tb * precision,
@@ -35,21 +35,21 @@ export default class DefaultShader extends C2dShader {
             if (rect) {
                 // Check for gradient.
                 if (white) {
-                    ctx.fillStyle = "white";
+                    context.fillStyle = "white";
                 } else {
-                    this._setColorGradient(ctx, vc);
+                    this._setColorGradient(context, vc);
                 }
 
-                ctx.globalAlpha = rc.alpha;
+                context.globalAlpha = rc.alpha;
                 this._beforeDrawEl(info);
-                ctx.fillRect(0, 0, vc.getLayoutW(), vc.getLayoutH());
+                context.fillRect(0, 0, vc.getLayoutW(), vc.getLayoutH());
                 this._afterDrawEl(info);
-                ctx.globalAlpha = 1.0;
+                context.globalAlpha = 1.0;
             } else {
                 // @todo: set image smoothing based on the texture.
 
                 // @todo: optimize by registering whether identity texcoords are used.
-                ctx.globalAlpha = rc.alpha;
+                context.globalAlpha = rc.alpha;
                 this._beforeDrawEl(info);
 
                 // @todo: test if rounding yields better performance.
@@ -75,25 +75,25 @@ export default class DefaultShader extends C2dShader {
                     }
 
                     const alpha = ((color / 16777216) | 0) / 255.0;
-                    ctx.globalAlpha *= alpha;
+                    context.globalAlpha *= alpha;
 
                     const rgb = color & 0x00ffffff;
                     const tintTexture = this._tintManager.getTintTexture(tx, rgb);
 
                     // Actually draw result.
-                    ctx.fillStyle = "white";
-                    ctx.drawImage(tintTexture, sourceX, sourceY, sourceW, sourceH, 0, 0, vc.getLayoutW(), vc.getLayoutH());
+                    context.fillStyle = "white";
+                    context.drawImage(tintTexture, sourceX, sourceY, sourceW, sourceH, 0, 0, vc.getLayoutW(), vc.getLayoutH());
                 } else {
-                    ctx.fillStyle = "white";
-                    ctx.drawImage(tx, sourceX, sourceY, sourceW, sourceH, 0, 0, vc.getLayoutW(), vc.getLayoutH());
+                    context.fillStyle = "white";
+                    context.drawImage(tx, sourceX, sourceY, sourceW, sourceH, 0, 0, vc.getLayoutW(), vc.getLayoutH());
                 }
                 this._afterDrawEl(info);
-                ctx.globalAlpha = 1.0;
+                context.globalAlpha = 1.0;
             }
         }
     }
 
-    _setColorGradient(ctx, vc, w = vc.w, h = vc.h, transparency = true) {
+    _setColorGradient(context, vc, w = vc.w, h = vc.h, transparency = true) {
         const color = vc._colorUl;
         let gradient;
         //@todo: quick single color check.
@@ -105,7 +105,7 @@ export default class DefaultShader extends C2dShader {
                     // Single color.
                 } else {
                     // Vertical gradient.
-                    gradient = ctx.createLinearGradient(0, 0, 0, h);
+                    gradient = context.createLinearGradient(0, 0, 0, h);
                     if (transparency) {
                         gradient.addColorStop(0, ColorUtils.getRgbaString(vc._colorUl));
                         gradient.addColorStop(1, ColorUtils.getRgbaString(vc._colorBl));
@@ -120,7 +120,7 @@ export default class DefaultShader extends C2dShader {
         } else {
             if (vc._colorUl === vc._colorBl && vc._colorUr === vc._colorBr) {
                 // Horizontal gradient.
-                gradient = ctx.createLinearGradient(0, 0, w, 0);
+                gradient = context.createLinearGradient(0, 0, w, 0);
                 if (transparency) {
                     gradient.addColorStop(0, ColorUtils.getRgbaString(vc._colorUl));
                     gradient.addColorStop(1, ColorUtils.getRgbaString(vc._colorBr));
@@ -132,9 +132,9 @@ export default class DefaultShader extends C2dShader {
         }
 
         if (gradient) {
-            ctx.fillStyle = gradient;
+            context.fillStyle = gradient;
         } else {
-            ctx.fillStyle = transparency ? ColorUtils.getRgbaString(color) : ColorUtils.getRgbString(color);
+            context.fillStyle = transparency ? ColorUtils.getRgbaString(color) : ColorUtils.getRgbString(color);
         }
     }
 

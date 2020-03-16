@@ -20,10 +20,10 @@ export default class BlurShader extends DefaultShader {
     }
 
     _beforeDrawEl({ target }) {
-        target.ctx.filter = "blur(" + this._kernelRadius + "px)";
+        target.context.filter = "blur(" + this._kernelRadius + "px)";
     }
 
     _afterDrawEl({ target }) {
-        target.ctx.filter = "none";
+        target.context.filter = "none";
     }
 }

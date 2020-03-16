@@ -6,11 +6,12 @@ import DefaultShader from "./shaders/DefaultShader";
 import C2dShader from "./C2dShader";
 import Renderer from "../Renderer";
 import TextureTintManager from "./C2dTextureTintManager";
-import Shader from "../../tree/Shader";
 
 export default class C2dRenderer extends Renderer {
     constructor(stage) {
         super(stage);
+
+        this.stage.canvas.context = stage.c2d;
 
         this.tintManager = new TextureTintManager(stage);
 
@@ -21,8 +22,8 @@ export default class C2dRenderer extends Renderer {
         this.tintManager.destroy();
     }
 
-    _createDefaultShader(ctx) {
-        return new DefaultShader(ctx);
+    _createDefaultShader(context) {
+        return new DefaultShader(context);
     }
 
     _getShaderBaseType() {
@@ -33,20 +34,20 @@ export default class C2dRenderer extends Renderer {
         return shaderType.getC2d();
     }
 
-    createCoreQuadList(ctx) {
-        return new C2dCoreQuadList(ctx);
+    createCoreQuadList(context) {
+        return new C2dCoreQuadList(context);
     }
 
-    createCoreQuadOperation(ctx, shader, shaderOwner, renderTextureInfo, scissor, index) {
-        return new C2dCoreQuadOperation(ctx, shader, shaderOwner, renderTextureInfo, scissor, index);
+    createCoreQuadOperation(context, shader, shaderOwner, renderTextureInfo, scissor, index) {
+        return new C2dCoreQuadOperation(context, shader, shaderOwner, renderTextureInfo, scissor, index);
     }
 
-    createCoreRenderExecutor(ctx) {
-        return new C2dCoreRenderExecutor(ctx);
+    createCoreRenderExecutor(context) {
+        return new C2dCoreRenderExecutor(context);
     }
 
-    createCoreRenderState(ctx) {
-        return new CoreRenderState(ctx);
+    createCoreRenderState(context) {
+        return new CoreRenderState(context);
     }
 
     createRenderTexture(w, h, pw, ph) {
@@ -73,7 +74,11 @@ export default class C2dRenderer extends Renderer {
             canvas.width = options.w;
             canvas.height = options.h;
 
-            const imageData = new ImageData(new Uint8ClampedArray(options.source.buffer), options.width, options.height);
+            const imageData = new ImageData(
+                new Uint8ClampedArray(options.source.buffer),
+                options.width,
+                options.height
+            );
             canvas.getContext("2d").putImageData(imageData, 0, 0);
             return canvas;
         }
@@ -101,12 +106,12 @@ export default class C2dRenderer extends Renderer {
     finishRenderState(renderState) {}
 
     setupC2d(canvas) {
-        const ctx = canvas.getContext("2d");
-        canvas.ctx = ctx;
+        const context = canvas.getContext("2d");
+        canvas.context = context;
 
-        ctx._scissor = null;
+        context._scissor = null;
 
         // Save base state so we can restore the defaults later.
-        canvas.ctx.save();
+        canvas.context.save();
     }
 }

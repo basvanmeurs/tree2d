@@ -8,8 +8,8 @@ import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 export default class PixelateShader extends DefaultShader {
     private _size = new Float32Array([4, 4]);
 
-    constructor(ctx: CoreContext) {
-        super(ctx);
+    constructor(context: CoreContext) {
+        super(context);
     }
 
     get x() {

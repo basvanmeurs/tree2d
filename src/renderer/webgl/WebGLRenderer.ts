@@ -49,8 +49,8 @@ export default class WebGLRenderer extends Renderer {
         this.shaderPrograms.forEach(shaderProgram => shaderProgram.destroy());
     }
 
-    _createDefaultShader(ctx: CoreContext) {
-        return new DefaultShader(ctx);
+    _createDefaultShader(context: CoreContext) {
+        return new DefaultShader(context);
     }
 
     _getShaderBaseType() {
@@ -61,30 +61,26 @@ export default class WebGLRenderer extends Renderer {
         return (shaderType as any).getWebGL();
     }
 
-    createCoreQuadList(ctx: CoreContext) {
-        return new WebGLCoreQuadList(ctx);
+    createCoreQuadList(context: CoreContext) {
+        return new WebGLCoreQuadList(context);
     }
 
     createCoreQuadOperation(
-        ctx: CoreContext,
+        context: CoreContext,
         shader: Shader,
         shaderOwner: ElementCore,
         renderTextureInfo: RenderTextureInfo,
         scissor: number[],
         index: number
     ) {
-        return new WebGLCoreQuadOperation(ctx, shader, shaderOwner, renderTextureInfo, scissor, index);
+        return new WebGLCoreQuadOperation(context, shader, shaderOwner, renderTextureInfo, scissor, index);
     }
 
-    createCoreRenderExecutor(ctx: CoreContext) {
-        return new WebGLCoreRenderExecutor(ctx);
+    createCoreRenderExecutor(context: CoreContext) {
+        return new WebGLCoreRenderExecutor(context);
     }
 
-    createCoreRenderState(ctx: CoreContext) {
-        return new CoreRenderState(ctx);
-    }
-
-    createRenderTexture(w: number, h: number, pw: GLsizei, ph: GLsizei): RenderTexture {
+    createRenderTexture(w: number, h: number, pw: number, ph: number): RenderTexture {
         const gl = this.stage.gl;
         const glTexture: RenderTexture = gl.createTexture() as RenderTexture;
         gl.bindTexture(gl.TEXTURE_2D, glTexture);

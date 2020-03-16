@@ -1,8 +1,8 @@
 import CoreQuadList from "../../tree/core/CoreQuadList";
 
 export default class C2dCoreQuadList extends CoreQuadList {
-    constructor(ctx) {
-        super(ctx);
+    constructor(context) {
+        super(context);
 
         this.renderContexts = [];
         this.modes = [];

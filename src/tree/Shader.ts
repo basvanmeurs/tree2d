@@ -5,13 +5,13 @@ import {Constructor} from "../util/types";
 import C2dShader from "../renderer/c2d/C2dShader";
 
 export default class Shader {
-    protected ctx: CoreContext;
+    protected context: CoreContext;
 
     // The (enabled) elements that use this shader.
     private _elements = new Set<ElementCore>();
 
     constructor(coreContext: CoreContext) {
-        this.ctx = coreContext;
+        this.context = coreContext;
     }
 
     static getWebGL(): Constructor<WebGLShader>|undefined {

@@ -2,6 +2,7 @@ import WebGLShaderProgram from "./WebGLShaderProgram";
 import Shader from "../../tree/Shader";
 import CoreContext from "../../tree/core/CoreContext";
 import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
+import WebGLRenderer from "./WebGLRenderer";
 
 export default class WebGLShader extends Shader {
     vertexShaderSource: string;
@@ -12,23 +13,24 @@ export default class WebGLShader extends Shader {
     private readonly _program: WebGLShaderProgram;
     gl: WebGLRenderingContext;
 
-    constructor(ctx: CoreContext) {
-        super(ctx);
+    constructor(context: CoreContext) {
+        super(context);
 
         this._initialized = false;
 
-        const stage = ctx.stage;
+        const stage = context.stage;
 
-        this._program = stage.renderer.shaderPrograms.get(this.constructor);
-        if (!this._program) {
-            this._program = new WebGLShaderProgram(
+        let program = (stage.renderer as WebGLRenderer).shaderPrograms.get(this.constructor);
+        if (!program) {
+            program = new WebGLShaderProgram(
                 this.constructor.prototype.vertexShaderSource,
                 this.constructor.prototype.fragmentShaderSource
             );
 
             // Let the vbo context perform garbage collection.
-            stage.renderer.shaderPrograms.set(this.constructor, this._program);
+            (stage.renderer as WebGLRenderer).shaderPrograms.set(this.constructor, program);
         }
+        this._program = program;
 
         this.gl = stage.gl;
     }

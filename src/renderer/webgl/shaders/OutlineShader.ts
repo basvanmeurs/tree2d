@@ -8,8 +8,8 @@ export default class OutlineShader extends DefaultShader {
     private _col: number = 0xffffffff;
     private _color: number[] = [1, 1, 1, 1];
 
-    constructor(ctx: CoreContext) {
-        super(ctx);
+    constructor(context: CoreContext) {
+        super(context);
     }
 
     set width(v: number) {

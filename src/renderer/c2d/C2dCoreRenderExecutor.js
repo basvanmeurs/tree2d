@@ -3,8 +3,10 @@ import ColorUtils from "../../tree/ColorUtils";
 import Utils from "../../tree/Utils";
 
 export default class C2dCoreRenderExecutor extends CoreRenderExecutor {
-    init() {
-        this._mainRenderTexture = this.ctx.stage.getCanvas();
+
+    constructor(context) {
+        super(context);
+        this._mainRenderTexture = this.context.stage.getCanvas();
     }
 
     _renderQuadOperation(op) {
@@ -19,65 +21,65 @@ export default class C2dCoreRenderExecutor extends CoreRenderExecutor {
     }
 
     _clearRenderTexture() {
-        const ctx = this._getContext();
+        const context = this._getContext();
 
         let clearColor = [0, 0, 0, 0];
-        if (this._mainRenderTexture.ctx === ctx) {
-            clearColor = this.ctx.stage.getClearColor();
+        if (this._mainRenderTexture.context === context) {
+            clearColor = this.context.stage.getClearColor();
         }
 
-        const renderTexture = ctx.canvas;
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        const renderTexture = context.canvas;
+        context.setTransform(1, 0, 0, 1, 0, 0);
         if (!clearColor[0] && !clearColor[1] && !clearColor[2] && !clearColor[3]) {
-            ctx.clearRect(0, 0, renderTexture.width, renderTexture.height);
+            context.clearRect(0, 0, renderTexture.width, renderTexture.height);
         } else {
-            ctx.fillStyle = ColorUtils.getRgbaStringFromArray(clearColor);
+            context.fillStyle = ColorUtils.getRgbaStringFromArray(clearColor);
             // Do not use fillRect because it produces artifacts.
-            ctx.globalCompositeOperation = "copy";
-            ctx.beginPath();
-            ctx.rect(0, 0, renderTexture.width, renderTexture.height);
-            ctx.closePath();
-            ctx.fill();
-            ctx.globalCompositeOperation = "source-over";
+            context.globalCompositeOperation = "copy";
+            context.beginPath();
+            context.rect(0, 0, renderTexture.width, renderTexture.height);
+            context.closePath();
+            context.fill();
+            context.globalCompositeOperation = "source-over";
         }
     }
 
     _getContext() {
         if (this._renderTexture) {
-            return this._renderTexture.ctx;
+            return this._renderTexture.context;
         } else {
-            return this._mainRenderTexture.ctx;
+            return this._mainRenderTexture.context;
         }
     }
 
     _restoreContext() {
-        const ctx = this._getContext();
-        ctx.restore();
-        ctx.save();
-        ctx._scissor = null;
+        const context = this._getContext();
+        context.restore();
+        context.save();
+        context._scissor = null;
     }
 
     _setScissor(area) {
-        const ctx = this._getContext();
+        const context = this._getContext();
 
-        if (!C2dCoreRenderExecutor._equalScissorAreas(ctx.canvas, ctx._scissor, area)) {
+        if (!C2dCoreRenderExecutor._equalScissorAreas(context.canvas, context._scissor, area)) {
             // Clipping is stored in the canvas context state.
             // We can't reset clipping alone so we need to restore the full context.
             this._restoreContext();
 
-            const precision = this.ctx.stage.getRenderPrecision();
+            const precision = this.context.stage.getRenderPrecision();
             if (area) {
-                ctx.beginPath();
-                ctx.rect(
+                context.beginPath();
+                context.rect(
                     Math.round(area[0] * precision),
                     Math.round(area[1] * precision),
                     Math.round(area[2] * precision),
                     Math.round(area[3] * precision)
                 );
-                ctx.closePath();
-                ctx.clip();
+                context.closePath();
+                context.clip();
             }
-            ctx._scissor = area;
+            context._scissor = area;
         }
     }
 

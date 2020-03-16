@@ -49,13 +49,13 @@ export default class C2dTextureTintManager {
             // Find blanco tint texture.
             let target = cache.reuseTexture(frame);
             if (target) {
-                target.ctx.clearRect(0, 0, target.width, target.height);
+                target.context.clearRect(0, 0, target.width, target.height);
             } else {
                 // Allocate new.
                 target = document.createElement("canvas");
                 target.width = nativeTexture.w;
                 target.height = nativeTexture.h;
-                target.ctx = target.getContext("2d");
+                target.context = target.getContext("2d");
             }
 
             this._tintTexture(target, nativeTexture, color);
@@ -76,15 +76,15 @@ export default class C2dTextureTintManager {
         while (col.length < 6) {
             col = "0" + col;
         }
-        target.ctx.fillStyle = "#" + col;
-        target.ctx.globalCompositeOperation = "copy";
-        target.ctx.fillRect(0, 0, source.w, source.h);
-        target.ctx.globalCompositeOperation = "multiply";
-        target.ctx.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.width, target.height);
+        target.context.fillStyle = "#" + col;
+        target.context.globalCompositeOperation = "copy";
+        target.context.fillRect(0, 0, source.w, source.h);
+        target.context.globalCompositeOperation = "multiply";
+        target.context.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.width, target.height);
 
         // Alpha-mix the texture.
-        target.ctx.globalCompositeOperation = "destination-in";
-        target.ctx.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.width, target.height);
+        target.context.globalCompositeOperation = "destination-in";
+        target.context.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.width, target.height);
     }
 
     _hasCache(nativeTexture) {

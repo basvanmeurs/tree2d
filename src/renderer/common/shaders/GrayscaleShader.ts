@@ -73,10 +73,10 @@ export class C2dGrayscaleShader extends C2dDefaultShader {
     }
 
     _beforeDrawEl(obj: any) {
-        obj.target.ctx.filter = "grayscale(" + this._amount + ")";
+        obj.target.context.filter = "grayscale(" + this._amount + ")";
     }
 
     _afterDrawEl(obj: any) {
-        obj.target.ctx.filter = "none";
+        obj.target.context.filter = "none";
     }
 }

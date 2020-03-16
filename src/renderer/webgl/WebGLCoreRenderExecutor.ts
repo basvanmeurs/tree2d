@@ -5,17 +5,18 @@ import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import WebGLShader from "./WebGLShader";
 import { RenderTexture } from "./WebGLRenderer";
 
-export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLRenderingContext> {
+export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     private _attribsBuffer: WebGLBuffer;
     private _quadsBuffer: WebGLBuffer;
     private _projection: Float32Array;
     _scissor: number[];
     private _currentShaderProgram?: WebGLShader;
+    public readonly gl : WebGLRenderingContext;
 
-    constructor(ctx: CoreContext) {
-        super(ctx);
+    constructor(context: CoreContext) {
+        super(context);
 
-        this.gl = this.ctx.stage.gl;
+        this.gl = this.context.stage.gl;
 
         this.init();
     }
@@ -47,7 +48,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLRen
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, allIndices, gl.STATIC_DRAW);
 
         // The matrix that causes the [0,0 - W,H] box to map to [-1,-1 - 1,1] in the end results.
-        this._projection = new Float32Array([2 / this.ctx.stage.coordsWidth, -2 / this.ctx.stage.coordsHeight]);
+        this._projection = new Float32Array([2 / this.context.stage.coordsWidth, -2 / this.context.stage.coordsHeight]);
     }
 
     destroy() {
@@ -120,7 +121,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLRen
         const gl = this.gl;
         if (!this._renderTexture) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-            gl.viewport(0, 0, this.ctx.stage.w, this.ctx.stage.h);
+            gl.viewport(0, 0, this.context.stage.w, this.context.stage.h);
         } else {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this._renderTexture.framebuffer);
             gl.viewport(0, 0, this._renderTexture.w, this._renderTexture.h);
@@ -131,7 +132,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLRen
         super._clearRenderTexture();
         const gl = this.gl;
         if (!this._renderTexture) {
-            const glClearColor = this.ctx.stage.getClearColor();
+            const glClearColor = this.context.stage.getClearColor();
             if (glClearColor) {
                 gl.clearColor(
                     glClearColor[0] * glClearColor[3],
@@ -161,11 +162,11 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLRen
             gl.disable(gl.SCISSOR_TEST);
         } else {
             gl.enable(gl.SCISSOR_TEST);
-            const precision = this.ctx.stage.getRenderPrecision();
+            const precision = this.context.stage.getRenderPrecision();
             let y = area[1];
             if (this._renderTexture === null) {
                 // Flip.
-                y = this.ctx.stage.h / precision - (area[1] + area[3]);
+                y = this.context.stage.h / precision - (area[1] + area[3]);
             }
             gl.scissor(
                 Math.round(area[0] * precision),

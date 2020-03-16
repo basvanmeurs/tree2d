@@ -5,7 +5,7 @@ export default class ElementTexturizer {
         this._element = elementCore.element;
         this._core = elementCore;
 
-        this.ctx = this._core.ctx;
+        this.context = this._core.context;
 
         this._enabled = false;
         this.lazy = false;
@@ -115,7 +115,7 @@ export default class ElementTexturizer {
     releaseRenderTexture() {
         if (this._renderTexture) {
             if (!this._renderTextureReused) {
-                this.ctx.releaseRenderTexture(this._renderTexture);
+                this.context.releaseRenderTexture(this._renderTexture);
             }
             this._renderTexture = null;
             this._renderTextureReused = false;
@@ -138,7 +138,7 @@ export default class ElementTexturizer {
 
     getRenderTexture() {
         if (!this._renderTexture) {
-            this._renderTexture = this.ctx.allocateRenderTexture(this._core._w, this._core._h);
+            this._renderTexture = this.context.allocateRenderTexture(this._core._w, this._core._h);
             this._renderTextureReused = false;
         }
         return this._renderTexture;

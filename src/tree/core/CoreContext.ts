@@ -1,21 +1,22 @@
+import Stage from "../Stage";
+import ElementCore from "./ElementCore";
+import CoreRenderState from "./CoreRenderState";
+import CoreRenderExecutor from "./CoreRenderExecutor";
+import { RenderTexture } from "../../renderer/webgl/WebGLRenderer";
+import NativeTexture from "../../renderer/NativeTexture";
+import { CopyRenderTextureOptions } from "../../renderer/Renderer";
+
 export default class CoreContext {
-    constructor(stage) {
-        this.stage = stage;
+    public root?: ElementCore;
+    public updateTreeOrder: number = 0;
+    public readonly renderState: CoreRenderState = this.stage.renderer.createCoreRenderState(this);
+    private renderExecutor: CoreRenderExecutor = this.stage.renderer.createCoreRenderExecutor(this);
+    private _usedMemory: number = 0;
+    private _renderTexturePool: RenderTexture[];
+    private _renderTextureId: number = 1;
+    private _zSorts: ElementCore[];
 
-        this.root = null;
-
-        this.updateTreeOrder = 0;
-
-        this.renderState = this.stage.renderer.createCoreRenderState(this);
-
-        this.renderExec = this.stage.renderer.createCoreRenderExecutor(this);
-        this.renderExec.init();
-
-        this._usedMemory = 0;
-        this._renderTexturePool = [];
-
-        this._renderTextureId = 1;
-
+    constructor(public readonly stage: Stage) {
         this._zSorts = [];
     }
 
@@ -28,16 +29,20 @@ export default class CoreContext {
         this._usedMemory = 0;
     }
 
+    private getRootParent(): ElementCore {
+        return this.root!.getParent()!;
+    }
+
     hasRenderUpdates() {
-        return !!this.root.getParent().hasRenderUpdates();
+        return this.getRootParent().hasRenderUpdates();
     }
 
     _clearRenderUpdatesFlag() {
-        this.root.getParent().clearHasRenderUpdates();
+        this.getRootParent().clearHasRenderUpdates();
     }
 
     setRenderUpdatesFlag() {
-        this.root.getParent().setHasRenderUpdates(1);
+        this.getRootParent().setHasRenderUpdates(1);
     }
 
     render() {
@@ -52,7 +57,7 @@ export default class CoreContext {
         // Due to the boundsVisibility flag feature (and onAfterUpdate hook), it is possible that other elements were
         // changed during the update loop (for example due to the txLoaded event). We process these changes immediately
         // (but not recursively to prevent infinite loops).
-        if (this.root._hasUpdates) {
+        if (this.root!.hasUpdates()) {
             this._update();
         }
 
@@ -62,7 +67,7 @@ export default class CoreContext {
     /**
      * Certain ElementCore items may be forced to zSort to strip out references to prevent memleaks..
      */
-    _performForcedZSorts() {
+    private _performForcedZSorts() {
         const n = this._zSorts.length;
         if (n) {
             // Forced z-sorts (ElementCore may force a z-sort in order to free memory/prevent memory leaks).
@@ -75,12 +80,12 @@ export default class CoreContext {
         }
     }
 
-    _update() {
+    private _update() {
         this.updateTreeOrder = 0;
-        this.root.update();
+        this.root!.update();
     }
 
-    _render() {
+    private _render() {
         // Obtain a sequence of the quad operations.
         this._fillRenderState();
 
@@ -88,22 +93,22 @@ export default class CoreContext {
         this._performRender();
     }
 
-    _fillRenderState() {
+    private _fillRenderState() {
         this.renderState.reset();
-        this.root.render();
+        this.root!.render();
         this.renderState.finish();
     }
 
-    _performRender() {
-        this.renderExec.execute();
+    private _performRender() {
+        this.renderExecutor.execute();
     }
 
-    _addMemoryUsage(delta) {
+    private _addMemoryUsage(delta: number) {
         this._usedMemory += delta;
         this.stage.addMemoryUsage(delta);
     }
 
-    allocateRenderTexture(w, h) {
+    allocateRenderTexture(w: number, h: number) {
         const prec = this.stage.getRenderPrecision();
         const pw = Math.max(1, Math.round(w * prec));
         const ph = Math.max(1, Math.round(h * prec));
@@ -113,7 +118,7 @@ export default class CoreContext {
         for (let i = n - 1; i >= 0; i--) {
             const texture = this._renderTexturePool[i];
             // We don't want to reuse the same render textures within the same frame because that will create gpu stalls.
-            if (texture.w === pw && texture.h === ph && texture.update !== this.stage.frameCounter) {
+            if (texture.w === pw && texture.h === ph && texture.updateFrame !== this.stage.frameCounter) {
                 texture.f = this.stage.frameCounter;
                 this._renderTexturePool.splice(i, 1);
                 return texture;
@@ -125,7 +130,7 @@ export default class CoreContext {
         return texture;
     }
 
-    releaseRenderTexture(texture) {
+    releaseRenderTexture(texture: RenderTexture) {
         this._renderTexturePool.push(texture);
     }
 
@@ -144,7 +149,7 @@ export default class CoreContext {
         });
     }
 
-    _createRenderTexture(w, h, pw, ph) {
+    protected _createRenderTexture(w: number, h: number, pw: number, ph: number) {
         this._addMemoryUsage(pw * ph);
 
         const texture = this.stage.renderer.createRenderTexture(w, h, pw, ph);
@@ -158,17 +163,16 @@ export default class CoreContext {
         return texture;
     }
 
-    _freeRenderTexture(nativeTexture) {
-        this.stage.renderer.freeRenderTexture(nativeTexture);
-        this._addMemoryUsage(-nativeTexture.w * nativeTexture.h);
+    _freeRenderTexture(renderTexture: RenderTexture) {
+        this.stage.renderer.freeRenderTexture(renderTexture);
+        this._addMemoryUsage(-renderTexture.w * renderTexture.h);
     }
 
-    copyRenderTexture(renderTexture, nativeTexture, options) {
+    copyRenderTexture(renderTexture: RenderTexture, nativeTexture: NativeTexture, options: CopyRenderTextureOptions) {
         this.stage.renderer.copyRenderTexture(renderTexture, nativeTexture, options);
     }
 
-    forceZSort(elementCore) {
+    forceZSort(elementCore: ElementCore) {
         this._zSorts.push(elementCore);
     }
-
 }

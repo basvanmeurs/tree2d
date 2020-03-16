@@ -8,14 +8,14 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
     extraAttribsDataByteOffset: number;
 
     constructor(
-        ctx: CoreContext,
+        context: CoreContext,
         shader: Shader,
         shaderOwner: ElementCore,
         renderTextureInfo: RenderTextureInfo,
         scissor: number[],
         index: number
     ) {
-        super(ctx, shader, shaderOwner, renderTextureInfo, scissor, index);
+        super(context, shader, shaderOwner, renderTextureInfo, scissor, index);
 
         this.extraAttribsDataByteOffset = 0;
     }
@@ -42,7 +42,7 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
 
     getProjection() {
         if (this.renderTextureInfo === null) {
-            return this.ctx.renderExec._projection;
+            return this.context.renderExecutor._projection;
         } else {
             return this.renderTextureInfo.nativeTexture.projection;
         }

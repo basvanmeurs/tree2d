@@ -6,6 +6,8 @@ import { TextureSourceOptions } from "../tree/Texture";
 import { RenderTexture } from "./webgl/WebGLRenderer";
 import TextureSource from "../tree/TextureSource";
 import NativeTexture from "./NativeTexture";
+import CoreRenderState from "../tree/core/CoreRenderState";
+import CoreRenderExecutor from "../tree/core/CoreRenderExecutor";
 
 export default abstract class Renderer {
     _defaultShader?: Shader;
@@ -16,14 +18,14 @@ export default abstract class Renderer {
 
     abstract destroy(): void;
 
-    getDefaultShader(ctx = this.stage.context) {
+    getDefaultShader(context = this.stage.context) {
         if (!this._defaultShader) {
-            this._defaultShader = this._createDefaultShader(ctx);
+            this._defaultShader = this._createDefaultShader(context);
         }
         return this._defaultShader;
     }
 
-    protected abstract _createDefaultShader(ctx: CoreContext): Shader;
+    protected abstract _createDefaultShader(context: CoreContext): Shader;
 
     isValidShaderType(shaderType: Constructor<Shader>) {
         return shaderType.prototype instanceof this._getShaderBaseType();
@@ -47,22 +49,32 @@ export default abstract class Renderer {
         return undefined;
     }
 
-    copyRenderTexture(
+    abstract copyRenderTexture(
         renderTexture: RenderTexture,
-        nativeTexture: WebGLTexture,
-        options: {
-            sx?: number;
-            sy?: number;
-            x?: number;
-            y?: number;
-            w?: number;
-            h?: number;
-        }
-    ) {
-        console.warn("copyRenderTexture not supported by renderer");
-    }
+        nativeTexture: NativeTexture,
+        options: CopyRenderTextureOptions
+    ): void;
 
     abstract freeTextureSource(textureSource: TextureSource): void;
 
     abstract uploadTextureSource(textureSource: TextureSource, options: TextureSourceOptions): NativeTexture;
+
+    createCoreRenderState(context: CoreContext) {
+        return new CoreRenderState(context);
+    }
+
+    abstract createCoreRenderExecutor(context: CoreContext): CoreRenderExecutor;
+
+    abstract createRenderTexture(w: number, h: number, pw: number, ph: number): RenderTexture;
+
+    abstract freeRenderTexture(glTexture: RenderTexture): void;
 }
+
+export type CopyRenderTextureOptions = {
+    sx?: number;
+    sy?: number;
+    x?: number;
+    y?: number;
+    w?: number;
+    h?: number;
+};

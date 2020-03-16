@@ -4,7 +4,7 @@ import Element from "../Element";
 export default class ElementCore implements FlexSubject {
     private _element: Element;
 
-    private ctx: CoreContext;
+    private context: CoreContext;
 
     /**
      * Recalc flags in bits.
@@ -149,7 +149,7 @@ export default class ElementCore implements FlexSubject {
     private _clipbox: boolean = true;
 
     // The render function. _renderComplex is only used if necessary.
-    private render: Function = this._renderSimple;
+    public render: () => void = this._renderSimple;
 
     // Flex layouting if enabled.
     private _layout?: FlexNode;
@@ -160,9 +160,9 @@ export default class ElementCore implements FlexSubject {
     constructor(element: Element) {
         this._element = element;
 
-        this.ctx = element.stage.context;
+        this.context = element.stage.context;
 
-        this.renderState = this.ctx.renderState;
+        this.renderState = this.context.renderState;
     }
 
     get x(): number | FunctionX {
@@ -512,6 +512,10 @@ export default class ElementCore implements FlexSubject {
         this._setLocalAlpha(this._visible ? this._alpha : 0);
     }
 
+    hasUpdates() {
+        return this._hasUpdates;
+    }
+
     hasRenderUpdates() {
         return this._hasRenderUpdates > 0;
     }
@@ -629,7 +633,7 @@ export default class ElementCore implements FlexSubject {
             if (force) {
                 // ZSort must be done, even if this element is invisible.
                 // This is done to prevent memory leaks when removing element from inactive render branches.
-                this.ctx.forceZSort(this);
+                this.context.forceZSort(this);
             }
         }
     }
@@ -826,10 +830,10 @@ export default class ElementCore implements FlexSubject {
         // Root is, and will always be, the primary zContext.
         this._isRoot = true;
 
-        this.ctx.root = this;
+        this.context.root = this;
 
         // Set scissor area of 'fake parent' to stage's viewport.
-        this._parent._viewport = [0, 0, this.ctx.stage.coordsWidth, this.ctx.stage.coordsHeight];
+        this._parent._viewport = [0, 0, this.context.stage.coordsWidth, this.context.stage.coordsHeight];
         this._parent._scissor = this._parent._viewport;
 
         // When recBoundsMargin is undefined, the defaults are used (100 for all sides).
@@ -1453,10 +1457,10 @@ export default class ElementCore implements FlexSubject {
                 this._renderContext = this._worldContext;
             }
 
-            if (this.ctx.updateTreeOrder === -1) {
-                this.ctx.updateTreeOrder = this._updateTreeOrder + 1;
+            if (this.context.updateTreeOrder === -1) {
+                this.context.updateTreeOrder = this._updateTreeOrder + 1;
             } else {
-                this._updateTreeOrder = this.ctx.updateTreeOrder++;
+                this._updateTreeOrder = this.context.updateTreeOrder++;
             }
 
             // Determine whether we must use a 'renderTexture'.
@@ -1720,9 +1724,9 @@ export default class ElementCore implements FlexSubject {
                 this._onAfterUpdate(this.element);
             }
         } else {
-            if (this.ctx.updateTreeOrder === -1 || this._updateTreeOrder >= this.ctx.updateTreeOrder) {
+            if (this.context.updateTreeOrder === -1 || this._updateTreeOrder >= this.context.updateTreeOrder) {
                 // If new tree order does not interfere with the current (gaps allowed) there's no need to traverse the branch.
-                this.ctx.updateTreeOrder = -1;
+                this.context.updateTreeOrder = -1;
             } else {
                 this.updateTreeOrder();
             }
@@ -1790,7 +1794,7 @@ export default class ElementCore implements FlexSubject {
 
     updateTreeOrder() {
         if (this._localAlpha && this._outOfBounds !== 2) {
-            this._updateTreeOrder = this.ctx.updateTreeOrder++;
+            this._updateTreeOrder = this.context.updateTreeOrder++;
 
             if (this._children) {
                 for (let i = 0, n = this._children.length; i < n; i++) {

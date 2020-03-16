@@ -19,8 +19,8 @@ export default class Light3dShader extends DefaultShader {
     private _lightY: number = 0;
     private _lightZ: number = 0;
 
-    constructor(ctx: CoreContext) {
-        super(ctx);
+    constructor(context: CoreContext) {
+        super(context);
     }
 
     setupUniforms(operation: WebGLCoreQuadOperation) {

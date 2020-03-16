@@ -23,8 +23,8 @@ export default class CircularPushShader extends DefaultShader {
 
     private _buckets: number;
 
-    constructor(ctx: CoreContext) {
-        super(ctx);
+    constructor(context: CoreContext) {
+        super(context);
 
         this.buckets = 100;
     }

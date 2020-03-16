@@ -83,7 +83,7 @@ export default class Stage {
             console.log("Using canvas2d renderer");
             this.c2d = this.platform.createCanvasContext();
             this.gl = undefined as any;
-            this._renderer = new C2dRenderer(this);
+            this._renderer = new C2dRenderer(this) as any;
         } else {
             this.gl = this.platform.createWebGLContext();
             this.c2d = undefined as any;
@@ -312,11 +312,11 @@ export default class Stage {
     }
 
     gcTextureMemory(aggressive = false) {
-        if (aggressive && this.context.root.visible) {
+        if (aggressive && this.root.visible) {
             // Make sure that ALL textures are cleaned;
-            this.context.root.visible = false;
+            this.root.visible = false;
             this.textureManager.gc();
-            this.context.root.visible = true;
+            this.root.visible = true;
         } else {
             this.textureManager.gc();
         }

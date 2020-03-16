@@ -1,6 +1,6 @@
 export default class CoreQuadOperation {
-    constructor(ctx, shader, shaderOwner, renderTextureInfo, scissor, index) {
-        this.ctx = ctx;
+    constructor(context, shader, shaderOwner, renderTextureInfo, scissor, index) {
+        this.context = context;
         this.shader = shader;
         this.shaderOwner = shaderOwner;
         this.renderTextureInfo = renderTextureInfo;
@@ -10,7 +10,7 @@ export default class CoreQuadOperation {
     }
 
     get quads() {
-        return this.ctx.renderState.quads;
+        return this.context.renderState.quads;
     }
 
     getTexture(index) {
@@ -45,7 +45,7 @@ export default class CoreQuadOperation {
         if (this.renderTextureInfo) {
             return this.renderTextureInfo.w;
         } else {
-            return this.ctx.stage.w;
+            return this.context.stage.w;
         }
     }
 
@@ -53,7 +53,7 @@ export default class CoreQuadOperation {
         if (this.renderTextureInfo) {
             return this.renderTextureInfo.h;
         } else {
-            return this.ctx.stage.h;
+            return this.context.stage.h;
         }
     }
 }

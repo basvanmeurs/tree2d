@@ -1,16 +1,16 @@
 export default class CoreRenderState {
-    constructor(ctx) {
-        this.ctx = ctx;
+    constructor(context) {
+        this.context = context;
 
         this.quadOperations = [];
 
-        this.stage = ctx.stage;
+        this.stage = context.stage;
 
-        this.defaultShader = this.stage.renderer.getDefaultShader(ctx);
+        this.defaultShader = this.stage.renderer.getDefaultShader(context);
 
-        this.renderer = ctx.stage.renderer;
+        this.renderer = context.stage.renderer;
 
-        this.quads = this.renderer.createCoreQuadList(ctx);
+        this.quads = this.renderer.createCoreQuadList(context);
     }
 
     reset() {
@@ -220,7 +220,7 @@ export default class CoreRenderState {
 
     _createQuadOperation() {
         this._quadOperation = this.renderer.createCoreQuadOperation(
-            this.ctx,
+            this.context,
             this._shader,
             this._shaderOwner,
             this._renderTextureInfo,

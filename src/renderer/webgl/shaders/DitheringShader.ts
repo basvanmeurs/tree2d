@@ -11,8 +11,8 @@ export default class DitheringShader extends DefaultShader {
     private _graining: number = 1 / 256;
     private _random: boolean = false;
 
-    constructor(ctx: CoreContext) {
-        super(ctx);
+    constructor(context: CoreContext) {
+        super(context);
     }
 
     set graining(v: number) {

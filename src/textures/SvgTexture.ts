@@ -29,14 +29,14 @@ export default class SvgTexture extends Texture {
         const options = Utils.clone(this._options);
         return cb => {
             const canvas = this.stage.platform.getDrawingCanvas();
-            const ctx = canvas.getContext("2d")!;
-            ctx.imageSmoothingEnabled = true;
+            const context = canvas.getContext("2d")!;
+            context.imageSmoothingEnabled = true;
 
             const img = new Image();
             img.onload = () => {
                 canvas.width = options.w;
                 canvas.height = options.h;
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
                 cb(undefined, { source: canvas });
             };
             img.onerror = err => {

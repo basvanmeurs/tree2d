@@ -1,6 +1,6 @@
 export default class CoreQuadList {
-    constructor(ctx) {
-        this.ctx = ctx;
+    constructor(context) {
+        this.context = context;
 
         this.quadTextures = [];
 

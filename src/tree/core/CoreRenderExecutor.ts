@@ -3,15 +3,13 @@ import CoreQuadOperation from "./CoreQuadOperation";
 import { RenderTexture } from "../../renderer/webgl/WebGLRenderer";
 import CoreRenderState from "./CoreRenderState";
 
-export default class CoreRenderExecutor<T extends RenderingContext> {
+export default class CoreRenderExecutor {
     renderState: CoreRenderState;
-    gl: T;
 
     protected _renderTexture: RenderTexture | null;
 
-    constructor(public ctx: CoreContext) {
-        this.renderState = ctx.renderState;
-        this.gl = this.ctx.stage.gl;
+    constructor(public context: CoreContext) {
+        this.renderState = context.renderState;
     }
 
     destroy() {}
