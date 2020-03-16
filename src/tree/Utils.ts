@@ -1,25 +1,25 @@
 export default class Utils {
-    static isFunction(value) {
+    static isFunction(value: any) {
         return typeof value === "function";
     }
 
-    static isNumber(value) {
+    static isNumber(value: any) {
         return typeof value === "number";
     }
 
-    static isInteger(value) {
+    static isInteger(value: any) {
         return typeof value === "number" && value % 1 === 0;
     }
 
-    static isBoolean(value) {
+    static isBoolean(value: any) {
         return value === true || value === false;
     }
 
-    static isString(value) {
+    static isString(value: any) {
         return typeof value === "string";
     }
 
-    static clone(v) {
+    static clone(v: any) {
         if (Utils.isObjectLiteral(v) || Array.isArray(v)) {
             return Utils.getDeepClone(v);
         } else {
@@ -28,42 +28,41 @@ export default class Utils {
         }
     }
 
-    static cloneObjShallow(obj) {
+    static cloneObjShallow<T extends object>(obj: T): T {
         const keys = Object.keys(obj);
-        const clone = {};
-        for (let i = 0; i < keys.length; i++) {
-            clone[keys[i]] = obj[keys[i]];
+        const clone: T = {} as T;
+        for (const k in obj) {
+            clone[k] = obj[k];
         }
         return clone;
     }
 
-    static merge(obj1, obj2) {
-        const keys = Object.keys(obj2);
-        for (let i = 0; i < keys.length; i++) {
-            obj1[keys[i]] = obj2[keys[i]];
+    static merge<T extends object>(obj1: T, obj2: T): T {
+        for (const k in obj2) {
+            obj1[k] = obj2[k];
         }
         return obj1;
     }
 
-    static isObject(value) {
+    static isObject(value: any) {
         const type = typeof value;
         return !!value && (type === "object" || type === "function");
     }
 
-    static isPlainObject(value) {
+    static isPlainObject(value: any) {
         const type = typeof value;
         return !!value && type === "object";
     }
 
-    static isObjectLiteral(value) {
+    static isObjectLiteral(value: any) {
         return typeof value === "object" && value && value.constructor === Object;
     }
 
-    static getArrayIndex(index, arr) {
+    static getArrayIndex(index: number, arr: Array<any>) {
         return Utils.getModuloIndex(index, arr.length);
     }
 
-    static getModuloIndex(index, len) {
+    static getModuloIndex(index: number, len: number) {
         if (len === 0) return index;
         while (index < 0) {
             index += Math.ceil(-index / len) * len;
@@ -72,24 +71,23 @@ export default class Utils {
         return index;
     }
 
-    static getDeepClone(obj) {
-        let i, c;
+    static getDeepClone<T extends object>(obj: T): T {
         if (Utils.isFunction(obj)) {
             // Copy functions by reference.
             return obj;
         }
         if (Array.isArray(obj)) {
-            c = [];
-            const keys = Object.keys(obj);
-            for (i = 0; i < keys.length; i++) {
-                c[keys[i]] = Utils.getDeepClone(obj[keys[i]]);
+            const c: Array<any> = [];
+            for (const key in obj) {
+                const v = obj[key] as any;
+                c[key] = Utils.getDeepClone(v);
             }
-            return c;
+            return c as T;
         } else if (Utils.isObject(obj)) {
-            c = {};
-            const keys = Object.keys(obj);
-            for (i = 0; i < keys.length; i++) {
-                c[keys[i]] = Utils.getDeepClone(obj[keys[i]]);
+            const c: any = {};
+            for (const key in obj) {
+                const v = obj[key] as any;
+                (c as T)[key] = Utils.getDeepClone(v);
             }
             return c;
         } else {
@@ -97,7 +95,7 @@ export default class Utils {
         }
     }
 
-    static equalValues(v1, v2) {
+    static equalValues(v1: any, v2: any): boolean {
         if (typeof v1 !== typeof v2) return false;
         if (Utils.isObjectLiteral(v1)) {
             return Utils.isObjectLiteral(v2) && Utils.equalObjectLiterals(v1, v2);
@@ -108,9 +106,9 @@ export default class Utils {
         }
     }
 
-    static equalObjectLiterals(obj1, obj2) {
-        const keys1 = Object.keys(obj1);
-        const keys2 = Object.keys(obj2);
+    static equalObjectLiterals<T extends object>(obj1: T, obj2: T) {
+        const keys1 = Object.keys(obj1) as (keyof T)[];
+        const keys2 = Object.keys(obj2) as (keyof T)[];
         if (keys1.length !== keys2.length) {
             return false;
         }
@@ -133,7 +131,7 @@ export default class Utils {
         return true;
     }
 
-    static equalArrays(v1, v2) {
+    static equalArrays<T extends Array<any>>(v1: T, v2: T) {
         if (v1.length !== v2.length) {
             return false;
         }
@@ -146,15 +144,15 @@ export default class Utils {
         return true;
     }
 
-    static setToArray(s) {
-        const result = [];
+    static setToArray<T>(s: Set<T>): T[] {
+        const result = new Array<T>();
         s.forEach(function(value) {
             result.push(value);
         });
         return result;
     }
 
-    static iteratorToArray(iterator) {
+    static iteratorToArray<T>(iterator: Iterator<T, any, any>): T[] {
         const result = [];
         let iteratorResult = iterator.next();
         while (!iteratorResult.done) {
@@ -164,7 +162,7 @@ export default class Utils {
         return result;
     }
 
-    static isUcChar(charcode) {
+    static isUcChar(charcode: number) {
         return charcode >= 65 && charcode <= 90;
     }
 }
