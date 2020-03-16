@@ -576,6 +576,11 @@ export type TextureSourceOptions = {
     premultiplyAlpha?: boolean;
     renderInfo?: any;
     texParams?: Record<GLenum, GLenum>;
+    texOptions?: {
+        format?: number;
+        internalFormat?: number;
+        type?: GLenum;
+    };
 };
 
 import TextureSource from "./TextureSource";

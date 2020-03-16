@@ -13,12 +13,12 @@ export default class TextureSource {
     private _activeTextureCount: number = 0;
 
     // Reuse identifier.
-    private lookupId?: string;
+    public lookupId?: string;
 
     // If set, this.is called when the texture source is no longer displayed (activeTextureCount becomes 0).
     private _cancelCb?: (ts: TextureSource) => void;
 
-    // Loading since timestamp in millis.
+    // Loading since timestamp in millis. If set, it is currently loading or loaded. If 0, this is currently not loading.
     private loadingSince: number = 0;
 
     public w: number = 0;
@@ -41,7 +41,7 @@ export default class TextureSource {
     constructor(private manager: TextureManager, private loader?: TextureSourceLoader) {}
 
     private get stage(): Stage {
-        return this.manager.stage;
+        return this.manager.getStage();
     }
 
     get loadError(): Error | undefined {
@@ -167,7 +167,7 @@ export default class TextureSource {
                     // Clear callback to avoid memory leaks.
                     this._cancelCb = undefined;
 
-                    if (this.manager.stage.destroyed) {
+                    if (this.manager.getStage().destroyed) {
                         // Ignore async load when stage is destroyed.
                         return;
                     }
@@ -297,6 +297,10 @@ export default class TextureSource {
 
     _isNativeTexture(source: any) {
         return source instanceof WebGLTexture;
+    }
+
+    setNotLoaded() {
+        this.loadingSince = 0;
     }
 }
 

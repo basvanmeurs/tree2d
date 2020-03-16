@@ -1,27 +1,18 @@
 import TextureSource from "./TextureSource";
+import Stage from "./Stage";
+import { TextureSourceLoader, TextureSourceOptions } from "./Texture";
 
 export default class TextureManager {
-    constructor(stage) {
-        this.stage = stage;
+    // The currently used amount of texture memory.
+    private _usedMemory: number = 0;
 
-        /**
-         * The currently used amount of texture memory.
-         * @type {number}
-         */
-        this._usedMemory = 0;
+    // All texture sources that are uploaded to the GPU.
+    private _uploadedTextureSources: TextureSource[] = [];
 
-        /**
-         * All uploaded texture sources.
-         * @type {TextureSource[]}
-         */
-        this._uploadedTextureSources = [];
+    // The texture source lookup id to texture source hashmap.
+    private textureSourceHashmap = new Map<string, TextureSource>();
 
-        /**
-         * The texture source lookup id to texture source hashmap.
-         * @type {Map<String, TextureSource>}
-         */
-        this.textureSourceHashmap = new Map();
-    }
+    constructor(private stage: Stage) {}
 
     get usedMemory() {
         return this._usedMemory;
@@ -36,27 +27,27 @@ export default class TextureManager {
         this._usedMemory = 0;
     }
 
-    getReusableTextureSource(id) {
+    getReusableTextureSource(id: string): TextureSource | undefined {
         return this.textureSourceHashmap.get(id);
     }
 
-    getTextureSource(func, id) {
+    getTextureSource(loader: TextureSourceLoader, lookupId: string | undefined) {
         // Check if texture source is already known.
-        let textureSource = id ? this.textureSourceHashmap.get(id) : null;
+        let textureSource = lookupId ? this.textureSourceHashmap.get(lookupId) : undefined;
         if (!textureSource) {
             // Create new texture source.
-            textureSource = new TextureSource(this, func);
+            textureSource = new TextureSource(this, loader);
 
-            if (id) {
-                textureSource.lookupId = id;
-                this.textureSourceHashmap.set(id, textureSource);
+            if (lookupId) {
+                textureSource.lookupId = lookupId;
+                this.textureSourceHashmap.set(lookupId, textureSource);
             }
         }
 
         return textureSource;
     }
 
-    uploadTextureSource(textureSource, options) {
+    uploadTextureSource(textureSource: TextureSource, options: TextureSourceOptions) {
         if (textureSource.isLoaded()) return;
 
         this._addMemoryUsage(textureSource.w * textureSource.h);
@@ -77,12 +68,12 @@ export default class TextureManager {
         this.addToLookupMap(textureSource);
     }
 
-    _addMemoryUsage(delta) {
+    private _addMemoryUsage(delta: number) {
         this._usedMemory += delta;
         this.stage.addMemoryUsage(delta);
     }
 
-    addToLookupMap(textureSource) {
+    addToLookupMap(textureSource: TextureSource) {
         const lookupId = textureSource.lookupId;
         if (lookupId) {
             if (!this.textureSourceHashmap.has(lookupId)) {
@@ -96,7 +87,7 @@ export default class TextureManager {
         this._cleanupLookupMap();
     }
 
-    freeUnusedTextureSources() {
+    private freeUnusedTextureSources() {
         const remainingTextureSources = [];
         for (let i = 0, n = this._uploadedTextureSources.length; i < n; i++) {
             const ts = this._uploadedTextureSources[i];
@@ -112,17 +103,17 @@ export default class TextureManager {
         this._cleanupLookupMap();
     }
 
-    _freeManagedTextureSource(textureSource) {
+    private _freeManagedTextureSource(textureSource: TextureSource) {
         if (textureSource.isLoaded()) {
             this._nativeFreeTextureSource(textureSource);
             this._addMemoryUsage(-textureSource.w * textureSource.h);
         }
 
         // Should be reloaded.
-        textureSource.loadingSince = null;
+        textureSource.setNotLoaded();
     }
 
-    _cleanupLookupMap() {
+    private _cleanupLookupMap() {
         // We keep those that still have value (are being loaded or already loaded, or are likely to be reused).
         this.textureSourceHashmap.forEach((textureSource, lookupId) => {
             if (!(textureSource.isLoaded() || textureSource.isLoading()) && !textureSource.isUsed()) {
@@ -131,11 +122,7 @@ export default class TextureManager {
         });
     }
 
-    /**
-     * Externally free texture source.
-     * @param textureSource
-     */
-    freeTextureSource(textureSource) {
+    freeTextureSource(textureSource: TextureSource) {
         const index = this._uploadedTextureSources.indexOf(textureSource);
         const managed = index !== -1;
 
@@ -148,15 +135,19 @@ export default class TextureManager {
         }
 
         // Should be reloaded.
-        textureSource.loadingSince = null;
+        textureSource.setNotLoaded();
     }
 
-    _nativeUploadTextureSource(textureSource, options) {
+    private _nativeUploadTextureSource(textureSource: TextureSource, options: TextureSourceOptions) {
         return this.stage.renderer.uploadTextureSource(textureSource, options);
     }
 
-    _nativeFreeTextureSource(textureSource) {
+    private _nativeFreeTextureSource(textureSource: TextureSource) {
         this.stage.renderer.freeTextureSource(textureSource);
         textureSource.clearNativeTexture();
+    }
+
+    getStage() {
+        return this.stage;
     }
 }

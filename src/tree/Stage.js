@@ -14,6 +14,8 @@ export default class Stage {
     constructor(options = {}) {
         this._setOptions(options);
 
+        this.destroyed = false;
+
         this._usedMemory = 0;
         this._lastGcFrame = 0;
 
@@ -156,6 +158,7 @@ export default class Stage {
     }
 
     destroy() {
+        this.destroyed = true;
         this.platform.stopLoop();
         this.platform.destroy();
         this.ctx.destroy();

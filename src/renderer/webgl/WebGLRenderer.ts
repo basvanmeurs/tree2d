@@ -16,6 +16,7 @@ import { Constructor } from "../../util/types";
 import ElementCore from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import WebGLShaderProgram from "./WebGLShaderProgram";
+import {TextureSourceOptions} from "../../tree/Texture";
 
 export interface RenderTexture extends WebGLTexture {
     id: number;
@@ -114,17 +115,7 @@ export default class WebGLRenderer extends Renderer {
 
     uploadTextureSource(
         textureSource: TextureSource,
-        options: {
-            premultiplyAlpha?: boolean;
-            hasAlpha?: boolean;
-            texParams?: TexParams;
-            texOptions: {
-                format: number;
-                internalFormat: number;
-                type: GLenum;
-            };
-            source: ImageData | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | ImageBitmap;
-        }
+        options: TextureSourceOptions
     ) {
         const gl = this.stage.gl;
 
@@ -154,7 +145,6 @@ export default class WebGLRenderer extends Renderer {
         }
 
         format.texParams = options.texParams || {};
-        format.texOptions = options.texOptions || {};
 
         const glTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
@@ -173,9 +163,9 @@ export default class WebGLRenderer extends Renderer {
         }
 
         const texOptions = format.texOptions;
-        texOptions.format = texOptions.format || (format.hasAlpha ? gl.RGBA : gl.RGB);
-        texOptions.type = texOptions.type || gl.UNSIGNED_BYTE;
-        texOptions.internalFormat = texOptions.internalFormat || texOptions.format;
+        texOptions.format = (texOptions && texOptions.format) || (format.hasAlpha ? gl.RGBA : gl.RGB);
+        texOptions.type = (texOptions && texOptions.type) || gl.UNSIGNED_BYTE;
+        texOptions.internalFormat = (texOptions && texOptions.internalFormat) || texOptions.format;
 
         this.stage.platform.uploadGlTexture(gl, textureSource, source, texOptions);
 
