@@ -3,7 +3,7 @@ import WebGLDefaultShader from "../../webgl/shaders/DefaultShader";
 import CoreContext from "../../../tree/core/CoreContext";
 import WebGLCoreQuadOperation from "../../webgl/WebGLCoreQuadOperation";
 
-export class WebGLGrayscaleShader extends WebGLDefaultShader {
+export default class GrayscaleShader extends WebGLDefaultShader {
     private _amount: number = 1;
 
     constructor(context: CoreContext) {
@@ -33,7 +33,7 @@ export class WebGLGrayscaleShader extends WebGLDefaultShader {
     }
 }
 
-WebGLGrayscaleShader.prototype.fragmentShaderSource = `
+GrayscaleShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -56,7 +56,7 @@ export class C2dGrayscaleShader extends C2dDefaultShader {
     }
 
     static getWebGL() {
-        return WebGLGrayscaleShader;
+        return GrayscaleShader;
     }
 
     set amount(v) {

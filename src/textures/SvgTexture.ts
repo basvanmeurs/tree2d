@@ -1,6 +1,6 @@
 import Texture, {TextureSourceLoader} from "../tree/Texture";
 import Utils from "../tree/Utils";
-import StageUtils from "../tree/StageUtils";
+import ColorUtils from "../tree/ColorUtils";
 
 export type SvgOptions = {w: number, h: number, src: string};
 

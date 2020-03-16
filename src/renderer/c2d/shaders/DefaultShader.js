@@ -1,5 +1,5 @@
 import C2dShader from "../C2dShader";
-import StageUtils from "../../../tree/StageUtils";
+import ColorUtils from "../../../tree/ColorUtils";
 
 export default class DefaultShader extends C2dShader {
     constructor(ctx) {
@@ -71,7 +71,7 @@ export default class DefaultShader extends C2dShader {
                     // Notice that we don't support (non-rect) gradients, only color tinting for c2d. We'll just take the average color.
                     let color = vc._colorUl;
                     if (vc._colorUl !== vc._colorUr || vc._colorUr !== vc._colorBl || vc._colorBr !== vc._colorBl) {
-                        color = StageUtils.mergeMultiColorsEqual([vc._colorUl, vc._colorUr, vc._colorBl, vc._colorBr]);
+                        color = ColorUtils.mergeMultiColorsEqual([vc._colorUl, vc._colorUr, vc._colorBl, vc._colorBr]);
                     }
 
                     const alpha = ((color / 16777216) | 0) / 255.0;
@@ -107,11 +107,11 @@ export default class DefaultShader extends C2dShader {
                     // Vertical gradient.
                     gradient = ctx.createLinearGradient(0, 0, 0, h);
                     if (transparency) {
-                        gradient.addColorStop(0, StageUtils.getRgbaString(vc._colorUl));
-                        gradient.addColorStop(1, StageUtils.getRgbaString(vc._colorBl));
+                        gradient.addColorStop(0, ColorUtils.getRgbaString(vc._colorUl));
+                        gradient.addColorStop(1, ColorUtils.getRgbaString(vc._colorBl));
                     } else {
-                        gradient.addColorStop(0, StageUtils.getRgbString(vc._colorUl));
-                        gradient.addColorStop(1, StageUtils.getRgbString(vc._colorBl));
+                        gradient.addColorStop(0, ColorUtils.getRgbString(vc._colorUl));
+                        gradient.addColorStop(1, ColorUtils.getRgbString(vc._colorBl));
                     }
                 }
             } else {
@@ -122,11 +122,11 @@ export default class DefaultShader extends C2dShader {
                 // Horizontal gradient.
                 gradient = ctx.createLinearGradient(0, 0, w, 0);
                 if (transparency) {
-                    gradient.addColorStop(0, StageUtils.getRgbaString(vc._colorUl));
-                    gradient.addColorStop(1, StageUtils.getRgbaString(vc._colorBr));
+                    gradient.addColorStop(0, ColorUtils.getRgbaString(vc._colorUl));
+                    gradient.addColorStop(1, ColorUtils.getRgbaString(vc._colorBr));
                 } else {
-                    gradient.addColorStop(0, StageUtils.getRgbString(vc._colorUl));
-                    gradient.addColorStop(1, StageUtils.getRgbString(vc._colorBr));
+                    gradient.addColorStop(0, ColorUtils.getRgbString(vc._colorUl));
+                    gradient.addColorStop(1, ColorUtils.getRgbString(vc._colorBr));
                 }
             }
         }
@@ -134,7 +134,7 @@ export default class DefaultShader extends C2dShader {
         if (gradient) {
             ctx.fillStyle = gradient;
         } else {
-            ctx.fillStyle = transparency ? StageUtils.getRgbaString(color) : StageUtils.getRgbString(color);
+            ctx.fillStyle = transparency ? ColorUtils.getRgbaString(color) : ColorUtils.getRgbString(color);
         }
     }
 

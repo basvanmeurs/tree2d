@@ -1,5 +1,5 @@
 import DefaultShader from "./DefaultShader";
-import StageUtils from "../../../tree/StageUtils";
+import ColorUtils from "../../../tree/ColorUtils";
 import CoreContext from "../../../tree/core/CoreContext";
 import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
@@ -58,7 +58,7 @@ export default class RadialGradientShader extends DefaultShader {
 
     set color(v: number) {
         if (this._color !== v) {
-            const col = StageUtils.getRgbaComponentsNormalized(v);
+            const col = ColorUtils.getRgbaComponentsNormalized(v);
             col[0] = col[0] * col[3];
             col[1] = col[1] * col[3];
             col[2] = col[2] * col[3];

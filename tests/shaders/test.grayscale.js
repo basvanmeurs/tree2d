@@ -7,7 +7,7 @@ describe("Shaders", function() {
     before(() => {
         const template = {
             children: {
-                Image: { src: "./shaders/Lightning.png", shader: { type: lng.shaders.Grayscale, amount: 1 } }
+                Image: { src: "./shaders/Lightning.png", shader: { type: lng.shaders.GrayscaleShader, amount: 1 } }
             }
         };
 
@@ -24,14 +24,14 @@ describe("Shaders", function() {
     describe("Image texture (WebGL)", function() {
         it("Should be gray", function() {
             const shader = stageGL.root.getByRef("Image").shader;
-            chai.assert(shader instanceof lng.shaders.Grayscale);
+            chai.assert(shader instanceof lng.shaders.GrayscaleShader);
         });
     });
 
     describe("Image texture (C2D)", function() {
         it("Should be gray", function() {
             const shader = stage2D.root.getByRef("Image").shader;
-            chai.assert(shader instanceof lng.shaders.c2d.Grayscale);
+            chai.assert(shader.constructor.name === "C2dGrayscaleShader");
         });
     });
 });

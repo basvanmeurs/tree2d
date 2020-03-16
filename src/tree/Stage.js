@@ -265,7 +265,7 @@ export default class Stage {
         } else if (Array.isArray(clearColor)) {
             this._clearColor = clearColor;
         } else {
-            this._clearColor = StageUtils.getRgbaComponentsNormalized(clearColor);
+            this._clearColor = ColorUtils.getRgbaComponentsNormalized(clearColor);
         }
     }
 
@@ -388,7 +388,7 @@ export default class Stage {
 }
 
 import Element from "./Element";
-import StageUtils from "./StageUtils";
+import ColorUtils from "./ColorUtils";
 import TextureManager from "./TextureManager";
 import CoreContext from "./core/CoreContext";
 import RectangleTexture from "../textures/RectangleTexture";

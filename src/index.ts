@@ -1,14 +1,10 @@
 import Patcher from "./patch/Patcher";
 import Utils from "./tree/Utils";
-import StageUtils from "./tree/StageUtils";
+import ColorUtils from "./tree/ColorUtils";
 import Element from "./tree/Element";
 import ElementCore from "./tree/core/ElementCore";
 import ElementTexturizer from "./tree/core/ElementTexturizer";
 import Texture from "./tree/Texture";
-
-import ObjMerger from "./tools/ObjMerger";
-import ObjectListProxy from "./tools/ObjectListProxy";
-import ObjectListWrapper from "./tools/ObjectListWrapper";
 
 import RectangleTexture from "./textures/RectangleTexture";
 import NoiseTexture from "./textures/NoiseTexture";
@@ -21,7 +17,7 @@ import SourceTexture from "./textures/SourceTexture";
 
 import WebGLShader from "./renderer/webgl/WebGLShader";
 import WebGLDefaultShader from "./renderer/webgl/shaders/DefaultShader";
-import { WebGLGrayscaleShader } from "./renderer/common/shaders/GrayscaleShader";
+import GrayscaleShader from "./renderer/common/shaders/GrayscaleShader";
 import BoxBlurShader from "./renderer/webgl/shaders/BoxBlurShader";
 import DitheringShader from "./renderer/webgl/shaders/DitheringShader";
 import CircularPushShader from "./renderer/webgl/shaders/CircularPushShader";
@@ -41,35 +37,27 @@ import C2dBlurShader from "./renderer/c2d/shaders/BlurShader";
 
 import Stage from "./tree/Stage";
 
-import FlexNode from "./flex/FlexNode";
-import FlexLayouter from "./flex/layout/FlexLayouter";
-import FlexContainer from "./flex/FlexContainer";
-
 const index = {
     Patcher,
     Utils,
-    StageUtils,
     Element,
     Stage,
     ElementCore,
     ElementTexturizer,
     Texture,
-    FlexNode,
-    FlexLayouter,
-    FlexContainer,
     shaders: {
-        Grayscale: WebGLGrayscaleShader,
-        BoxBlur: BoxBlurShader,
-        Dithering: DitheringShader,
-        CircularPush: CircularPushShader,
-        Inversion: InversionShader,
-        LinearBlur: LinearBlurShader,
-        Outline: OutlineShader,
-        Pixelate: PixelateShader,
-        RadialFilter: RadialFilterShader,
-        RoundedRectangle: RoundedRectangleShader,
-        RadialGradient: RadialGradientShader,
-        Light3d: Light3dShader,
+        GrayscaleShader,
+        BoxBlurShader,
+        DitheringShader,
+        CircularPushShader,
+        InversionShader,
+        LinearBlurShader,
+        OutlineShader,
+        PixelateShader,
+        RadialFilterShader,
+        RoundedRectangleShader,
+        RadialGradientShader,
+        Light3dShader,
         WebGLShader,
         WebGLDefaultShader,
         C2dShader,
@@ -90,9 +78,7 @@ const index = {
         SourceTexture
     },
     tools: {
-        ObjMerger,
-        ObjectListProxy,
-        ObjectListWrapper
+        ColorUtils
     }
 };
 

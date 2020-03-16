@@ -1,5 +1,5 @@
 import Utils from "../../tree/Utils";
-import StageUtils from "../../tree/StageUtils";
+import ColorUtils from "../../tree/ColorUtils";
 import WebGLCoreQuadList from "./WebGLCoreQuadList";
 import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
@@ -187,7 +187,7 @@ export default class WebGLRenderer extends Renderer {
 
         const floats = renderState.quads.floats;
         const uints = renderState.quads.uints;
-        const mca = StageUtils.mergeColorAlpha;
+        const mca = ColorUtils.mergeColorAlpha;
 
         if (r.tb !== 0 || r.tc !== 0) {
             floats[offset++] = r.px;

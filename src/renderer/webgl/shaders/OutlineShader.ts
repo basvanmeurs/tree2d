@@ -1,4 +1,4 @@
-import StageUtils from "../../../tree/StageUtils";
+import ColorUtils from "../../../tree/ColorUtils";
 import DefaultShader from "./DefaultShader";
 import CoreContext from "../../../tree/core/CoreContext";
 import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
@@ -23,7 +23,7 @@ export default class OutlineShader extends DefaultShader {
 
     set color(v) {
         if (this._col !== v) {
-            const col = StageUtils.getRgbaComponentsNormalized(v);
+            const col = ColorUtils.getRgbaComponentsNormalized(v);
             col[0] = col[0] * col[3];
             col[1] = col[1] * col[3];
             col[2] = col[2] * col[3];

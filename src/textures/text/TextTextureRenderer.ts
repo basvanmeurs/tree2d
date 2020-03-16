@@ -1,4 +1,4 @@
-import StageUtils from "../../tree/StageUtils";
+import ColorUtils from "../../tree/ColorUtils";
 import Stage from "../../tree/Stage";
 import { TextSettings } from "./TextSettings";
 
@@ -208,7 +208,7 @@ export default class TextTextureRenderer {
 
         // Text shadow.
         if (shadow) {
-            this._context.shadowColor = StageUtils.getRgbaString(shadowColor);
+            this._context.shadowColor = ColorUtils.getRgbaString(shadowColor);
             this._context.shadowOffsetX = shadowOffsetX * precision;
             this._context.shadowOffsetY = shadowOffsetY * precision;
             this._context.shadowBlur = shadowBlur * precision;
@@ -216,7 +216,7 @@ export default class TextTextureRenderer {
             this._context.shadowBlur = 0;
         }
 
-        this._context.fillStyle = StageUtils.getRgbaString(textColor);
+        this._context.fillStyle = ColorUtils.getRgbaString(textColor);
         for (let i = 0, n = drawLines.length; i < n; i++) {
             const drawLine = drawLines[i];
             this._context.fillText(drawLine.text, drawLine.x, drawLine.y);

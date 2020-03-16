@@ -1,6 +1,6 @@
 import Texture, {TextureSourceLoader} from "../tree/Texture";
 import Utils from "../tree/Utils";
-import StageUtils from "../tree/StageUtils";
+import ColorUtils from "../tree/ColorUtils";
 
 export type RoundRectOptions = {w: number, h: number, radius: number[], strokeWidth: number, strokeColor: string|number, fill: boolean, fillColor: string|number};
 
@@ -64,7 +64,7 @@ export default class RoundRectTexture extends Texture {
 
         if (fill) {
             if (Utils.isNumber(fillColor)) {
-                ctx.fillStyle = StageUtils.getRgbaString(fillColor);
+                ctx.fillStyle = ColorUtils.getRgbaString(fillColor);
             } else {
                 ctx.fillStyle = "white";
             }
@@ -73,7 +73,7 @@ export default class RoundRectTexture extends Texture {
 
         if (strokeWidth) {
             if (Utils.isNumber(strokeColor)) {
-                ctx.strokeStyle = StageUtils.getRgbaString(strokeColor);
+                ctx.strokeStyle = ColorUtils.getRgbaString(strokeColor);
             } else {
                 ctx.strokeStyle = "white";
             }

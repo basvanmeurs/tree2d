@@ -1,6 +1,6 @@
 import Texture, {TextureSourceLoader} from "../tree/Texture";
 import Utils from "../tree/Utils";
-import StageUtils from "../tree/StageUtils";
+import ColorUtils from "../tree/ColorUtils";
 
 export type ShadowRectOptions = {w: number, h: number, radius: number[], blur: number, margin: number};
 
@@ -49,8 +49,8 @@ export default class ShadowRectTexture extends Texture {
         ctx.fillRect(0, 0, 0.01, 0.01);
         ctx.globalAlpha = 1.0;
 
-        ctx.shadowColor = StageUtils.getRgbaString(0xffffffff);
-        ctx.fillStyle = StageUtils.getRgbaString(0xffffffff);
+        ctx.shadowColor = ColorUtils.getRgbaString(0xffffffff);
+        ctx.fillStyle = ColorUtils.getRgbaString(0xffffffff);
         ctx.shadowBlur = blur;
         ctx.shadowOffsetX = w + 10 + margin;
         ctx.shadowOffsetY = margin;

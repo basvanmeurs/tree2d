@@ -1,5 +1,5 @@
 import CoreRenderExecutor from "../../tree/core/CoreRenderExecutor";
-import StageUtils from "../../tree/StageUtils";
+import ColorUtils from "../../tree/ColorUtils";
 import Utils from "../../tree/Utils";
 
 export default class C2dCoreRenderExecutor extends CoreRenderExecutor {
@@ -31,7 +31,7 @@ export default class C2dCoreRenderExecutor extends CoreRenderExecutor {
         if (!clearColor[0] && !clearColor[1] && !clearColor[2] && !clearColor[3]) {
             ctx.clearRect(0, 0, renderTexture.width, renderTexture.height);
         } else {
-            ctx.fillStyle = StageUtils.getRgbaStringFromArray(clearColor);
+            ctx.fillStyle = ColorUtils.getRgbaStringFromArray(clearColor);
             // Do not use fillRect because it produces artifacts.
             ctx.globalCompositeOperation = "copy";
             ctx.beginPath();

@@ -1,21 +1,21 @@
 export default class Utils {
-    static isFunction(value: any) {
+    static isFunction(value: any): value is Function {
         return typeof value === "function";
     }
 
-    static isNumber(value: any) {
+    static isNumber(value: any): value is number {
         return typeof value === "number";
     }
 
-    static isInteger(value: any) {
+    static isInteger(value: any): value is number {
         return typeof value === "number" && value % 1 === 0;
     }
 
-    static isBoolean(value: any) {
+    static isBoolean(value: any): value is boolean {
         return value === true || value === false;
     }
 
-    static isString(value: any) {
+    static isString(value: any): value is string {
         return typeof value === "string";
     }
 

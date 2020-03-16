@@ -1,24 +1,21 @@
-export default class StageUtils {
-    static mergeNumbers(v1, v2, p) {
-        return v1 * p + v2 * (1 - p);
-    }
+export default class ColorUtils {
 
-    static rgb(r, g, b) {
+    static rgb(r: number, g: number, b: number) {
         return (r << 16) + (g << 8) + b + 255 * 16777216;
     }
 
-    static rgba(r, g, b, a) {
+    static rgba(r: number, g: number, b: number, a: number) {
         return (r << 16) + (g << 8) + b + ((a * 255) | 0) * 16777216;
     }
 
-    static getRgbString(color) {
+    static getRgbString(color: number) {
         const r = ((color / 65536) | 0) % 256;
         const g = ((color / 256) | 0) % 256;
         const b = color % 256;
         return "rgb(" + r + "," + g + "," + b + ")";
     }
 
-    static getRgbaString(color) {
+    static getRgbaString(color: number): string {
         const r = ((color / 65536) | 0) % 256;
         const g = ((color / 256) | 0) % 256;
         const b = color % 256;
@@ -26,7 +23,7 @@ export default class StageUtils {
         return "rgba(" + r + "," + g + "," + b + "," + a.toFixed(4) + ")";
     }
 
-    static getRgbaStringFromArray(color) {
+    static getRgbaStringFromArray(color: number[]) {
         const r = Math.floor(color[0] * 255);
         const g = Math.floor(color[1] * 255);
         const b = Math.floor(color[2] * 255);
@@ -34,7 +31,7 @@ export default class StageUtils {
         return "rgba(" + r + "," + g + "," + b + "," + a.toFixed(4) + ")";
     }
 
-    static getRgbaComponentsNormalized(argb) {
+    static getRgbaComponentsNormalized(argb: number) {
         const r = ((argb / 65536) | 0) % 256;
         const g = ((argb / 256) | 0) % 256;
         const b = argb % 256;
@@ -42,14 +39,14 @@ export default class StageUtils {
         return [r / 255, g / 255, b / 255, a / 255];
     }
 
-    static getRgbComponentsNormalized(argb) {
+    static getRgbComponentsNormalized(argb: number) {
         const r = ((argb / 65536) | 0) % 256;
         const g = ((argb / 256) | 0) % 256;
         const b = argb % 256;
         return [r / 255, g / 255, b / 255];
     }
 
-    static getRgbaComponents(argb) {
+    static getRgbaComponents(argb: number) {
         const r = ((argb / 65536) | 0) % 256;
         const g = ((argb / 256) | 0) % 256;
         const b = argb % 256;
@@ -57,7 +54,7 @@ export default class StageUtils {
         return [r, g, b, a];
     }
 
-    static getArgbNumber(rgba) {
+    static getArgbNumber(rgba: number[]) {
         rgba[0] = Math.max(0, Math.min(255, rgba[0]));
         rgba[1] = Math.max(0, Math.min(255, rgba[1]));
         rgba[2] = Math.max(0, Math.min(255, rgba[2]));
@@ -69,7 +66,7 @@ export default class StageUtils {
         return v;
     }
 
-    static mergeColors(c1, c2, p) {
+    static mergeColors(c1: number, c2: number, p: number) {
         const r1 = ((c1 / 65536) | 0) % 256;
         const g1 = ((c1 / 256) | 0) % 256;
         const b1 = c1 % 256;
@@ -88,7 +85,7 @@ export default class StageUtils {
         return Math.round(a) * 16777216 + Math.round(r) * 65536 + Math.round(g) * 256 + Math.round(b);
     }
 
-    static mergeMultiColors(c, p) {
+    static mergeMultiColors(c: number[], p: number[]) {
         let r = 0,
             g = 0,
             b = 0,
@@ -111,7 +108,7 @@ export default class StageUtils {
         return Math.round(a * t) * 16777216 + Math.round(r * t) * 65536 + Math.round(g * t) * 256 + Math.round(b * t);
     }
 
-    static mergeMultiColorsEqual(c) {
+    static mergeMultiColorsEqual(c: number[]) {
         let r = 0,
             g = 0,
             b = 0,
@@ -134,7 +131,7 @@ export default class StageUtils {
         return Math.round(a * t) * 16777216 + Math.round(r * t) * 65536 + Math.round(g * t) * 256 + Math.round(b * t);
     }
 
-    static mergeColorAlpha(c, alpha) {
+    static mergeColorAlpha(c: number, alpha: number) {
         const a = (((c / 16777216) | 0) * alpha) | 0;
         return (
             (((((c >> 16) & 0xff) * a) / 255) & 0xff) +
