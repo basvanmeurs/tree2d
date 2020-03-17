@@ -12,7 +12,7 @@ export default class CoreContext {
     public readonly renderState: CoreRenderState = this.stage.renderer.createCoreRenderState(this);
     public readonly renderExecutor: CoreRenderExecutor = this.stage.renderer.createCoreRenderExecutor(this);
     private _usedMemory: number = 0;
-    private _renderTexturePool: RenderTexture[];
+    private _renderTexturePool: RenderTexture[] = [];
     private _renderTextureId: number = 1;
     private _zSorts: ElementCore[];
 

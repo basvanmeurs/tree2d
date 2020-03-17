@@ -1196,26 +1196,18 @@ class Element {
     }
 
     get renderToTexture() {
-        return this.rtt;
-    }
-
-    set renderToTexture(v) {
-        this.rtt = v;
-    }
-
-    get rtt() {
         return this._hasTexturizer() && this.texturizer.enabled;
     }
 
-    set rtt(v) {
+    set renderToTexture(v) {
         this.texturizer.enabled = v;
     }
 
-    get rttLazy() {
+    get renderLazy() {
         return this._hasTexturizer() && this.texturizer.lazy;
     }
 
-    set rttLazy(v) {
+    set renderLazy(v) {
         this.texturizer.lazy = v;
     }
 
@@ -1227,11 +1219,11 @@ class Element {
         this.texturizer.renderOffscreen = v;
     }
 
-    get colorizeResultTexture() {
+    get renderColorize() {
         return this._hasTexturizer() && this.texturizer.colorize;
     }
 
-    set colorizeResultTexture(v) {
+    set renderColorize(v) {
         this.texturizer.colorize = v;
     }
 

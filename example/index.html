@@ -22,6 +22,9 @@
 //            const el = stage.createElement({texture: {type: lng.textures.RoundRectTexture, options: {radius: [10,10,10,10], w: 100, h: 100}}, color: 0xFFFF0000})
             stage.root.childList.add(el);
 
+           stage.root.w = 100;
+           stage.root.h = 100;
+           stage.root.renderToTexture = true;
             setInterval(() => {
                 el.y++;
             }, 100)

@@ -49,7 +49,7 @@ export default class CoreRenderExecutor {
         // Set render texture.
         const renderTexture = op.renderTextureInfo ? op.renderTextureInfo.renderTexture : undefined;
 
-        if (renderTexture && this._renderTexture !== renderTexture) {
+        if (this._renderTexture !== renderTexture) {
             this._bindRenderTexture(renderTexture);
         }
 
