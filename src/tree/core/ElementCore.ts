@@ -1278,7 +1278,7 @@ export default class ElementCore implements FlexSubject {
         }
     }
 
-    private isWhite() {
+    public isWhite() {
         return (
             this._colorUl === 0xffffffff &&
             this._colorUr === 0xffffffff &&
@@ -1287,7 +1287,7 @@ export default class ElementCore implements FlexSubject {
         );
     }
 
-    private hasSimpleTexCoords() {
+    public hasSimpleTexCoords() {
         return this.ulx === 0 && this.uly === 0 && this.brx === 1 && this.bry === 1;
     }
 

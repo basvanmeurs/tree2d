@@ -58,8 +58,8 @@ export default class TextureManager {
         textureSource._nativeTexture = nativeTexture;
 
         // We attach w and h to native texture (we need it in CoreRenderState._isRenderTextureReusable).
-        nativeTexture.w = textureSource.w;
-        nativeTexture.h = textureSource.h;
+        nativeTexture.width = textureSource.w;
+        nativeTexture.height = textureSource.h;
 
         nativeTexture.updateFrame = this.stage.frameCounter;
 

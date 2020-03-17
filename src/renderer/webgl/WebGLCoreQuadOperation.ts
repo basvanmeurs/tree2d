@@ -6,6 +6,7 @@ import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
 import WebGLShader from "./WebGLShader";
 import WebGLCoreQuadList from "./WebGLCoreQuadList";
+import WebGLRenderTexture from "./WebGLRenderTexture";
 
 export default class WebGLCoreQuadOperation extends CoreQuadOperation {
     extraAttribsDataByteOffset: number;
@@ -53,7 +54,7 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
 
     getProjection() {
         if (this.renderTextureInfo && this.renderTextureInfo.renderTexture) {
-            return this.renderTextureInfo.renderTexture.projection;
+            return (this.renderTextureInfo.renderTexture as WebGLRenderTexture).projection;
         } else {
             return (this.context.renderExecutor as WebGLCoreRenderExecutor).projection;
         }

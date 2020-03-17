@@ -5,6 +5,7 @@ import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import WebGLShader from "./WebGLShader";
 import WebGLCoreQuadList from "./WebGLCoreQuadList";
 import RenderTexture from "../RenderTexture";
+import WebGLRenderTexture from "./WebGLRenderTexture";
 
 export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     public readonly attribsBuffer: WebGLBuffer;
@@ -129,8 +130,9 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             gl.viewport(0, 0, this.context.stage.w, this.context.stage.h);
         } else {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this._renderTexture.framebuffer);
-            gl.viewport(0, 0, this._renderTexture.w, this._renderTexture.h);
+            const renderTexture = this._renderTexture as WebGLRenderTexture;
+            gl.bindFramebuffer(gl.FRAMEBUFFER, renderTexture.framebuffer);
+            gl.viewport(0, 0, renderTexture.width, renderTexture.height);
         }
     }
 

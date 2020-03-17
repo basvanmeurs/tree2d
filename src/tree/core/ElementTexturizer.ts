@@ -76,8 +76,8 @@ export default class ElementTexturizer {
         const resultTexture = this.getResultTexture();
         if (this._resultTextureSource) {
             if (this._resultTextureSource.nativeTexture !== resultTexture) {
-                const w = resultTexture ? resultTexture.w : 0;
-                const h = resultTexture ? resultTexture.h : 0;
+                const w = resultTexture ? resultTexture.width : 0;
+                const h = resultTexture ? resultTexture.height : 0;
                 this._resultTextureSource.replaceNativeTexture(resultTexture, w, h);
             }
 

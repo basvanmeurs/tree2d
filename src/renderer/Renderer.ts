@@ -69,7 +69,7 @@ export default abstract class Renderer {
 
     abstract createRenderTexture(w: number, h: number, pw: number, ph: number): RenderTexture;
 
-    abstract freeRenderTexture(glTexture: RenderTexture): void;
+    abstract freeRenderTexture(renderTexture: RenderTexture): void;
 
     abstract createCoreQuadList(context: CoreContext): CoreQuadList;
 

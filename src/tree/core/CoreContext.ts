@@ -118,7 +118,7 @@ export default class CoreContext {
         for (let i = n - 1; i >= 0; i--) {
             const texture = this._renderTexturePool[i];
             // We don't want to reuse the same render textures within the same frame because that will create gpu stalls.
-            if (texture.w === pw && texture.h === ph && texture.updateFrame !== this.stage.frameCounter) {
+            if (texture.width === pw && texture.height === ph && texture.updateFrame !== this.stage.frameCounter) {
                 texture.f = this.stage.frameCounter;
                 this._renderTexturePool.splice(i, 1);
                 return texture;
@@ -153,19 +153,19 @@ export default class CoreContext {
         this._addMemoryUsage(pw * ph);
 
         const texture = this.stage.renderer.createRenderTexture(w, h, pw, ph);
-        texture.id = this._renderTextureId++;
+        texture._id = this._renderTextureId++;
         texture.f = this.stage.frameCounter;
         texture.ow = w;
         texture.oh = h;
-        texture.w = pw;
-        texture.h = ph;
+        texture.width = pw;
+        texture.height = ph;
 
         return texture;
     }
 
     _freeRenderTexture(renderTexture: RenderTexture) {
         this.stage.renderer.freeRenderTexture(renderTexture);
-        this._addMemoryUsage(-renderTexture.w * renderTexture.h);
+        this._addMemoryUsage(-renderTexture.width * renderTexture.height);
     }
 
     copyRenderTexture(renderTexture: RenderTexture, nativeTexture: NativeTexture, options: CopyRenderTextureOptions) {

@@ -163,8 +163,8 @@ export default abstract class CoreRenderState {
         const offset = renderTextureInfo.reusableRenderStateOffset;
         const texture = this.quadList.getTexture(offset);
         return (
-            texture.w === renderTextureInfo.w &&
-            texture.h === renderTextureInfo.h &&
+            texture.width === renderTextureInfo.w &&
+            texture.height === renderTextureInfo.h &&
             this.isRenderTextureReusable(renderTextureInfo)
         );
     }

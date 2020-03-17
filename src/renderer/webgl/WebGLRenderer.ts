@@ -5,7 +5,7 @@ import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
 import CoreRenderState from "../../tree/core/CoreRenderState";
 import DefaultShader from "./shaders/DefaultShader";
 import WebGLShader from "./WebGLShader";
-import Renderer from "../Renderer";
+import Renderer, {CopyRenderTextureOptions} from "../Renderer";
 import TextureSource from "../../tree/TextureSource";
 import Stage from "../../tree/Stage";
 import CoreContext from "../../tree/core/CoreContext";
@@ -176,18 +176,11 @@ export default class WebGLRenderer extends Renderer {
     copyRenderTexture(
         renderTexture: RenderTexture,
         nativeTexture: WebGLTexture,
-        options: {
-            sx?: number;
-            sy?: number;
-            x?: number;
-            y?: number;
-            w?: number;
-            h?: number;
-        }
+        options: CopyRenderTextureOptions
     ) {
         const gl = this.stage.gl;
         gl.bindTexture(gl.TEXTURE_2D, nativeTexture);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, renderTexture.framebuffer);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, (renderTexture as WebGLRenderTexture).framebuffer);
         const precision = renderTexture.precision;
         gl.copyTexSubImage2D(
             gl.TEXTURE_2D,

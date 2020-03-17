@@ -562,14 +562,13 @@ export type TextureSourceCallback = (error: Error | undefined, options?: Texture
 export type TextureSourceCancelFunction = () => void;
 export type TextureSourceOptions = {
     source:
-        | ArrayBuffer
+        | Uint8ClampedArray
         | WebGLTexture
         | ImageData
         | HTMLImageElement
         | HTMLCanvasElement
         | HTMLVideoElement
-        | ImageBitmap
-        | WebGLNativeTexture;
+        | ImageBitmap;
     width?: number;
     height?: number;
     permanent?: boolean;

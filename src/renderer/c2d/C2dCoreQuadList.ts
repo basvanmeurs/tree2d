@@ -1,18 +1,15 @@
 import CoreQuadList from "../../tree/core/CoreQuadList";
+import ElementCoreContext from "../../tree/core/ElementCoreContext";
 
 export default class C2dCoreQuadList extends CoreQuadList {
-    constructor(context) {
-        super(context);
+    private renderContexts: ElementCoreContext[] = [];
+    private modes: number[] = [];
 
-        this.renderContexts = [];
-        this.modes = [];
-    }
-
-    setRenderContext(index, v) {
+    setRenderContext(index: number, v: ElementCoreContext) {
         this.renderContexts[index] = v;
     }
 
-    setSimpleTc(index, v) {
+    setSimpleTc(index: number, v: boolean) {
         if (v) {
             this.modes[index] |= 1;
         } else {
@@ -20,7 +17,7 @@ export default class C2dCoreQuadList extends CoreQuadList {
         }
     }
 
-    setWhite(index, v) {
+    setWhite(index: number, v: boolean) {
         if (v) {
             this.modes[index] |= 2;
         } else {
@@ -28,15 +25,15 @@ export default class C2dCoreQuadList extends CoreQuadList {
         }
     }
 
-    getRenderContext(index) {
+    getRenderContext(index: number) {
         return this.renderContexts[index];
     }
 
-    getSimpleTc(index) {
+    getSimpleTc(index: number) {
         return this.modes[index] & 1;
     }
 
-    getWhite(index) {
+    getWhite(index: number) {
         return this.modes[index] & 2;
     }
 }

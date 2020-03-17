@@ -1,5 +1,5 @@
 export default interface NativeTexture {
-    w: number;
-    h: number;
+    width: number;
+    height: number;
     updateFrame: number;
 }
