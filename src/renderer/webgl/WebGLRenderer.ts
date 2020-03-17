@@ -180,60 +180,63 @@ export default class WebGLRenderer extends Renderer {
 
     addQuad(renderState: CoreRenderState, quads: CoreQuadList, index: number) {
         let offset = index * 20;
-        const elementCore = quads.quadElements[index];
+        const elementCore = quads.getElementCore(index);
 
-        const r = elementCore._renderContext;
+        const r = elementCore.getRenderContext();
 
         const floats = renderState.quads.floats;
         const uints = renderState.quads.uints;
         const mca = ColorUtils.mergeColorAlpha;
 
+        const w = elementCore.getLayoutW();
+        const h = elementCore.getLayoutH();
+
         if (r.tb !== 0 || r.tc !== 0) {
             floats[offset++] = r.px;
             floats[offset++] = r.py;
-            floats[offset++] = elementCore._ulx;
-            floats[offset++] = elementCore._uly;
-            uints[offset++] = mca(elementCore._colorUl, r.alpha);
-            floats[offset++] = r.px + elementCore._w * r.ta;
-            floats[offset++] = r.py + elementCore._w * r.tc;
-            floats[offset++] = elementCore._brx;
-            floats[offset++] = elementCore._uly;
-            uints[offset++] = mca(elementCore._colorUr, r.alpha);
-            floats[offset++] = r.px + elementCore._w * r.ta + elementCore._h * r.tb;
-            floats[offset++] = r.py + elementCore._w * r.tc + elementCore._h * r.td;
-            floats[offset++] = elementCore._brx;
-            floats[offset++] = elementCore._bry;
-            uints[offset++] = mca(elementCore._colorBr, r.alpha);
-            floats[offset++] = r.px + elementCore._h * r.tb;
-            floats[offset++] = r.py + elementCore._h * r.td;
-            floats[offset++] = elementCore._ulx;
-            floats[offset++] = elementCore._bry;
-            uints[offset] = mca(elementCore._colorBl, r.alpha);
+            floats[offset++] = elementCore.ulx;
+            floats[offset++] = elementCore.uly;
+            uints[offset++] = mca(elementCore.colorUl, r.alpha);
+            floats[offset++] = r.px + w * r.ta;
+            floats[offset++] = r.py + w * r.tc;
+            floats[offset++] = elementCore.brx;
+            floats[offset++] = elementCore.uly;
+            uints[offset++] = mca(elementCore.colorUr, r.alpha);
+            floats[offset++] = r.px + w * r.ta + h * r.tb;
+            floats[offset++] = r.py + w * r.tc + h * r.td;
+            floats[offset++] = elementCore.brx;
+            floats[offset++] = elementCore.bry;
+            uints[offset++] = mca(elementCore.colorBr, r.alpha);
+            floats[offset++] = r.px + h * r.tb;
+            floats[offset++] = r.py + h * r.td;
+            floats[offset++] = elementCore.ulx;
+            floats[offset++] = elementCore.bry;
+            uints[offset] = mca(elementCore.colorBl, r.alpha);
         } else {
             // Simple.
-            const cx = r.px + elementCore._w * r.ta;
-            const cy = r.py + elementCore._h * r.td;
+            const cx = r.px + w * r.ta;
+            const cy = r.py + h * r.td;
 
             floats[offset++] = r.px;
             floats[offset++] = r.py;
-            floats[offset++] = elementCore._ulx;
-            floats[offset++] = elementCore._uly;
-            uints[offset++] = mca(elementCore._colorUl, r.alpha);
+            floats[offset++] = elementCore.ulx;
+            floats[offset++] = elementCore.uly;
+            uints[offset++] = mca(elementCore.colorUl, r.alpha);
             floats[offset++] = cx;
             floats[offset++] = r.py;
-            floats[offset++] = elementCore._brx;
-            floats[offset++] = elementCore._uly;
-            uints[offset++] = mca(elementCore._colorUr, r.alpha);
+            floats[offset++] = elementCore.brx;
+            floats[offset++] = elementCore.uly;
+            uints[offset++] = mca(elementCore.colorUr, r.alpha);
             floats[offset++] = cx;
             floats[offset++] = cy;
-            floats[offset++] = elementCore._brx;
-            floats[offset++] = elementCore._bry;
-            uints[offset++] = mca(elementCore._colorBr, r.alpha);
+            floats[offset++] = elementCore.brx;
+            floats[offset++] = elementCore.bry;
+            uints[offset++] = mca(elementCore.colorBr, r.alpha);
             floats[offset++] = r.px;
             floats[offset++] = cy;
-            floats[offset++] = elementCore._ulx;
-            floats[offset++] = elementCore._bry;
-            uints[offset] = mca(elementCore._colorBl, r.alpha);
+            floats[offset++] = elementCore.ulx;
+            floats[offset++] = elementCore.bry;
+            uints[offset] = mca(elementCore.colorBl, r.alpha);
         }
     }
 

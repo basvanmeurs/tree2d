@@ -92,7 +92,7 @@ export default class C2dRenderer extends Renderer {
 
     addQuad(renderState, quads, index) {
         // Render context changes while traversing so we save it by ref.
-        const elementCore = quads.quadElements[index];
+        const elementCore = quads.quadElementCores[index];
         quads.setRenderContext(index, elementCore._renderContext);
         quads.setWhite(index, elementCore.isWhite());
         quads.setSimpleTc(index, elementCore.hasSimpleTexCoords());

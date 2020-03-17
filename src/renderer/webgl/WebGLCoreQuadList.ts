@@ -13,8 +13,6 @@ export default class WebGLCoreQuadList extends CoreQuadList {
         // We do not (want to) handle memory overflow.
         const byteSize = context.stage.bufferMemory;
 
-        this.dataLength = 0;
-
         this.data = new ArrayBuffer(byteSize);
         this.floats = new Float32Array(this.data);
         this.uints = new Uint32Array(this.data);

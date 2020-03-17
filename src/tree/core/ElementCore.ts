@@ -108,10 +108,10 @@ export default class ElementCore implements FlexSubject {
     private _visible: boolean = true;
 
     // Texture clipping.
-    private _ulx: number = 0;
-    private _uly: number = 0;
-    private _brx: number = 1;
-    private _bry: number = 1;
+    public ulx: number = 0;
+    public uly: number = 0;
+    public brx: number = 1;
+    public bry: number = 1;
 
     private _isRoot: boolean = false;
 
@@ -163,6 +163,10 @@ export default class ElementCore implements FlexSubject {
         this.context = element.stage.context;
 
         this.renderState = this.context.renderState;
+    }
+
+    getRenderContext(): ElementCoreContext {
+        return this._renderContext;
     }
 
     get x(): number | FunctionX {
@@ -800,10 +804,10 @@ export default class ElementCore implements FlexSubject {
     setTextureCoords(ulx: number, uly: number, brx: number, bry: number) {
         this.setHasRenderUpdates(3);
 
-        this._ulx = ulx;
-        this._uly = uly;
-        this._brx = brx;
-        this._bry = bry;
+        this.ulx = ulx;
+        this.uly = uly;
+        this.brx = brx;
+        this.bry = bry;
     }
 
     get displayedTextureSource(): TextureSource | undefined {
@@ -1280,22 +1284,22 @@ export default class ElementCore implements FlexSubject {
     }
 
     private hasSimpleTexCoords() {
-        return this._ulx === 0 && this._uly === 0 && this._brx === 1 && this._bry === 1;
+        return this.ulx === 0 && this.uly === 0 && this.brx === 1 && this.bry === 1;
     }
 
     private _stashTexCoords() {
-        this._stashedTexCoords = [this._ulx, this._uly, this._brx, this._bry];
-        this._ulx = 0;
-        this._uly = 0;
-        this._brx = 1;
-        this._bry = 1;
+        this._stashedTexCoords = [this.ulx, this.uly, this.brx, this.bry];
+        this.ulx = 0;
+        this.uly = 0;
+        this.brx = 1;
+        this.bry = 1;
     }
 
     private _unstashTexCoords() {
-        this._ulx = this._stashedTexCoords![0];
-        this._uly = this._stashedTexCoords![1];
-        this._brx = this._stashedTexCoords![2];
-        this._bry = this._stashedTexCoords![3];
+        this.ulx = this._stashedTexCoords![0];
+        this.uly = this._stashedTexCoords![1];
+        this.brx = this._stashedTexCoords![2];
+        this.bry = this._stashedTexCoords![3];
         this._stashedTexCoords = undefined;
     }
 

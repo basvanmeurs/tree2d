@@ -143,7 +143,7 @@ export default class CoreRenderState {
         }
 
         this.quads.quadTextures.push(nativeTexture);
-        this.quads.quadElements.push(elementCore);
+        this.quads.quadElementCores.push(elementCore);
 
         this._quadOperation.length++;
 
