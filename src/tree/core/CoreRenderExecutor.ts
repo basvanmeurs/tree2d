@@ -1,12 +1,12 @@
 import CoreContext from "./CoreContext";
 import CoreQuadOperation from "./CoreQuadOperation";
-import { RenderTexture } from "../../renderer/webgl/WebGLRenderer";
 import CoreRenderState from "./CoreRenderState";
+import { RenderTexture } from "../../renderer/RenderTexture";
 
 export default class CoreRenderExecutor {
     renderState: CoreRenderState;
 
-    protected _renderTexture: RenderTexture | null;
+    protected _renderTexture: RenderTexture | undefined;
 
     constructor(public context: CoreContext) {
         this.renderState = context.renderState;
@@ -15,20 +15,20 @@ export default class CoreRenderExecutor {
     destroy() {}
 
     protected _reset() {
-        this._bindRenderTexture(null);
-        this._setScissor(null);
+        this._bindRenderTexture(undefined);
+        this._setScissor(undefined);
         this._clearRenderTexture();
     }
 
     execute() {
         this._reset();
 
-        const qops = this.renderState.quadOperations;
+        const quadOps = this.renderState.quadOperations;
 
         let i = 0;
-        const n = qops.length;
+        const n = quadOps.length;
         while (i < n) {
-            this._processQuadOperation(qops[i]);
+            this._processQuadOperation(quadOps[i]);
             i++;
         }
     }
@@ -47,14 +47,14 @@ export default class CoreRenderExecutor {
 
     protected _execQuadOperation(op: CoreQuadOperation) {
         // Set render texture.
-        const nativeTexture = op.renderTextureInfo ? op.renderTextureInfo.nativeTexture : null;
+        const renderTexture = op.renderTextureInfo ? op.renderTextureInfo.renderTexture : undefined;
 
-        if (this._renderTexture !== nativeTexture) {
-            this._bindRenderTexture(nativeTexture);
+        if (renderTexture && this._renderTexture !== renderTexture) {
+            this._bindRenderTexture(renderTexture);
         }
 
         if (op.renderTextureInfo && !op.renderTextureInfo.cleared) {
-            this._setScissor(null);
+            this._setScissor(undefined);
             this._clearRenderTexture();
             op.renderTextureInfo.cleared = true;
             this._setScissor(op.scissor);
@@ -67,11 +67,11 @@ export default class CoreRenderExecutor {
 
     protected _renderQuadOperation(op: CoreQuadOperation) {}
 
-    protected _bindRenderTexture(renderTexture: RenderTexture | null) {
+    protected _bindRenderTexture(renderTexture: RenderTexture | undefined) {
         this._renderTexture = renderTexture;
     }
 
     protected _clearRenderTexture() {}
 
-    protected _setScissor(area: number[] | null) {}
+    protected _setScissor(area: number[] | undefined) {}
 }

@@ -1,43 +1,49 @@
+import CoreContext from "./CoreContext";
+import Shader from "../Shader";
+import ElementCore from "./ElementCore";
+import { RenderTextureInfo } from "./RenderTextureInfo";
+
 export default class CoreQuadOperation {
-    constructor(context, shader, shaderOwner, renderTextureInfo, scissor, index) {
-        this.context = context;
-        this.shader = shader;
-        this.shaderOwner = shaderOwner;
-        this.renderTextureInfo = renderTextureInfo;
-        this.scissor = scissor;
-        this.index = index;
-        this.length = 0;
-    }
+    public length: number = 0;
+
+    constructor(
+        public readonly context: CoreContext,
+        public readonly shader: Shader,
+        public readonly shaderOwner: ElementCore,
+        public readonly renderTextureInfo: RenderTextureInfo,
+        public readonly scissor: number[],
+        public readonly index: number
+    ) {}
 
     get quads() {
         return this.context.renderState.quads;
     }
 
-    getTexture(index) {
+    getTexture(index: number) {
         return this.quads.getTexture(this.index + index);
     }
 
-    getElementCore(index) {
+    getElementCore(index: number) {
         return this.quads.getElementCore(this.index + index);
     }
 
-    getElement(index) {
+    getElement(index: number) {
         return this.quads.getElement(this.index + index);
     }
 
-    getElementWidth(index) {
+    getElementWidth(index: number) {
         return this.getElement(index).renderWidth;
     }
 
-    getElementHeight(index) {
+    getElementHeight(index: number) {
         return this.getElement(index).renderHeight;
     }
 
-    getTextureWidth(index) {
+    getTextureWidth(index: number) {
         return this.quads.getTextureWidth(this.index + index);
     }
 
-    getTextureHeight(index) {
+    getTextureHeight(index: number) {
         return this.quads.getTextureHeight(this.index + index);
     }
 

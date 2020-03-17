@@ -3,11 +3,11 @@ import CoreContext from "../tree/core/CoreContext";
 import Shader from "../tree/Shader";
 import { Constructor } from "../util/types";
 import { TextureSourceOptions } from "../tree/Texture";
-import { RenderTexture } from "./webgl/WebGLRenderer";
 import TextureSource from "../tree/TextureSource";
 import NativeTexture from "./NativeTexture";
 import CoreRenderState from "../tree/core/CoreRenderState";
 import CoreRenderExecutor from "../tree/core/CoreRenderExecutor";
+import {RenderTexture} from "./RenderTexture";
 
 export default abstract class Renderer {
     _defaultShader?: Shader;

@@ -3,29 +3,35 @@ import CoreContext from "../../tree/core/CoreContext";
 import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
 import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import WebGLShader from "./WebGLShader";
-import { RenderTexture } from "./WebGLRenderer";
+import { RenderTexture } from "../RenderTexture";
 
 export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
-    private _attribsBuffer: WebGLBuffer;
-    private _quadsBuffer: WebGLBuffer;
-    private _projection: Float32Array;
-    _scissor: number[];
-    private _currentShaderProgram?: WebGLShader;
-    public readonly gl : WebGLRenderingContext;
+    public readonly attribsBuffer: WebGLBuffer;
+    public readonly quadsBuffer: WebGLBuffer;
+
+    // The matrix that maps the [0,0 - W,H] coordinates to [-1,-1 - 1,1] in the vertex shaders.
+    public readonly projection: Float32Array;
+
+    public scissor: number[];
+    public currentShaderProgram?: WebGLShader;
+    public readonly gl: WebGLRenderingContext;
 
     constructor(context: CoreContext) {
         super(context);
 
         this.gl = this.context.stage.gl;
 
+        this.attribsBuffer = this.gl.createBuffer()!;
+
+        this.quadsBuffer = this.gl.createBuffer()!;
+
+        this.projection = new Float32Array([2 / this.context.stage.coordsWidth, -2 / this.context.stage.coordsHeight]);
+
         this.init();
     }
 
     init() {
         const gl = this.gl;
-
-        // Create new sharable buffer for params.
-        this._attribsBuffer = gl.createBuffer()!;
 
         const maxQuads = Math.floor(this.renderState.quads.data.byteLength / 80);
 
@@ -42,19 +48,14 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
             allIndices[i + 5] = j + 3;
         }
 
-        // The quads buffer can be (re)used to draw a range of quads.
-        this._quadsBuffer = gl.createBuffer()!;
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._quadsBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.quadsBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, allIndices, gl.STATIC_DRAW);
-
-        // The matrix that causes the [0,0 - W,H] box to map to [-1,-1 - 1,1] in the end results.
-        this._projection = new Float32Array([2 / this.context.stage.coordsWidth, -2 / this.context.stage.coordsHeight]);
     }
 
     destroy() {
         super.destroy();
-        this.gl.deleteBuffer(this._attribsBuffer);
-        this.gl.deleteBuffer(this._quadsBuffer);
+        this.gl.deleteBuffer(this.attribsBuffer);
+        this.gl.deleteBuffer(this.quadsBuffer);
     }
 
     protected _reset() {
@@ -71,19 +72,19 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
 
     protected _setupBuffers() {
         const gl = this.gl;
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._quadsBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.quadsBuffer);
         const element = new DataView(this.renderState.quads.data, 0, this.renderState.quads.dataLength);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._attribsBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.attribsBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, element, gl.DYNAMIC_DRAW);
     }
 
     protected _setupQuadOperation(quadOperation: WebGLCoreQuadOperation) {
         super._setupQuadOperation(quadOperation);
-        this._useShaderProgram(quadOperation.shader, quadOperation);
+        this._useShaderProgram(quadOperation.getWebGLShader(), quadOperation);
     }
 
     protected _renderQuadOperation(op: WebGLCoreQuadOperation) {
-        const shader = op.shader;
+        const shader = op.getWebGLShader();
 
         if (op.length || op.shader.addEmpty()) {
             shader.beforeDraw(op);
@@ -97,21 +98,21 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
      * @param {CoreQuadOperation} operation;
      */
     protected _useShaderProgram(shader: WebGLShader, operation: WebGLCoreQuadOperation) {
-        if (!shader.hasSameProgram(this._currentShaderProgram!)) {
-            if (this._currentShaderProgram) {
-                this._currentShaderProgram.stopProgram();
+        if (!shader.hasSameProgram(this.currentShaderProgram!)) {
+            if (this.currentShaderProgram) {
+                this.currentShaderProgram.stopProgram();
             }
             shader.useProgram();
-            this._currentShaderProgram = shader;
+            this.currentShaderProgram = shader;
         }
         shader.setupUniforms(operation);
     }
 
     protected _stopShaderProgram() {
-        if (this._currentShaderProgram) {
+        if (this.currentShaderProgram) {
             // The currently used shader program should be stopped gracefully.
-            this._currentShaderProgram.stopProgram();
-            this._currentShaderProgram = undefined;
+            this.currentShaderProgram.stopProgram();
+            this.currentShaderProgram = undefined;
         }
     }
 
@@ -152,10 +153,10 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     protected _setScissor(area: number[]) {
         super._setScissor(area);
 
-        if (this._scissor === area) {
+        if (this.scissor === area) {
             return;
         }
-        this._scissor = area;
+        this.scissor = area;
 
         const gl = this.gl;
         if (!area) {

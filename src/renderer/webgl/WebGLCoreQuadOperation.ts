@@ -3,13 +3,15 @@ import CoreContext from "../../tree/core/CoreContext";
 import Shader from "../../tree/Shader";
 import ElementCore from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
+import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
+import WebGLShader from "./WebGLShader";
 
 export default class WebGLCoreQuadOperation extends CoreQuadOperation {
     extraAttribsDataByteOffset: number;
 
     constructor(
         context: CoreContext,
-        shader: Shader,
+        shader: WebGLShader,
         shaderOwner: ElementCore,
         renderTextureInfo: RenderTextureInfo,
         scissor: number[],
@@ -18,6 +20,10 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
         super(context, shader, shaderOwner, renderTextureInfo, scissor, index);
 
         this.extraAttribsDataByteOffset = 0;
+    }
+
+    getWebGLShader(): WebGLShader {
+        return this.shader as WebGLShader;
     }
 
     getAttribsDataByteOffset(index: number) {
@@ -41,10 +47,10 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
     }
 
     getProjection() {
-        if (this.renderTextureInfo === null) {
-            return this.context.renderExecutor._projection;
+        if (this.renderTextureInfo && this.renderTextureInfo.renderTexture) {
+            return this.renderTextureInfo.renderTexture.projection;
         } else {
-            return this.renderTextureInfo.nativeTexture.projection;
+            return (this.context.renderExecutor as WebGLCoreRenderExecutor).projection;
         }
     }
 }

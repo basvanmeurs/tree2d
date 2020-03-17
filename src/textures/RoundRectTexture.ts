@@ -1,19 +1,26 @@
-import Texture, {TextureSourceLoader} from "../tree/Texture";
+import Texture, { TextureSourceLoader } from "../tree/Texture";
 import Utils from "../tree/Utils";
 import ColorUtils from "../tree/ColorUtils";
 
-export type RoundRectOptions = {w: number, h: number, radius: number[], strokeWidth: number, strokeColor: string|number, fill: boolean, fillColor: string|number};
+export type RoundRectOptions = {
+    w: number;
+    h: number;
+    radius: number[];
+    strokeWidth: number;
+    strokeColor: string | number;
+    fill: boolean;
+    fillColor: string | number;
+};
 
 export default class RoundRectTexture extends Texture {
-
-    private _options? : RoundRectOptions;
+    private _options?: RoundRectOptions;
 
     set options(options: RoundRectOptions | undefined) {
         this._options = options;
         this._changed();
     }
 
-    get options() : RoundRectOptions | undefined {
+    get options(): RoundRectOptions | undefined {
         return this._options;
     }
 
@@ -22,24 +29,21 @@ export default class RoundRectTexture extends Texture {
     }
 
     protected _getLookupId() {
-        const {w, h, radius, strokeWidth, strokeColor, fill, fillColor} = this._options!;
+        const { w, h, radius, strokeWidth, strokeColor, fill, fillColor } = this._options!;
         return "rect" + [w, h, strokeWidth, strokeColor, fill ? 1 : 0, fillColor].concat(radius).join(",");
     }
 
-    protected _getSourceLoader() : TextureSourceLoader {
+    protected _getSourceLoader(): TextureSourceLoader {
         const options = Utils.clone(this._options);
         return cb => {
             const canvas = this.stage.platform.getDrawingCanvas();
             RoundRectTexture.drawOnCanvas(canvas, options);
-            cb(undefined, {source: canvas})
+            cb(undefined, { source: canvas });
         };
     }
 
     private static drawOnCanvas(canvas: HTMLCanvasElement, options: RoundRectOptions) {
-        let {w, h, radius, strokeWidth, strokeColor, fill, fillColor} = options;
-
-        if (fill === undefined) fill = true;
-        if (strokeWidth === undefined) strokeWidth = 0;
+        const { w, h, radius, strokeColor, strokeWidth = 0, fill = true, fillColor } = options;
 
         const context = canvas.getContext("2d")!;
         context.imageSmoothingEnabled = true;
@@ -81,5 +85,4 @@ export default class RoundRectTexture extends Texture {
             context.stroke();
         }
     }
-
 }

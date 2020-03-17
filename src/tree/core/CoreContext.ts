@@ -2,15 +2,15 @@ import Stage from "../Stage";
 import ElementCore from "./ElementCore";
 import CoreRenderState from "./CoreRenderState";
 import CoreRenderExecutor from "./CoreRenderExecutor";
-import { RenderTexture } from "../../renderer/webgl/WebGLRenderer";
 import NativeTexture from "../../renderer/NativeTexture";
 import { CopyRenderTextureOptions } from "../../renderer/Renderer";
+import {RenderTexture} from "../../renderer/RenderTexture";
 
 export default class CoreContext {
     public root?: ElementCore;
     public updateTreeOrder: number = 0;
     public readonly renderState: CoreRenderState = this.stage.renderer.createCoreRenderState(this);
-    private renderExecutor: CoreRenderExecutor = this.stage.renderer.createCoreRenderExecutor(this);
+    public readonly renderExecutor: CoreRenderExecutor = this.stage.renderer.createCoreRenderExecutor(this);
     private _usedMemory: number = 0;
     private _renderTexturePool: RenderTexture[];
     private _renderTextureId: number = 1;

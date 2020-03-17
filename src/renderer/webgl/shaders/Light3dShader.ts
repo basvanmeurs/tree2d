@@ -29,13 +29,13 @@ export default class Light3dShader extends DefaultShader {
         const vr = operation.shaderOwner;
         const element = vr.element;
 
-        const pivotX = isNaN(this._pivotX) ? element.pivotX * vr.w : this._pivotX;
-        const pivotY = isNaN(this._pivotY) ? element.pivotY * vr.h : this._pivotY;
+        const pivotX = isNaN(this._pivotX) ? element.pivotX * vr.getLayoutW() : this._pivotX;
+        const pivotY = isNaN(this._pivotY) ? element.pivotY * vr.getLayoutH() : this._pivotY;
         const coords = vr.getRenderTextureCoords(pivotX, pivotY);
 
         // Counter normal rotation.
 
-        const rz = -Math.atan2(vr._renderContext.tc, vr._renderContext.ta);
+        const rz = -Math.atan2(vr.renderContext.tc, vr.renderContext.ta);
 
         const gl = this.gl;
         this._setUniform("pivot", new Float32Array([coords[0], coords[1], this._pivotZ]), gl.uniform3fv);

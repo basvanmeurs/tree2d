@@ -25,7 +25,7 @@ export default class RoundedRectangleShader extends DefaultShader {
         this._setUniform("radius", (this._radius + 0.5) * renderPrecision, this.gl.uniform1f);
         this._setUniform(
             "resolution",
-            new Float32Array([owner._w * renderPrecision, owner._h * renderPrecision]),
+            new Float32Array([owner.getLayoutW() * renderPrecision, owner.getLayoutH() * renderPrecision]),
             this.gl.uniform2fv
         );
     }

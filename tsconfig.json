@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "removeComments": false,
-    "lib": ["esnext", "dom"],
+    "lib": ["esnext", "dom", "es5"],
     "rootDir": "."
   },
   "include": [

@@ -1,5 +1,8 @@
+import NativeTexture from "../../renderer/NativeTexture";
+import { RenderTexture } from "../../renderer/RenderTexture";
+
 export interface RenderTextureInfo {
-    nativeTexture?: WebGLTexture;
+    renderTexture?: RenderTexture;
     offset: number;
     w: number;
     h: number;

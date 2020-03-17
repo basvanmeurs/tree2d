@@ -18,24 +18,9 @@ import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import WebGLShaderProgram from "./WebGLShaderProgram";
 import { TextureSourceOptions } from "../../tree/Texture";
 import NativeTexture from "../NativeTexture";
-
-export type NativeWebGLTexture = WebGLTexture &
-    NativeTexture & {
-        params: any;
-        options: any;
-    };
-
-export interface RenderTexture extends NativeWebGLTexture {
-    id: number;
-    f: number;
-    ow: number;
-    oh: number;
-    precision: number;
-    framebuffer: WebGLFramebuffer;
-    projection: Float32Array;
-}
-
-type TexParams = { [key: number]: GLenum };
+import { WebGLRenderTexture } from "./WebGLRenderTexture";
+import { WebGLNativeTexture } from "./WebGLNativeTexture";
+import { RenderTexture } from "../RenderTexture";
 
 export default class WebGLRenderer extends Renderer {
     shaderPrograms: Map<Function, WebGLShaderProgram>;
@@ -73,16 +58,23 @@ export default class WebGLRenderer extends Renderer {
         scissor: number[],
         index: number
     ) {
-        return new WebGLCoreQuadOperation(context, shader, shaderOwner, renderTextureInfo, scissor, index);
+        return new WebGLCoreQuadOperation(
+            context,
+            shader as WebGLShader,
+            shaderOwner,
+            renderTextureInfo,
+            scissor,
+            index
+        );
     }
 
     createCoreRenderExecutor(context: CoreContext) {
         return new WebGLCoreRenderExecutor(context);
     }
 
-    createRenderTexture(w: number, h: number, pw: number, ph: number): RenderTexture {
+    createRenderTexture(w: number, h: number, pw: number, ph: number): WebGLRenderTexture {
         const gl = this.stage.gl;
-        const glTexture: RenderTexture = gl.createTexture() as RenderTexture;
+        const glTexture: WebGLRenderTexture = gl.createTexture() as WebGLRenderTexture;
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pw, ph, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -109,7 +101,7 @@ export default class WebGLRenderer extends Renderer {
         return glTexture;
     }
 
-    freeRenderTexture(glTexture: RenderTexture) {
+    freeRenderTexture(glTexture: WebGLRenderTexture) {
         const gl = this.stage.gl;
         gl.deleteFramebuffer(glTexture.framebuffer);
         gl.deleteTexture(glTexture);
@@ -145,7 +137,7 @@ export default class WebGLRenderer extends Renderer {
 
         format.texParams = options.texParams || {};
 
-        const glTexture = gl.createTexture() as NativeWebGLTexture;
+        const glTexture = gl.createTexture() as WebGLNativeTexture;
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, format.premultiplyAlpha);
@@ -316,3 +308,5 @@ export default class WebGLRenderer extends Renderer {
         );
     }
 }
+
+type TexParams = { [key: number]: GLenum };

@@ -1871,7 +1871,7 @@ export default class ElementCore implements FlexSubject {
                     prevRenderTextureInfo = renderState.renderTextureInfo;
 
                     renderTextureInfo = {
-                        nativeTexture: undefined,
+                        renderTexture: undefined,
                         offset: 0, // Set by CoreRenderState.
                         w: this._w,
                         h: this._h,
@@ -1970,9 +1970,9 @@ export default class ElementCore implements FlexSubject {
 
                         // The following cleans up memory and enforces that the result texture is also cleared.
                         this._texturizer!.releaseRenderTexture();
-                    } else if (renderTextureInfo.nativeTexture) {
+                    } else if (renderTextureInfo.renderTexture) {
                         // If nativeTexture is set, we can reuse that directly instead of creating a new render texture.
-                        this._texturizer!.reuseTextureAsRenderTexture(renderTextureInfo!.nativeTexture);
+                        this._texturizer!.reuseTextureAsRenderTexture(renderTextureInfo!.renderTexture);
 
                         renderTextureInfo.ignore = true;
                     } else {
@@ -1981,7 +1981,7 @@ export default class ElementCore implements FlexSubject {
                             this._texturizer!.releaseRenderTexture();
                         }
                         // Just create the render texture.
-                        renderTextureInfo.nativeTexture = this._texturizer!.getRenderTexture();
+                        renderTextureInfo.renderTexture = this._texturizer!.getRenderTexture();
                     }
 
                     // Restore the parent's render texture.
