@@ -7,7 +7,7 @@ export default class CoreQuadList {
     private quadElementCores: ElementCore[] = [];
     private dataLength: number = 0;
 
-    constructor(private context: CoreContext) {}
+    constructor(protected context: CoreContext) {}
 
     get length() {
         return this.quadTextures.length;
