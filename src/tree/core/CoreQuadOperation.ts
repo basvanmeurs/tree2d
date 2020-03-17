@@ -2,6 +2,7 @@ import CoreContext from "./CoreContext";
 import Shader from "../Shader";
 import ElementCore from "./ElementCore";
 import { RenderTextureInfo } from "./RenderTextureInfo";
+import WebGLCoreQuadList from "../../renderer/webgl/WebGLCoreQuadList";
 
 export default class CoreQuadOperation {
     public length: number = 0;
@@ -11,24 +12,24 @@ export default class CoreQuadOperation {
         public readonly shader: Shader,
         public readonly shaderOwner: ElementCore,
         public readonly renderTextureInfo: RenderTextureInfo,
-        public readonly scissor: number[],
+        public readonly scissor: number[] | undefined,
         public readonly index: number
     ) {}
 
-    get quads() {
-        return this.context.renderState.quads;
+    get quadList() {
+        return this.context.renderState.quadList;
     }
 
     getTexture(index: number) {
-        return this.quads.getTexture(this.index + index);
+        return this.quadList.getTexture(this.index + index);
     }
 
     getElementCore(index: number) {
-        return this.quads.getElementCore(this.index + index);
+        return this.quadList.getElementCore(this.index + index);
     }
 
     getElement(index: number) {
-        return this.quads.getElement(this.index + index);
+        return this.quadList.getElement(this.index + index);
     }
 
     getElementWidth(index: number) {
@@ -40,11 +41,11 @@ export default class CoreQuadOperation {
     }
 
     getTextureWidth(index: number) {
-        return this.quads.getTextureWidth(this.index + index);
+        return this.quadList.getTextureWidth(this.index + index);
     }
 
     getTextureHeight(index: number) {
-        return this.quads.getTextureHeight(this.index + index);
+        return this.quadList.getTextureHeight(this.index + index);
     }
 
     getRenderWidth() {

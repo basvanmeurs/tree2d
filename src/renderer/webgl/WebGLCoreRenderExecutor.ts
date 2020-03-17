@@ -4,6 +4,7 @@ import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
 import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import WebGLShader from "./WebGLShader";
 import { RenderTexture } from "../RenderTexture";
+import WebGLCoreQuadList from "./WebGLCoreQuadList";
 
 export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     public readonly attribsBuffer: WebGLBuffer;
@@ -12,7 +13,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     // The matrix that maps the [0,0 - W,H] coordinates to [-1,-1 - 1,1] in the vertex shaders.
     public readonly projection: Float32Array;
 
-    public scissor: number[];
+    public scissor: number[] | undefined;
     public currentShaderProgram?: WebGLShader;
     public readonly gl: WebGLRenderingContext;
 
@@ -33,7 +34,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     init() {
         const gl = this.gl;
 
-        const maxQuads = Math.floor(this.renderState.quads.data.byteLength / 80);
+        const maxQuads = Math.floor((this.renderState.quadList as WebGLCoreQuadList).data.byteLength / 80);
 
         // Init webgl arrays.
         const allIndices = new Uint16Array(maxQuads * 6);
@@ -73,7 +74,11 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     protected _setupBuffers() {
         const gl = this.gl;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.quadsBuffer);
-        const element = new DataView(this.renderState.quads.data, 0, this.renderState.quads.dataLength);
+        const element = new DataView(
+            (this.renderState.quadList as WebGLCoreQuadList).data,
+            0,
+            (this.renderState.quadList as WebGLCoreQuadList).getDataLength()
+        );
         gl.bindBuffer(gl.ARRAY_BUFFER, this.attribsBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, element, gl.DYNAMIC_DRAW);
     }
@@ -150,7 +155,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         }
     }
 
-    protected _setScissor(area: number[]) {
+    protected _setScissor(area: number[] | undefined) {
         super._setScissor(area);
 
         if (this.scissor === area) {

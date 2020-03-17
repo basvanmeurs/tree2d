@@ -66,12 +66,12 @@ export default class PixelateShader extends DefaultShader {
 
     setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
         let offset = operation.extraAttribsDataByteOffset / 4;
-        const floats = operation.quads.floats;
+        const floats = operation.quadList.floats;
 
         const length = operation.length;
         for (let i = 0; i < length; i++) {
-            const w = operation.quads.getTextureWidth(operation.index + i);
-            const h = operation.quads.getTextureHeight(operation.index + i);
+            const w = operation.quadList.getTextureWidth(operation.index + i);
+            const h = operation.quadList.getTextureHeight(operation.index + i);
 
             floats[offset] = w;
             floats[offset + 1] = h;

@@ -1,5 +1,4 @@
 import Utils from "../../tree/Utils";
-import ColorUtils from "../../tree/ColorUtils";
 import WebGLCoreQuadList from "./WebGLCoreQuadList";
 import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
@@ -7,7 +6,6 @@ import CoreRenderState from "../../tree/core/CoreRenderState";
 import DefaultShader from "./shaders/DefaultShader";
 import WebGLShader from "./WebGLShader";
 import Renderer from "../Renderer";
-import CoreQuadList from "../../tree/core/CoreQuadList";
 import TextureSource from "../../tree/TextureSource";
 import Stage from "../../tree/Stage";
 import CoreContext from "../../tree/core/CoreContext";
@@ -21,6 +19,7 @@ import NativeTexture from "../NativeTexture";
 import { WebGLRenderTexture } from "./WebGLRenderTexture";
 import { WebGLNativeTexture } from "./WebGLNativeTexture";
 import { RenderTexture } from "../RenderTexture";
+import WebGLCoreRenderState from "./WebGLCoreRenderState";
 
 export default class WebGLRenderer extends Renderer {
     shaderPrograms: Map<Function, WebGLShaderProgram>;
@@ -55,7 +54,7 @@ export default class WebGLRenderer extends Renderer {
         shader: Shader,
         shaderOwner: ElementCore,
         renderTextureInfo: RenderTextureInfo,
-        scissor: number[],
+        scissor: number[] | undefined,
         index: number
     ) {
         return new WebGLCoreQuadOperation(
@@ -70,6 +69,10 @@ export default class WebGLRenderer extends Renderer {
 
     createCoreRenderExecutor(context: CoreContext) {
         return new WebGLCoreRenderExecutor(context);
+    }
+
+    createCoreRenderState(context: CoreContext): CoreRenderState {
+        return new WebGLCoreRenderState(context);
     }
 
     createRenderTexture(w: number, h: number, pw: number, ph: number): WebGLRenderTexture {
@@ -167,117 +170,7 @@ export default class WebGLRenderer extends Renderer {
     }
 
     freeTextureSource(textureSource: TextureSource) {
-        this.stage.gl.deleteTexture(textureSource.nativeTexture);
-    }
-
-    addQuad(renderState: CoreRenderState, quads: CoreQuadList, index: number) {
-        let offset = index * 20;
-        const elementCore = quads.getElementCore(index);
-
-        const r = elementCore.getRenderContext();
-
-        const floats = renderState.quads.floats;
-        const uints = renderState.quads.uints;
-        const mca = ColorUtils.mergeColorAlpha;
-
-        const w = elementCore.getLayoutW();
-        const h = elementCore.getLayoutH();
-
-        if (r.tb !== 0 || r.tc !== 0) {
-            floats[offset++] = r.px;
-            floats[offset++] = r.py;
-            floats[offset++] = elementCore.ulx;
-            floats[offset++] = elementCore.uly;
-            uints[offset++] = mca(elementCore.colorUl, r.alpha);
-            floats[offset++] = r.px + w * r.ta;
-            floats[offset++] = r.py + w * r.tc;
-            floats[offset++] = elementCore.brx;
-            floats[offset++] = elementCore.uly;
-            uints[offset++] = mca(elementCore.colorUr, r.alpha);
-            floats[offset++] = r.px + w * r.ta + h * r.tb;
-            floats[offset++] = r.py + w * r.tc + h * r.td;
-            floats[offset++] = elementCore.brx;
-            floats[offset++] = elementCore.bry;
-            uints[offset++] = mca(elementCore.colorBr, r.alpha);
-            floats[offset++] = r.px + h * r.tb;
-            floats[offset++] = r.py + h * r.td;
-            floats[offset++] = elementCore.ulx;
-            floats[offset++] = elementCore.bry;
-            uints[offset] = mca(elementCore.colorBl, r.alpha);
-        } else {
-            // Simple.
-            const cx = r.px + w * r.ta;
-            const cy = r.py + h * r.td;
-
-            floats[offset++] = r.px;
-            floats[offset++] = r.py;
-            floats[offset++] = elementCore.ulx;
-            floats[offset++] = elementCore.uly;
-            uints[offset++] = mca(elementCore.colorUl, r.alpha);
-            floats[offset++] = cx;
-            floats[offset++] = r.py;
-            floats[offset++] = elementCore.brx;
-            floats[offset++] = elementCore.uly;
-            uints[offset++] = mca(elementCore.colorUr, r.alpha);
-            floats[offset++] = cx;
-            floats[offset++] = cy;
-            floats[offset++] = elementCore.brx;
-            floats[offset++] = elementCore.bry;
-            uints[offset++] = mca(elementCore.colorBr, r.alpha);
-            floats[offset++] = r.px;
-            floats[offset++] = cy;
-            floats[offset++] = elementCore.ulx;
-            floats[offset++] = elementCore.bry;
-            uints[offset] = mca(elementCore.colorBl, r.alpha);
-        }
-    }
-
-    isRenderTextureReusable(renderState: CoreRenderState, renderTextureInfo: TextureSource) {
-        const offset = (renderState._renderTextureInfo.offset * 80) / 4;
-        const floats = renderState.quads.floats;
-        const uints = renderState.quads.uints;
-        return (
-            floats[offset] === 0 &&
-            floats[offset + 1] === 0 &&
-            floats[offset + 2] === 0 &&
-            floats[offset + 3] === 0 &&
-            uints[offset + 4] === 0xffffffff &&
-            floats[offset + 5] === renderTextureInfo.w &&
-            floats[offset + 6] === 0 &&
-            floats[offset + 7] === 1 &&
-            floats[offset + 8] === 0 &&
-            uints[offset + 9] === 0xffffffff &&
-            floats[offset + 10] === renderTextureInfo.w &&
-            floats[offset + 11] === renderTextureInfo.h &&
-            floats[offset + 12] === 1 &&
-            floats[offset + 13] === 1 &&
-            uints[offset + 14] === 0xffffffff &&
-            floats[offset + 15] === 0 &&
-            floats[offset + 16] === renderTextureInfo.h &&
-            floats[offset + 17] === 0 &&
-            floats[offset + 18] === 1 &&
-            uints[offset + 19] === 0xffffffff
-        );
-    }
-
-    finishRenderState(renderState: CoreRenderState) {
-        // Set extra shader attribute data.
-        let offset = renderState.length * 80;
-        for (let i = 0, n = renderState.quadOperations.length; i < n; i++) {
-            renderState.quadOperations[i].extraAttribsDataByteOffset = offset;
-            const extra =
-                renderState.quadOperations[i].shader.getExtraAttribBytesPerVertex() *
-                4 *
-                renderState.quadOperations[i].length;
-            offset += extra;
-            if (extra) {
-                renderState.quadOperations[i].shader.setExtraAttribsInBuffer(
-                    renderState.quadOperations[i],
-                    renderState.quads
-                );
-            }
-        }
-        renderState.quads.dataLength = offset;
+        this.stage.gl.deleteTexture(textureSource.nativeTexture!);
     }
 
     copyRenderTexture(

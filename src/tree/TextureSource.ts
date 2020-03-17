@@ -24,7 +24,7 @@ export default class TextureSource {
     public w: number = 0;
     public h: number = 0;
 
-    public _nativeTexture?: any;
+    public _nativeTexture?: NativeTexture;
 
     // If true, then this.texture source is never freed from memory during garbage collection.
     public permanent: boolean;
@@ -209,7 +209,7 @@ export default class TextureSource {
             this.w = this.w || (source as any).w;
             this.h = this.h || (source as any).h;
 
-            // WebGLTexture objects are by default;
+            // NativeTexture objects are by default;
             this.permanent = options.permanent === undefined ? false : options.permanent;
         } else {
             this.manager.uploadTextureSource(this, options);
@@ -238,7 +238,7 @@ export default class TextureSource {
 
         if (this._nativeTexture) {
             // Change 'update' flag. This is currently not used by the framework but is handy in userland.
-            this._nativeTexture.update = this.stage.frameCounter;
+            this._nativeTexture.updateFrame = this.stage.frameCounter;
         }
 
         this.forEachActiveElement(function(element) {
@@ -257,7 +257,7 @@ export default class TextureSource {
     }
 
     clearNativeTexture() {
-        this._nativeTexture = null;
+        this._nativeTexture = undefined;
     }
 
     /**
@@ -295,7 +295,8 @@ export default class TextureSource {
         }
     }
 
-    _isNativeTexture(source: any) {
+    _isNativeTexture(source: any): source is NativeTexture {
+        // @todo: improve.
         return source instanceof WebGLTexture;
     }
 
@@ -306,3 +307,4 @@ export default class TextureSource {
 
 import Texture, { TextureSourceLoader, TextureSourceOptions } from "./Texture";
 import Stage from "./Stage";
+import NativeTexture from "../renderer/NativeTexture";

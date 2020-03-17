@@ -30,7 +30,7 @@ export default class DitheringShader extends DefaultShader {
         this._noiseTexture.load();
 
         let offset = operation.extraAttribsDataByteOffset / 4;
-        const floats = operation.quads.floats;
+        const floats = operation.quadList.floats;
 
         const length = operation.length;
 
@@ -91,7 +91,7 @@ export default class DitheringShader extends DefaultShader {
             this.getVertexAttribPointerOffset(operation)
         );
 
-        const glTexture = this._noiseTexture.source!.nativeTexture;
+        const glTexture = this._noiseTexture.source!.nativeTexture!;
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
         gl.activeTexture(gl.TEXTURE0);

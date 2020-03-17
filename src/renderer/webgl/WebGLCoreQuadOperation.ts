@@ -5,6 +5,7 @@ import ElementCore from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
 import WebGLShader from "./WebGLShader";
+import WebGLCoreQuadList from "./WebGLCoreQuadList";
 
 export default class WebGLCoreQuadOperation extends CoreQuadOperation {
     extraAttribsDataByteOffset: number;
@@ -14,12 +15,16 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
         shader: WebGLShader,
         shaderOwner: ElementCore,
         renderTextureInfo: RenderTextureInfo,
-        scissor: number[],
+        scissor: number[] | undefined,
         index: number
     ) {
         super(context, shader, shaderOwner, renderTextureInfo, scissor, index);
 
         this.extraAttribsDataByteOffset = 0;
+    }
+
+    get quadList(): WebGLCoreQuadList {
+        return super.quadList as WebGLCoreQuadList;
     }
 
     getWebGLShader(): WebGLShader {
@@ -28,7 +33,7 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
 
     getAttribsDataByteOffset(index: number) {
         // Where this quad can be found in the attribs buffer.
-        return this.quads.getAttribsDataByteOffset(this.index + index);
+        return (this.quadList as WebGLCoreQuadList).getAttribsDataByteOffset(this.index + index);
     }
 
     /**

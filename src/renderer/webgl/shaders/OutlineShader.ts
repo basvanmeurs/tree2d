@@ -58,7 +58,7 @@ export default class OutlineShader extends DefaultShader {
 
     setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
         let offset = operation.extraAttribsDataByteOffset / 4;
-        const floats = operation.quads.floats;
+        const floats = operation.quadList.floats;
 
         const length = operation.length;
 
@@ -66,9 +66,9 @@ export default class OutlineShader extends DefaultShader {
             const elementCore = operation.getElementCore(i);
 
             // We are setting attributes such that if the value is < 0 or > 1, a border should be drawn.
-            const ddw = this._width / elementCore.w;
+            const ddw = this._width / elementCore.getLayoutW();
             const dw = ddw / (1 - 2 * ddw);
-            const ddh = this._width / elementCore.h;
+            const ddh = this._width / elementCore.getLayoutH();
             const dh = ddh / (1 - 2 * ddh);
 
             // Specify all corner points.

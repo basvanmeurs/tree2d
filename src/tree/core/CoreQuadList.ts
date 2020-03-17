@@ -5,7 +5,6 @@ import ElementCore from "./ElementCore";
 export default class CoreQuadList {
     private quadTextures: NativeTexture[] = [];
     private quadElementCores: ElementCore[] = [];
-    private dataLength: number = 0;
 
     constructor(protected context: CoreContext) {}
 
@@ -16,7 +15,6 @@ export default class CoreQuadList {
     reset() {
         this.quadTextures = [];
         this.quadElementCores = [];
-        this.dataLength = 0;
     }
 
     getElement(index: number) {
@@ -50,4 +48,10 @@ export default class CoreQuadList {
             return this.quadElementCores[index].displayedTextureSource!.h;
         }
     }
+
+    add(texture: NativeTexture, elementCore: ElementCore) {
+        this.quadTextures.push(texture);
+        this.quadElementCores.push(elementCore);
+    }
+
 }

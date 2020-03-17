@@ -7,7 +7,11 @@ import TextureSource from "../tree/TextureSource";
 import NativeTexture from "./NativeTexture";
 import CoreRenderState from "../tree/core/CoreRenderState";
 import CoreRenderExecutor from "../tree/core/CoreRenderExecutor";
-import {RenderTexture} from "./RenderTexture";
+import { RenderTexture } from "./RenderTexture";
+import CoreQuadList from "../tree/core/CoreQuadList";
+import { RenderTextureInfo } from "../tree/core/RenderTextureInfo";
+import ElementCore from "../tree/core/ElementCore";
+import CoreQuadOperation from "../tree/core/CoreQuadOperation";
 
 export default abstract class Renderer {
     _defaultShader?: Shader;
@@ -59,15 +63,24 @@ export default abstract class Renderer {
 
     abstract uploadTextureSource(textureSource: TextureSource, options: TextureSourceOptions): NativeTexture;
 
-    createCoreRenderState(context: CoreContext) {
-        return new CoreRenderState(context);
-    }
+    abstract createCoreRenderState(context: CoreContext): CoreRenderState;
 
     abstract createCoreRenderExecutor(context: CoreContext): CoreRenderExecutor;
 
     abstract createRenderTexture(w: number, h: number, pw: number, ph: number): RenderTexture;
 
     abstract freeRenderTexture(glTexture: RenderTexture): void;
+
+    abstract createCoreQuadList(context: CoreContext): CoreQuadList;
+
+    abstract createCoreQuadOperation(
+        context: CoreContext,
+        shader: Shader,
+        shaderOwner: ElementCore,
+        renderTextureInfo: RenderTextureInfo,
+        scissor: number[] | undefined,
+        index: number
+    ): CoreQuadOperation;
 }
 
 export type CopyRenderTextureOptions = {

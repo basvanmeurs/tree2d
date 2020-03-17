@@ -568,7 +568,8 @@ export type TextureSourceOptions = {
         | HTMLImageElement
         | HTMLCanvasElement
         | HTMLVideoElement
-        | ImageBitmap;
+        | ImageBitmap
+        | WebGLNativeTexture;
     width?: number;
     height?: number;
     permanent?: boolean;
@@ -584,3 +585,4 @@ export type TextureSourceOptions = {
 };
 
 import TextureSource from "./TextureSource";
+import {WebGLNativeTexture} from "../renderer/webgl/WebGLNativeTexture";

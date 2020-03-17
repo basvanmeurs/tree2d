@@ -1149,7 +1149,7 @@ export default class ElementCore implements FlexSubject {
     }
 
     get activeShader() {
-        return this._shaderOwner ? this._shaderOwner.shader : this.renderState.defaultShader;
+        return this._shaderOwner ? this._shaderOwner.shader! : this.renderState.defaultShader;
     }
 
     get activeShaderOwner() {
@@ -1820,8 +1820,8 @@ export default class ElementCore implements FlexSubject {
 
             if (this._outOfBounds === 0 && this._displayedTextureSource) {
                 renderState.setShader(this.activeShader, this._shaderOwner);
-                renderState.setScissor(this._scissor);
-                this.renderState.addQuad(this);
+                renderState.setScissor(this._scissor!);
+                renderState.addElementCore(this);
             }
 
             // Also add children to the VBO.
@@ -1886,19 +1886,19 @@ export default class ElementCore implements FlexSubject {
                         (!renderState.isCachingTexturizer && hasRenderUpdates < 3)
                     ) {
                         /**
-                         * We don't always cache render textures.
+                         * Normally, we cache render textures. But there are exceptions to preserve memory usage!
                          *
                          * The rule is, that caching for a specific render texture is only enabled if:
                          * - There is a result texture to be updated.
                          * - There were no render updates -within the contents- since last frame (ElementCore.hasRenderUpdates < 3)
                          * - AND there are no ancestors that are being cached during this frame (CoreRenderState.isCachingTexturizer)
-                         *   If an ancestor is cached anyway, it's probably not necessary to keep deeper caches. If the top level is to
-                         *   change while a lower one is not, that lower level will be cached instead.
+                         *   If an ancestor is cached anyway, deeper caches are unlikely to be used. If the top level is to
+                         *   change later while a lower one is not, that lower level will be cached instead at that instant.
                          *
-                         * In case of the fast blur element, this prevents having to cache all blur levels and stages, saving a huge amount
+                         * In some cases, this prevents having to cache all blur levels and stages, saving a huge amount
                          * of GPU memory!
                          *
-                         * Especially when using multiple stacked layers of the same dimensions that are RTT this will have a very
+                         * Especially when using multiple stacked layers of the same dimensions that are render-to-texture this will have a very
                          * noticable effect on performance as less render textures need to be allocated.
                          */
                         renderTextureInfo.cache = true;
@@ -1915,7 +1915,7 @@ export default class ElementCore implements FlexSubject {
                     }
 
                     renderState.setRenderTextureInfo(renderTextureInfo);
-                    renderState.setScissor(null);
+                    renderState.setScissor(undefined);
 
                     if (this._displayedTextureSource) {
                         const r = this._renderContext;
@@ -1924,7 +1924,7 @@ export default class ElementCore implements FlexSubject {
                         this._renderContext = ElementCoreContext.IDENTITY;
 
                         // Add displayed texture source in local coordinates.
-                        this.renderState.addQuad(this);
+                        this.renderState.addElementCore(this);
 
                         this._renderContext = r;
                     }
@@ -1935,7 +1935,7 @@ export default class ElementCore implements FlexSubject {
                 if (this._outOfBounds === 0 && this._displayedTextureSource) {
                     renderState.setShader(this.activeShader, this._shaderOwner);
                     renderState.setScissor(this._scissor);
-                    this.renderState.addQuad(this);
+                    this.renderState.addElementCore(this);
                 }
             }
 
@@ -1994,8 +1994,8 @@ export default class ElementCore implements FlexSubject {
                     const resultTexture = this._texturizer!.getResultTexture();
                     if (updateResultTexture) {
                         if (resultTexture) {
-                            // Logging the update frame can be handy for userland.
-                            resultTexture.update = renderState.stage.frameCounter;
+                            // Logging the update frame can be handy.
+                            resultTexture.updateFrame = this.element.stage.frameCounter;
                         }
                         this._texturizer!.updateResultTexture();
                     }
@@ -2008,13 +2008,13 @@ export default class ElementCore implements FlexSubject {
                         // If no render texture info is set, the cache can be reused.
                         const cache = !renderTextureInfo || renderTextureInfo.cache;
 
-                        renderState.setTexturizer(this._texturizer, cache);
+                        renderState.setTexturizer(this._texturizer!, cache);
                         this._stashTexCoords();
                         if (!this._texturizer!.colorize) this._stashColors();
-                        this.renderState.addQuad(this);
+                        this.renderState.addElementCore(this);
                         if (!this._texturizer!.colorize) this._unstashColors();
                         this._unstashTexCoords();
-                        renderState.setTexturizer(null);
+                        renderState.setTexturizer(undefined, false);
                     }
                 }
             }
