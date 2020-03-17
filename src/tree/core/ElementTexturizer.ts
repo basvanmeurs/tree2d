@@ -1,32 +1,32 @@
 import TextureSource from "../TextureSource";
+import Element from "../Element";
+import ElementCore from "./ElementCore";
+import CoreContext from "./CoreContext";
+import RenderTexture from "../../renderer/RenderTexture";
+import NativeTexture from "../../renderer/NativeTexture";
 
 export default class ElementTexturizer {
-    constructor(elementCore) {
-        this._element = elementCore.element;
-        this._core = elementCore;
+    private _element: Element = this._core.element;
+    private context: CoreContext = this._core.context;
+    private _enabled: boolean = false;
 
-        this.context = this._core.context;
+    // In lazy mode, render to texture will be disabled when there are changes since the last frame.
+    public lazy: boolean = false;
 
-        this._enabled = false;
-        this.lazy = false;
-        this._colorize = false;
+    private _colorize: boolean = false;
+    private _renderTexture?: RenderTexture;
+    private _reusedTexture?: NativeTexture;
+    private _resultTextureSource?: TextureSource;
+    private _renderOffscreen: boolean = false;
+    public empty: boolean = false;
 
-        this._renderTexture = null;
-
-        this._renderTextureReused = false;
-
-        this._resultTextureSource = null;
-
-        this._renderOffscreen = false;
-
-        this.empty = false;
-    }
+    constructor(private _core: ElementCore) {}
 
     get enabled() {
         return this._enabled;
     }
 
-    set enabled(v) {
+    set enabled(v: boolean) {
         this._enabled = v;
         this._core.updateRenderToTextureEnabled();
     }
@@ -35,7 +35,7 @@ export default class ElementTexturizer {
         return this._renderOffscreen;
     }
 
-    set renderOffscreen(v) {
+    set renderOffscreen(v: boolean) {
         this._renderOffscreen = v;
         this._core.setHasRenderUpdates(1);
 
@@ -47,7 +47,7 @@ export default class ElementTexturizer {
         return this._colorize;
     }
 
-    set colorize(v) {
+    set colorize(v: boolean) {
         if (this._colorize !== v) {
             this._colorize = v;
 
@@ -83,7 +83,7 @@ export default class ElementTexturizer {
 
             // Texture will be updated: all elements using the source need to be updated as well.
             this._resultTextureSource.forEachEnabledElement(element => {
-                element._updateDimensions();
+                element._updateTextureDimensions();
                 element.core.setHasRenderUpdates(3);
             });
         }
@@ -93,7 +93,7 @@ export default class ElementTexturizer {
         // Check if we must really render as texture.
         if (this._enabled && !this.lazy) {
             return true;
-        } else if (this._enabled && this.lazy && this._core._hasRenderUpdates < 3) {
+        } else if (this._enabled && this.lazy && !this._core.hasRenderTextureUpdates()) {
             // Static-only: if renderToTexture did not need to update during last drawn frame, generate it as a cache.
             return true;
         }
@@ -105,7 +105,7 @@ export default class ElementTexturizer {
     }
 
     get renderTextureReused() {
-        return this._renderTextureReused;
+        return !!this._reusedTexture;
     }
 
     release() {
@@ -114,21 +114,17 @@ export default class ElementTexturizer {
 
     releaseRenderTexture() {
         if (this._renderTexture) {
-            if (!this._renderTextureReused) {
-                this.context.releaseRenderTexture(this._renderTexture);
-            }
-            this._renderTexture = null;
-            this._renderTextureReused = false;
+            this.context.releaseRenderTexture(this._renderTexture);
+            this._renderTexture = undefined;
             this.updateResultTexture();
         }
     }
 
     // Reuses the specified texture as the render texture (in ancestor).
-    reuseTextureAsRenderTexture(nativeTexture) {
+    reuseTextureAsRenderTexture(nativeTexture: NativeTexture) {
         if (this._renderTexture !== nativeTexture) {
             this.releaseRenderTexture();
-            this._renderTexture = nativeTexture;
-            this._renderTextureReused = true;
+            this._reusedTexture = nativeTexture;
         }
     }
 
@@ -138,13 +134,13 @@ export default class ElementTexturizer {
 
     getRenderTexture() {
         if (!this._renderTexture) {
-            this._renderTexture = this.context.allocateRenderTexture(this._core._w, this._core._h);
-            this._renderTextureReused = false;
+            this._renderTexture = this.context.allocateRenderTexture(this._core.getLayoutW(), this._core.getLayoutH());
+            this._reusedTexture = undefined;
         }
         return this._renderTexture;
     }
 
-    getResultTexture() {
-        return this._renderTexture;
+    getResultTexture(): NativeTexture | undefined {
+        return this._reusedTexture || this._renderTexture;
     }
 }

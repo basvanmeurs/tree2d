@@ -1,9 +1,10 @@
 import NativeTexture from "../../renderer/NativeTexture";
-import { RenderTexture } from "../../renderer/RenderTexture";
+import RenderTexture from "../../renderer/RenderTexture";
 
 export interface RenderTextureInfo {
     renderTexture?: RenderTexture;
-    offset: number;
+    reusableTexture?: NativeTexture;
+    reusableRenderStateOffset: number;
     w: number;
     h: number;
     empty: boolean;

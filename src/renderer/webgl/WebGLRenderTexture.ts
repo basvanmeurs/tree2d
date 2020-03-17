@@ -1,6 +1,6 @@
-import { RenderTexture } from "../RenderTexture";
 import { WebGLNativeTexture } from "./WebGLNativeTexture";
+import RenderTexture from "../RenderTexture";
 
-export interface WebGLRenderTexture extends RenderTexture, WebGLNativeTexture {
+export default interface WebGLRenderTexture extends RenderTexture, WebGLNativeTexture {
     framebuffer: WebGLFramebuffer;
 }

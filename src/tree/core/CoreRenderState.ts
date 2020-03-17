@@ -5,8 +5,8 @@ import Renderer from "../../renderer/Renderer";
 import CoreQuadList from "./CoreQuadList";
 import { RenderTextureInfo } from "./RenderTextureInfo";
 import ElementCore from "./ElementCore";
-import ElementTexturizer from "./ElementTexturizer";
 import NativeTexture from "../../renderer/NativeTexture";
+import ElementTexturizer from "./ElementTexturizer";
 
 export default abstract class CoreRenderState {
     public quadOperations: CoreQuadOperation[] = [];
@@ -126,17 +126,17 @@ export default abstract class CoreRenderState {
         }
 
         if (!nativeTexture) {
-            nativeTexture = elementCore.displayedTextureSource!.nativeTexture;
+            nativeTexture = elementCore.displayedTextureSource!.nativeTexture!;
         }
 
         if (this.renderTextureInfo) {
             if (this.usedShader === this.defaultShader && this.renderTextureInfo.empty) {
-                // The texture might be reusable under some conditions. We will check them in ElementCore.renderer.
-                this.renderTextureInfo.renderTexture = nativeTexture;
-                this.renderTextureInfo.offset = this.length;
+                // The texture might be reusable under some conditions. We will check the conditions later.
+                this.renderTextureInfo.reusableTexture = nativeTexture;
+                this.renderTextureInfo.reusableRenderStateOffset = this.length;
             } else {
                 // It is not possible to reuse another texture when there is more than one quad.
-                this.renderTextureInfo.renderTexture = undefined;
+                this.renderTextureInfo.reusableTexture = undefined;
             }
             this.renderTextureInfo.empty = false;
         }
@@ -147,20 +147,20 @@ export default abstract class CoreRenderState {
     }
 
     finishedRenderTexture() {
-        if (this.renderTextureInfo && this.renderTextureInfo.renderTexture) {
+        if (this.renderTextureInfo && this.renderTextureInfo.reusableTexture) {
             // There was only one texture drawn in this render texture.
             // Check if we can reuse it so that we can optimize out an unnecessary render texture operation.
             // (it should exactly span this render texture).
 
             if (!this._isRenderTextureReusable()) {
-                this.renderTextureInfo.renderTexture = undefined;
+                this.renderTextureInfo.reusableTexture = undefined;
             }
         }
     }
 
     _isRenderTextureReusable() {
         const renderTextureInfo = this.renderTextureInfo!;
-        const offset = renderTextureInfo.offset;
+        const offset = renderTextureInfo.reusableRenderStateOffset;
         const texture = this.quadList.getTexture(offset);
         return (
             texture.w === renderTextureInfo.w &&

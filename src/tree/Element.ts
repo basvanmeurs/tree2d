@@ -773,7 +773,7 @@ class Element {
                 settings.renderToTexture = this.texturizer.enabled;
             }
             if (this.texturizer.lazy) {
-                settings.renderToTextureLazy = this.texturizer.lazy;
+                settings.renderToTextureLazy = true;
             }
             if (this.texturizer.colorize) {
                 settings.colorizeResultTexture = this.texturizer.colorize;

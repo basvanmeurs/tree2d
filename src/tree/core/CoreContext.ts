@@ -4,7 +4,7 @@ import CoreRenderState from "./CoreRenderState";
 import CoreRenderExecutor from "./CoreRenderExecutor";
 import NativeTexture from "../../renderer/NativeTexture";
 import { CopyRenderTextureOptions } from "../../renderer/Renderer";
-import {RenderTexture} from "../../renderer/RenderTexture";
+import RenderTexture from "../../renderer/RenderTexture";
 
 export default class CoreContext {
     public root?: ElementCore;

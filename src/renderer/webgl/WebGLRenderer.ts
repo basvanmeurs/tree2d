@@ -16,10 +16,10 @@ import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import WebGLShaderProgram from "./WebGLShaderProgram";
 import { TextureSourceOptions } from "../../tree/Texture";
 import NativeTexture from "../NativeTexture";
-import { WebGLRenderTexture } from "./WebGLRenderTexture";
+import WebGLRenderTexture from "./WebGLRenderTexture";
 import { WebGLNativeTexture } from "./WebGLNativeTexture";
-import { RenderTexture } from "../RenderTexture";
 import WebGLCoreRenderState from "./WebGLCoreRenderState";
+import RenderTexture from "../RenderTexture";
 
 export default class WebGLRenderer extends Renderer {
     shaderPrograms: Map<Function, WebGLShaderProgram>;

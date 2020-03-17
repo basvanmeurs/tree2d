@@ -3,8 +3,8 @@ import CoreContext from "../../tree/core/CoreContext";
 import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
 import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import WebGLShader from "./WebGLShader";
-import { RenderTexture } from "../RenderTexture";
 import WebGLCoreQuadList from "./WebGLCoreQuadList";
+import RenderTexture from "../RenderTexture";
 
 export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     public readonly attribsBuffer: WebGLBuffer;

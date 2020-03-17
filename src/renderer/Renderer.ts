@@ -7,11 +7,11 @@ import TextureSource from "../tree/TextureSource";
 import NativeTexture from "./NativeTexture";
 import CoreRenderState from "../tree/core/CoreRenderState";
 import CoreRenderExecutor from "../tree/core/CoreRenderExecutor";
-import { RenderTexture } from "./RenderTexture";
 import CoreQuadList from "../tree/core/CoreQuadList";
 import { RenderTextureInfo } from "../tree/core/RenderTextureInfo";
 import ElementCore from "../tree/core/ElementCore";
 import CoreQuadOperation from "../tree/core/CoreQuadOperation";
+import RenderTexture from "./RenderTexture";
 
 export default abstract class Renderer {
     _defaultShader?: Shader;

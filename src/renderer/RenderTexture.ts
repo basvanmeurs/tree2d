@@ -1,6 +1,6 @@
 import NativeTexture from "./NativeTexture";
 
-export interface RenderTexture extends NativeTexture {
+export default interface RenderTexture extends NativeTexture {
     id: number;
     f: number;
     ow: number;

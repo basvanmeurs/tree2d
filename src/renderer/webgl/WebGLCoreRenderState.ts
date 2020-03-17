@@ -8,7 +8,7 @@ import ElementCore from "../../tree/core/ElementCore";
 
 export default class WebGLCoreRenderState extends CoreRenderState {
     isRenderTextureReusable(renderTextureInfo: RenderTextureInfo): boolean {
-        const offset = (this.renderTextureInfo!.offset * 80) / 4;
+        const offset = (this.renderTextureInfo!.reusableRenderStateOffset * 80) / 4;
         const floats = (this.quadList as WebGLCoreQuadList).floats;
         const uints = (this.quadList as WebGLCoreQuadList).uints;
         return (

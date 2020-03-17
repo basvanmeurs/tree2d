@@ -4,7 +4,7 @@ import Element from "../Element";
 export default class ElementCore implements FlexSubject {
     private _element: Element;
 
-    private context: CoreContext;
+    public readonly context: CoreContext;
 
     /**
      * Recalc flags in bits.
@@ -522,6 +522,10 @@ export default class ElementCore implements FlexSubject {
 
     hasRenderUpdates() {
         return this._hasRenderUpdates > 0;
+    }
+
+    hasRenderTextureUpdates() {
+        return this._hasRenderUpdates >= 3;
     }
 
     clearHasRenderUpdates() {
@@ -1218,7 +1222,7 @@ export default class ElementCore implements FlexSubject {
     public updateRenderToTextureEnabled() {
         // Enforce texturizer initialisation.
         const texturizer = this.texturizer;
-        const v = texturizer._enabled;
+        const v = texturizer.enabled;
 
         if (v) {
             this._enableRenderToTexture();
@@ -1872,7 +1876,8 @@ export default class ElementCore implements FlexSubject {
 
                     renderTextureInfo = {
                         renderTexture: undefined,
-                        offset: 0, // Set by CoreRenderState.
+                        reusableTexture: undefined,
+                        reusableRenderStateOffset: 0, // Set by CoreRenderState.
                         w: this._w,
                         h: this._h,
                         empty: true,
@@ -1970,9 +1975,9 @@ export default class ElementCore implements FlexSubject {
 
                         // The following cleans up memory and enforces that the result texture is also cleared.
                         this._texturizer!.releaseRenderTexture();
-                    } else if (renderTextureInfo.renderTexture) {
+                    } else if (renderTextureInfo.reusableTexture) {
                         // If nativeTexture is set, we can reuse that directly instead of creating a new render texture.
-                        this._texturizer!.reuseTextureAsRenderTexture(renderTextureInfo!.renderTexture);
+                        this._texturizer!.reuseTextureAsRenderTexture(renderTextureInfo.reusableTexture);
 
                         renderTextureInfo.ignore = true;
                     } else {
