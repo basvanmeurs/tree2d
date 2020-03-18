@@ -1,15 +1,21 @@
 import ImageWorker from "./ImageWorker";
+import Stage from "../../tree/Stage";
+import { TextureDrawableSource, TextureSourceOptions } from "../../tree/Texture";
+import TextureSource from "../../tree/TextureSource";
 
 /**
  * Platform-specific functionality.
- * Copyright Metrological, 2017;
+ * Copyright Metrological, 2017
+ * Copyright Bas van Meurs, 2020
  */
 export default class WebPlatform {
-    init(stage) {
-        this.stage = stage;
-        this._looping = false;
-        this._awaitingLoop = false;
+    private _looping: boolean = false;
+    private _awaitingLoop: boolean = false;
+    private _imageWorker: ImageWorker;
 
+    constructor(private stage: Stage) {}
+
+    init() {
         if (this.stage.useImageWorker) {
             if (!window.createImageBitmap || !window.Worker) {
                 console.warn(
@@ -26,7 +32,6 @@ export default class WebPlatform {
         if (this._imageWorker) {
             this._imageWorker.destroy();
         }
-        this._removeKeyHandler();
     }
 
     startLoop() {
@@ -52,17 +57,14 @@ export default class WebPlatform {
         requestAnimationFrame(lp);
     }
 
-    uploadGlTexture(gl, textureSource, source, options) {
-        if (
-            source instanceof ImageData ||
-            source instanceof HTMLImageElement ||
-            source instanceof HTMLCanvasElement ||
-            source instanceof HTMLVideoElement ||
-            (window.ImageBitmap && source instanceof ImageBitmap)
-        ) {
-            // Web-specific data types.
-            gl.texImage2D(gl.TEXTURE_2D, 0, options.internalFormat, options.format, options.type, source);
-        } else {
+    uploadGlTexture(
+        gl: WebGLRenderingContext,
+        textureSource: TextureSource,
+        source: TextureDrawableSource,
+        options: any
+    ) {
+        if ((source as any).buffer) {
+            // Uint8Array
             gl.texImage2D(
                 gl.TEXTURE_2D,
                 0,
@@ -72,25 +74,36 @@ export default class WebPlatform {
                 0,
                 options.format,
                 options.type,
-                source
+                source as any
+            );
+        } else {
+            // Web-specific data types.
+            gl.texImage2D(
+                gl.TEXTURE_2D,
+                0,
+                options.internalFormat,
+                options.format,
+                options.type,
+                source as TexImageSource
             );
         }
     }
 
-    loadSrcTexture({ src, hasAlpha }, cb) {
+    loadSrcTexture(info: { src: string; hasAlpha: boolean }, cb: (err: Error | undefined, result?: any) => void) {
+        const { src, hasAlpha } = info;
         let cancelCb = undefined;
         const isPng = src.indexOf(".png") >= 0;
         if (this._imageWorker) {
             // WPE-specific image parser.
             const image = this._imageWorker.create(src);
-            image.onError = function(err) {
-                return cb(new Error("Image load error: " + err.toString()));
+            image.onError = function(err: Error) {
+                return cb(err);
             };
-            image.onLoad = function({ imageBitmap, hasAlphaChannel }) {
-                cb(null, {
-                    source: imageBitmap,
+            image.onLoad = function(info: { imageBitmap: ImageBitmap; hasAlphaChannel: boolean }) {
+                cb(undefined, {
+                    source: info.imageBitmap,
                     renderInfo: { src: src },
-                    hasAlpha: hasAlphaChannel,
+                    hasAlpha: info.hasAlphaChannel,
                     premultiplyAlpha: true
                 });
             };
@@ -106,11 +119,11 @@ export default class WebPlatform {
             image.onerror = function(err) {
                 // Ignore error message when cancelled.
                 if (image.src) {
-                    return cb("Image load error");
+                    return cb(new Error("Image load error"));
                 }
             };
             image.onload = function() {
-                cb(null, {
+                cb(undefined, {
                     source: image,
                     renderInfo: { src: src },
                     hasAlpha: isPng || hasAlpha
@@ -128,7 +141,7 @@ export default class WebPlatform {
         return cancelCb;
     }
 
-    createWebGLContext() {
+    createWebGLContext(): WebGLRenderingContext {
         const canvas = this.stage.canvas;
 
         const opts = {
@@ -139,7 +152,8 @@ export default class WebPlatform {
             preserveDrawingBuffer: false
         };
 
-        const gl = canvas.getContext("webgl", opts) || canvas.getContext("experimental-webgl", opts);
+        const gl = (canvas.getContext("webgl", opts) ||
+            canvas.getContext("experimental-webgl", opts)) as WebGLRenderingContext;
         if (!gl) {
             throw new Error("This browser does not support webGL.");
         }
@@ -167,37 +181,14 @@ export default class WebPlatform {
         return document.createElement("canvas");
     }
 
-    getTextureOptionsForDrawingCanvas(canvas) {
-        const options = {};
-        options.source = canvas;
+    getTextureOptionsForDrawingCanvas(canvas: HTMLCanvasElement) {
+        const options: TextureSourceOptions = {
+            source: canvas
+        };
         return options;
     }
 
-    nextFrame(changes) {
+    nextFrame(changes: boolean) {
         /* WebGL blits automatically */
-    }
-
-    registerKeydownHandler(keyhandler) {
-        this._keydownListener = e => {
-            keyhandler(e);
-        };
-        window.addEventListener("keydown", this._keydownListener);
-    }
-
-    registerKeyupHandler(keyhandler) {
-        this._keyupListener = e => {
-            keyhandler(e);
-        };
-        window.addEventListener("keyup", this._keyupListener);
-    }
-
-    _removeKeyHandler() {
-        if (this._keydownListener) {
-            window.removeEventListener("keydown", this._keydownListener);
-        }
-
-        if (this._keyupListener) {
-            window.removeEventListener("keyup", this._keyupListener);
-        }
     }
 }

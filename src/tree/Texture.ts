@@ -560,15 +560,9 @@ export type TextureSourceLoader = (
 ) => TextureSourceCancelFunction | void;
 export type TextureSourceCallback = (error: Error | undefined, options?: TextureSourceOptions) => void;
 export type TextureSourceCancelFunction = () => void;
+export type TextureDrawableSource = Uint8Array | Uint8ClampedArray | WebGLTexture | TexImageSource;
 export type TextureSourceOptions = {
-    source:
-        | Uint8ClampedArray
-        | WebGLTexture
-        | ImageData
-        | HTMLImageElement
-        | HTMLCanvasElement
-        | HTMLVideoElement
-        | ImageBitmap;
+    source: TextureDrawableSource;
     width?: number;
     height?: number;
     permanent?: boolean;
@@ -584,4 +578,4 @@ export type TextureSourceOptions = {
 };
 
 import TextureSource from "./TextureSource";
-import {WebGLNativeTexture} from "../renderer/webgl/WebGLNativeTexture";
+import { WebGLNativeTexture } from "../renderer/webgl/WebGLNativeTexture";

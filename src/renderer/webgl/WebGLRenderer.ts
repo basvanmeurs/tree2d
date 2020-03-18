@@ -196,3 +196,4 @@ export default class WebGLRenderer extends Renderer {
 }
 
 type TexParams = { [key: number]: GLenum };
+

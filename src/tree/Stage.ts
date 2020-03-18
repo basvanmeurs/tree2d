@@ -34,7 +34,7 @@ export default class Stage {
 
     private _usedMemory: number = 0;
     private _lastGcFrame: number = 0;
-    public readonly platform: WebPlatform = new WebPlatform();
+    public readonly platform: WebPlatform = new WebPlatform(this);
 
     public readonly gl: WebGLRenderingContext;
     public readonly c2d: CanvasRenderingContext2D;
@@ -77,7 +77,7 @@ export default class Stage {
         this._usedMemory = 0;
         this._lastGcFrame = 0;
 
-        this.platform.init(this);
+        this.platform.init();
 
         if (this.canvas2d) {
             console.log("Using canvas2d renderer");
