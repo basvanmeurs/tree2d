@@ -2,10 +2,15 @@ import CoreQuadList from "../../tree/core/CoreQuadList";
 
 export default class WebGLCoreQuadList extends CoreQuadList {
     // Allocate a fairly big chunk of memory that should be enough to support ~100000 (default) quads.
-    public data: ArrayBuffer = new ArrayBuffer(this.context.stage.bufferMemory);
+    public data: ArrayBuffer;
     public floats: Float32Array = new Float32Array(this.data);
     public uints: Uint32Array = new Uint32Array(this.data);
     private dataLength: number = 0;
+
+    constructor(bufferMemory: number) {
+        super();
+        this.data = new ArrayBuffer(bufferMemory);
+    }
 
     getDataLength() {
         return this.dataLength;

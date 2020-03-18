@@ -1,12 +1,9 @@
-import CoreContext from "./CoreContext";
 import NativeTexture from "../../renderer/NativeTexture";
 import ElementCore from "./ElementCore";
 
 export default class CoreQuadList {
     private quadTextures: NativeTexture[] = [];
     private quadElementCores: ElementCore[] = [];
-
-    constructor(protected context: CoreContext) {}
 
     get length() {
         return this.quadTextures.length;

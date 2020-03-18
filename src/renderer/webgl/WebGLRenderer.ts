@@ -45,8 +45,8 @@ export default class WebGLRenderer extends Renderer {
         return (shaderType as any).getWebGL();
     }
 
-    createCoreQuadList(context: CoreContext) {
-        return new WebGLCoreQuadList(context);
+    createCoreQuadList() {
+        return new WebGLCoreQuadList(this.stage.bufferMemory);
     }
 
     createCoreQuadOperation(

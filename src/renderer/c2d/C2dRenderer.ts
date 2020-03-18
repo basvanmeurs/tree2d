@@ -46,8 +46,8 @@ export default class C2dRenderer extends Renderer {
         return (shaderType as any).getC2d();
     }
 
-    createCoreQuadList(context: CoreContext) {
-        return new C2dCoreQuadList(context);
+    createCoreQuadList() {
+        return new C2dCoreQuadList();
     }
 
     createCoreQuadOperation(

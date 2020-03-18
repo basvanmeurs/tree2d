@@ -12,7 +12,7 @@ export default abstract class CoreRenderState {
     public quadOperations: CoreQuadOperation[] = [];
     public readonly defaultShader: Shader = this.context.stage.renderer.getDefaultShader(this.context);
     private renderer: Renderer = this.context.stage.renderer;
-    public readonly quadList: CoreQuadList = this.renderer.createCoreQuadList(this.context);
+    public readonly quadList: CoreQuadList = this.renderer.createCoreQuadList();
 
     public renderTextureInfo?: RenderTextureInfo;
     private scissor?: number[];
