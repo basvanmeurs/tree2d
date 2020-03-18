@@ -8,11 +8,14 @@ import ElementCore from "./ElementCore";
 import NativeTexture from "../../renderer/NativeTexture";
 import ElementTexturizer from "./ElementTexturizer";
 
-export default abstract class CoreRenderState {
-    public quadOperations: CoreQuadOperation[] = [];
+export default abstract class CoreRenderState<
+    CoreQuadListType extends CoreQuadList = CoreQuadList,
+    CoreQuadOperationType extends CoreQuadOperation = CoreQuadOperation
+> {
+    public quadOperations: CoreQuadOperationType[] = [];
     public readonly defaultShader: Shader = this.context.stage.renderer.getDefaultShader(this.context);
     private renderer: Renderer = this.context.stage.renderer;
-    public readonly quadList: CoreQuadList = this.renderer.createCoreQuadList();
+    public readonly quadList: CoreQuadListType = this.renderer.createCoreQuadList() as CoreQuadListType;
 
     public renderTextureInfo?: RenderTextureInfo;
     private scissor?: number[];
@@ -21,7 +24,7 @@ export default abstract class CoreRenderState {
     private usedShader?: Shader;
     private checkForChanges: boolean = false;
     private texturizer?: ElementTexturizer;
-    private pendingQuadOperation?: CoreQuadOperation;
+    private pendingQuadOperation?: CoreQuadOperationType;
 
     // A list of texturizers that should not to be cached - and pending to be released.
     private temporaryTexturizers: ElementTexturizer[] = [];
@@ -220,7 +223,7 @@ export default abstract class CoreRenderState {
             this.renderTextureInfo!,
             this.scissor,
             this.length
-        );
+        ) as CoreQuadOperationType;
         this.checkForChanges = false;
     }
 
@@ -238,5 +241,4 @@ export default abstract class CoreRenderState {
     abstract isRenderTextureReusable(renderTextureInfo: RenderTextureInfo): boolean;
 
     abstract finishRenderState(): void;
-
 }

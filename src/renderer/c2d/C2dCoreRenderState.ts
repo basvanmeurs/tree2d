@@ -4,7 +4,7 @@ import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import ElementCore from "../../tree/core/ElementCore";
 import C2dCoreQuadList from "./C2dCoreQuadList";
 
-export default class C2dCoreRenderState extends CoreRenderState {
+export default class C2dCoreRenderState extends CoreRenderState<C2dCoreQuadList> {
     isRenderTextureReusable(renderTextureInfo: RenderTextureInfo): boolean {
         return false;
     }
@@ -15,7 +15,7 @@ export default class C2dCoreRenderState extends CoreRenderState {
         const index = this.length;
 
         // Render context changes while traversing so we save it by ref.
-        const quadList = this.quadList as C2dCoreQuadList;
+        const quadList = this.quadList;
         quadList.add(texture, elementCore);
         quadList.setRenderContext(index, elementCore.getRenderContext());
         quadList.setWhite(index, elementCore.isWhite());

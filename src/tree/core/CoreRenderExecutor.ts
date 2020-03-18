@@ -1,16 +1,15 @@
 import CoreContext from "./CoreContext";
 import CoreRenderState from "./CoreRenderState";
 import RenderTexture from "../../renderer/RenderTexture";
-import Renderer from "../../renderer/Renderer";
 import CoreQuadOperation from "./CoreQuadOperation";
 
-export default class CoreRenderExecutor {
-    renderState: CoreRenderState;
+export default class CoreRenderExecutor<CoreRenderStateType extends CoreRenderState = CoreRenderState> {
+    renderState: CoreRenderStateType;
 
     protected _renderTexture: RenderTexture | undefined;
 
     constructor(public context: CoreContext) {
-        this.renderState = context.renderState;
+        this.renderState = context.renderState as CoreRenderStateType;
     }
 
     destroy() {}

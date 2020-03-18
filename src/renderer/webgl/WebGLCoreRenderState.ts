@@ -6,11 +6,11 @@ import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
 import ElementCore from "../../tree/core/ElementCore";
 
-export default class WebGLCoreRenderState extends CoreRenderState {
+export default class WebGLCoreRenderState extends CoreRenderState<WebGLCoreQuadList, WebGLCoreQuadOperation> {
     isRenderTextureReusable(renderTextureInfo: RenderTextureInfo): boolean {
         const offset = (this.renderTextureInfo!.reusableRenderStateOffset * 80) / 4;
-        const floats = (this.quadList as WebGLCoreQuadList).floats;
-        const uints = (this.quadList as WebGLCoreQuadList).uints;
+        const floats = this.quadList.floats;
+        const uints = this.quadList.uints;
         return (
             floats[offset] === 0 &&
             floats[offset + 1] === 0 &&
@@ -39,7 +39,7 @@ export default class WebGLCoreRenderState extends CoreRenderState {
         // Set extra shader attribute data.
         let offset = this.length * 80;
         for (let i = 0, n = this.quadOperations.length; i < n; i++) {
-            const quadOperation = this.quadOperations[i] as WebGLCoreQuadOperation;
+            const quadOperation = this.quadOperations[i];
             quadOperation.extraAttribsDataByteOffset = offset;
             const extra = quadOperation.getWebGLShader().getExtraAttribBytesPerVertex() * 4 * quadOperation.length;
             offset += extra;
@@ -47,13 +47,13 @@ export default class WebGLCoreRenderState extends CoreRenderState {
                 quadOperation.getWebGLShader().setExtraAttribsInBuffer(quadOperation);
             }
         }
-        (this.quadList as WebGLCoreQuadList).setDataLength(offset);
+        this.quadList.setDataLength(offset);
     }
 
     addQuad(texture: NativeTexture, elementCore: ElementCore) {
         const index = this.length;
 
-        const quadList = this.quadList as WebGLCoreQuadList;
+        const quadList = this.quadList;
         let offset = index * 20;
 
         quadList.add(texture, elementCore);

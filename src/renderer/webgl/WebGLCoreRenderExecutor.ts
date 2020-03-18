@@ -6,8 +6,9 @@ import WebGLShader from "./WebGLShader";
 import WebGLCoreQuadList from "./WebGLCoreQuadList";
 import RenderTexture from "../RenderTexture";
 import WebGLRenderTexture from "./WebGLRenderTexture";
+import WebGLCoreRenderState from "./WebGLCoreRenderState";
 
-export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
+export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderState> {
     public readonly attribsBuffer: WebGLBuffer;
     public readonly quadsBuffer: WebGLBuffer;
 
@@ -35,7 +36,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     init() {
         const gl = this.gl;
 
-        const maxQuads = Math.floor((this.renderState.quadList as WebGLCoreQuadList).data.byteLength / 80);
+        const maxQuads = Math.floor(this.renderState.quadList.data.byteLength / 80);
 
         // Init webgl arrays.
         const allIndices = new Uint16Array(maxQuads * 6);
@@ -76,9 +77,9 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         const gl = this.gl;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.quadsBuffer);
         const element = new DataView(
-            (this.renderState.quadList as WebGLCoreQuadList).data,
+            this.renderState.quadList.data,
             0,
-            (this.renderState.quadList as WebGLCoreQuadList).getDataLength()
+            this.renderState.quadList.getDataLength()
         );
         gl.bindBuffer(gl.ARRAY_BUFFER, this.attribsBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, element, gl.DYNAMIC_DRAW);
