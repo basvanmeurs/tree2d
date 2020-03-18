@@ -27,7 +27,7 @@ export default class C2dRenderer extends Renderer {
     constructor(stage: Stage) {
         super(stage);
 
-        this.setupC2d(stage.canvas);
+        this.setupCanvasAsRenderTexture(stage.canvas);
     }
 
     destroy() {
@@ -73,7 +73,7 @@ export default class C2dRenderer extends Renderer {
         const canvas = document.createElement("canvas");
         canvas.width = pw;
         canvas.height = ph;
-        this.setupC2d(canvas);
+        this.setupCanvasAsRenderTexture(canvas);
         return (canvas as unknown) as RenderTexture;
     }
 
@@ -107,11 +107,10 @@ export default class C2dRenderer extends Renderer {
         this.tintManager.delete(textureSource.nativeTexture as C2dNativeTexture);
     }
 
-    setupC2d(canvas: HTMLCanvasElement) {
+    private setupCanvasAsRenderTexture(canvas: HTMLCanvasElement) {
         const context = canvas.getContext("2d")!;
-        (this.stage.canvas as any).context = context;
-
-        (context as any)._scissor = null;
+        (canvas as C2dRenderTexture).context = context;
+        (canvas as C2dRenderTexture).context.scissor = undefined;
 
         // Save base state so we can restore the defaults later.
         context.save();

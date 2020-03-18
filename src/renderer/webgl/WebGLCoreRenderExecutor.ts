@@ -132,7 +132,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         } else {
             const renderTexture = this._renderTexture as WebGLRenderTexture;
             gl.bindFramebuffer(gl.FRAMEBUFFER, renderTexture.framebuffer);
-            gl.viewport(0, 0, renderTexture.width, renderTexture.height);
+            gl.viewport(0, 0, renderTexture.w, renderTexture.h);
         }
     }
 

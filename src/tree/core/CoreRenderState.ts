@@ -163,8 +163,8 @@ export default abstract class CoreRenderState {
         const offset = renderTextureInfo.reusableRenderStateOffset;
         const texture = this.quadList.getTexture(offset);
         return (
-            texture.width === renderTextureInfo.w &&
-            texture.height === renderTextureInfo.h &&
+            texture.w === renderTextureInfo.w &&
+            texture.h === renderTextureInfo.h &&
             this.isRenderTextureReusable(renderTextureInfo)
         );
     }
@@ -179,7 +179,7 @@ export default abstract class CoreRenderState {
         return false;
     }
 
-    private static scissorsEqual(a: number[] | undefined, b: number[] | undefined) {
+    public static scissorsEqual(a: number[] | undefined, b: number[] | undefined) {
         return !(a !== b || !a || !b || a[0] !== b[0] || a[1] !== b[1] || a[2] !== b[2] || a[3] !== b[3]);
     }
 

@@ -17,7 +17,7 @@ import SourceTexture from "./textures/SourceTexture";
 
 import WebGLShader from "./renderer/webgl/WebGLShader";
 import WebGLDefaultShader from "./renderer/webgl/shaders/DefaultShader";
-import GrayscaleShader from "./renderer/common/shaders/GrayscaleShader";
+import GrayscaleShader from "./renderer/webgl/shaders/GrayscaleShader";
 import BoxBlurShader from "./renderer/webgl/shaders/BoxBlurShader";
 import DitheringShader from "./renderer/webgl/shaders/DitheringShader";
 import CircularPushShader from "./renderer/webgl/shaders/CircularPushShader";
@@ -32,7 +32,7 @@ import Light3dShader from "./renderer/webgl/shaders/Light3dShader";
 
 import C2dShader from "./renderer/c2d/C2dShader";
 import C2dDefaultShader from "./renderer/c2d/shaders/DefaultShader";
-import { C2dGrayscaleShader } from "./renderer/common/shaders/GrayscaleShader";
+import C2dGrayscaleShader from "./renderer/c2d/shaders/GrayscaleShader";
 import C2dBlurShader from "./renderer/c2d/shaders/BlurShader";
 
 import Stage from "./tree/Stage";
@@ -60,11 +60,11 @@ const index = {
         Light3dShader,
         WebGLShader,
         WebGLDefaultShader,
-        C2dShader,
-        C2dDefaultShader,
         c2d: {
-            Grayscale: C2dGrayscaleShader,
-            Blur: C2dBlurShader
+            C2dShader,
+            C2dDefaultShader,
+            C2dGrayscaleShader,
+            C2dBlurShader
         }
     },
     textures: {

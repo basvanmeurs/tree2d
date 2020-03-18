@@ -1,7 +1,7 @@
-import C2dDefaultShader from "../../c2d/shaders/DefaultShader";
-import WebGLDefaultShader from "../../webgl/shaders/DefaultShader";
+import WebGLDefaultShader from "./DefaultShader";
 import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../../webgl/WebGLCoreQuadOperation";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import C2dGrayscaleShader from "../../c2d/shaders/GrayscaleShader";
 
 export default class GrayscaleShader extends WebGLDefaultShader {
     private _amount: number = 1;
@@ -48,35 +48,3 @@ GrayscaleShader.prototype.fragmentShaderSource = `
     }
 `;
 
-export class C2dGrayscaleShader extends C2dDefaultShader {
-    private _amount: number = 1;
-
-    constructor(context: CoreContext) {
-        super(context);
-    }
-
-    static getWebGL() {
-        return GrayscaleShader;
-    }
-
-    set amount(v) {
-        this._amount = v;
-        this.redraw();
-    }
-
-    get amount() {
-        return this._amount;
-    }
-
-    useDefault() {
-        return this._amount === 0;
-    }
-
-    _beforeDrawEl(obj: any) {
-        obj.target.context.filter = "grayscale(" + this._amount + ")";
-    }
-
-    _afterDrawEl(obj: any) {
-        obj.target.context.filter = "none";
-    }
-}

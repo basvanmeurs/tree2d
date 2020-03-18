@@ -3,7 +3,7 @@ import ElementCore from "./ElementCore";
 import CoreRenderState from "./CoreRenderState";
 import CoreRenderExecutor from "./CoreRenderExecutor";
 import NativeTexture from "../../renderer/NativeTexture";
-import { CopyRenderTextureOptions } from "../../renderer/Renderer";
+import {CopyRenderTextureOptions} from "../../renderer/Renderer";
 import RenderTexture from "../../renderer/RenderTexture";
 
 export default class CoreContext {
@@ -118,7 +118,7 @@ export default class CoreContext {
         for (let i = n - 1; i >= 0; i--) {
             const texture = this._renderTexturePool[i];
             // We don't want to reuse the same render textures within the same frame because that will create gpu stalls.
-            if (texture.width === pw && texture.height === ph && texture.updateFrame !== this.stage.frameCounter) {
+            if (texture.w === pw && texture.h === ph && texture.updateFrame !== this.stage.frameCounter) {
                 texture.f = this.stage.frameCounter;
                 this._renderTexturePool.splice(i, 1);
                 return texture;
@@ -157,15 +157,15 @@ export default class CoreContext {
         texture.f = this.stage.frameCounter;
         texture.ow = w;
         texture.oh = h;
-        texture.width = pw;
-        texture.height = ph;
+        texture.w = pw;
+        texture.h = ph;
 
         return texture;
     }
 
     _freeRenderTexture(renderTexture: RenderTexture) {
         this.stage.renderer.freeRenderTexture(renderTexture);
-        this._addMemoryUsage(-renderTexture.width * renderTexture.height);
+        this._addMemoryUsage(-renderTexture.w * renderTexture.h);
     }
 
     copyRenderTexture(renderTexture: RenderTexture, nativeTexture: NativeTexture, options: CopyRenderTextureOptions) {

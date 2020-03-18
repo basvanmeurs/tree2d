@@ -1,19 +1,17 @@
 import CoreRenderExecutor from "../../tree/core/CoreRenderExecutor";
 import ColorUtils from "../../tree/ColorUtils";
-import Utils from "../../tree/Utils";
+import C2dCoreQuadOperation from "./C2dCoreQuadOperation";
+import C2dRenderTexture from "./C2dRenderTexture";
+import CoreRenderState from "../../tree/core/CoreRenderState";
 
 export default class C2dCoreRenderExecutor extends CoreRenderExecutor {
+    private _mainRenderTexture = this.context.stage.getCanvas() as C2dRenderTexture;
 
-    constructor(context) {
-        super(context);
-        this._mainRenderTexture = this.context.stage.getCanvas();
-    }
-
-    _renderQuadOperation(op) {
-        const shader = op.shader;
+    protected _renderQuadOperation(op: C2dCoreQuadOperation) {
+        const shader = op.getC2dShader();
 
         if (op.length || op.shader.addEmpty()) {
-            const target = this._renderTexture || this._mainRenderTexture;
+            const target = (this._renderTexture || this._mainRenderTexture) as C2dRenderTexture;
             shader.beforeDraw(op, target);
             shader.draw(op, target);
             shader.afterDraw(op, target);
@@ -23,30 +21,32 @@ export default class C2dCoreRenderExecutor extends CoreRenderExecutor {
     _clearRenderTexture() {
         const context = this._getContext();
 
-        let clearColor = [0, 0, 0, 0];
+        const renderTexture = context.canvas;
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        let clearColor: number[] | null = [0, 0, 0, 0];
         if (this._mainRenderTexture.context === context) {
             clearColor = this.context.stage.getClearColor();
         }
-
-        const renderTexture = context.canvas;
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        if (!clearColor[0] && !clearColor[1] && !clearColor[2] && !clearColor[3]) {
-            context.clearRect(0, 0, renderTexture.width, renderTexture.height);
-        } else {
-            context.fillStyle = ColorUtils.getRgbaStringFromArray(clearColor);
-            // Do not use fillRect because it produces artifacts.
-            context.globalCompositeOperation = "copy";
-            context.beginPath();
-            context.rect(0, 0, renderTexture.width, renderTexture.height);
-            context.closePath();
-            context.fill();
-            context.globalCompositeOperation = "source-over";
+        if (clearColor) {
+            if (!clearColor[0] && !clearColor[1] && !clearColor[2] && !clearColor[3]) {
+                context.clearRect(0, 0, renderTexture.width, renderTexture.height);
+            } else {
+                context.fillStyle = ColorUtils.getRgbaStringFromArray(clearColor);
+                // Do not use fillRect because it produces artifacts.
+                context.globalCompositeOperation = "copy";
+                context.beginPath();
+                context.rect(0, 0, renderTexture.width, renderTexture.height);
+                context.closePath();
+                context.fill();
+                context.globalCompositeOperation = "source-over";
+            }
         }
     }
 
     _getContext() {
         if (this._renderTexture) {
-            return this._renderTexture.context;
+            return (this._renderTexture as C2dRenderTexture).context;
         } else {
             return this._mainRenderTexture.context;
         }
@@ -56,13 +56,13 @@ export default class C2dCoreRenderExecutor extends CoreRenderExecutor {
         const context = this._getContext();
         context.restore();
         context.save();
-        context._scissor = null;
+        context.scissor = undefined;
     }
 
-    _setScissor(area) {
+    _setScissor(area: number[] | undefined) {
         const context = this._getContext();
 
-        if (!C2dCoreRenderExecutor._equalScissorAreas(context.canvas, context._scissor, area)) {
+        if (!CoreRenderState.scissorsEqual(context.scissor, area)) {
             // Clipping is stored in the canvas context state.
             // We can't reset clipping alone so we need to restore the full context.
             this._restoreContext();
@@ -79,17 +79,8 @@ export default class C2dCoreRenderExecutor extends CoreRenderExecutor {
                 context.closePath();
                 context.clip();
             }
-            context._scissor = area;
+            context.scissor = area;
         }
     }
 
-    static _equalScissorAreas(canvas, area, current) {
-        if (!area) {
-            area = [0, 0, canvas.width, canvas.height];
-        }
-        if (!current) {
-            current = [0, 0, canvas.width, canvas.height];
-        }
-        return Utils.equalValues(area, current);
-    }
 }

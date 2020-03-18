@@ -38,7 +38,7 @@ describe("Shaders", function() {
     describe("Image texture (C2D)", function() {
         it("Should be gray", function() {
             const shader = stage2D.root.getByRef("Image").shader;
-            chai.assert(shader.constructor.name === "C2dGrayscaleShader");
+            chai.assert(shader instanceof lng.shaders.c2d.C2dGrayscaleShader);
         });
     });
 });

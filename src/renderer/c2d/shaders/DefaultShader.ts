@@ -33,7 +33,7 @@ export default class DefaultShader extends C2dShader {
             );
 
             const rect = tx === this._rectangleTexture;
-            const info = { operation, index: i, rect };
+            const info = { operation, target, index: i, rect };
 
             if (rect) {
                 // Check for gradient.
@@ -59,10 +59,10 @@ export default class DefaultShader extends C2dShader {
 
                 // Notice that simple texture coords can be turned on even though vc._ulx etc are not simple, because
                 //  we are rendering a render-to-texture (texcoords were stashed). Same is true for 'white' color btw.
-                const sourceX = stc ? 0 : elementCore.ulx * tx.width;
-                const sourceY = stc ? 0 : elementCore.uly * tx.height;
-                const sourceW = (stc ? 1 : elementCore.brx - elementCore.ulx) * tx.width;
-                const sourceH = (stc ? 1 : elementCore.bry - elementCore.uly) * tx.height;
+                const sourceX = stc ? 0 : elementCore.ulx * tx.w;
+                const sourceY = stc ? 0 : elementCore.uly * tx.h;
+                const sourceW = (stc ? 1 : elementCore.brx - elementCore.ulx) * tx.w;
+                const sourceH = (stc ? 1 : elementCore.bry - elementCore.uly) * tx.h;
 
                 const colorize = !white;
                 if (colorize) {

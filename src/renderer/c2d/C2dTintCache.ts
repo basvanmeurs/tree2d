@@ -16,7 +16,7 @@ export default class C2dTintCache {
     constructor(public readonly nativeTexture: NativeTexture) {}
 
     get memoryUsage() {
-        return this._memTextures * this.nativeTexture.width * this.nativeTexture.height;
+        return this._memTextures * this.nativeTexture.w * this.nativeTexture.h;
     }
 
     releaseBlancoTextures() {

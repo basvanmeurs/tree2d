@@ -53,12 +53,12 @@ export default class C2dTextureTintManager {
             // Find blanco tint texture.
             let target = cache.reuseTexture(frame);
             if (target) {
-                target.context.clearRect(0, 0, target.width, target.height);
+                target.context.clearRect(0, 0, target.w, target.h);
             } else {
                 // Allocate new.
                 target = document.createElement("canvas") as C2dRenderTexture;
-                target.width = nativeTexture.width;
-                target.height = nativeTexture.height;
+                target.w = nativeTexture.w;
+                target.h = nativeTexture.h;
                 target.context = target.getContext("2d")!;
             }
 
@@ -82,13 +82,13 @@ export default class C2dTextureTintManager {
         }
         target.context.fillStyle = "#" + col;
         target.context.globalCompositeOperation = "copy";
-        target.context.fillRect(0, 0, source.width, source.height);
+        target.context.fillRect(0, 0, source.w, source.h);
         target.context.globalCompositeOperation = "multiply";
-        target.context.drawImage(source, 0, 0, source.width, source.height, 0, 0, target.width, target.height);
+        target.context.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.w, target.h);
 
         // Alpha-mix the texture.
         target.context.globalCompositeOperation = "destination-in";
-        target.context.drawImage(source, 0, 0, source.width, source.height, 0, 0, target.width, target.height);
+        target.context.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.w, target.h);
     }
 
     private _hasCache(nativeTexture: C2dNativeTexture) {

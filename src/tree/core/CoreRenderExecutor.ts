@@ -1,7 +1,8 @@
 import CoreContext from "./CoreContext";
-import CoreQuadOperation from "./CoreQuadOperation";
 import CoreRenderState from "./CoreRenderState";
 import RenderTexture from "../../renderer/RenderTexture";
+import Renderer from "../../renderer/Renderer";
+import CoreQuadOperation from "./CoreQuadOperation";
 
 export default class CoreRenderExecutor {
     renderState: CoreRenderState;

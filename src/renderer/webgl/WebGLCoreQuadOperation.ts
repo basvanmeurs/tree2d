@@ -1,6 +1,5 @@
 import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
 import CoreContext from "../../tree/core/CoreContext";
-import Shader from "../../tree/Shader";
 import ElementCore from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
 import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
