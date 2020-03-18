@@ -538,10 +538,6 @@ describe("textures", function() {
 
             describe("becomes invisible", () => {
                 it("should *not* clean up texture automatically(unconfirmed performance bottleneck)", () => {
-                    /* Reason:
-                       https://github.com/WebPlatformForEmbedded/Lightning/commit/c7688785a4430026f3bcc9da5ed77a80ca9f9ab0
-                     */
-
                     item.visible = false;
                     const texture = element.getByRef("Item").texture;
                     chai.assert(texture.isLoaded(), "Texture must still be loaded");

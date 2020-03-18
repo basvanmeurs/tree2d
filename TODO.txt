@@ -1,5 +1,3 @@
-C2d renderer
-Platforms typescript
 Use flexbox.js as dependency
 Run prettier on all files
 Improve patch methodology > structural definition

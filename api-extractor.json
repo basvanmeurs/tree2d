@@ -42,7 +42,7 @@
   "mainEntryPointFilePath": "./dist/src/index.d.ts",
   "dtsRollup": {
     "enabled": true,
-    "untrimmedFilePath": "./dist/lightning.d.ts"
+    "untrimmedFilePath": "./dist/tree2d.d.ts"
   }
 
 }

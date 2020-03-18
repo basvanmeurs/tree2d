@@ -1,6 +1,7 @@
 /**
  * Render tree node.
  * Copyright Metrological, 2017
+ * Copyright Bas van Meurs, 2020
  */
 
 import ElementCore, { FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";

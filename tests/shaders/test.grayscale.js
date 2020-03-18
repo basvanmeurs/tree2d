@@ -7,7 +7,7 @@ describe("Shaders", function() {
     before(() => {
         const template = {
             children: {
-                Image: { src: "./shaders/Lightning.png", shader: { type: lng.shaders.GrayscaleShader, amount: 1 } }
+                Image: { src: "./shaders/example.png", shader: { type: lng.shaders.GrayscaleShader, amount: 1 } }
             }
         };
 

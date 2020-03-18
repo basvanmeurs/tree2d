@@ -31,7 +31,7 @@ const buildTypes = args.t || args.types || isRelease;
 const lean = args.lean || args.l;
 const commit = execa.sync("git", ["rev-parse", "HEAD"]).stdout.slice(0, 7);
 
-const target = "lightning";
+const target = "tree2d";
 
 run();
 

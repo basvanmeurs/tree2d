@@ -1,2 +1,2 @@
-import lng from "./dist/lightning.js";
+import lng from "./dist/tree2d.js";
 export default lng;

@@ -1,21 +1,20 @@
 {
-    "author": "Metrological, Bas van Meurs <b.van.meurs@metrological.com>",
-    "name": "wpe-lightning",
+    "author": "Planning.nl, Bas van Meurs",
+    "name": "tree2d",
     "version": "1.4.1",
     "license": "apache",
-    "main": "dist/lightning.js",
+    "main": "dist/tree2d.js",
     "module": "index.js",
     "files": [
         "index.js",
         "src/**",
-        "dist/**",
-        "devtools/**"
+        "dist/**"
     ],
     "scripts": {
         "build": "node scripts/build.js"
     },
     "buildOptions": {
-        "name": "lng",
+        "name": "tree2d",
         "formats": [
             "esm-bundler",
             "cjs",
@@ -23,13 +22,10 @@
             "esm"
         ]
     },
-    "types": "dist/lightning.d.ts",
+    "types": "dist/tree2d.d.ts",
     "repository": {
         "type": "git",
-        "url": "git@github.com:WebPlatformForEmbedded/Lightning.git"
-    },
-    "bugs": {
-        "url": "https://github.com/WebPlatformForEmbedded/Lightning/issues"
+        "url": "git@github.com:Planning-nl/tree2d.git"
     },
     "devDependencies": {
         "eslint": "^6.8.0",
