@@ -241,11 +241,11 @@ export default class TextTextureRenderer {
     const lineWidths: number[] = [];
     let maxWidth = 0;
     const spaceWidth = wordWrapWidth ? this._context.measureText(' ').width : 0;
-    for (let i = 0; i < lineItems.length; i++) {
+    lineItems.forEach(lineItem => {
       if (wordWrapWidth) {
         let result = '';
         let lineWidth = 0;
-        const words = lineItems[i].split(' ');
+        const words = lineItem.split(' ');
         const n = words.length;
         for (let j = 0; j < n; j++) {
           const wordWidth = this._context.measureText(words[j]).width;
@@ -270,12 +270,12 @@ export default class TextTextureRenderer {
           maxWidth = Math.max(maxWidth, lineWidth);
         }
       } else {
-        const line = lineItems[i];
+        const line = lineItem;
         const lineWidth = this._context.measureText(line).width;
         maxWidth = Math.max(maxWidth, lineWidth);
         lines.push(line);
       }
-    }
+    });
 
     return { lines, lineWidths, maxWidth };
   }

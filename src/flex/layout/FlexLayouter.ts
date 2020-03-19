@@ -18,7 +18,7 @@ export default class FlexLayouter {
 
   private shrunk: boolean = false;
 
-  private totalCrossAxisSize: number;
+  private totalCrossAxisSize: number = 0;
 
   constructor(public container: FlexContainer) {}
 

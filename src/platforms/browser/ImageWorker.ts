@@ -1,4 +1,5 @@
 import createWorker from "./createWorker";
+import {ImageWorkerImage} from "./ImageWorkerImage";
 
 export default class ImageWorker {
 
@@ -36,7 +37,7 @@ export default class ImageWorker {
     const id = ++this._id;
     const item = new ImageWorkerImage(this, id, src);
     this._items.set(id, item);
-    this._worker.postMessage({ type: 'add', id: id, src: src });
+    this._worker.postMessage({ type: 'add', id, src });
     return item;
   }
 
@@ -53,37 +54,6 @@ export default class ImageWorker {
   finish(image: ImageWorkerImage, info: any) {
     image.load(info);
     this._items.delete(image.id);
-  }
-}
-
-class ImageWorkerImage {
-  private _onError?: (error: Error) => void;
-  private _onLoad?: (info: any) => void;
-
-  constructor(private manager: ImageWorker, public id: number, public src: string) {}
-
-  set onError(f: (error: Error) => void | undefined) {
-    this._onError = f;
-  }
-
-  set onLoad(f: (info: any) => void | undefined) {
-    this._onLoad = f;
-  }
-
-  cancel() {
-    this.manager.cancel(this);
-  }
-
-  load(info: any) {
-    if (this._onLoad) {
-      this._onLoad(info);
-    }
-  }
-
-  error(info: Error) {
-    if (this._onError) {
-      this._onError(info);
-    }
   }
 }
 

@@ -39,7 +39,7 @@
     }
   },
 
-  "mainEntryPointFilePath": "./dist/src/index.d.ts",
+  "mainEntryPointFilePath": "./dist/index.d.ts",
   "dtsRollup": {
     "enabled": true,
     "untrimmedFilePath": "./dist/tree2d.d.ts"

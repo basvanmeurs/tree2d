@@ -35,7 +35,7 @@ export default class ShadowRectTexture extends Texture {
   }
 
   private static drawOnCanvas(canvas: HTMLCanvasElement, options: ShadowRectOptions) {
-    let { w, h, radius, blur, margin } = options;
+    const { w, h, radius, blur, margin } = options;
 
     const context = canvas.getContext('2d')!;
     context.imageSmoothingEnabled = true;

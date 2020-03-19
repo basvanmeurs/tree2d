@@ -35,11 +35,11 @@ export default class ImageTexture extends Texture {
   }
 
   protected _getSourceLoader(): TextureSourceLoader {
-    let src = this._src!;
+    const src = this._src!;
     const hasAlpha = this._hasAlpha;
 
     return cb => {
-      return this.stage.platform.loadSrcTexture({ src: src, hasAlpha: hasAlpha }, cb);
+      return this.stage.platform.loadSrcTexture({ src, hasAlpha }, cb);
     };
   }
 

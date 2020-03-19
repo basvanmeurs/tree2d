@@ -85,11 +85,11 @@ export default class ColorUtils {
   }
 
   static mergeMultiColors(c: number[], p: number[]) {
-    let r = 0,
-      g = 0,
-      b = 0,
-      a = 0,
-      t = 0;
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let a = 0;
+    let t = 0;
     const n = c.length;
     for (let i = 0; i < n; i++) {
       const r1 = ((c[i] / 65536) | 0) % 256;
@@ -108,11 +108,11 @@ export default class ColorUtils {
   }
 
   static mergeMultiColorsEqual(c: number[]) {
-    let r = 0,
-      g = 0,
-      b = 0,
-      a = 0,
-      t = 0;
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let a = 0;
+    let t = 0;
     const n = c.length;
     for (let i = 0; i < n; i++) {
       const r1 = ((c[i] / 65536) | 0) % 256;

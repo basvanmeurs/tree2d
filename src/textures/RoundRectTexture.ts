@@ -52,8 +52,8 @@ export default class RoundRectTexture extends Texture {
     canvas.height = h + strokeWidth + 2;
 
     context.beginPath();
-    const x = 0.5 * strokeWidth + 1,
-      y = 0.5 * strokeWidth + 1;
+    const x = 0.5 * strokeWidth + 1;
+    const y = 0.5 * strokeWidth + 1;
 
     context.moveTo(x + radius[0], y);
     context.lineTo(x + w - radius[1], y);

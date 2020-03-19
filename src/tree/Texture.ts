@@ -216,7 +216,7 @@ export default class Texture {
   }
 
   private _getTextureSource(): TextureSource | undefined {
-    let source = undefined;
+    let source;
     if (this._getIsValid()) {
       const lookupId = this._getLookupId();
       source = this._getReusableTextureSource(lookupId);
@@ -432,7 +432,7 @@ export default class Texture {
   }
 
   getNonDefaults(): any {
-    const nonDefaults: any = {};
+    const nonDefaults: Record<string, any> = {};
     nonDefaults['type'] = this.constructor.name;
     if (this.x !== 0) nonDefaults['x'] = this.x;
     if (this.y !== 0) nonDefaults['y'] = this.y;

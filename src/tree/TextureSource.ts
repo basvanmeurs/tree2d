@@ -241,13 +241,13 @@ export default class TextureSource {
       this._nativeTexture.updateFrame = this.stage.frameCounter;
     }
 
-    this.forEachActiveElement(function(element) {
+    this.forEachActiveElement((element) => {
       element.forceRenderUpdate();
     });
   }
 
   forceUpdateRenderCoords() {
-    this.forEachActiveElement(function(element) {
+    this.forEachActiveElement((element) => {
       element.updateTextureCoords();
     });
   }

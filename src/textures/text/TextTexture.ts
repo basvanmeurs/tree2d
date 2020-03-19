@@ -321,7 +321,7 @@ export default class TextTexture extends Texture {
       return obj.map(o => TextTexture.getHash(o)).join(',');
     } else if (Utils.isObjectLiteral(obj)) {
       const parts = [];
-      for (let [key, value] of Object.entries(obj)) {
+      for (const [key, value] of Object.entries(obj)) {
         parts.push(key + '=' + TextTexture.getHash(value));
       }
       return parts.join('|');

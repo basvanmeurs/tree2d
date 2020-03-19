@@ -1,20 +1,20 @@
 /**
  * Base functionality for shader setup/destroy.
  */
+import {GLFunction} from "./WebGLShader";
+
 export default class WebGLShaderProgram {
-  private _program: WebGLProgram | null;
+  private _program?: WebGLProgram;
   private _uniformLocations: Map<string, WebGLUniformLocation> = new Map();
   private _attributeLocations: Map<string, GLint> = new Map();
   private readonly _currentUniformValues: { [key: string]: any } = {};
 
-  gl: WebGLRenderingContext;
+  constructor(public gl: WebGLRenderingContext, public vertexShaderSource: string, public fragmentShaderSource: string) {}
 
-  constructor(public vertexShaderSource: string, public fragmentShaderSource: string) {}
-
-  compile(gl: WebGLRenderingContext) {
+  compile() {
     if (this._program) return;
 
-    this.gl = gl;
+    const gl = this.gl;
 
     this._program = gl.createProgram()!;
 
@@ -37,7 +37,7 @@ export default class WebGLShaderProgram {
       }
 
       gl.deleteProgram(this._program);
-      this._program = null;
+      this._program = undefined;
     }
 
     // clean up some shaders
@@ -94,7 +94,7 @@ export default class WebGLShaderProgram {
   destroy() {
     if (this._program) {
       this.gl.deleteProgram(this._program);
-      this._program = null;
+      this._program = undefined;
     }
   }
 
@@ -126,7 +126,7 @@ export default class WebGLShaderProgram {
     }
   }
 
-  setUniformValue(name: string, value: any, glFunction: Function) {
+  setUniformValue(name: string, value: any, glFunction: GLFunction) {
     const v = this._currentUniformValues[name];
     if (v === undefined || !WebGLShaderProgram._valueEquals(v, value)) {
       const clonedValue = WebGLShaderProgram._valueClone(value);

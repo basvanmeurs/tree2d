@@ -7,7 +7,7 @@ import FlexNode from '../../FlexNode';
 
 export default class LineLayout {
   public items: FlexNode[];
-  private crossAxisMaxLayoutSize: number;
+  private crossAxisMaxLayoutSize: number = 0;
 
   constructor(
     private layout: FlexLayouter,

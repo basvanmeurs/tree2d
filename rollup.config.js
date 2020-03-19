@@ -165,7 +165,7 @@ function createReplacePlugin(isProduction, isBundlerESMBuild, isBrowserBuild, is
 
 function createProductionConfig(format) {
     return createConfig(format, {
-        file: resolve(`dist/${name}.${format}.prod.js`),
+        file: resolve(`bundles/${name}.${format}.prod.js`),
         format: outputConfigs[format].format
     });
 }

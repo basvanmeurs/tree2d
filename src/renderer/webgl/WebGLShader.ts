@@ -5,6 +5,8 @@ import WebGLCoreQuadOperation from './WebGLCoreQuadOperation';
 import WebGLRenderer from './WebGLRenderer';
 import { Constructor } from '../../util/types';
 
+export type GLFunction = (location: WebGLUniformLocation | null, ...args: any[]) => void;
+
 export default class WebGLShader extends Shader {
   vertexShaderSource?: string;
   fragmentShaderSource?: string;
@@ -21,9 +23,12 @@ export default class WebGLShader extends Shader {
 
     const stage = context.stage;
 
+    this.gl = stage.gl;
+
     let program = (stage.renderer as WebGLRenderer).getShaderProgram(this.getConstructor());
     if (!program) {
       program = new WebGLShaderProgram(
+        this.gl,
         this.constructor.prototype.vertexShaderSource!,
         this.constructor.prototype.fragmentShaderSource!,
       );
@@ -32,8 +37,6 @@ export default class WebGLShader extends Shader {
       (stage.renderer as WebGLRenderer).setShaderProgram(this.getConstructor(), program);
     }
     this._program = program;
-
-    this.gl = stage.gl;
   }
 
   private getConstructor() {
@@ -52,7 +55,7 @@ export default class WebGLShader extends Shader {
   }
 
   initialize() {
-    this._program.compile(this.gl);
+    this._program.compile();
   }
 
   get initialized() {
@@ -67,13 +70,13 @@ export default class WebGLShader extends Shader {
     return this._program.getAttribLocation(name);
   }
 
-  protected _setUniform(name: string, value: any, glFunction: Function) {
+  protected _setUniform(name: string, value: any, glFunction: GLFunction) {
     this._program.setUniformValue(name, value, glFunction);
   }
 
   useProgram() {
     this._init();
-    this.gl.useProgram(this.glProgram);
+    this.gl.useProgram(this.glProgram!);
     this.beforeUsage();
     this.enableAttribs();
   }

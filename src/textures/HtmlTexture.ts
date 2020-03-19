@@ -52,7 +52,7 @@ export default class HtmlTexture extends Texture {
   _getSourceLoader(): TextureSourceLoader {
     const htmlElement = this._htmlElement!;
     const scale = this._scale;
-    return function(cb: TextureSourceCallback) {
+    return (cb: TextureSourceCallback) => {
       const html2canvas: any = (window as any).html2canvas;
       if (!(window as any).html2canvas) {
         return cb(new Error('Please include html2canvas (https://html2canvas.hertzen.com/)'));
@@ -61,8 +61,8 @@ export default class HtmlTexture extends Texture {
       const area = HtmlTexture.getPreloadArea();
       area.appendChild(htmlElement);
 
-      html2canvas(htmlElement, { backgroundColor: null, scale: scale })
-        .then(function(canvas: HTMLCanvasElement) {
+      html2canvas(htmlElement, { backgroundColor: null, scale })
+        .then((canvas: HTMLCanvasElement) => {
           area.removeChild(htmlElement);
           if (canvas.height === 0) {
             return cb(new Error('Canvas height is 0'));

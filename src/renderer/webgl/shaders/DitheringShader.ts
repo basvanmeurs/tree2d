@@ -7,13 +7,9 @@ import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
  * This shader can be used to fix a problem that is known as 'gradient banding'.
  */
 export default class DitheringShader extends DefaultShader {
-  private _noiseTexture: NoiseTexture;
+  private _noiseTexture: NoiseTexture = new NoiseTexture(this.context.stage);
   private _graining: number = 1 / 256;
   private _random: boolean = false;
-
-  constructor(context: CoreContext) {
-    super(context);
-  }
 
   set graining(v: number) {
     this._graining = v;

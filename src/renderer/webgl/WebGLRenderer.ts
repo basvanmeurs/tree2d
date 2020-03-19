@@ -138,8 +138,8 @@ export default class WebGLRenderer extends Renderer {
     if (!texParams[gl.TEXTURE_WRAP_S]) texParams[gl.TEXTURE_WRAP_S] = gl.CLAMP_TO_EDGE;
     if (!texParams[gl.TEXTURE_WRAP_T]) texParams[gl.TEXTURE_WRAP_T] = gl.CLAMP_TO_EDGE;
 
-    for (let [key, value] of Object.entries(texParams)) {
-      gl.texParameteri(gl.TEXTURE_2D, parseInt(key), value);
+    for (const [key, value] of Object.entries(texParams)) {
+      gl.texParameteri(gl.TEXTURE_2D, parseInt(key, 10), value);
     }
 
     const texOptions = format.texOptions;

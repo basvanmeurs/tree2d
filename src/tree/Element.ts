@@ -14,38 +14,38 @@ class Element {
 
   public readonly stage: Stage;
 
-  private readonly __id: number = Element.id++;
+  private readonly id: number = Element.id++;
 
-  private readonly __core: ElementCore;
+  private readonly _core: ElementCore;
 
-  private __ref?: string;
+  private _ref?: string;
 
   // An element is attached if it is a descendant of the stage root.
-  private __attached: boolean = false;
+  private _attached: boolean = false;
 
   // An element is enabled when it is attached and it is visible (worldAlpha > 0).
-  private __enabled: boolean = false;
+  private _enabled: boolean = false;
 
   // An element is active when it is enabled and it is within bounds.
-  private __active: boolean = false;
+  private _active: boolean = false;
 
-  private __parent?: Element;
+  private _parent?: Element;
 
   // The texture that is currently set.
-  private __texture?: Texture;
+  private _texture?: Texture;
 
   // The currently displayed texture. May differ from this.texture while loading.
-  private __displayedTexture?: Texture;
+  private _displayedTexture?: Texture;
 
   // Contains the child elements.
-  private __childList?: ElementChildList;
+  private _childList?: ElementChildList;
 
   private listeners?: ElementListeners;
 
   constructor(stage: Stage) {
     this.stage = stage;
 
-    this.__core = new ElementCore(this);
+    this._core = new ElementCore(this);
   }
 
   private getListeners(): ElementListeners {
@@ -55,50 +55,46 @@ class Element {
     return this.listeners;
   }
 
-  get id(): number {
-    return this.__id;
-  }
-
   set ref(ref: string | undefined) {
-    if (this.__ref !== ref) {
-      if (this.__ref !== undefined) {
-        if (this.__parent !== undefined) {
-          this.__parent._children.clearRef(this.__ref);
+    if (this._ref !== ref) {
+      if (this._ref !== undefined) {
+        if (this._parent !== undefined) {
+          this._parent._children.clearRef(this._ref);
         }
       }
 
-      this.__ref = ref;
+      this._ref = ref;
 
-      if (this.__ref) {
-        if (this.__parent) {
-          this.__parent._children.setRef(this.__ref, this);
+      if (this._ref) {
+        if (this._parent) {
+          this._parent._children.setRef(this._ref, this);
         }
       }
     }
   }
 
   get ref(): string | undefined {
-    return this.__ref;
+    return this._ref;
   }
 
   get core(): ElementCore {
-    return this.__core;
+    return this._core;
   }
 
   setAsRoot(): void {
-    this.__core.setAsRoot();
+    this._core.setAsRoot();
     this._updateAttachedFlag();
     this._updateEnabledFlag();
   }
 
   get isRoot(): boolean {
-    return this.__core.isRoot;
+    return this._core.isRoot;
   }
 
   _setParent(parent: Element | undefined) {
-    if (this.__parent === parent) return;
+    if (this._parent === parent) return;
 
-    this.__parent = parent;
+    this._parent = parent;
 
     this._updateAttachedFlag();
     this._updateEnabledFlag();
@@ -109,23 +105,23 @@ class Element {
   }
 
   get attached(): boolean {
-    return this.__attached;
+    return this._attached;
   }
 
   get enabled(): boolean {
-    return this.__enabled;
+    return this._enabled;
   }
 
   get active(): boolean {
-    return this.__active;
+    return this._active;
   }
 
   private _isAttached(): boolean {
-    return this.__parent ? this.__parent.__attached : this.isRoot;
+    return this._parent ? this._parent._attached : this.isRoot;
   }
 
   private _isEnabled(): boolean {
-    return this.__core.visible && this.__core.alpha > 0 && (this.__parent ? this.__parent.__enabled : this.isRoot);
+    return this._core.visible && this._core.alpha > 0 && (this._parent ? this._parent._enabled : this.isRoot);
   }
 
   private _isActive(): boolean {
@@ -134,8 +130,8 @@ class Element {
 
   protected _updateAttachedFlag(): void {
     const newAttached = this._isAttached();
-    if (this.__attached !== newAttached) {
-      this.__attached = newAttached;
+    if (this._attached !== newAttached) {
+      this._attached = newAttached;
 
       if (newAttached) {
         this._onSetup();
@@ -161,7 +157,7 @@ class Element {
 
   public _updateEnabledFlag(): void {
     const newEnabled = this._isEnabled();
-    if (this.__enabled !== newEnabled) {
+    if (this._enabled !== newEnabled) {
       if (newEnabled) {
         this._onEnabled();
         this._setEnabledFlag();
@@ -183,62 +179,62 @@ class Element {
   }
 
   private _setEnabledFlag(): void {
-    this.__enabled = true;
+    this._enabled = true;
 
     // Force re-check of texture because dimensions might have changed (cutting).
     this._updateTextureDimensions();
     this.updateTextureCoords();
 
-    if (this.__texture) {
-      this.__texture.addElement(this);
+    if (this._texture) {
+      this._texture.addElement(this);
     }
 
     if (this.isWithinBoundsMargin()) {
       this._setActiveFlag();
     }
 
-    if (this.__core.shader) {
-      this.__core.shader.addElement(this.__core);
+    if (this._core.shader) {
+      this._core.shader.addElement(this._core);
     }
   }
 
   private _unsetEnabledFlag(): void {
-    if (this.__active) {
+    if (this._active) {
       this._unsetActiveFlag();
     }
 
-    if (this.__texture) {
-      this.__texture.removeElement(this);
+    if (this._texture) {
+      this._texture.removeElement(this);
     }
 
-    if (this.__core.shader) {
-      this.__core.shader.removeElement(this.__core);
+    if (this._core.shader) {
+      this._core.shader.removeElement(this._core);
     }
 
-    this.__enabled = false;
+    this._enabled = false;
   }
 
   private _setActiveFlag(): void {
-    this.__active = true;
+    this._active = true;
 
     // This must happen before enabling the texture, because it may already be loaded or load directly.
-    if (this.__texture) {
-      this.__texture.incActiveCount();
+    if (this._texture) {
+      this._texture.incActiveCount();
     }
 
-    if (this.__texture) {
+    if (this._texture) {
       this._enableTexture();
     }
     this._onActive();
   }
 
   private _unsetActiveFlag(): void {
-    if (this.__texture) {
-      this.__texture.decActiveCount();
+    if (this._texture) {
+      this._texture.decActiveCount();
     }
 
-    this.__active = false;
-    if (this.__texture) {
+    this._active = false;
+    if (this._texture) {
       this._disableTexture();
     }
 
@@ -360,38 +356,38 @@ class Element {
   }
 
   get renderWidth(): number {
-    return this.__core.getRenderWidth();
+    return this._core.getRenderWidth();
   }
 
   get renderHeight(): number {
-    return this.__core.getRenderHeight();
+    return this._core.getRenderHeight();
   }
 
   get layoutX(): number {
-    return this.__core.getLayoutX();
+    return this._core.getLayoutX();
   }
 
   get layoutY(): number {
-    return this.__core.getLayoutY();
+    return this._core.getLayoutY();
   }
 
   get layoutW(): number {
-    return this.__core.getLayoutW();
+    return this._core.getLayoutW();
   }
 
   get layoutH(): number {
-    return this.__core.getLayoutH();
+    return this._core.getLayoutH();
   }
 
   textureIsLoaded(): boolean {
-    return this.__texture ? this.__texture.isLoaded() : false;
+    return this._texture ? this._texture.isLoaded() : false;
   }
 
   loadTexture(): void {
-    if (this.__texture) {
-      this.__texture.load();
+    if (this._texture) {
+      this._texture.load();
 
-      if (!this.__texture.isUsed() || !this._isEnabled()) {
+      if (!this._texture.isUsed() || !this._isEnabled()) {
         // As this element is invisible, loading the texture will have no effect on the dimensions of this element.
         // To help the developers, automatically update the dimensions.
         this._updateTextureDimensions();
@@ -401,15 +397,15 @@ class Element {
 
   private _enableTextureError(): void {
     // txError event should automatically be re-triggered when a element becomes active.
-    const loadError = this.__texture!.loadError;
+    const loadError = this._texture!.loadError;
     if (loadError) {
-      this._onTextureError(loadError, this.__texture!);
+      this._onTextureError(loadError, this._texture!);
     }
   }
 
   private _enableTexture(): void {
-    if (this.__texture!.isLoaded()) {
-      this.setDisplayedTexture(this.__texture);
+    if (this._texture!.isLoaded()) {
+      this.setDisplayedTexture(this._texture);
     } else {
       // We don't want to retain the old image as it wasn't visible anyway.
       this.setDisplayedTexture(undefined);
@@ -425,7 +421,7 @@ class Element {
   }
 
   get texture(): Texture | undefined {
-    return this.__texture;
+    return this._texture;
   }
 
   set texture(v: Texture | undefined) {
@@ -436,17 +432,17 @@ class Element {
       texture = v;
     }
 
-    const prevTexture = this.__texture;
+    const prevTexture = this._texture;
     if (texture !== prevTexture) {
-      this.__texture = texture as Texture;
+      this._texture = texture as Texture;
 
-      if (this.__texture) {
-        if (this.__enabled) {
-          this.__texture.addElement(this);
+      if (this._texture) {
+        if (this._enabled) {
+          this._texture.addElement(this);
 
           if (this.isWithinBoundsMargin()) {
-            if (this.__texture.isLoaded()) {
-              this.setDisplayedTexture(this.__texture);
+            if (this._texture.isLoaded()) {
+              this.setDisplayedTexture(this._texture);
             } else {
               this._enableTextureError();
             }
@@ -457,7 +453,7 @@ class Element {
         this.setDisplayedTexture(undefined);
       }
 
-      if (prevTexture && prevTexture !== this.__displayedTexture) {
+      if (prevTexture && prevTexture !== this._displayedTexture) {
         prevTexture.removeElement(this);
       }
 
@@ -466,38 +462,38 @@ class Element {
   }
 
   get displayedTexture(): Texture | undefined {
-    return this.__displayedTexture;
+    return this._displayedTexture;
   }
 
   setDisplayedTexture(v: Texture | undefined) {
-    const prevTexture = this.__displayedTexture;
+    const prevTexture = this._displayedTexture;
 
     if (prevTexture && v !== prevTexture) {
-      if (this.__texture !== prevTexture) {
+      if (this._texture !== prevTexture) {
         // The old displayed texture is deprecated.
         prevTexture.removeElement(this);
       }
     }
 
-    const prevSource = this.__core.displayedTextureSource ? this.__core.displayedTextureSource : undefined;
+    const prevSource = this._core.displayedTextureSource ? this._core.displayedTextureSource : undefined;
     const sourceChanged = (v ? v.getSource() : undefined) !== prevSource;
 
-    this.__displayedTexture = v;
+    this._displayedTexture = v;
     this._updateTextureDimensions();
 
-    if (this.__displayedTexture) {
+    if (this._displayedTexture) {
       if (sourceChanged) {
         // We don't need to reference the displayed texture because it was already referenced (this.texture === this.displayedTexture).
         this.updateTextureCoords();
-        this.__core.setDisplayedTextureSource(this.__displayedTexture.getSource());
+        this._core.setDisplayedTextureSource(this._displayedTexture.getSource());
       }
     } else {
-      this.__core.setDisplayedTextureSource(undefined);
+      this._core.setDisplayedTextureSource(undefined);
     }
 
     if (sourceChanged) {
-      if (this.__displayedTexture) {
-        this._onTextureLoaded(this.__displayedTexture);
+      if (this._displayedTexture) {
+        this._onTextureLoaded(this._displayedTexture);
       } else if (prevTexture) {
         this._onTextureUnloaded(prevTexture);
       }
@@ -508,16 +504,16 @@ class Element {
     // This function is called when element is enabled, but we only want to set displayed texture for active elements.
     if (this.active) {
       // We may be dealing with a texture reloading, so we must force update.
-      this.setDisplayedTexture(this.__texture);
+      this.setDisplayedTexture(this._texture);
     }
   }
 
   onTextureSourceLoadError(loadError: Error): void {
-    this._onTextureError(loadError, this.__texture!);
+    this._onTextureError(loadError, this._texture!);
   }
 
   forceRenderUpdate(): void {
-    this.__core.setHasRenderUpdates(3);
+    this._core.setHasRenderUpdates(3);
   }
 
   onDisplayedTextureClippingChanged(): void {
@@ -530,32 +526,32 @@ class Element {
   }
 
   _updateTextureDimensions(): void {
-    let w = 0,
-      h = 0;
-    if (this.__displayedTexture) {
-      w = this.__displayedTexture.getRenderWidth();
-      h = this.__displayedTexture.getRenderHeight();
-    } else if (this.__texture) {
+    let w = 0;
+    let h = 0;
+    if (this._displayedTexture) {
+      w = this._displayedTexture.getRenderWidth();
+      h = this._displayedTexture.getRenderHeight();
+    } else if (this._texture) {
       // Texture already loaded, but not yet updated (probably because this element is not active).
-      w = this.__texture.getRenderWidth();
-      h = this.__texture.getRenderWidth();
+      w = this._texture.getRenderWidth();
+      h = this._texture.getRenderWidth();
     }
 
     let unknownSize = false;
     if (!w || !h) {
-      if (!this.__displayedTexture && this.__texture) {
+      if (!this._displayedTexture && this._texture) {
         // We use a 'max width' replacement instead in the ElementCore calcs.
         // This makes sure that it is able to determine withinBounds.
-        w = w || this.__texture.mw;
-        h = h || this.__texture.mh;
+        w = w || this._texture.mw;
+        h = h || this._texture.mh;
 
-        if ((!w || !h) && this.__texture.isAutosizeTexture()) {
+        if ((!w || !h) && this._texture.isAutosizeTexture()) {
           unknownSize = true;
         }
       }
     }
 
-    this.__core.setTextureDimensions(w, h, unknownSize);
+    this._core.setTextureDimensions(w, h, unknownSize);
   }
 
   public updateTextureCoords(): void {
@@ -564,15 +560,18 @@ class Element {
       const displayedTextureSource = this.displayedTexture.getSource();
 
       if (displayedTextureSource) {
-        let tx1 = 0,
-          ty1 = 0,
-          tx2 = 1.0,
-          ty2 = 1.0;
+        let tx1 = 0;
+        let ty1 = 0;
+        let tx2 = 1.0;
+        let ty2 = 1.0;
         if (displayedTexture.hasClipping()) {
           // Apply texture clipping.
           const w = displayedTextureSource.getRenderWidth();
           const h = displayedTextureSource.getRenderHeight();
-          let iw, ih, rw, rh;
+          let iw;
+          let ih;
+          let rw;
+          let rh;
           iw = 1 / w;
           ih = 1 / h;
 
@@ -602,13 +601,13 @@ class Element {
           ty2 = Math.min(1, ty2);
         }
 
-        this.__core.setTextureCoords(tx1, ty1, tx2, ty2);
+        this._core.setTextureCoords(tx1, ty1, tx2, ty2);
       }
     }
   }
 
   getCornerPoints(): number[] {
-    return this.__core.getCornerPoints();
+    return this._core.getCornerPoints();
   }
 
   getByRef(ref: string) {
@@ -616,8 +615,8 @@ class Element {
   }
 
   getLocationString(): string {
-    const i = this.__parent ? this.__parent._children.getIndex(this) : 'R';
-    let str = this.__parent ? this.__parent.getLocationString() : '';
+    const i = this._parent ? this._parent._children.getIndex(this) : 'R';
+    let str = this._parent ? this._parent.getLocationString() : '';
     if (this.ref) {
       str += ':[' + i + ']' + this.ref;
     } else {
@@ -637,7 +636,7 @@ class Element {
 
     // Convert singular json settings object.
     const colorKeys = ['color', 'colorUl', 'colorUr', 'colorBl', 'colorBr'];
-    let str = JSON.stringify(obj, function(k, v) {
+    let str = JSON.stringify(obj, (k: string, v: number): string|number => {
       if (colorKeys.indexOf(k) !== -1) {
         return 'COLOR[' + v.toString(16) + ']';
       }
@@ -709,8 +708,8 @@ class Element {
       settings.type = this.constructor.name;
     }
 
-    if (this.__ref) {
-      settings.ref = this.__ref;
+    if (this._ref) {
+      settings.ref = this._ref;
     }
 
     if (this.x !== 0) settings.x = this.x;
@@ -762,8 +761,8 @@ class Element {
 
     if (!this.clipbox) settings.clipbox = this.clipbox;
 
-    if (this.__texture) {
-      const tnd = this.__texture.getNonDefaults();
+    if (this._texture) {
+      const tnd = this._texture.getNonDefaults();
       if (Object.keys(tnd).length) {
         settings.texture = tnd;
       }
@@ -788,19 +787,19 @@ class Element {
   }
 
   isWithinBoundsMargin() {
-    return this.__core.isWithinBoundsMargin();
+    return this._core.isWithinBoundsMargin();
   }
 
   _enableWithinBoundsMargin() {
     // Iff enabled, this toggles the active flag.
-    if (this.__enabled) {
+    if (this._enabled) {
       this._setActiveFlag();
     }
   }
 
   _disableWithinBoundsMargin() {
     // Iff active, this toggles the active flag.
-    if (this.__active) {
+    if (this._active) {
       this._unsetActiveFlag();
     }
   }
@@ -809,175 +808,175 @@ class Element {
     if (!Array.isArray(v) && v !== undefined) {
       throw new Error('boundsMargin should be an array of left-top-right-bottom values or undefined (inherit margin)');
     }
-    this.__core.boundsMargin = v;
+    this._core.boundsMargin = v;
   }
 
   get boundsMargin() {
-    return this.__core.boundsMargin;
+    return this._core.boundsMargin;
   }
 
   get x(): number | FunctionX {
-    return this.__core.x;
+    return this._core.x;
   }
 
   set x(v: number | FunctionX) {
-    this.__core.x = v;
+    this._core.x = v;
   }
 
   get y(): number | FunctionY {
-    return this.__core.y;
+    return this._core.y;
   }
 
   set y(v: number | FunctionY) {
-    this.__core.y = v;
+    this._core.y = v;
   }
 
   get w(): number | FunctionW {
-    return this.__core.w;
+    return this._core.w;
   }
 
   set w(v) {
-    this.__core.w = v;
+    this._core.w = v;
   }
 
   get h(): number | FunctionH {
-    return this.__core.h;
+    return this._core.h;
   }
 
   set h(v) {
-    this.__core.h = v;
+    this._core.h = v;
   }
 
   get scaleX() {
-    return this.__core.scaleX;
+    return this._core.scaleX;
   }
 
   set scaleX(v) {
-    this.__core.scaleX = v;
+    this._core.scaleX = v;
   }
 
   get scaleY() {
-    return this.__core.scaleY;
+    return this._core.scaleY;
   }
 
   set scaleY(v) {
-    this.__core.scaleY = v;
+    this._core.scaleY = v;
   }
 
   get scale() {
-    return this.__core.scale;
+    return this._core.scale;
   }
 
   set scale(v) {
-    this.__core.scale = v;
+    this._core.scale = v;
   }
 
   get pivotX() {
-    return this.__core.pivotX;
+    return this._core.pivotX;
   }
 
   set pivotX(v) {
-    this.__core.pivotX = v;
+    this._core.pivotX = v;
   }
 
   get pivotY() {
-    return this.__core.pivotY;
+    return this._core.pivotY;
   }
 
   set pivotY(v) {
-    this.__core.pivotY = v;
+    this._core.pivotY = v;
   }
 
   get pivot() {
-    return this.__core.pivot;
+    return this._core.pivot;
   }
 
   set pivot(v) {
-    this.__core.pivot = v;
+    this._core.pivot = v;
   }
 
   get mountX() {
-    return this.__core.mountX;
+    return this._core.mountX;
   }
 
   set mountX(v) {
-    this.__core.mountX = v;
+    this._core.mountX = v;
   }
 
   get mountY() {
-    return this.__core.mountY;
+    return this._core.mountY;
   }
 
   set mountY(v) {
-    this.__core.mountY = v;
+    this._core.mountY = v;
   }
 
   get mount() {
-    return this.__core.mount;
+    return this._core.mount;
   }
 
   set mount(v) {
-    this.__core.mount = v;
+    this._core.mount = v;
   }
 
   get rotation() {
-    return this.__core.rotation;
+    return this._core.rotation;
   }
 
   set rotation(v) {
-    this.__core.rotation = v;
+    this._core.rotation = v;
   }
 
   get alpha() {
-    return this.__core.alpha;
+    return this._core.alpha;
   }
 
   set alpha(v) {
-    this.__core.alpha = v;
+    this._core.alpha = v;
   }
 
   get visible() {
-    return this.__core.visible;
+    return this._core.visible;
   }
 
   set visible(v) {
-    this.__core.visible = v;
+    this._core.visible = v;
   }
 
   get colorUl() {
-    return this.__core.colorUl;
+    return this._core.colorUl;
   }
 
   set colorUl(v) {
-    this.__core.colorUl = v;
+    this._core.colorUl = v;
   }
 
   get colorUr() {
-    return this.__core.colorUr;
+    return this._core.colorUr;
   }
 
   set colorUr(v) {
-    this.__core.colorUr = v;
+    this._core.colorUr = v;
   }
 
   get colorBl() {
-    return this.__core.colorBl;
+    return this._core.colorBl;
   }
 
   set colorBl(v) {
-    this.__core.colorBl = v;
+    this._core.colorBl = v;
   }
 
   get colorBr() {
-    return this.__core.colorBr;
+    return this._core.colorBr;
   }
 
   set colorBr(v) {
-    this.__core.colorBr = v;
+    this._core.colorBr = v;
   }
 
   get color() {
-    return this.__core.colorUl;
+    return this._core.colorUl;
   }
 
   set color(v) {
@@ -1034,38 +1033,38 @@ class Element {
   }
 
   get zIndex() {
-    return this.__core.zIndex;
+    return this._core.zIndex;
   }
   set zIndex(v) {
-    this.__core.zIndex = v;
+    this._core.zIndex = v;
   }
 
   get forceZIndexContext() {
-    return this.__core.forceZIndexContext;
+    return this._core.forceZIndexContext;
   }
   set forceZIndexContext(v) {
-    this.__core.forceZIndexContext = v;
+    this._core.forceZIndexContext = v;
   }
 
   get clipping() {
-    return this.__core.clipping;
+    return this._core.clipping;
   }
   set clipping(v) {
-    this.__core.clipping = v;
+    this._core.clipping = v;
   }
 
   get clipbox() {
-    return this.__core.clipbox;
+    return this._core.clipbox;
   }
   set clipbox(v) {
-    this.__core.clipbox = v;
+    this._core.clipbox = v;
   }
 
   get _children(): ElementChildList {
-    if (!this.__childList) {
-      this.__childList = new ElementChildList(this);
+    if (!this._childList) {
+      this._childList = new ElementChildList(this);
     }
-    return this.__childList;
+    return this._childList;
   }
 
   get childList() {
@@ -1076,7 +1075,7 @@ class Element {
   }
 
   hasChildren() {
-    return this._allowChildrenAccess() && this.__childList && this.__childList.length > 0;
+    return this._allowChildrenAccess() && this._childList && this._childList.length > 0;
   }
 
   _allowChildrenAccess() {
@@ -1092,11 +1091,11 @@ class Element {
   }
 
   get p() {
-    return this.__parent;
+    return this._parent;
   }
 
   get parent() {
-    return this.__parent;
+    return this._parent;
   }
 
   get src() {
@@ -1158,40 +1157,40 @@ class Element {
   }
 
   set onUpdate(f: ElementEventCallback) {
-    this.__core.onUpdate = f;
+    this._core.onUpdate = f;
   }
 
   set onAfterCalcs(f: ElementEventCallback) {
-    this.__core.onAfterCalcs = f;
+    this._core.onAfterCalcs = f;
   }
 
   set onAfterUpdate(f: ElementEventCallback) {
-    this.__core.onAfterUpdate = f;
+    this._core.onAfterUpdate = f;
   }
 
   forceUpdate() {
     // Make sure that the update loop is run.
-    this.__core._setHasUpdates();
+    this._core._setHasUpdates();
   }
 
   get shader(): Shader | undefined {
-    return this.__core.shader;
+    return this._core.shader;
   }
 
   set shader(shader: Shader | undefined) {
-    if (this.__enabled && this.__core.shader) {
-      this.__core.shader.removeElement(this.__core);
+    if (this._enabled && this._core.shader) {
+      this._core.shader.removeElement(this._core);
     }
 
-    this.__core.shader = shader;
+    this._core.shader = shader;
 
-    if (this.__enabled && this.__core.shader) {
-      this.__core.shader.addElement(this.__core);
+    if (this._enabled && this._core.shader) {
+      this._core.shader.addElement(this._core);
     }
   }
 
   _hasTexturizer() {
-    return this.__core.hasTexturizer();
+    return this._core.hasTexturizer();
   }
 
   get renderToTexture() {
@@ -1231,7 +1230,7 @@ class Element {
   }
 
   get texturizer(): ElementTexturizer {
-    return this.__core.texturizer;
+    return this._core.texturizer;
   }
 
   _throwError(message: string) {
@@ -1239,11 +1238,11 @@ class Element {
   }
 
   private get _flex() {
-    return this.__core.layout.flex;
+    return this._core.layout.flex;
   }
 
   private get _flexItem() {
-    return this.__core.layout.flexItem;
+    return this._core.layout.flexItem;
   }
 
   set flex(v: boolean) {
