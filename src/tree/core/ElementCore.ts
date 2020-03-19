@@ -533,17 +533,17 @@ export default class ElementCore implements FlexSubject {
   }
 
   /**
-   * @param {number} type
-   * 0: no updates
-   * 1: re-invoke shader
-   * 3: re-create render texture and re-invoke shader
+   * @param level - Level of updates:
+   *  0: no updates
+   *  1: re-invoke shader
+   *  3: re-create render texture and re-invoke shader
    */
-  setHasRenderUpdates(type: number) {
+  setHasRenderUpdates(level: number) {
     if (this._worldContext.alpha) {
       // Ignore if 'world invisible'. Render updates will be reset to 3 for every element that becomes visible.
-      let p : ElementCore | undefined = this as ElementCore;
-      p!._hasRenderUpdates = Math.max(type, p!._hasRenderUpdates);
-      while(true) {
+      let p: ElementCore | undefined = this as ElementCore;
+      p!._hasRenderUpdates = Math.max(level, p!._hasRenderUpdates);
+      while (true) {
         p = p!._parent;
         if (!p || p._hasRenderUpdates >= 3) {
           break;
@@ -555,12 +555,12 @@ export default class ElementCore implements FlexSubject {
 
   /**
    * Marks recalculation updates.
-   * @param type
-   *   1: alpha
-   *   2: translate
-   *   4: transform
-   * 128: becomes visible
-   * 256: flex layout updated
+   * @param type - What needs to be recalculated
+   *  1: alpha
+   *  2: translate
+   *  4: transform
+   *  128: becomes visible
+   *  256: flex layout updated
    */
   _setRecalc(type: number) {
     this._recalc |= type;
@@ -855,9 +855,9 @@ export default class ElementCore implements FlexSubject {
   }
 
   private isAncestorOf(c: ElementCore) {
-    let p : ElementCore | undefined = this as ElementCore;
+    let p: ElementCore | undefined = this as ElementCore;
 
-    while(true) {
+    while (true) {
       p = p!._parent;
       if (!p) {
         return false;
@@ -1067,7 +1067,7 @@ export default class ElementCore implements FlexSubject {
         this.sortZIndexedChildren();
       }
 
-      this._zIndexedChildren!.slice().forEach((c) => {
+      this._zIndexedChildren!.slice().forEach(c => {
         if (c._zIndex !== 0) {
           c.setZParent(newZParent);
         }
@@ -1119,19 +1119,31 @@ export default class ElementCore implements FlexSubject {
     }
   }
 
-  set onUpdate(f: ElementEventCallback) {
+  set onUpdate(f: ElementEventCallback | undefined) {
     this._onUpdate = f;
     this._setRecalc(7);
   }
 
-  set onAfterUpdate(f: ElementEventCallback) {
+  get onUpdate() {
+    return this._onUpdate;
+  }
+
+  set onAfterUpdate(f: ElementEventCallback | undefined) {
     this._onAfterUpdate = f;
     this._setRecalc(7);
   }
 
-  set onAfterCalcs(f: ElementEventCallback) {
+  get onAfterUpdate() {
+    return this._onUpdate;
+  }
+
+  set onAfterCalcs(f: ElementEventCallback | undefined) {
     this._onAfterCalcs = f;
     this._setRecalc(7);
+  }
+
+  get onAfterCalcs() {
+    return this._onUpdate;
   }
 
   get shader() {
@@ -2320,4 +2332,4 @@ import FlexContainer from '../../flex/FlexContainer';
 import FlexItem from '../../flex/FlexItem';
 import { RenderTextureInfo } from './RenderTextureInfo';
 import { FlexSubject } from '../../flex/FlexSubject';
-import {ElementEventCallback} from "../ElementListeners";
+import { ElementEventCallback } from '../ElementListeners';

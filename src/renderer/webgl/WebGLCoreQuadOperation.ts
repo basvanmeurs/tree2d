@@ -36,12 +36,7 @@ export default class WebGLCoreQuadOperation extends CoreQuadOperation {
     return (this.quadList as WebGLCoreQuadList).getAttribsDataByteOffset(this.index + index);
   }
 
-  /**
-   * Returns the relative pixel coordinates in the shader owner to gl position coordinates in the render texture.
-   * @param x
-   * @param y
-   * @return {number[]}
-   */
+  // Returns the relative pixel coordinates in the shader owner to gl position coordinates in the render texture.
   getNormalRenderTextureCoords(x: number, y: number) {
     const coords = this.shaderOwner.getRenderTextureCoords(x, y);
     coords[0] /= this.getRenderWidth();

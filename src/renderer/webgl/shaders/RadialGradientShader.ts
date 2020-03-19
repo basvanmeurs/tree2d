@@ -9,7 +9,7 @@ export default class RadialGradientShader extends DefaultShader {
   private _radiusX: number = 100;
   private _radiusY: number = 100;
 
-  private _color: number = 0xFFFFFFFF;
+  private _color: number = 0xffffffff;
   private _rawColor: Float32Array = new Float32Array([255, 255, 255, 255]);
 
   set x(v: number) {
@@ -17,9 +17,17 @@ export default class RadialGradientShader extends DefaultShader {
     this.redraw();
   }
 
+  get x() {
+    return this._x;
+  }
+
   set y(v: number) {
     this._y = v;
     this.redraw();
+  }
+
+  get y() {
+    return this._y;
   }
 
   set radiusX(v) {
@@ -43,6 +51,10 @@ export default class RadialGradientShader extends DefaultShader {
   set radius(v: number) {
     this.radiusX = v;
     this.radiusY = v;
+  }
+
+  get radius() {
+    return this.radiusX;
   }
 
   get color() {

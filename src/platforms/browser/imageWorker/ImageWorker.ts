@@ -1,8 +1,7 @@
-import createWorker from "./createWorker";
-import {ImageWorkerImage} from "./ImageWorkerImage";
+import createWorker from './createWorker';
+import { ImageWorkerImage } from './ImageWorkerImage';
 
 export default class ImageWorker {
-
   private _items = new Map<number, ImageWorkerImage>();
   private _id: number = 0;
   private _worker: Worker;
@@ -20,7 +19,10 @@ export default class ImageWorker {
           if (e.data.type === 'data') {
             this.finish(item, e.data.info);
           } else {
-            this.error(item, new Error(`Image loading error type ${e.data.info.type}: ${e.data.info.message}`));
+            this.error(
+              item,
+              new Error(`Image loading error type ${e.data.info.type.type}: ${e.data.info.type.message}`),
+            );
           }
         }
       }
@@ -56,4 +58,3 @@ export default class ImageWorker {
     this._items.delete(image.id);
   }
 }
-

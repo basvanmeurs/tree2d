@@ -17,6 +17,10 @@ export default class RoundedRectangleShader extends DefaultShader {
     this.redraw();
   }
 
+  get radius() {
+    return this._radius;
+  }
+
   setupUniforms(operation: WebGLCoreQuadOperation) {
     super.setupUniforms(operation);
     const owner = operation.shaderOwner;

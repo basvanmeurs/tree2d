@@ -17,6 +17,10 @@ export default class OutlineShader extends DefaultShader {
     this.redraw();
   }
 
+  get width() {
+    return this._width;
+  }
+
   get color() {
     return this._col;
   }

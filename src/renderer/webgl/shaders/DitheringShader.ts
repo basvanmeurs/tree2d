@@ -16,9 +16,17 @@ export default class DitheringShader extends DefaultShader {
     this.redraw();
   }
 
+  get graining() {
+    return this._graining;
+  }
+
   set random(v: boolean) {
     this._random = v;
     this.redraw();
+  }
+
+  get random() {
+    return this._random;
   }
 
   setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {

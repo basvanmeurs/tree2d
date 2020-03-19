@@ -1,4 +1,4 @@
-import ImageWorker from './ImageWorker';
+import ImageWorker from './imageWorker/ImageWorker';
 import Stage from '../../tree/Stage';
 import { TextureDrawableSource, TextureSourceOptions } from '../../tree/Texture';
 import TextureSource from '../../tree/TextureSource';
@@ -20,8 +20,24 @@ export default class WebPlatform {
       if (!window.createImageBitmap || !window.Worker) {
         console.warn("Can't use image worker because browser does not have createImageBitmap and Web Worker support");
       } else {
-        console.log('Using image worker!');
-        this._imageWorker = new ImageWorker();
+        // Firefox does support createImageBitmap, but not with the required paramater signature.
+        const canvas = this.stage.getDrawingCanvas();
+        canvas.width = 1;
+        canvas.height = 1;
+        (window.createImageBitmap as any)(canvas, {
+          premultiplyAlpha: 'premultiply',
+          colorSpaceConversion: 'none',
+          imageOrientation: 'none',
+        })
+          .then(() => {
+            console.log('Using image worker!');
+            this._imageWorker = new ImageWorker();
+          })
+          .catch(() => {
+            console.warn(
+              "Can't use image worker: createImageBitmap does not support signature. Using on-thread image parsing.",
+            );
+          });
       }
     }
   }

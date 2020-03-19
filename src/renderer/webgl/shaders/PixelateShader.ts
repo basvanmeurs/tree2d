@@ -2,9 +2,6 @@ import DefaultShader from './DefaultShader';
 import CoreContext from '../../../tree/core/CoreContext';
 import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 
-/**
- * @see https://github.com/pixijs/pixi-filters/tree/master/filters/pixelate/src
- */
 export default class PixelateShader extends DefaultShader {
   private _size = new Float32Array([4, 4]);
 

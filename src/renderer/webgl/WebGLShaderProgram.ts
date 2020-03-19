@@ -1,7 +1,7 @@
 /**
  * Base functionality for shader setup/destroy.
  */
-import {GLFunction} from "./WebGLShader";
+import { GLFunction } from './WebGLShader';
 
 export default class WebGLShaderProgram {
   private _program?: WebGLProgram;
@@ -9,7 +9,11 @@ export default class WebGLShaderProgram {
   private _attributeLocations: Map<string, GLint> = new Map();
   private readonly _currentUniformValues: { [key: string]: any } = {};
 
-  constructor(public gl: WebGLRenderingContext, public vertexShaderSource: string, public fragmentShaderSource: string) {}
+  constructor(
+    public gl: WebGLRenderingContext,
+    public vertexShaderSource: string,
+    public fragmentShaderSource: string,
+  ) {}
 
   compile() {
     if (this._program) return;

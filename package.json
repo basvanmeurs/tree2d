@@ -12,15 +12,14 @@
     ],
     "scripts": {
         "test": "echo \"please run tests in browser using tests/test.html\"",
-        "build": "tsc",
+        "build": "node scripts/build.js -s -t",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "formatTests": "prettier --write \"tests/**/*.ts\" \"tests/**/*.js\"",
         "lint": "tslint -p tsconfig.json",
         "prepare": "npm run build",
         "prepublishOnly": "npm test && npm run lint",
         "preversion": "npm run lint",
-        "version": "npm run format",
-        "bundle": "node scripts/build.js"
+        "version": "npm run format"
     },
     "buildOptions": {
         "name": "tree2d",

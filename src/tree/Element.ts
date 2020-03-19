@@ -245,8 +245,12 @@ class Element {
     this._onInactive();
   }
 
-  public set onSetup(v: ElementEventCallback) {
+  public set onSetup(v: ElementEventCallback | undefined) {
     this.getListeners().onSetup = v;
+  }
+
+  public get onSetup() {
+    return this.getListeners().onSetup;
   }
 
   protected _onSetup(): void {
@@ -255,8 +259,12 @@ class Element {
     }
   }
 
-  public set onAttach(v: ElementEventCallback) {
+  public set onAttach(v: ElementEventCallback | undefined) {
     this.getListeners().onAttach = v;
+  }
+
+  public get onAttach() {
+    return this.getListeners().onAttach;
   }
 
   protected _onAttach(): void {
@@ -265,8 +273,12 @@ class Element {
     }
   }
 
-  public set onDetach(v: ElementEventCallback) {
+  public set onDetach(v: ElementEventCallback | undefined) {
     this.getListeners().onDetach = v;
+  }
+
+  public get onDetach() {
+    return this.getListeners().onDetach;
   }
 
   protected _onDetach(): void {
@@ -275,8 +287,12 @@ class Element {
     }
   }
 
-  public set onEnabled(v: ElementEventCallback) {
+  public set onEnabled(v: ElementEventCallback | undefined) {
     this.getListeners().onEnabled = v;
+  }
+
+  public get onEnabled() {
+    return this.getListeners().onEnabled;
   }
 
   protected _onEnabled(): void {
@@ -285,8 +301,12 @@ class Element {
     }
   }
 
-  public set onDisabled(v: ElementEventCallback) {
+  public set onDisabled(v: ElementEventCallback | undefined) {
     this.getListeners().onDisabled = v;
+  }
+
+  public get onDisabled() {
+    return this.getListeners().onDisabled;
   }
 
   protected _onDisabled(): void {
@@ -295,8 +315,12 @@ class Element {
     }
   }
 
-  public set onActive(v: ElementEventCallback) {
+  public set onActive(v: ElementEventCallback | undefined) {
     this.getListeners().onActive = v;
+  }
+
+  public get onActive() {
+    return this.getListeners().onActive;
   }
 
   protected _onActive(): void {
@@ -305,8 +329,12 @@ class Element {
     }
   }
 
-  public set onInactive(v: ElementEventCallback) {
+  public set onInactive(v: ElementEventCallback | undefined) {
     this.getListeners().onInactive = v;
+  }
+
+  public get onInactive() {
+    return this.getListeners().onInactive;
   }
 
   protected _onInactive(): void {
@@ -319,6 +347,10 @@ class Element {
     this.getListeners().onTextureError = v;
   }
 
+  public get onTextureError() {
+    return this.getListeners().onTextureError;
+  }
+
   protected _onTextureError(loadError: Error, texture: Texture): void {
     if (this.listeners && this.listeners.onTextureError) {
       this.listeners.onTextureError(this, texture, loadError);
@@ -327,6 +359,10 @@ class Element {
 
   public set onTextureLoaded(v: ElementTextureEventCallback | undefined) {
     this.getListeners().onTextureLoaded = v;
+  }
+
+  public get onTextureLoaded() {
+    return this.getListeners().onTextureLoaded;
   }
 
   protected _onTextureLoaded(texture: Texture): void {
@@ -339,6 +375,10 @@ class Element {
     this.getListeners().onTextureUnloaded = v;
   }
 
+  public get onTextureUnloaded() {
+    return this.getListeners().onTextureUnloaded;
+  }
+
   protected _onTextureUnloaded(texture: Texture): void {
     if (this.listeners && this.listeners.onTextureUnloaded) {
       this.listeners.onTextureUnloaded(this, texture);
@@ -347,6 +387,10 @@ class Element {
 
   public set onResize(v: ElementResizeEventCallback | undefined) {
     this.getListeners().onResize = v;
+  }
+
+  public get onResize() {
+    return this.getListeners().onResize;
   }
 
   public _onResize(w: number, h: number): void {
@@ -636,7 +680,7 @@ class Element {
 
     // Convert singular json settings object.
     const colorKeys = ['color', 'colorUl', 'colorUr', 'colorBl', 'colorBr'];
-    let str = JSON.stringify(obj, (k: string, v: number): string|number => {
+    let str = JSON.stringify(obj, (k: string, v: number): string | number => {
       if (colorKeys.indexOf(k) !== -1) {
         return 'COLOR[' + v.toString(16) + ']';
       }
@@ -1117,8 +1161,12 @@ class Element {
       this.texture.mw = v;
       this._updateTextureDimensions();
     } else {
-      this._throwError('Please set mw after setting a texture.');
+      this._throwError('Set mw after setting a texture.');
     }
+  }
+
+  get mw() {
+    return this.texture ? this.texture.mw : 0;
   }
 
   set mh(v: number) {
@@ -1126,8 +1174,12 @@ class Element {
       this.texture.mh = v;
       this._updateTextureDimensions();
     } else {
-      this._throwError('Please set mh after setting a texture.');
+      this._throwError('Set mh after setting a texture.');
     }
+  }
+
+  get mh() {
+    return this.texture ? this.texture.mh : 0;
   }
 
   get rect() {
@@ -1156,16 +1208,28 @@ class Element {
     return this.texture;
   }
 
-  set onUpdate(f: ElementEventCallback) {
+  set onUpdate(f: ElementEventCallback | undefined) {
     this._core.onUpdate = f;
   }
 
-  set onAfterCalcs(f: ElementEventCallback) {
+  get onUpdate() {
+    return this._core.onUpdate;
+  }
+
+  set onAfterCalcs(f: ElementEventCallback | undefined) {
     this._core.onAfterCalcs = f;
   }
 
-  set onAfterUpdate(f: ElementEventCallback) {
+  get onAfterCalcs() {
+    return this._core.onAfterCalcs;
+  }
+
+  set onAfterUpdate(f: ElementEventCallback | undefined) {
     this._core.onAfterUpdate = f;
+  }
+
+  get onAfterUpdate() {
+    return this._core.onAfterUpdate;
   }
 
   forceUpdate() {
@@ -1249,96 +1313,192 @@ class Element {
     this._flex.enabled = v;
   }
 
+  get flex() {
+    return this._flex.enabled;
+  }
+
   set flexDirection(v: FlexDirection) {
     this._flex.direction = v;
+  }
+
+  get flexDirection() {
+    return this._flex.direction;
   }
 
   set flexWrap(v: boolean) {
     this._flex.wrap = v;
   }
 
+  get flexWrap() {
+    return this._flex.wrap;
+  }
+
   set flexAlignItems(v: AlignItemsMode) {
     this._flex.alignItems = v;
+  }
+
+  get flexAlignItems() {
+    return this._flex.alignItems;
   }
 
   set flexJustifyContent(v: JustifyContentMode) {
     this._flex.justifyContent = v;
   }
 
+  get flexJustifyContent() {
+    return this._flex.justifyContent;
+  }
+
   set flexAlignContent(v: AlignContentMode) {
     this._flex.alignContent = v;
+  }
+
+  get flexAlignContent() {
+    return this._flex.alignContent;
   }
 
   set flexItem(v: boolean) {
     this._flexItem.enabled = v;
   }
 
+  get flexItem() {
+    return this._flexItem.enabled;
+  }
+
   set flexGrow(v: number) {
     this._flexItem.grow = v;
+  }
+
+  get flexGrow() {
+    return this._flexItem.grow;
   }
 
   set flexShrink(v: number) {
     this._flexItem.shrink = v;
   }
 
-  set alignSelf(v: AlignItemsMode) {
+  get flexShrink() {
+    return this._flexItem.shrink;
+  }
+
+  set flexAlignSelf(v: AlignItemsMode | undefined) {
     this._flexItem.alignSelf = v;
+  }
+
+  get flexAlignSelf() {
+    return this._flexItem.alignSelf;
   }
 
   set padding(v: number) {
     this._flex.padding = v;
   }
 
+  get padding() {
+    return this._flex.padding;
+  }
+
   set paddingLeft(v: number) {
     this._flex.paddingLeft = v;
+  }
+
+  get paddingLeft() {
+    return this._flex.paddingLeft;
   }
 
   set paddingRight(v: number) {
     this._flex.paddingRight = v;
   }
 
+  get paddingRight() {
+    return this._flex.paddingRight;
+  }
+
   set paddingTop(v: number) {
     this._flex.paddingTop = v;
+  }
+
+  get paddingTop() {
+    return this._flex.paddingTop;
   }
 
   set paddingBottom(v: number) {
     this._flex.paddingBottom = v;
   }
 
+  get paddingBottom() {
+    return this._flex.paddingBottom;
+  }
+
   set margin(v: number) {
     this._flexItem.margin = v;
+  }
+
+  get margin() {
+    return this._flexItem.margin;
   }
 
   set marginLeft(v: number) {
     this._flexItem.marginLeft = v;
   }
 
+  get marginLeft() {
+    return this._flexItem.marginLeft;
+  }
+
   set marginRight(v: number) {
     this._flexItem.marginRight = v;
+  }
+
+  get marginRight() {
+    return this._flexItem.marginRight;
   }
 
   set marginTop(v: number) {
     this._flexItem.marginTop = v;
   }
 
+  get marginTop() {
+    return this._flexItem.marginTop;
+  }
+
   set marginBottom(v: number) {
     this._flexItem.marginBottom = v;
+  }
+
+  get marginBottom() {
+    return this._flexItem.marginBottom;
   }
 
   set minWidth(v: number) {
     this._flexItem.minWidth = v;
   }
 
+  get minWidth() {
+    return this._flexItem.minWidth;
+  }
+
   set maxWidth(v: number) {
     this._flexItem.maxWidth = v;
+  }
+
+  get maxWidth() {
+    return this._flexItem.maxWidth;
   }
 
   set minHeight(v: number) {
     this._flexItem.minHeight = v;
   }
 
+  get minHeight() {
+    return this._flexItem.minHeight;
+  }
+
   set maxHeight(v: number) {
     this._flexItem.maxHeight = v;
+  }
+
+  get maxHeight() {
+    return this._flexItem.maxHeight;
   }
 }
 
@@ -1350,10 +1510,11 @@ import Stage from './Stage';
 import ElementTexturizer from './core/ElementTexturizer';
 import ElementListeners, {
   ElementEventCallback,
-  ElementResizeEventCallback, ElementTextureErrorEventCallback,
-  ElementTextureEventCallback
+  ElementResizeEventCallback,
+  ElementTextureErrorEventCallback,
+  ElementTextureEventCallback,
 } from './ElementListeners';
 import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from '../flex/FlexContainer';
-import TextureSource from "./TextureSource";
+import TextureSource from './TextureSource';
 
 export default Element;

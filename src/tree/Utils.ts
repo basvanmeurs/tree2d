@@ -146,7 +146,7 @@ export default class Utils {
 
   static setToArray<T>(s: Set<T>): T[] {
     const result = new Array<T>();
-    s.forEach((value) => {
+    s.forEach(value => {
       result.push(value);
     });
     return result;

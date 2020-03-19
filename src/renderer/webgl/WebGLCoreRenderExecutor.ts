@@ -96,10 +96,6 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCor
     }
   }
 
-  /**
-   * @param {WebGLShader} shader;
-   * @param {CoreQuadOperation} operation;
-   */
   protected _useShaderProgram(shader: WebGLShader, operation: WebGLCoreQuadOperation) {
     if (!shader.hasSameProgram(this.currentShaderProgram!)) {
       if (this.currentShaderProgram) {

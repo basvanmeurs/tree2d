@@ -110,8 +110,7 @@ export default class CircularPushShader extends DefaultShader {
 
   /**
    * Progresses the shader with the specified (fractional) number of buckets.
-   * @param {number} o;
-   *   A number from 0 to 1 (1 = all buckets).
+   * @param o - A number from 0 to 1 (1 = all buckets).
    */
   progress(o: number) {
     this._offset += o * this._buckets;
@@ -139,6 +138,10 @@ export default class CircularPushShader extends DefaultShader {
   set offset(v: number) {
     this._offset = v;
     this.redraw();
+  }
+
+  get offset() {
+    return this._offset;
   }
 
   setupUniforms(operation: WebGLCoreQuadOperation) {
