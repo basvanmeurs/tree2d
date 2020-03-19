@@ -1,7 +1,7 @@
 {
     "author": "Planning.nl, Bas van Meurs",
     "name": "tree2d",
-    "version": "1.4.1",
+    "version": "1.0.0-alpha.1",
     "license": "apache",
     "main": "dist/tree2d.js",
     "module": "index.js",
@@ -11,7 +11,16 @@
         "dist/**"
     ],
     "scripts": {
-        "build": "node scripts/build.js"
+        "test": "echo \"please run tests in browser using tests/test.html\"",
+        "build": "tsc",
+        "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+        "formatTests": "prettier --write \"tests/**/*.ts\" \"tests/**/*.js\"",
+        "lint": "tslint -p tsconfig.json",
+        "prepare": "npm run build",
+        "prepublishOnly": "npm test && npm run lint",
+        "preversion": "npm run lint",
+        "version": "npm run format",
+        "bundle": "node scripts/build.js"
     },
     "buildOptions": {
         "name": "tree2d",
@@ -28,18 +37,7 @@
         "url": "git@github.com:Planning-nl/tree2d.git"
     },
     "devDependencies": {
-        "eslint": "^6.8.0",
-        "@typescript-eslint/eslint-plugin": "^2.20.0",
-        "@typescript-eslint/parser": "^2.20.0",
-        "eslint-config-prettier": "^6.10.0",
-        "eslint-plugin-prettier": "^3.1.2",
         "prettier": "^1.19.1",
-        "@babel/cli": "^7.8.4",
-        "@babel/core": "^7.8.4",
-        "@babel/node": "^7.8.4",
-        "@babel/plugin-transform-parameters": "^7.8.3",
-        "@babel/plugin-transform-spread": "^7.8.3",
-        "@babel/preset-env": "^7.8.4",
         "chai": "^4.2.0",
         "mocha": "^6.2.1",
         "@microsoft/api-extractor": "^7.3.9",
@@ -57,6 +55,8 @@
         "rollup-plugin-license": "^0.10.0",
         "rollup-plugin-terser": "^5.1.2",
         "sinon": "^7.5.0",
+        "tslint": "^6.0.0",
+        "tslint-config-prettier": "^1.18.0",
         "typescript": "^3.8.2"
     },
     "dependencies": {

@@ -1,156 +1,156 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import DefaultShader from './DefaultShader';
+import CoreContext from '../../../tree/core/CoreContext';
+import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 
 export default class Light3dShader extends DefaultShader {
-    private _strength: number = 0.5;
-    private _ambient: number = 0.5;
-    private _fudge: number = 0.4;
+  private _strength: number = 0.5;
+  private _ambient: number = 0.5;
+  private _fudge: number = 0.4;
 
-    private _rx: number = 0;
-    private _ry: number = 0;
+  private _rx: number = 0;
+  private _ry: number = 0;
 
-    private _z: number = 0;
+  private _z: number = 0;
 
-    private _pivotX: number = NaN;
-    private _pivotY: number = NaN;
-    private _pivotZ: number = NaN;
+  private _pivotX: number = NaN;
+  private _pivotY: number = NaN;
+  private _pivotZ: number = NaN;
 
-    private _lightY: number = 0;
-    private _lightZ: number = 0;
+  private _lightY: number = 0;
+  private _lightZ: number = 0;
 
-    constructor(context: CoreContext) {
-        super(context);
-    }
+  constructor(context: CoreContext) {
+    super(context);
+  }
 
-    setupUniforms(operation: WebGLCoreQuadOperation) {
-        super.setupUniforms(operation);
+  setupUniforms(operation: WebGLCoreQuadOperation) {
+    super.setupUniforms(operation);
 
-        const vr = operation.shaderOwner;
-        const element = vr.element;
+    const vr = operation.shaderOwner;
+    const element = vr.element;
 
-        const pivotX = isNaN(this._pivotX) ? element.pivotX * vr.getLayoutW() : this._pivotX;
-        const pivotY = isNaN(this._pivotY) ? element.pivotY * vr.getLayoutH() : this._pivotY;
-        const coords = vr.getRenderTextureCoords(pivotX, pivotY);
+    const pivotX = isNaN(this._pivotX) ? element.pivotX * vr.getLayoutW() : this._pivotX;
+    const pivotY = isNaN(this._pivotY) ? element.pivotY * vr.getLayoutH() : this._pivotY;
+    const coords = vr.getRenderTextureCoords(pivotX, pivotY);
 
-        // Counter normal rotation.
+    // Counter normal rotation.
 
-        const rz = -Math.atan2(vr.renderContext.tc, vr.renderContext.ta);
+    const rz = -Math.atan2(vr.renderContext.tc, vr.renderContext.ta);
 
-        const gl = this.gl;
-        this._setUniform("pivot", new Float32Array([coords[0], coords[1], this._pivotZ]), gl.uniform3fv);
-        this._setUniform("rot", new Float32Array([this._rx, this._ry, rz]), gl.uniform3fv);
+    const gl = this.gl;
+    this._setUniform('pivot', new Float32Array([coords[0], coords[1], this._pivotZ]), gl.uniform3fv);
+    this._setUniform('rot', new Float32Array([this._rx, this._ry, rz]), gl.uniform3fv);
 
-        this._setUniform("z", this._z, gl.uniform1f);
-        this._setUniform("lightY", this.lightY, gl.uniform1f);
-        this._setUniform("lightZ", this.lightZ, gl.uniform1f);
-        this._setUniform("strength", this._strength, gl.uniform1f);
-        this._setUniform("ambient", this._ambient, gl.uniform1f);
-        this._setUniform("fudge", this._fudge, gl.uniform1f);
-    }
+    this._setUniform('z', this._z, gl.uniform1f);
+    this._setUniform('lightY', this.lightY, gl.uniform1f);
+    this._setUniform('lightZ', this.lightZ, gl.uniform1f);
+    this._setUniform('strength', this._strength, gl.uniform1f);
+    this._setUniform('ambient', this._ambient, gl.uniform1f);
+    this._setUniform('fudge', this._fudge, gl.uniform1f);
+  }
 
-    set strength(v) {
-        this._strength = v;
-        this.redraw();
-    }
+  set strength(v) {
+    this._strength = v;
+    this.redraw();
+  }
 
-    get strength() {
-        return this._strength;
-    }
+  get strength() {
+    return this._strength;
+  }
 
-    set ambient(v) {
-        this._ambient = v;
-        this.redraw();
-    }
+  set ambient(v) {
+    this._ambient = v;
+    this.redraw();
+  }
 
-    get ambient() {
-        return this._ambient;
-    }
+  get ambient() {
+    return this._ambient;
+  }
 
-    set fudge(v) {
-        this._fudge = v;
-        this.redraw();
-    }
+  set fudge(v) {
+    this._fudge = v;
+    this.redraw();
+  }
 
-    get fudge() {
-        return this._fudge;
-    }
+  get fudge() {
+    return this._fudge;
+  }
 
-    get rx() {
-        return this._rx;
-    }
+  get rx() {
+    return this._rx;
+  }
 
-    set rx(v) {
-        this._rx = v;
-        this.redraw();
-    }
+  set rx(v) {
+    this._rx = v;
+    this.redraw();
+  }
 
-    get ry() {
-        return this._ry;
-    }
+  get ry() {
+    return this._ry;
+  }
 
-    set ry(v) {
-        this._ry = v;
-        this.redraw();
-    }
+  set ry(v) {
+    this._ry = v;
+    this.redraw();
+  }
 
-    get z() {
-        return this._z;
-    }
+  get z() {
+    return this._z;
+  }
 
-    set z(v) {
-        this._z = v;
-        this.redraw();
-    }
+  set z(v) {
+    this._z = v;
+    this.redraw();
+  }
 
-    get pivotX() {
-        return this._pivotX;
-    }
+  get pivotX() {
+    return this._pivotX;
+  }
 
-    set pivotX(v) {
-        this._pivotX = v + 1;
-        this.redraw();
-    }
+  set pivotX(v) {
+    this._pivotX = v + 1;
+    this.redraw();
+  }
 
-    get pivotY() {
-        return this._pivotY;
-    }
+  get pivotY() {
+    return this._pivotY;
+  }
 
-    set pivotY(v) {
-        this._pivotY = v + 1;
-        this.redraw();
-    }
+  set pivotY(v) {
+    this._pivotY = v + 1;
+    this.redraw();
+  }
 
-    get lightY() {
-        return this._lightY;
-    }
+  get lightY() {
+    return this._lightY;
+  }
 
-    set lightY(v) {
-        this._lightY = v;
-        this.redraw();
-    }
+  set lightY(v) {
+    this._lightY = v;
+    this.redraw();
+  }
 
-    get pivotZ() {
-        return this._pivotZ;
-    }
+  get pivotZ() {
+    return this._pivotZ;
+  }
 
-    set pivotZ(v) {
-        this._pivotZ = v;
-        this.redraw();
-    }
+  set pivotZ(v) {
+    this._pivotZ = v;
+    this.redraw();
+  }
 
-    get lightZ() {
-        return this._lightZ;
-    }
+  get lightZ() {
+    return this._lightZ;
+  }
 
-    set lightZ(v) {
-        this._lightZ = v;
-        this.redraw();
-    }
+  set lightZ(v) {
+    this._lightZ = v;
+    this.redraw();
+  }
 
-    useDefault() {
-        return this._rx === 0 && this._ry === 0 && this._z === 0 && this._strength === 0 && this._ambient === 1;
-    }
+  useDefault() {
+    return this._rx === 0 && this._ry === 0 && this._z === 0 && this._strength === 0 && this._ambient === 1;
+  }
 }
 
 Light3dShader.prototype.vertexShaderSource = `

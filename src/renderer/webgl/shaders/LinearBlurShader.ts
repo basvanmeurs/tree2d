@@ -1,55 +1,55 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import DefaultShader from './DefaultShader';
+import CoreContext from '../../../tree/core/CoreContext';
+import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 
 export default class LinearBlurShader extends DefaultShader {
-    private _direction: Float32Array = new Float32Array([1, 0]);
-    private _kernelRadius: number = 1;
+  private _direction: Float32Array = new Float32Array([1, 0]);
+  private _kernelRadius: number = 1;
 
-    constructor(context: CoreContext) {
-        super(context);
-    }
+  constructor(context: CoreContext) {
+    super(context);
+  }
 
-    get x() {
-        return this._direction[0];
-    }
+  get x() {
+    return this._direction[0];
+  }
 
-    set x(v) {
-        this._direction[0] = v;
-        this.redraw();
-    }
+  set x(v) {
+    this._direction[0] = v;
+    this.redraw();
+  }
 
-    get y() {
-        return this._direction[1];
-    }
+  get y() {
+    return this._direction[1];
+  }
 
-    set y(v) {
-        this._direction[1] = v;
-        this.redraw();
-    }
+  set y(v) {
+    this._direction[1] = v;
+    this.redraw();
+  }
 
-    get kernelRadius() {
-        return this._kernelRadius;
-    }
+  get kernelRadius() {
+    return this._kernelRadius;
+  }
 
-    set kernelRadius(v) {
-        this._kernelRadius = v;
-        this.redraw();
-    }
+  set kernelRadius(v) {
+    this._kernelRadius = v;
+    this.redraw();
+  }
 
-    useDefault() {
-        return this._kernelRadius === 0;
-    }
+  useDefault() {
+    return this._kernelRadius === 0;
+  }
 
-    setupUniforms(operation: WebGLCoreQuadOperation) {
-        super.setupUniforms(operation);
-        this._setUniform("direction", this._direction, this.gl.uniform2fv);
-        this._setUniform("kernelRadius", this._kernelRadius, this.gl.uniform1i);
+  setupUniforms(operation: WebGLCoreQuadOperation) {
+    super.setupUniforms(operation);
+    this._setUniform('direction', this._direction, this.gl.uniform2fv);
+    this._setUniform('kernelRadius', this._kernelRadius, this.gl.uniform1i);
 
-        const w = operation.getRenderWidth();
-        const h = operation.getRenderHeight();
-        this._setUniform("resolution", new Float32Array([w, h]), this.gl.uniform2fv);
-    }
+    const w = operation.getRenderWidth();
+    const h = operation.getRenderHeight();
+    this._setUniform('resolution', new Float32Array([w, h]), this.gl.uniform2fv);
+  }
 }
 
 LinearBlurShader.prototype.fragmentShaderSource = `

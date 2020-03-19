@@ -1,113 +1,17 @@
-export default class ImageWorker {
-    constructor(options = {}) {
-        this._items = new Map();
-        this._id = 0;
-
-        this._initWorker();
-    }
-
-    destroy() {
-        if (this._worker) {
-            this._worker.terminate();
-        }
-    }
-
-    _initWorker() {
-        const code = `(${createWorker.toString()})()`;
-        const blob = new Blob([code.replace('"use strict";', "")]); // firefox adds "use strict"; to any function which might block worker execution so knock it off
-        const blobURL = (window.URL ? URL : webkitURL).createObjectURL(blob, {
-            type: "application/javascript; charset=utf-8"
-        });
-        this._worker = new Worker(blobURL);
-
-        this._worker.postMessage({ type: "config", config: { path: window.location.href } });
-
-        this._worker.onmessage = e => {
-            if (e.data && e.data.id) {
-                const id = e.data.id;
-                const item = this._items.get(id);
-                if (item) {
-                    if (e.data.type == "data") {
-                        this.finish(item, e.data.info);
-                    } else {
-                        this.error(item, e.data.info);
-                    }
-                }
-            }
-        };
-    }
-
-    create(src) {
-        const id = ++this._id;
-        const item = new ImageWorkerImage(this, id, src);
-        this._items.set(id, item);
-        this._worker.postMessage({ type: "add", id: id, src: src });
-        return item;
-    }
-
-    cancel(image) {
-        this._worker.postMessage({ type: "cancel", id: image.id });
-        this._items.delete(image.id);
-    }
-
-    error(image, info) {
-        image.error(info);
-        this._items.delete(image.id);
-    }
-
-    finish(image, info) {
-        image.load(info);
-        this._items.delete(image.id);
-    }
-}
-
-class ImageWorkerImage {
-    constructor(manager, id, src) {
-        this._manager = manager;
-        this._id = id;
-        this._src = src;
-        this._onError = null;
-        this._onLoad = null;
-    }
-
-    get id() {
-        return this._id;
-    }
-
-    get src() {
-        return this._src;
-    }
-
-    set onError(f) {
-        this._onError = f;
-    }
-
-    set onLoad(f) {
-        this._onLoad = f;
-    }
-
-    cancel() {
-        this._manager.cancel(this);
-    }
-
-    load(info) {
-        if (this._onLoad) {
-            this._onLoad(info);
-        }
-    }
-
-    error(info) {
-        if (this._onError) {
-            this._onError(info);
-        }
-    }
+export default function createWorker() {
+    const code = `(${createWorkerServer.toString()})()`;
+    const blob = new Blob([code.replace('"use strict";', '')]); // firefox adds "use strict"; to any function which might block worker execution so knock it off
+    const blobURL = (window.URL ? URL : webkitURL).createObjectURL(blob, {
+        type: 'application/javascript; charset=utf-8',
+    });
+    return new Worker(blobURL);
 }
 
 /**
  * Notice that, within the createWorker function, we must only use ES5 code to keep it ES5-valid after babelifying, as
  *  the converted code of this section is converted to a blob and used as the js of the web worker thread.
  */
-const createWorker = function() {
+function createWorkerServer() {
     function ImageWorkerServer() {
         this.items = new Map();
 
@@ -122,16 +26,16 @@ const createWorker = function() {
     };
 
     ImageWorkerServer.prototype._receiveMessage = function(e) {
-        if (e.data.type === "config") {
+        if (e.data.type === 'config') {
             this.config = e.data.config;
 
             const base = this.config.path;
-            const parts = base.split("/");
+            const parts = base.split('/');
             parts.pop();
-            this._relativeBase = parts.join("/") + "/";
-        } else if (e.data.type === "add") {
+            this._relativeBase = parts.join('/') + '/';
+        } else if (e.data.type === 'add') {
             this.add(e.data.id, e.data.src);
-        } else if (e.data.type === "cancel") {
+        } else if (e.data.type === 'cancel') {
             this.cancel(e.data.id);
         }
     };
@@ -142,9 +46,9 @@ const createWorker = function() {
             src = this._relativeBase + src;
         }
 
-        if (src.substr(0, 2) === "//") {
+        if (src.substr(0, 2) === '//') {
             // This doesn't work for image workers.
-            src = "http:" + src;
+            src = 'http:' + src;
         }
 
         const item = new ImageWorkerServerItem(id, src);
@@ -170,26 +74,26 @@ const createWorker = function() {
     ImageWorkerServer.prototype.finish = function(item, { imageBitmap, hasAlphaChannel }) {
         postMessage(
             {
-                type: "data",
+                type: 'data',
                 id: item.id,
                 info: {
                     imageBitmap,
-                    hasAlphaChannel
-                }
+                    hasAlphaChannel,
+                },
             },
-            [imageBitmap]
+            [imageBitmap],
         );
         this.items.delete(item.id);
     };
 
     ImageWorkerServer.prototype.error = function(item, { type, message }) {
         postMessage({
-            type: "error",
+            type: 'error',
             id: item.id,
             info: {
                 type,
-                message
-            }
+                message,
+            },
         });
         this.items.delete(item.id);
     };
@@ -204,38 +108,38 @@ const createWorker = function() {
         this._canceled = false;
     }
 
-    Object.defineProperty(ImageWorkerServerItem.prototype, "id", {
+    Object.defineProperty(ImageWorkerServerItem.prototype, 'id', {
         get: function() {
             return this._id;
-        }
+        },
     });
 
-    Object.defineProperty(ImageWorkerServerItem.prototype, "onFinish", {
+    Object.defineProperty(ImageWorkerServerItem.prototype, 'onFinish', {
         get: function() {
             return this._onFinish;
         },
         set: function(f) {
             this._onFinish = f;
-        }
+        },
     });
 
-    Object.defineProperty(ImageWorkerServerItem.prototype, "onError", {
+    Object.defineProperty(ImageWorkerServerItem.prototype, 'onError', {
         get: function() {
             return this._onError;
         },
         set: function(f) {
             this._onError = f;
-        }
+        },
     });
 
     ImageWorkerServerItem.prototype.start = function() {
         this._xhr = new XMLHttpRequest();
-        this._xhr.open("GET", this._src, true);
-        this._xhr.responseType = "blob";
+        this._xhr.open('GET', this._src, true);
+        this._xhr.responseType = 'blob';
 
         const t = this;
         this._xhr.onerror = function(oEvent) {
-            t.error({ type: "connection", message: "Connection error" });
+            t.error({ type: 'connection', message: 'Connection error' });
         };
 
         this._xhr.onload = function(oEvent) {
@@ -251,23 +155,23 @@ const createWorker = function() {
     ImageWorkerServerItem.prototype._createImageBitmap = function(blob) {
         const t = this;
         createImageBitmap(blob, {
-            premultiplyAlpha: "premultiply",
-            colorSpaceConversion: "none",
-            imageOrientation: "none"
+            premultiplyAlpha: 'premultiply',
+            colorSpaceConversion: 'none',
+            imageOrientation: 'none',
         })
             .then(function(imageBitmap) {
                 t.finish({
                     imageBitmap,
-                    hasAlphaChannel: t._hasAlphaChannel()
+                    hasAlphaChannel: t._hasAlphaChannel(),
                 });
             })
             .catch(function(e) {
-                t.error({ type: "parse", message: "Error parsing image data" });
+                t.error({ type: 'parse', message: 'Error parsing image data' });
             });
     };
 
     ImageWorkerServerItem.prototype._hasAlphaChannel = function() {
-        return this._mimeType.indexOf("image/png") !== -1;
+        return this._mimeType.indexOf('image/png') !== -1;
     };
 
     ImageWorkerServerItem.prototype.cancel = function() {

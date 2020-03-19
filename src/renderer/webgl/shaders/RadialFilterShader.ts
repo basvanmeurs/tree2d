@@ -1,43 +1,43 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import DefaultShader from './DefaultShader';
+import CoreContext from '../../../tree/core/CoreContext';
+import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 
 export default class RadialFilterShader extends DefaultShader {
-    private _radius: number = 0;
-    private _cutoff: number = 1;
+  private _radius: number = 0;
+  private _cutoff: number = 1;
 
-    constructor(context: CoreContext) {
-        super(context);
-    }
+  constructor(context: CoreContext) {
+    super(context);
+  }
 
-    set radius(v) {
-        this._radius = v;
-        this.redraw();
-    }
+  set radius(v) {
+    this._radius = v;
+    this.redraw();
+  }
 
-    get radius() {
-        return this._radius;
-    }
+  get radius() {
+    return this._radius;
+  }
 
-    set cutoff(v) {
-        this._cutoff = v;
-        this.redraw();
-    }
+  set cutoff(v) {
+    this._cutoff = v;
+    this.redraw();
+  }
 
-    get cutoff() {
-        return this._cutoff;
-    }
+  get cutoff() {
+    return this._cutoff;
+  }
 
-    useDefault() {
-        return this._radius === 0;
-    }
+  useDefault() {
+    return this._radius === 0;
+  }
 
-    setupUniforms(operation: WebGLCoreQuadOperation) {
-        super.setupUniforms(operation);
-        // We substract half a pixel to get a better cutoff effect.
-        this._setUniform("radius", (2 * (this._radius - 0.5)) / operation.getRenderWidth(), this.gl.uniform1f);
-        this._setUniform("cutoff", (0.5 * operation.getRenderWidth()) / this._cutoff, this.gl.uniform1f);
-    }
+  setupUniforms(operation: WebGLCoreQuadOperation) {
+    super.setupUniforms(operation);
+    // We substract half a pixel to get a better cutoff effect.
+    this._setUniform('radius', (2 * (this._radius - 0.5)) / operation.getRenderWidth(), this.gl.uniform1f);
+    this._setUniform('cutoff', (0.5 * operation.getRenderWidth()) / this._cutoff, this.gl.uniform1f);
+  }
 }
 
 RadialFilterShader.prototype.vertexShaderSource = `

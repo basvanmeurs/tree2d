@@ -1,66 +1,66 @@
-import WebGLShader from "../WebGLShader";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import WebGLShader from '../WebGLShader';
+import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 
 export default class DefaultShader extends WebGLShader {
-    enableAttribs() {
-        // Enables the attribs in the shader program.
-        const gl = this.gl;
-        gl.vertexAttribPointer(this._attrib("aVertexPosition"), 2, gl.FLOAT, false, 20, 0);
-        gl.enableVertexAttribArray(this._attrib("aVertexPosition"));
+  enableAttribs() {
+    // Enables the attribs in the shader program.
+    const gl = this.gl;
+    gl.vertexAttribPointer(this._attrib('aVertexPosition'), 2, gl.FLOAT, false, 20, 0);
+    gl.enableVertexAttribArray(this._attrib('aVertexPosition'));
 
-        if (this._attrib("aTextureCoord") !== -1) {
-            gl.vertexAttribPointer(this._attrib("aTextureCoord"), 2, gl.FLOAT, false, 20, 2 * 4);
-            gl.enableVertexAttribArray(this._attrib("aTextureCoord"));
-        }
-
-        if (this._attrib("aColor") !== -1) {
-            // Some shaders may ignore the color.
-            gl.vertexAttribPointer(this._attrib("aColor"), 4, gl.UNSIGNED_BYTE, true, 20, 4 * 4);
-            gl.enableVertexAttribArray(this._attrib("aColor"));
-        }
+    if (this._attrib('aTextureCoord') !== -1) {
+      gl.vertexAttribPointer(this._attrib('aTextureCoord'), 2, gl.FLOAT, false, 20, 2 * 4);
+      gl.enableVertexAttribArray(this._attrib('aTextureCoord'));
     }
 
-    disableAttribs() {
-        // Disables the attribs in the shader program.
-        const gl = this.gl;
-        gl.disableVertexAttribArray(this._attrib("aVertexPosition"));
+    if (this._attrib('aColor') !== -1) {
+      // Some shaders may ignore the color.
+      gl.vertexAttribPointer(this._attrib('aColor'), 4, gl.UNSIGNED_BYTE, true, 20, 4 * 4);
+      gl.enableVertexAttribArray(this._attrib('aColor'));
+    }
+  }
 
-        if (this._attrib("aTextureCoord") !== -1) {
-            gl.disableVertexAttribArray(this._attrib("aTextureCoord"));
-        }
+  disableAttribs() {
+    // Disables the attribs in the shader program.
+    const gl = this.gl;
+    gl.disableVertexAttribArray(this._attrib('aVertexPosition'));
 
-        if (this._attrib("aColor") !== -1) {
-            gl.disableVertexAttribArray(this._attrib("aColor"));
-        }
+    if (this._attrib('aTextureCoord') !== -1) {
+      gl.disableVertexAttribArray(this._attrib('aTextureCoord'));
     }
 
-    setupUniforms(operation: WebGLCoreQuadOperation) {
-        this._setUniform("projection", this._getProjection(operation), this.gl.uniform2fv);
+    if (this._attrib('aColor') !== -1) {
+      gl.disableVertexAttribArray(this._attrib('aColor'));
     }
+  }
 
-    draw(operation: WebGLCoreQuadOperation) {
-        const gl = this.gl;
+  setupUniforms(operation: WebGLCoreQuadOperation) {
+    this._setUniform('projection', this._getProjection(operation), this.gl.uniform2fv);
+  }
 
-        const length = operation.length;
+  draw(operation: WebGLCoreQuadOperation) {
+    const gl = this.gl;
 
-        if (length) {
-            let glTexture = operation.getTexture(0);
-            let pos = 0;
-            for (let i = 0; i < length; i++) {
-                const tx = operation.getTexture(i);
-                if (glTexture !== tx) {
-                    gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                    gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
-                    glTexture = tx;
-                    pos = i;
-                }
-            }
-            if (pos < length) {
-                gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                gl.drawElements(gl.TRIANGLES, 6 * (length - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
-            }
+    const length = operation.length;
+
+    if (length) {
+      let glTexture = operation.getTexture(0);
+      let pos = 0;
+      for (let i = 0; i < length; i++) {
+        const tx = operation.getTexture(i);
+        if (glTexture !== tx) {
+          gl.bindTexture(gl.TEXTURE_2D, glTexture);
+          gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+          glTexture = tx;
+          pos = i;
         }
+      }
+      if (pos < length) {
+        gl.bindTexture(gl.TEXTURE_2D, glTexture);
+        gl.drawElements(gl.TRIANGLES, 6 * (length - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+      }
     }
+  }
 }
 
 DefaultShader.prototype.vertexShaderSource = `

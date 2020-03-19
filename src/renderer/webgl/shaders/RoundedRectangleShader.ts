@@ -1,34 +1,34 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import DefaultShader from './DefaultShader';
+import CoreContext from '../../../tree/core/CoreContext';
+import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 
 export default class RoundedRectangleShader extends DefaultShader {
-    private _radius: number = 1;
+  private _radius: number = 1;
 
-    constructor(context: CoreContext) {
-        super(context);
+  constructor(context: CoreContext) {
+    super(context);
+  }
+
+  set radius(v: number) {
+    if (v < 1) {
+      v = 1;
     }
+    this._radius = v;
+    this.redraw();
+  }
 
-    set radius(v: number) {
-        if (v < 1) {
-            v = 1;
-        }
-        this._radius = v;
-        this.redraw();
-    }
+  setupUniforms(operation: WebGLCoreQuadOperation) {
+    super.setupUniforms(operation);
+    const owner = operation.shaderOwner;
 
-    setupUniforms(operation: WebGLCoreQuadOperation) {
-        super.setupUniforms(operation);
-        const owner = operation.shaderOwner;
-
-        const renderPrecision = this.context.stage.getRenderPrecision();
-        this._setUniform("radius", (this._radius + 0.5) * renderPrecision, this.gl.uniform1f);
-        this._setUniform(
-            "resolution",
-            new Float32Array([owner.getLayoutW() * renderPrecision, owner.getLayoutH() * renderPrecision]),
-            this.gl.uniform2fv
-        );
-    }
+    const renderPrecision = this.context.stage.getRenderPrecision();
+    this._setUniform('radius', (this._radius + 0.5) * renderPrecision, this.gl.uniform1f);
+    this._setUniform(
+      'resolution',
+      new Float32Array([owner.getLayoutW() * renderPrecision, owner.getLayoutH() * renderPrecision]),
+      this.gl.uniform2fv,
+    );
+  }
 }
 
 RoundedRectangleShader.prototype.vertexShaderSource = `
