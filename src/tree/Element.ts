@@ -1514,7 +1514,6 @@ import ElementListeners, {
   ElementTextureErrorEventCallback,
   ElementTextureEventCallback,
 } from './ElementListeners';
-import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from '../flex/FlexContainer';
-import TextureSource from './TextureSource';
+import {AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode} from "flexbox.js/dist/FlexContainer";
 
 export default Element;

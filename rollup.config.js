@@ -3,6 +3,8 @@ import path from "path";
 import ts from "rollup-plugin-typescript2";
 import replace from "@rollup/plugin-replace";
 import json from "@rollup/plugin-json";
+import nodeResolve from 'rollup-plugin-node-resolve';
+import commonJS from 'rollup-plugin-commonjs'
 
 if (!process.env.TARGET) {
     throw new Error("TARGET package must be specified via --environment flag.");
@@ -19,29 +21,13 @@ const packageOptions = pkg.buildOptions || {};
 let hasTSChecked = false;
 
 const outputConfigs = {
-    "esm-bundler": {
-        file: resolve(`dist/${name}.esm-bundler.js`),
-        format: `es`
-    },
-    "esm-bundler-runtime": {
-        file: resolve(`dist/${name}.runtime.esm-bundler.js`),
-        format: `es`
-    },
-    cjs: {
-        file: resolve(`dist/${name}.cjs.js`),
-        format: `cjs`
-    },
     global: {
         file: resolve(`dist/${name}.global.js`),
         format: `iife`
-    },
-    esm: {
-        file: resolve(`dist/${name}.esm.js`),
-        format: `es`
     }
 };
 
-const defaultFormats = ["esm-bundler", "cjs"];
+const defaultFormats = ["global"];
 const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(",");
 const packageFormats = inlineFormats || packageOptions.formats || defaultFormats;
 const packageConfigs = process.env.PROD_ONLY
@@ -50,12 +36,7 @@ const packageConfigs = process.env.PROD_ONLY
 
 if (process.env.NODE_ENV === "production") {
     packageFormats.forEach(format => {
-        if (format === "cjs" && packageOptions.prod !== false) {
-            packageConfigs.push(createProductionConfig(format));
-        }
-        if (format === "global" || format === "esm") {
-            packageConfigs.push(createMinifiedConfig(format));
-        }
+        packageConfigs.push(createMinifiedConfig(format));
     });
 }
 
@@ -71,16 +52,10 @@ function createConfig(format, output, plugins = []) {
     output.externalLiveBindings = false;
 
     const isProductionBuild = process.env.__DEV__ === "false" || /\.prod\.js$/.test(output.file);
-    const isGlobalBuild = format === "global";
-    const isRawESMBuild = format === "esm";
-    const isNodeBuild = format === "cjs";
-    const isBundlerESMBuild = /esm-bundler/.test(format);
-
-    if (isGlobalBuild) {
-        output.name = packageOptions.name;
-    }
 
     const shouldEmitDeclarations = process.env.TYPES != null && !hasTSChecked;
+
+    output.name = packageOptions.name;
 
     const tsPlugin = ts({
         check: process.env.NODE_ENV === "production" && !hasTSChecked,
@@ -100,28 +75,20 @@ function createConfig(format, output, plugins = []) {
     // during a single build.
     hasTSChecked = true;
 
-    const entryFile = format === "esm-bundler-runtime" ? `src/runtime.ts` : `src/index.ts`;
-
-    const external = isGlobalBuild || isRawESMBuild ? [] : Object.keys(pkg.dependencies || []);
+    const entryFile = `src/index.ts`;
 
     return {
         input: resolve(entryFile),
-        // Global and Browser ESM builds inlines everything so that they can be
-        // used alone.
-        external,
         plugins: [
+            nodeResolve(),
+            commonJS({
+                include: 'node_modules/**'
+            }),
             json({
                 namedExports: false
             }),
             tsPlugin,
-            createReplacePlugin(
-                isProductionBuild,
-                isBundlerESMBuild,
-                // isBrowserBuild?
-                (isGlobalBuild || isRawESMBuild || isBundlerESMBuild) && !packageOptions.enableNonBrowserBranches,
-                isGlobalBuild,
-                isNodeBuild
-            ),
+            createReplacePlugin(isProductionBuild),
             ...plugins
         ],
         output,
@@ -133,24 +100,11 @@ function createConfig(format, output, plugins = []) {
     };
 }
 
-function createReplacePlugin(isProduction, isBundlerESMBuild, isBrowserBuild, isGlobalBuild, isNodeBuild) {
+function createReplacePlugin(isProduction) {
     const replacements = {
         __COMMIT__: `"${process.env.COMMIT}"`,
         __VERSION__: `"${masterVersion}"`,
-        __DEV__: isBundlerESMBuild
-            ? // preserve to be handled by bundlers
-              `(process.env.NODE_ENV !== 'production')`
-            : // hard coded dev/prod builds
-              !isProduction,
-        // this is only used during tests
-        __TEST__: isBundlerESMBuild ? `(process.env.NODE_ENV === 'test')` : false,
-        // If the build is expected to run directly in the browser (global / esm builds)
-        __BROWSER__: isBrowserBuild,
-        // is targeting bundlers?
-        __BUNDLER__: isBundlerESMBuild,
-        __GLOBAL__: isGlobalBuild,
-        // is targeting Node (SSR)?
-        __NODE_JS__: isNodeBuild
+        __DEV__: !isProduction
     };
 
     // allow inline overrides like
