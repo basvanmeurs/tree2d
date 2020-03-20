@@ -12,6 +12,15 @@ export default class ElementChildList extends ObjectList<Element> {
     super();
   }
 
+  getIndex(item: Element) {
+    if (item.parent !== this.element) {
+      // Performance optimization for new items.
+      return -1;
+    } else {
+      return super.getIndex(item);
+    }
+  }
+
   protected onAdd(item: Element, index: number) {
     this.connectParent(item);
     this.element.core.addChildAt(index, item.core);

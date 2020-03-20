@@ -1,5 +1,1 @@
-Use flexbox.js as dependency
-Run prettier on all files
 Improve patch methodology > structural definition
-Compile to separate js files (no bundle, just as dep)
-Check imageworker in Ffox

@@ -30,18 +30,16 @@ export default class ObjectList<T extends ListType> {
     return this._items.length ? this._items[this._items.length - 1] : undefined;
   }
 
-  add(item: T, ensureNew = false) {
-    this.addAt(item, this._items.length, ensureNew);
+  add(item: T) {
+    this.addAt(item, this._items.length);
   }
 
-  addAt(item: T, index: number, ensureNew = false) {
+  addAt(item: T, index: number) {
     if (index >= 0 && index <= this._items.length) {
       let currentIndex = -1;
-      if (!ensureNew) {
-        currentIndex = this._items.indexOf(item);
-        if (currentIndex === index) {
-          return item;
-        }
+      currentIndex = this.getIndex(item);
+      if (currentIndex === index) {
+        return item;
       }
 
       if (currentIndex !== -1) {
@@ -81,7 +79,7 @@ export default class ObjectList<T extends ListType> {
 
   setAt(item: T, index: number) {
     if (index >= 0 && index <= this._items.length) {
-      const currentIndex = this._items.indexOf(item);
+      const currentIndex = this.getIndex(item);
       if (currentIndex !== -1) {
         if (currentIndex !== index) {
           const fromIndex = currentIndex;

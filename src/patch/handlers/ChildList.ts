@@ -28,8 +28,8 @@ export class ChildList {
     return this.c.getIndex(item);
   }
 
-  add(item: Element, ensureNew = false) {
-    this.c.add(item, ensureNew);
+  add(item: Element) {
+    this.c.add(item);
   }
 
   setAt(item: Element, index: number) {
