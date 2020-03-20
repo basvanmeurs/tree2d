@@ -41,5 +41,3 @@ jspm_packages
 dist
 
 .idea
-
-yarn.lock
