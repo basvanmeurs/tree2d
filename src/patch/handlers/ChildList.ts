@@ -4,130 +4,130 @@ import Utils from '../../tree/Utils';
 import Patcher from '../Patcher';
 
 export class ChildList {
-  private element: Element;
-  private c: ElementChildList;
+    private element: Element;
+    private c: ElementChildList;
 
-  constructor(obj: Element) {
-    this.element = obj;
-    this.c = this.element.childList;
-  }
-
-  patch(settings: any) {
-    if (Utils.isObjectLiteral(settings)) {
-      this._setByObject(settings);
-    } else if (Array.isArray(settings)) {
-      this._setByArray(settings);
+    constructor(obj: Element) {
+        this.element = obj;
+        this.c = this.element.childList;
     }
-  }
 
-  getRefs(): Record<string, Element | undefined> {
-    return this.c.getRefs();
-  }
+    patch(settings: any) {
+        if (Utils.isObjectLiteral(settings)) {
+            this._setByObject(settings);
+        } else if (Array.isArray(settings)) {
+            this._setByArray(settings);
+        }
+    }
 
-  getIndex(item: Element) {
-    return this.c.getIndex(item);
-  }
+    getRefs(): Record<string, Element | undefined> {
+        return this.c.getRefs();
+    }
 
-  add(item: Element) {
-    this.c.add(item);
-  }
+    getIndex(item: Element) {
+        return this.c.getIndex(item);
+    }
 
-  setAt(item: Element, index: number) {
-    this.c.setAt(item, index);
-  }
+    add(item: Element) {
+        this.c.add(item);
+    }
 
-  _setByObject(settings: any) {
-    // Overrule settings of known referenced items.
-    const refs = this.getRefs();
-    const crefs = Object.keys(settings);
-    for (let i = 0, n = crefs.length; i < n; i++) {
-      const cref = crefs[i];
-      const s = settings[cref];
+    setAt(item: Element, index: number) {
+        this.c.setAt(item, index);
+    }
 
-      let c = refs[cref];
-      if (!c) {
-        if (this.isItem(s)) {
-          // Replace previous item;
-          s.ref = cref;
-          this.add(s);
+    _setByObject(settings: any) {
+        // Overrule settings of known referenced items.
+        const refs = this.getRefs();
+        const crefs = Object.keys(settings);
+        for (let i = 0, n = crefs.length; i < n; i++) {
+            const cref = crefs[i];
+            const s = settings[cref];
+
+            let c = refs[cref];
+            if (!c) {
+                if (this.isItem(s)) {
+                    // Replace previous item;
+                    s.ref = cref;
+                    this.add(s);
+                } else {
+                    // Create new item.
+                    c = this.createItem(s);
+                    c.ref = cref;
+                    Patcher.patchObject(c, s);
+                    this.add(c);
+                }
+            } else {
+                if (this.isItem(s)) {
+                    if (c !== s) {
+                        // Replace previous item;
+                        const idx = this.getIndex(c);
+                        s.ref = cref;
+                        this.setAt(s, idx);
+                    }
+                } else {
+                    Patcher.patchObject(c, s);
+                }
+            }
+        }
+    }
+
+    _equalsArray(array: any[]) {
+        let same = true;
+        const items = this.c.getItems();
+        if (array.length === items.length) {
+            for (let i = 0, n = items.length; i < n && same; i++) {
+                same = same && items[i] === array[i];
+            }
         } else {
-          // Create new item.
-          c = this.createItem(s);
-          c.ref = cref;
-          Patcher.patchObject(c, s);
-          this.add(c);
+            same = false;
         }
-      } else {
-        if (this.isItem(s)) {
-          if (c !== s) {
-            // Replace previous item;
-            const idx = this.getIndex(c);
-            s.ref = cref;
-            this.setAt(s, idx);
-          }
-        } else {
-          Patcher.patchObject(c, s);
-        }
-      }
-    }
-  }
-
-  _equalsArray(array: any[]) {
-    let same = true;
-    const items = this.c.getItems();
-    if (array.length === items.length) {
-      for (let i = 0, n = items.length; i < n && same; i++) {
-        same = same && items[i] === array[i];
-      }
-    } else {
-      same = false;
-    }
-    return same;
-  }
-
-  _setByArray(array: any[]) {
-    // For performance reasons, first check if the arrays match exactly and bail out if they do.
-    if (this._equalsArray(array)) {
-      return;
+        return same;
     }
 
-    const items = this.c.getItems();
-
-    let refs;
-    const newItems = [];
-    for (let i = 0, n = array.length; i < n; i++) {
-      const s = array[i];
-      if (this.isItem(s)) {
-        newItems.push(s);
-      } else {
-        const cref = s.ref;
-        let c;
-        if (cref) {
-          if (!refs) refs = this.getRefs();
-          c = refs[cref];
+    _setByArray(array: any[]) {
+        // For performance reasons, first check if the arrays match exactly and bail out if they do.
+        if (this._equalsArray(array)) {
+            return;
         }
 
-        if (!c) {
-          // Create new item.
-          c = this.createItem(s);
+        const items = this.c.getItems();
+
+        let refs;
+        const newItems = [];
+        for (let i = 0, n = array.length; i < n; i++) {
+            const s = array[i];
+            if (this.isItem(s)) {
+                newItems.push(s);
+            } else {
+                const cref = s.ref;
+                let c;
+                if (cref) {
+                    if (!refs) refs = this.getRefs();
+                    c = refs[cref];
+                }
+
+                if (!c) {
+                    // Create new item.
+                    c = this.createItem(s);
+                }
+
+                if (Utils.isObjectLiteral(s)) {
+                    Patcher.patchObject(c, s);
+                }
+
+                newItems.push(c);
+            }
         }
 
-        if (Utils.isObjectLiteral(s)) {
-          Patcher.patchObject(c, s);
-        }
-
-        newItems.push(c);
-      }
+        this.c.setItems(newItems);
     }
 
-    this.c.setItems(newItems);
-  }
+    createItem(object: any): Element {
+        return Patcher.createObject(object, Element, this.element.stage);
+    }
 
-  createItem(object: any): Element {
-    return Patcher.createObject(object, Element, this.element.stage);
-  }
-
-  isItem(object: any) {
-    return object instanceof Element;
-  }
+    isItem(object: any) {
+        return object instanceof Element;
+    }
 }

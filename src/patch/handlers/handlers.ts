@@ -6,10 +6,10 @@ import ChildrenHandler from './ChildrenHandler';
 import { ShaderHandler } from './ShaderHandler';
 
 const handlers = [
-  new SingleReferenceHandler(Element, 'texture', Texture, obj => [obj.stage]),
-  new ShaderHandler(Element, 'shader'),
-  new TextHandler(Element, 'text'),
-  new ChildrenHandler(Element, 'children'),
+    new SingleReferenceHandler(Element, 'texture', Texture, obj => [obj.stage]),
+    new ShaderHandler(Element, 'shader'),
+    new TextHandler(Element, 'text'),
+    new ChildrenHandler(Element, 'children'),
 ];
 
 export default handlers;

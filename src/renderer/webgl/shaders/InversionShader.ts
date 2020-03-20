@@ -3,29 +3,29 @@ import CoreContext from '../../../tree/core/CoreContext';
 import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 
 export default class InversionShader extends DefaultShader {
-  private _amount: number = 1;
+    private _amount: number = 1;
 
-  constructor(context: CoreContext) {
-    super(context);
-  }
+    constructor(context: CoreContext) {
+        super(context);
+    }
 
-  set amount(v: number) {
-    this._amount = v;
-    this.redraw();
-  }
+    set amount(v: number) {
+        this._amount = v;
+        this.redraw();
+    }
 
-  get amount() {
-    return this._amount;
-  }
+    get amount() {
+        return this._amount;
+    }
 
-  useDefault() {
-    return this._amount === 0;
-  }
+    useDefault() {
+        return this._amount === 0;
+    }
 
-  setupUniforms(operation: WebGLCoreQuadOperation) {
-    super.setupUniforms(operation);
-    this._setUniform('amount', this._amount, this.gl.uniform1f);
-  }
+    setupUniforms(operation: WebGLCoreQuadOperation) {
+        super.setupUniforms(operation);
+        this._setUniform('amount', this._amount, this.gl.uniform1f);
+    }
 }
 
 InversionShader.prototype.fragmentShaderSource = `

@@ -4,109 +4,109 @@ import CoreContext from '../../../tree/core/CoreContext';
 import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 
 export default class OutlineShader extends DefaultShader {
-  private _width: number = 5;
-  private _col: number = 0xffffffff;
-  private _color: number[] = [1, 1, 1, 1];
+    private _width: number = 5;
+    private _col: number = 0xffffffff;
+    private _color: number[] = [1, 1, 1, 1];
 
-  constructor(context: CoreContext) {
-    super(context);
-  }
-
-  set width(v: number) {
-    this._width = v;
-    this.redraw();
-  }
-
-  get width() {
-    return this._width;
-  }
-
-  get color() {
-    return this._col;
-  }
-
-  set color(v) {
-    if (this._col !== v) {
-      const col = ColorUtils.getRgbaComponentsNormalized(v);
-      col[0] = col[0] * col[3];
-      col[1] = col[1] * col[3];
-      col[2] = col[2] * col[3];
-
-      this._color = col;
-
-      this.redraw();
-
-      this._col = v;
+    constructor(context: CoreContext) {
+        super(context);
     }
-  }
 
-  useDefault() {
-    return this._width === 0 || this._color[3] === 0;
-  }
-
-  setupUniforms(operation: WebGLCoreQuadOperation) {
-    super.setupUniforms(operation);
-    const gl = this.gl;
-    this._setUniform('color', new Float32Array(this._color), gl.uniform4fv);
-  }
-
-  enableAttribs() {
-    super.enableAttribs();
-    this.gl.enableVertexAttribArray(this._attrib('aCorner'));
-  }
-
-  disableAttribs() {
-    super.disableAttribs();
-    this.gl.disableVertexAttribArray(this._attrib('aCorner'));
-  }
-
-  setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
-    let offset = operation.extraAttribsDataByteOffset / 4;
-    const floats = operation.quadList.floats;
-
-    const length = operation.length;
-
-    for (let i = 0; i < length; i++) {
-      const elementCore = operation.getElementCore(i);
-
-      // We are setting attributes such that if the value is < 0 or > 1, a border should be drawn.
-      const ddw = this._width / elementCore.getLayoutW();
-      const dw = ddw / (1 - 2 * ddw);
-      const ddh = this._width / elementCore.getLayoutH();
-      const dh = ddh / (1 - 2 * ddh);
-
-      // Specify all corner points.
-      floats[offset] = -dw;
-      floats[offset + 1] = -dh;
-
-      floats[offset + 2] = 1 + dw;
-      floats[offset + 3] = -dh;
-
-      floats[offset + 4] = 1 + dw;
-      floats[offset + 5] = 1 + dh;
-
-      floats[offset + 6] = -dw;
-      floats[offset + 7] = 1 + dh;
-
-      offset += 8;
+    set width(v: number) {
+        this._width = v;
+        this.redraw();
     }
-  }
 
-  beforeDraw(operation: WebGLCoreQuadOperation) {
-    const gl = this.gl;
-    gl.vertexAttribPointer(
-      this._attrib('aCorner'),
-      2,
-      gl.FLOAT,
-      false,
-      8,
-      this.getVertexAttribPointerOffset(operation),
-    );
-  }
+    get width() {
+        return this._width;
+    }
 
-  getExtraAttribBytesPerVertex() {
-    return 8;
-  }
+    get color() {
+        return this._col;
+    }
+
+    set color(v) {
+        if (this._col !== v) {
+            const col = ColorUtils.getRgbaComponentsNormalized(v);
+            col[0] = col[0] * col[3];
+            col[1] = col[1] * col[3];
+            col[2] = col[2] * col[3];
+
+            this._color = col;
+
+            this.redraw();
+
+            this._col = v;
+        }
+    }
+
+    useDefault() {
+        return this._width === 0 || this._color[3] === 0;
+    }
+
+    setupUniforms(operation: WebGLCoreQuadOperation) {
+        super.setupUniforms(operation);
+        const gl = this.gl;
+        this._setUniform('color', new Float32Array(this._color), gl.uniform4fv);
+    }
+
+    enableAttribs() {
+        super.enableAttribs();
+        this.gl.enableVertexAttribArray(this._attrib('aCorner'));
+    }
+
+    disableAttribs() {
+        super.disableAttribs();
+        this.gl.disableVertexAttribArray(this._attrib('aCorner'));
+    }
+
+    setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
+        let offset = operation.extraAttribsDataByteOffset / 4;
+        const floats = operation.quadList.floats;
+
+        const length = operation.length;
+
+        for (let i = 0; i < length; i++) {
+            const elementCore = operation.getElementCore(i);
+
+            // We are setting attributes such that if the value is < 0 or > 1, a border should be drawn.
+            const ddw = this._width / elementCore.getLayoutW();
+            const dw = ddw / (1 - 2 * ddw);
+            const ddh = this._width / elementCore.getLayoutH();
+            const dh = ddh / (1 - 2 * ddh);
+
+            // Specify all corner points.
+            floats[offset] = -dw;
+            floats[offset + 1] = -dh;
+
+            floats[offset + 2] = 1 + dw;
+            floats[offset + 3] = -dh;
+
+            floats[offset + 4] = 1 + dw;
+            floats[offset + 5] = 1 + dh;
+
+            floats[offset + 6] = -dw;
+            floats[offset + 7] = 1 + dh;
+
+            offset += 8;
+        }
+    }
+
+    beforeDraw(operation: WebGLCoreQuadOperation) {
+        const gl = this.gl;
+        gl.vertexAttribPointer(
+            this._attrib('aCorner'),
+            2,
+            gl.FLOAT,
+            false,
+            8,
+            this.getVertexAttribPointerOffset(operation),
+        );
+    }
+
+    getExtraAttribBytesPerVertex() {
+        return 8;
+    }
 }
 
 OutlineShader.prototype.vertexShaderSource = `

@@ -4,33 +4,33 @@ import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
 import C2dGrayscaleShader from '../../c2d/shaders/GrayscaleShader';
 
 export default class GrayscaleShader extends WebGLDefaultShader {
-  private _amount: number = 1;
+    private _amount: number = 1;
 
-  constructor(context: CoreContext) {
-    super(context);
-  }
+    constructor(context: CoreContext) {
+        super(context);
+    }
 
-  static getC2d() {
-    return C2dGrayscaleShader;
-  }
+    static getC2d() {
+        return C2dGrayscaleShader;
+    }
 
-  set amount(v) {
-    this._amount = v;
-    this.redraw();
-  }
+    set amount(v) {
+        this._amount = v;
+        this.redraw();
+    }
 
-  get amount() {
-    return this._amount;
-  }
+    get amount() {
+        return this._amount;
+    }
 
-  useDefault() {
-    return this._amount === 0;
-  }
+    useDefault() {
+        return this._amount === 0;
+    }
 
-  setupUniforms(operation: WebGLCoreQuadOperation) {
-    super.setupUniforms(operation);
-    this._setUniform('amount', this._amount, this.gl.uniform1f);
-  }
+    setupUniforms(operation: WebGLCoreQuadOperation) {
+        super.setupUniforms(operation);
+        this._setUniform('amount', this._amount, this.gl.uniform1f);
+    }
 }
 
 GrayscaleShader.prototype.fragmentShaderSource = `

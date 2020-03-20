@@ -8,136 +8,136 @@ import { Constructor } from '../../util/types';
 export type GLFunction = (location: WebGLUniformLocation | null, ...args: any[]) => void;
 
 export default class WebGLShader extends Shader {
-  vertexShaderSource?: string;
-  fragmentShaderSource?: string;
+    vertexShaderSource?: string;
+    fragmentShaderSource?: string;
 
-  private _initialized: boolean;
+    private _initialized: boolean;
 
-  private readonly _program: WebGLShaderProgram;
-  gl: WebGLRenderingContext;
+    private readonly _program: WebGLShaderProgram;
+    gl: WebGLRenderingContext;
 
-  constructor(context: CoreContext) {
-    super(context);
+    constructor(context: CoreContext) {
+        super(context);
 
-    this._initialized = false;
+        this._initialized = false;
 
-    const stage = context.stage;
+        const stage = context.stage;
 
-    this.gl = stage.gl;
+        this.gl = stage.gl;
 
-    let program = (stage.renderer as WebGLRenderer).getShaderProgram(this.getConstructor());
-    if (!program) {
-      program = new WebGLShaderProgram(
-        this.gl,
-        this.constructor.prototype.vertexShaderSource!,
-        this.constructor.prototype.fragmentShaderSource!,
-      );
+        let program = (stage.renderer as WebGLRenderer).getShaderProgram(this.getConstructor());
+        if (!program) {
+            program = new WebGLShaderProgram(
+                this.gl,
+                this.constructor.prototype.vertexShaderSource!,
+                this.constructor.prototype.fragmentShaderSource!,
+            );
 
-      // Let the vbo context perform garbage collection.
-      (stage.renderer as WebGLRenderer).setShaderProgram(this.getConstructor(), program);
+            // Let the vbo context perform garbage collection.
+            (stage.renderer as WebGLRenderer).setShaderProgram(this.getConstructor(), program);
+        }
+        this._program = program;
     }
-    this._program = program;
-  }
 
-  private getConstructor() {
-    return this.constructor as Constructor<WebGLShader>;
-  }
-
-  get glProgram() {
-    return this._program.glProgram;
-  }
-
-  protected _init() {
-    if (!this._initialized) {
-      this.initialize();
-      this._initialized = true;
+    private getConstructor() {
+        return this.constructor as Constructor<WebGLShader>;
     }
-  }
 
-  initialize() {
-    this._program.compile();
-  }
+    get glProgram() {
+        return this._program.glProgram;
+    }
 
-  get initialized() {
-    return this._initialized;
-  }
+    protected _init() {
+        if (!this._initialized) {
+            this.initialize();
+            this._initialized = true;
+        }
+    }
 
-  protected _uniform(name: string) {
-    return this._program.getUniformLocation(name);
-  }
+    initialize() {
+        this._program.compile();
+    }
 
-  protected _attrib(name: string) {
-    return this._program.getAttribLocation(name);
-  }
+    get initialized() {
+        return this._initialized;
+    }
 
-  protected _setUniform(name: string, value: any, glFunction: GLFunction) {
-    this._program.setUniformValue(name, value, glFunction);
-  }
+    protected _uniform(name: string) {
+        return this._program.getUniformLocation(name);
+    }
 
-  useProgram() {
-    this._init();
-    this.gl.useProgram(this.glProgram!);
-    this.beforeUsage();
-    this.enableAttribs();
-  }
+    protected _attrib(name: string) {
+        return this._program.getAttribLocation(name);
+    }
 
-  stopProgram() {
-    this.afterUsage();
-    this.disableAttribs();
-  }
+    protected _setUniform(name: string, value: any, glFunction: GLFunction) {
+        this._program.setUniformValue(name, value, glFunction);
+    }
 
-  hasSameProgram(other: WebGLShader) {
-    // For performance reasons, we first check for identical references.
-    return other && (other === this || other._program === this._program);
-  }
+    useProgram() {
+        this._init();
+        this.gl.useProgram(this.glProgram!);
+        this.beforeUsage();
+        this.enableAttribs();
+    }
 
-  beforeUsage() {
-    // Override to set settings other than the default settings (blend mode etc).
-  }
+    stopProgram() {
+        this.afterUsage();
+        this.disableAttribs();
+    }
 
-  afterUsage() {
-    // All settings changed in beforeUsage should be reset here.
-  }
+    hasSameProgram(other: WebGLShader) {
+        // For performance reasons, we first check for identical references.
+        return other && (other === this || other._program === this._program);
+    }
 
-  enableAttribs() {}
+    beforeUsage() {
+        // Override to set settings other than the default settings (blend mode etc).
+    }
 
-  disableAttribs() {}
+    afterUsage() {
+        // All settings changed in beforeUsage should be reset here.
+    }
 
-  getExtraAttribBytesPerVertex() {
-    return 0;
-  }
+    enableAttribs() {}
 
-  getVertexAttribPointerOffset(operation: WebGLCoreQuadOperation) {
-    return operation.extraAttribsDataByteOffset - (operation.index + 1) * 4 * this.getExtraAttribBytesPerVertex();
-  }
+    disableAttribs() {}
 
-  setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
-    // Set extra attrib data in in operation.quads.data/floats/uints, starting from
-    // operation.extraAttribsBufferByteOffset.
-  }
+    getExtraAttribBytesPerVertex() {
+        return 0;
+    }
 
-  setupUniforms(operation: WebGLCoreQuadOperation) {
-    // Set all shader-specific uniforms.
-    // Notice that all uniforms should be set, even if they have not been changed within this shader instance.
-    // The uniforms are shared by all shaders that have the same type (and shader program).
-  }
+    getVertexAttribPointerOffset(operation: WebGLCoreQuadOperation) {
+        return operation.extraAttribsDataByteOffset - (operation.index + 1) * 4 * this.getExtraAttribBytesPerVertex();
+    }
 
-  protected _getProjection(operation: WebGLCoreQuadOperation) {
-    return operation.getProjection();
-  }
+    setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
+        // Set extra attrib data in in operation.quads.data/floats/uints, starting from
+        // operation.extraAttribsBufferByteOffset.
+    }
 
-  getFlipY(operation: WebGLCoreQuadOperation) {
-    return this._getProjection(operation)[1] < 0;
-  }
+    setupUniforms(operation: WebGLCoreQuadOperation) {
+        // Set all shader-specific uniforms.
+        // Notice that all uniforms should be set, even if they have not been changed within this shader instance.
+        // The uniforms are shared by all shaders that have the same type (and shader program).
+    }
 
-  beforeDraw(operation: WebGLCoreQuadOperation) {}
+    protected _getProjection(operation: WebGLCoreQuadOperation) {
+        return operation.getProjection();
+    }
 
-  draw(operation: WebGLCoreQuadOperation) {}
+    getFlipY(operation: WebGLCoreQuadOperation) {
+        return this._getProjection(operation)[1] < 0;
+    }
 
-  afterDraw(operation: WebGLCoreQuadOperation) {}
+    beforeDraw(operation: WebGLCoreQuadOperation) {}
 
-  cleanup() {
-    this._initialized = false;
-    // Program takes little resources, so it is only destroyed when the full stage is destroyed.
-  }
+    draw(operation: WebGLCoreQuadOperation) {}
+
+    afterDraw(operation: WebGLCoreQuadOperation) {}
+
+    cleanup() {
+        this._initialized = false;
+        // Program takes little resources, so it is only destroyed when the full stage is destroyed.
+    }
 }

@@ -14,80 +14,80 @@ import CoreQuadOperation from '../tree/core/CoreQuadOperation';
 import RenderTexture from './RenderTexture';
 
 export default abstract class Renderer {
-  _defaultShader?: Shader;
+    _defaultShader?: Shader;
 
-  constructor(public stage: Stage) {}
+    constructor(public stage: Stage) {}
 
-  gc(aggressive: boolean): void {}
+    gc(aggressive: boolean): void {}
 
-  abstract destroy(): void;
+    abstract destroy(): void;
 
-  getDefaultShader(context = this.stage.context) {
-    if (!this._defaultShader) {
-      this._defaultShader = this._createDefaultShader(context);
+    getDefaultShader(context = this.stage.context) {
+        if (!this._defaultShader) {
+            this._defaultShader = this._createDefaultShader(context);
+        }
+        return this._defaultShader;
     }
-    return this._defaultShader;
-  }
 
-  protected abstract _createDefaultShader(context: CoreContext): Shader;
+    protected abstract _createDefaultShader(context: CoreContext): Shader;
 
-  isValidShaderType(shaderType: Constructor<Shader>) {
-    return shaderType.prototype instanceof this._getShaderBaseType();
-  }
+    isValidShaderType(shaderType: Constructor<Shader>) {
+        return shaderType.prototype instanceof this._getShaderBaseType();
+    }
 
-  getSupportedShaderType(shaderType: Constructor<Shader>) {
-    if (!this.isValidShaderType(shaderType)) {
-      const convertedShaderType = this._getShaderAlternative(shaderType);
-      if (!convertedShaderType) {
+    getSupportedShaderType(shaderType: Constructor<Shader>) {
+        if (!this.isValidShaderType(shaderType)) {
+            const convertedShaderType = this._getShaderAlternative(shaderType);
+            if (!convertedShaderType) {
+                return undefined;
+            }
+            return convertedShaderType;
+        } else {
+            return shaderType;
+        }
+    }
+
+    abstract _getShaderBaseType(): Constructor<Shader>;
+
+    protected _getShaderAlternative(shaderType: Constructor<Shader>): Constructor<Shader> | undefined {
         return undefined;
-      }
-      return convertedShaderType;
-    } else {
-      return shaderType;
     }
-  }
 
-  abstract _getShaderBaseType(): Constructor<Shader>;
+    abstract copyRenderTexture(
+        renderTexture: RenderTexture,
+        nativeTexture: NativeTexture,
+        options: CopyRenderTextureOptions,
+    ): void;
 
-  protected _getShaderAlternative(shaderType: Constructor<Shader>): Constructor<Shader> | undefined {
-    return undefined;
-  }
+    abstract freeTextureSource(textureSource: TextureSource): void;
 
-  abstract copyRenderTexture(
-    renderTexture: RenderTexture,
-    nativeTexture: NativeTexture,
-    options: CopyRenderTextureOptions,
-  ): void;
+    abstract uploadTextureSource(textureSource: TextureSource, options: TextureSourceOptions): NativeTexture;
 
-  abstract freeTextureSource(textureSource: TextureSource): void;
+    abstract createCoreRenderState(context: CoreContext): CoreRenderState;
 
-  abstract uploadTextureSource(textureSource: TextureSource, options: TextureSourceOptions): NativeTexture;
+    abstract createCoreRenderExecutor(context: CoreContext): CoreRenderExecutor;
 
-  abstract createCoreRenderState(context: CoreContext): CoreRenderState;
+    abstract createRenderTexture(w: number, h: number, pw: number, ph: number): RenderTexture;
 
-  abstract createCoreRenderExecutor(context: CoreContext): CoreRenderExecutor;
+    abstract freeRenderTexture(renderTexture: RenderTexture): void;
 
-  abstract createRenderTexture(w: number, h: number, pw: number, ph: number): RenderTexture;
+    abstract createCoreQuadList(): CoreQuadList;
 
-  abstract freeRenderTexture(renderTexture: RenderTexture): void;
-
-  abstract createCoreQuadList(): CoreQuadList;
-
-  abstract createCoreQuadOperation(
-    context: CoreContext,
-    shader: Shader,
-    shaderOwner: ElementCore,
-    renderTextureInfo: RenderTextureInfo,
-    scissor: number[] | undefined,
-    index: number,
-  ): CoreQuadOperation;
+    abstract createCoreQuadOperation(
+        context: CoreContext,
+        shader: Shader,
+        shaderOwner: ElementCore,
+        renderTextureInfo: RenderTextureInfo,
+        scissor: number[] | undefined,
+        index: number,
+    ): CoreQuadOperation;
 }
 
 export type CopyRenderTextureOptions = {
-  sx?: number;
-  sy?: number;
-  x?: number;
-  y?: number;
-  w?: number;
-  h?: number;
+    sx?: number;
+    sy?: number;
+    x?: number;
+    y?: number;
+    w?: number;
+    h?: number;
 };
