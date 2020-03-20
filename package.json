@@ -1,7 +1,7 @@
 {
     "author": "Planning.nl, Bas van Meurs",
     "name": "tree2d",
-    "version": "1.0.0-alpha.2",
+    "version": "1.0.0-alpha.3",
     "license": "apache",
     "main": "dist/tree2d.js",
     "module": "index.js",
