@@ -4,7 +4,7 @@ describe('textures', function() {
   let root;
   let stage;
 
-  class TestTexture extends lng.Texture {
+  class TestTexture extends tree2d.Texture {
     _getLookupId() {
       return this._lookupId;
     }
@@ -32,7 +32,7 @@ describe('textures', function() {
     _getSourceLoader() {
       return cb => {
         const canvas = this.stage.getDrawingCanvas();
-        lng.textures.RoundRectTexture.drawOnCanvas(canvas, { w: 100, h: 100, radius: [30, 30, 30, 30] });
+        tree2d.textures.RoundRectTexture.drawOnCanvas(canvas, { w: 100, h: 100, radius: [30, 30, 30, 30] });
         const opts = Object.assign({}, this.stage.platform.getTextureOptionsForDrawingCanvas(canvas));
         if (this._async) {
           this.asyncLoad = () => {
@@ -55,7 +55,7 @@ describe('textures', function() {
     const canvas = document.createElement('canvas');
     canvas.width = 500;
     canvas.height = 500;
-    stage = new lng.Stage(canvas, { clearColor: 0xffff0000, autostart: false });
+    stage = new tree2d.Stage(canvas, { clearColor: 0xffff0000, autostart: false });
     root = stage.root;
   });
 
@@ -268,7 +268,7 @@ describe('textures', function() {
         stage.drawFrame();
         chai.assert(item.texture.source.isLoaded(), 'texture loaded');
 
-        lng.Patcher.patchObject(element.getByRef('Item'), {
+        tree2d.Patcher.patchObject(element.getByRef('Item'), {
           texture: { type: TestTexture, resizeMode: { type: 'cover', w: 100, h: 100, clipY: 0 }, lookupId: 1 },
         });
         chai.assert(item.texture._resizeMode.w === 100);
@@ -313,7 +313,7 @@ describe('textures', function() {
 
             setTimeout(() => {
               // Patch Item2 with same texture as Item
-              lng.Patcher.patchObject(container, { texture: { src: imageSrc } });
+              tree2d.Patcher.patchObject(container, { texture: { src: imageSrc } });
               stage.drawFrame();
             });
           };

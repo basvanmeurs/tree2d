@@ -84,6 +84,4 @@ const index = {
 
 declare const window: any;
 
-(window as any).lng = index;
-
 export default index;

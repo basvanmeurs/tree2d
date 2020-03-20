@@ -15,11 +15,11 @@
 
 
             const options = {clearColor: 0xFF000000, canvas2d: true, useImageWorker: true};
-            const stage = new lng.Stage(canvas, options);
-            // const el = stage.createElement({texture: {type: lng.textures.RectangleTexture}, w: 100, h: 100, color: 0xFFFF0000});
-            // const el = stage.createElement({texture: {type: lng.textures.TextTexture, text: "hello world", fontSize: 46, fontStyle: 'bold'}, color: 0xFFFF0000})
-//            const el = stage.createElement({texture: {type: lng.textures.RoundRectTexture, options: {radius: [10,10,10,10], w: 100, h: 100}}, color: 0xFFFF0000})
-            const el = stage.createElement({texture: {type: lng.textures.ImageTexture, src: "../tests/shaders/example.png"}})
+            const stage = new tree2d.Stage(canvas, options);
+            // const el = stage.createElement({texture: {type: tree2d.textures.RectangleTexture}, w: 100, h: 100, color: 0xFFFF0000});
+            // const el = stage.createElement({texture: {type: tree2d.textures.TextTexture, text: "hello world", fontSize: 46, fontStyle: 'bold'}, color: 0xFFFF0000})
+//            const el = stage.createElement({texture: {type: tree2d.textures.RoundRectTexture, options: {radius: [10,10,10,10], w: 100, h: 100}}, color: 0xFFFF0000})
+            const el = stage.createElement({texture: {type: tree2d.textures.ImageTexture, src: "../tests/shaders/example.png"}})
             stage.root.childList.add(el);
 
            stage.root.w = 100;

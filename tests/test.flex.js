@@ -6,7 +6,7 @@ describe('flex', () => {
       const canvas = document.createElement('canvas');
       canvas.width = 500;
       canvas.height = 500;
-      stage = new lng.Stage(canvas, { clearColor: 0xffff0000, autostart: false });
+      stage = new tree2d.Stage(canvas, { clearColor: 0xffff0000, autostart: false });
       root = stage.root;
       document.body.appendChild(stage.getCanvas());
     });

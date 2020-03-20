@@ -19,13 +19,13 @@ describe('text', function() {
   let root;
   let stage;
 
-  class TestTexture extends lng.textures.TextTexture {}
+  class TestTexture extends tree2d.textures.TextTexture {}
 
   before(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 1000;
     canvas.height = 1000;
-    stage = new lng.Stage(canvas, { clearColor: 0xffff0000, autostart: true });
+    stage = new tree2d.Stage(canvas, { clearColor: 0xffff0000, autostart: true });
     root = stage.root;
     document.body.appendChild(stage.getCanvas());
   });
