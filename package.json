@@ -12,7 +12,8 @@
     ],
     "scripts": {
         "test": "echo \"please run tests in browser using tests/test.html\"",
-        "build": "node scripts/build.js -s -t",
+        "build": "tsc",
+        "buildTests": "node scripts/build.js -s -t",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "formatTests": "prettier --write \"tests/**/*.ts\" \"tests/**/*.js\"",
         "lint": "tslint -p tsconfig.json",
