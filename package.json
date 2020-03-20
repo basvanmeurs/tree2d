@@ -56,7 +56,9 @@
         "tsd": "^0.11.0",
         "tslint": "^6.0.0",
         "tslint-config-prettier": "^1.18.0",
-        "typescript": "^3.8.2",
+        "typescript": "^3.8.2"
+    },
+    "dependencies": {
         "flexbox.js": "^1.0.4"
     },
     "type": "module"

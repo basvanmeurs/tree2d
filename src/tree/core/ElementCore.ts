@@ -1,7 +1,5 @@
 import Element from '../Element';
 
-import {FlexContainer, FlexItem, FlexNode, FlexSubject} from 'flexbox.js/dist/index';
-
 export default class ElementCore implements FlexSubject {
   private _element: Element;
 
@@ -2331,3 +2329,7 @@ import Shader from '../Shader';
 import ElementCoreContext from './ElementCoreContext';
 import { RenderTextureInfo } from './RenderTextureInfo';
 import { ElementEventCallback } from '../ElementListeners';
+import FlexSubject from "flexbox.js/dist/FlexSubject";
+import FlexNode from "flexbox.js/dist/FlexNode";
+import FlexContainer from "flexbox.js/dist/FlexContainer";
+import FlexItem from "flexbox.js/dist/FlexItem";
