@@ -42,7 +42,6 @@
         "eslint-config-prettier": "^6.10.0",
         "eslint-plugin-prettier": "^3.1.2",
         "execa": "^2.0.4",
-        "flexbox.js": "^1.0.6",
         "fs-extra": "^8.1.0",
         "minimist": "^1.2.0",
         "mocha": "^6.2.1",
@@ -57,6 +56,9 @@
         "sinon": "^7.5.0",
         "tsd": "^0.11.0",
         "typescript": "^3.8.2"
+    },
+    "dependencies": {
+        "flexbox.js": "^1.0.6"
     },
     "type": "module"
 }
