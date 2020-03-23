@@ -74,7 +74,7 @@ function createWorkerServer() {
 
         finish(item: ImageWorkerServerItem, info: any) {
             const { imageBitmap, hasAlphaChannel } = info;
-            postMessage(
+            (postMessage as any)(
                 {
                     type: 'data',
                     id: item.id,
@@ -90,7 +90,7 @@ function createWorkerServer() {
 
         error(item: ImageWorkerServerItem, info: any) {
             const { type, message } = info;
-            postMessage({
+            (postMessage as any)({
                 type: 'error',
                 id: item.id,
                 info: {
