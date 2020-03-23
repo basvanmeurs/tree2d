@@ -7,7 +7,7 @@
     "outDir": "./dist",
     "strict": true,
     "moduleResolution": "node",
-    "lib": ["esnext", "dom", "es2018.promise"]
+    "lib": ["esnext", "dom", "es2018.promise", "webworker"]
   },
   "include": ["src"],
   "exclude": ["node_modules"]
