@@ -61,8 +61,13 @@ export default class Stage {
     private onFrameStart?: () => void;
     private onUpdate?: () => void;
     private onFrameEnd?: () => void;
+    private prevCanvasWidth: number;
+    private prevCanvasHeight: number;
 
     constructor(public readonly canvas: HTMLCanvasElement, options: Partial<StageOptions> = {}) {
+        this.prevCanvasWidth = this.w;
+        this.prevCanvasHeight = this.h;
+
         this.gpuPixelsMemory = options.gpuPixelsMemory || 32e6;
         this.bufferMemory = options.bufferMemory || 4e6;
         this.defaultFontFace = options.defaultFontFace || ['sans-serif'];
@@ -107,6 +112,8 @@ export default class Stage {
 
         this.processClearColorOption(options.clearColor);
 
+        this.resetCanvasSize();
+
         if (this.autostart) {
             this.platform.startLoop();
         }
@@ -126,11 +133,11 @@ export default class Stage {
     }
 
     get w() {
-        return this.canvas.width;
+        return this.canvas.clientWidth || this.canvas.width;
     }
 
     get h() {
-        return this.canvas.height;
+        return this.canvas.clientHeight || this.canvas.height;
     }
 
     get renderer() {
@@ -191,6 +198,8 @@ export default class Stage {
     }
 
     drawFrame() {
+        this.checkCanvasDimensions();
+
         this.startTime = this.currentTime;
         this.currentTime = this.platform.getHrTime();
 
@@ -343,6 +352,25 @@ export default class Stage {
 
     isDestroyed() {
         return this.destroyed;
+    }
+
+    private checkCanvasDimensions() {
+        const newCanvasWidth = this.w;
+        const newCanvasHeight = this.h;
+        const changed = newCanvasWidth !== this.prevCanvasWidth || newCanvasHeight !== this.prevCanvasHeight;
+        this.prevCanvasWidth = newCanvasWidth;
+        this.prevCanvasHeight = newCanvasHeight;
+        if (changed) {
+            this.resetCanvasSize();
+        }
+    }
+
+    private resetCanvasSize() {
+        this.canvas.width = this.prevCanvasWidth;
+        this.canvas.height = this.prevCanvasHeight;
+
+        // Reset dimensions.
+        this.root.core.setupAsRoot();
     }
 }
 

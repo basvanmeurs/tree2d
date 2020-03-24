@@ -7,7 +7,7 @@ describe('Shaders', function() {
     before(() => {
         const template = {
             children: {
-                Image: { src: './shaders/example.png', shader: { type: tree2d.shaders.GrayscaleShader, amount: 1 } },
+                Image: { src: './example.png', shader: { type: tree2d.shaders.GrayscaleShader, amount: 1 } },
             },
         };
 

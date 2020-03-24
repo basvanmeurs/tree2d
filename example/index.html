@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Example</title>
-    <script src="../dist/tree2d.global.js"></script>
+    <script src="../dist/tree2d.js"></script>
+    <style>
+        document, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
     <script>
         window.onload = () => {
             const canvas = document.createElement('canvas');
-            canvas.width = 900;
-            canvas.height = 900;
+            canvas.style.position = 'absolute';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
             document.body.appendChild(canvas);
 
 
@@ -19,7 +27,7 @@
             // const el = stage.createElement({texture: {type: tree2d.textures.RectangleTexture}, w: 100, h: 100, color: 0xFFFF0000});
             // const el = stage.createElement({texture: {type: tree2d.textures.TextTexture, text: "hello world", fontSize: 46, fontStyle: 'bold'}, color: 0xFFFF0000})
 //            const el = stage.createElement({texture: {type: tree2d.textures.RoundRectTexture, options: {radius: [10,10,10,10], w: 100, h: 100}}, color: 0xFFFF0000})
-            const el = stage.createElement({texture: {type: tree2d.textures.ImageTexture, src: "../tests/shaders/example.png"}})
+            const el = stage.createElement({texture: {type: tree2d.textures.ImageTexture, src: "../tests/example.png"}})
             stage.root.childList.add(el);
 
            stage.root.w = 100;

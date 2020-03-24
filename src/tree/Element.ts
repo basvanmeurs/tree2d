@@ -82,7 +82,7 @@ class Element {
     }
 
     setAsRoot(): void {
-        this._core.setAsRoot();
+        this._core.setupAsRoot();
         this._updateAttachedFlag();
         this._updateEnabledFlag();
     }

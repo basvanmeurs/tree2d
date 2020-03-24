@@ -830,11 +830,13 @@ export default class ElementCore implements FlexSubject {
         return this._isRoot;
     }
 
-    setAsRoot() {
+    setupAsRoot() {
         // Use parent dummy.
         this._parent = new ElementCore(this._element);
 
         // After setting root, make sure it's updated.
+        this._parent.w = this.context.stage.coordsWidth;
+        this._parent.h = this.context.stage.coordsHeight;
         this._parent._hasRenderUpdates = 3;
         this._parent._hasUpdates = true;
 
