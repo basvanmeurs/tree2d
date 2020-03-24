@@ -61,12 +61,12 @@ export default class Stage {
     private onFrameStart?: () => void;
     private onUpdate?: () => void;
     private onFrameEnd?: () => void;
-    private prevCanvasWidth: number;
-    private prevCanvasHeight: number;
+    private canvasWidth: number;
+    private canvasHeight: number;
 
     constructor(public readonly canvas: HTMLCanvasElement, options: Partial<StageOptions> = {}) {
-        this.prevCanvasWidth = this.w;
-        this.prevCanvasHeight = this.h;
+        this.canvasWidth = this.w;
+        this.canvasHeight = this.h;
 
         this.gpuPixelsMemory = options.gpuPixelsMemory || 32e6;
         this.bufferMemory = options.bufferMemory || 4e6;
@@ -112,7 +112,7 @@ export default class Stage {
 
         this.processClearColorOption(options.clearColor);
 
-        this.resetCanvasSize();
+        this.updateCanvasSize();
 
         if (this.autostart) {
             this.platform.startLoop();
@@ -357,20 +357,21 @@ export default class Stage {
     private checkCanvasDimensions() {
         const newCanvasWidth = this.w;
         const newCanvasHeight = this.h;
-        const changed = newCanvasWidth !== this.prevCanvasWidth || newCanvasHeight !== this.prevCanvasHeight;
-        this.prevCanvasWidth = newCanvasWidth;
-        this.prevCanvasHeight = newCanvasHeight;
+        const changed = newCanvasWidth !== this.canvasWidth || newCanvasHeight !== this.canvasHeight;
+        this.canvasWidth = newCanvasWidth;
+        this.canvasHeight = newCanvasHeight;
         if (changed) {
-            this.resetCanvasSize();
+            this.updateCanvasSize();
         }
     }
 
-    private resetCanvasSize() {
-        this.canvas.width = this.prevCanvasWidth;
-        this.canvas.height = this.prevCanvasHeight;
+    private updateCanvasSize() {
+        this.canvas.width = this.canvasWidth;
+        this.canvas.height = this.canvasHeight;
 
         // Reset dimensions.
         this.root.core.setupAsRoot();
+        this.renderer.onResizeCanvasSize();
     }
 }
 

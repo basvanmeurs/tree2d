@@ -190,6 +190,10 @@ export default class WebGLRenderer extends Renderer {
     setShaderProgram(shaderType: Constructor<WebGLShader>, program: WebGLShaderProgram) {
         this.shaderPrograms.set(shaderType, program);
     }
+
+    onResizeCanvasSize() {
+        (this.stage.context.renderExecutor as WebGLCoreRenderExecutor).updateProjectionVector();
+    }
 }
 
 type TexParams = { [key: number]: GLenum };

@@ -13,7 +13,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCor
     public readonly quadsBuffer: WebGLBuffer;
 
     // The matrix that maps the [0,0 - W,H] coordinates to [-1,-1 - 1,1] in the vertex shaders.
-    public readonly projection: Float32Array;
+    public projection: Float32Array;
 
     public scissor: number[] | undefined;
     public currentShaderProgram?: WebGLShader;
@@ -28,9 +28,17 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCor
 
         this.quadsBuffer = this.gl.createBuffer()!;
 
-        this.projection = new Float32Array([2 / this.context.stage.coordsWidth, -2 / this.context.stage.coordsHeight]);
+        this.projection = this.getProjectionVector();
 
         this.init();
+    }
+
+    updateProjectionVector() {
+        this.projection = this.getProjectionVector();
+    }
+
+    private getProjectionVector() {
+        return new Float32Array([2 / this.context.stage.coordsWidth, -2 / this.context.stage.coordsHeight]);
     }
 
     init() {

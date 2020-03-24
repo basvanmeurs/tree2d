@@ -81,6 +81,10 @@ export default abstract class Renderer {
         scissor: number[] | undefined,
         index: number,
     ): CoreQuadOperation;
+
+    onResizeCanvasSize() {
+        // Not implemented.
+    }
 }
 
 export type CopyRenderTextureOptions = {
