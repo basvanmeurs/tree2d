@@ -8,11 +8,12 @@ export default class TextTextureRenderer {
     private _context = this.canvas.getContext('2d')!;
     public renderInfo: any;
 
-    constructor(private stage: Stage, private canvas: HTMLCanvasElement, private settings: Partial<TextSettings>) {}
-
-    private getPrecision() {
-        return this.settings.precision || this.stage.precision;
-    }
+    constructor(
+        private stage: Stage,
+        private canvas: HTMLCanvasElement,
+        private settings: Partial<TextSettings>,
+        private precision: number,
+    ) {}
 
     setFontProperties() {
         this._context.font = this._getFontSetting();
@@ -23,7 +24,7 @@ export default class TextTextureRenderer {
 
     private _getFontSetting() {
         const fontStyle = this.settings.fontStyle || 'normal';
-        const fontSize = (this.settings.fontSize || 40) * this.getPrecision();
+        const fontSize = (this.settings.fontSize || 40) * this.precision;
         const fontFaces = this._getFontFaces();
         return `${fontStyle} ${fontSize}px ${fontFaces.join(',')}`;
     }
@@ -87,7 +88,7 @@ export default class TextTextureRenderer {
     private _draw() {
         const renderInfo: any = {};
 
-        const precision = this.getPrecision();
+        const precision = this.precision;
 
         let {
             fontSize = 40,

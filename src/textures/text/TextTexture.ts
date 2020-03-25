@@ -3,6 +3,11 @@ import Texture, { TextureSourceCallback, TextureSourceLoader } from '../../tree/
 export default class TextTexture extends Texture {
     private settings: Partial<TextSettings> = {};
 
+    constructor(stage: Stage) {
+        super(stage);
+        this.precision = this.stage.precision;
+    }
+
     get text() {
         return this.settings.text;
     }
@@ -340,7 +345,7 @@ export default class TextTexture extends Texture {
 
         return (cb: TextureSourceCallback) => {
             const canvas = this.stage.platform.getDrawingCanvas();
-            const renderer = new TextTextureRenderer(this.stage, canvas, args);
+            const renderer = new TextTextureRenderer(this.stage, canvas, args, this.precision);
             const p = renderer.draw();
 
             const respond = () => {
@@ -381,3 +386,4 @@ export default class TextTexture extends Texture {
 import TextTextureRenderer from './TextTextureRenderer';
 import { TextSettings } from './TextSettings';
 import Utils from '../../tree/Utils';
+import Stage from '../../tree/Stage';
