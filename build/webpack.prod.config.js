@@ -21,12 +21,6 @@ module.exports = merge(baseWebpackConfig, {
         // See https://github.com/webpack/webpack/issues/6522
         globalObject: "typeof self !== 'undefined' ? self : this",
     },
-    externals: {
-        vue: { ...vueExternals },
-        '@vue/runtime-core': { ...vueExternals },
-        '@vue/compiler-core': { ...vueExternals },
-        '@vue/reactivity': { ...vueExternals },
-    },
     module: {
         rules: [
             {
