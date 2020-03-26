@@ -173,9 +173,9 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCor
             gl.enable(gl.SCISSOR_TEST);
             const precision = this.context.stage.getRenderPrecision();
             let y = area[1];
-            if (this._renderTexture === null) {
-                // Flip.
-                y = this.context.stage.h / precision - (area[1] + area[3]);
+            if (this._renderTexture === undefined) {
+                // Flip, for the main framebuffer the coordinates are inversed.
+                y = this.context.stage.coordsHeight - (area[1] + area[3]);
             }
             gl.scissor(
                 Math.round(area[0] * precision),
