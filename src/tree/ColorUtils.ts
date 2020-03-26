@@ -11,7 +11,7 @@ export default class ColorUtils {
         const r = ((color / 65536) | 0) % 256;
         const g = ((color / 256) | 0) % 256;
         const b = color % 256;
-        return 'rgb(' + r + ',' + g + ',' + b + ')';
+        return "rgb(" + r + "," + g + "," + b + ")";
     }
 
     static getRgbaString(color: number): string {
@@ -19,7 +19,7 @@ export default class ColorUtils {
         const g = ((color / 256) | 0) % 256;
         const b = color % 256;
         const a = ((color / 16777216) | 0) / 255;
-        return 'rgba(' + r + ',' + g + ',' + b + ',' + a.toFixed(4) + ')';
+        return "rgba(" + r + "," + g + "," + b + "," + a.toFixed(4) + ")";
     }
 
     static getRgbaStringFromArray(color: number[]) {
@@ -27,7 +27,7 @@ export default class ColorUtils {
         const g = Math.floor(color[1] * 255);
         const b = Math.floor(color[2] * 255);
         const a = Math.floor(color[3] * 255) / 255;
-        return 'rgba(' + r + ',' + g + ',' + b + ',' + a.toFixed(4) + ')';
+        return "rgba(" + r + "," + g + "," + b + "," + a.toFixed(4) + ")";
     }
 
     static getRgbaComponentsNormalized(argb: number) {

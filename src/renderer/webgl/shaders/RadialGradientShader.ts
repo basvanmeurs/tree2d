@@ -1,6 +1,6 @@
-import DefaultShader from './DefaultShader';
-import ColorUtils from '../../../tree/ColorUtils';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import DefaultShader from "./DefaultShader";
+import ColorUtils from "../../../tree/ColorUtils";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class RadialGradientShader extends DefaultShader {
     private _x: number = 0;
@@ -80,16 +80,16 @@ export default class RadialGradientShader extends DefaultShader {
         super.setupUniforms(operation);
         // We substract half a pixel to get a better cutoff effect.
         const rtc = operation.getNormalRenderTextureCoords(this._x, this._y);
-        this._setUniform('center', new Float32Array(rtc), this.gl.uniform2fv);
+        this._setUniform("center", new Float32Array(rtc), this.gl.uniform2fv);
 
-        this._setUniform('radius', (2 * this._radiusX) / operation.getRenderWidth(), this.gl.uniform1f);
+        this._setUniform("radius", (2 * this._radiusX) / operation.getRenderWidth(), this.gl.uniform1f);
 
         // Radial gradient shader is expected to be used on a single element. That element's alpha is used.
-        this._setUniform('alpha', operation.getElementCore(0).renderContext.alpha, this.gl.uniform1f);
+        this._setUniform("alpha", operation.getElementCore(0).renderContext.alpha, this.gl.uniform1f);
 
-        this._setUniform('color', this._rawColor, this.gl.uniform4fv);
+        this._setUniform("color", this._rawColor, this.gl.uniform4fv);
         this._setUniform(
-            'aspectRatio',
+            "aspectRatio",
             ((this._radiusX / this._radiusY) * operation.getRenderHeight()) / operation.getRenderWidth(),
             this.gl.uniform1f,
         );

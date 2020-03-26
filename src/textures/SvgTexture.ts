@@ -1,6 +1,6 @@
-import Texture, { TextureSourceLoader } from '../tree/Texture';
-import Utils from '../tree/Utils';
-import ColorUtils from '../tree/ColorUtils';
+import Texture, { TextureSourceLoader } from "../tree/Texture";
+import Utils from "../tree/Utils";
+import ColorUtils from "../tree/ColorUtils";
 
 export type SvgOptions = { w: number; h: number; src: string };
 
@@ -22,14 +22,14 @@ export default class SvgTexture extends Texture {
 
     protected _getLookupId() {
         const { w, h, src } = this._options!;
-        return 'svg' + [w, h, src].join(',');
+        return "svg" + [w, h, src].join(",");
     }
 
     protected _getSourceLoader(): TextureSourceLoader {
         const options = Utils.clone(this._options);
-        return cb => {
+        return (cb) => {
             const canvas = this.stage.platform.getDrawingCanvas();
-            const context = canvas.getContext('2d')!;
+            const context = canvas.getContext("2d")!;
             context.imageSmoothingEnabled = true;
 
             const img = new Image();
@@ -39,8 +39,8 @@ export default class SvgTexture extends Texture {
                 context.drawImage(img, 0, 0, canvas.width, canvas.height);
                 cb(undefined, { source: canvas });
             };
-            img.onerror = err => {
-                return cb(new Error('Image load error: ' + err.toString()));
+            img.onerror = (err) => {
+                return cb(new Error("Image load error: " + err.toString()));
             };
             img.src = options.src;
         };

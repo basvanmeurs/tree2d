@@ -1,10 +1,10 @@
-import Stage from '../Stage';
-import ElementCore from './ElementCore';
-import CoreRenderState from './CoreRenderState';
-import CoreRenderExecutor from './CoreRenderExecutor';
-import NativeTexture from '../../renderer/NativeTexture';
-import { CopyRenderTextureOptions } from '../../renderer/Renderer';
-import RenderTexture from '../../renderer/RenderTexture';
+import Stage from "../Stage";
+import ElementCore from "./ElementCore";
+import CoreRenderState from "./CoreRenderState";
+import CoreRenderExecutor from "./CoreRenderExecutor";
+import NativeTexture from "../../renderer/NativeTexture";
+import { CopyRenderTextureOptions } from "../../renderer/Renderer";
+import RenderTexture from "../../renderer/RenderTexture";
 
 export default class CoreContext {
     public root?: ElementCore;
@@ -25,7 +25,7 @@ export default class CoreContext {
     }
 
     destroy() {
-        this._renderTexturePool.forEach(texture => this._freeRenderTexture(texture));
+        this._renderTexturePool.forEach((texture) => this._freeRenderTexture(texture));
         this._usedMemory = 0;
     }
 
@@ -140,7 +140,7 @@ export default class CoreContext {
         // updated during a number of frames.
         const limit = this.stage.frameCounter - maxAge;
 
-        this._renderTexturePool = this._renderTexturePool.filter(texture => {
+        this._renderTexturePool = this._renderTexturePool.filter((texture) => {
             if (texture.f <= limit) {
                 this._freeRenderTexture(texture);
                 return false;

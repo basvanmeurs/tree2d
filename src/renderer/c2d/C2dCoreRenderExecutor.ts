@@ -1,9 +1,9 @@
-import CoreRenderExecutor from '../../tree/core/CoreRenderExecutor';
-import ColorUtils from '../../tree/ColorUtils';
-import C2dCoreQuadOperation from './C2dCoreQuadOperation';
-import C2dRenderTexture from './C2dRenderTexture';
-import CoreRenderState from '../../tree/core/CoreRenderState';
-import C2dCoreRenderState from './C2dCoreRenderState';
+import CoreRenderExecutor from "../../tree/core/CoreRenderExecutor";
+import ColorUtils from "../../tree/ColorUtils";
+import C2dCoreQuadOperation from "./C2dCoreQuadOperation";
+import C2dRenderTexture from "./C2dRenderTexture";
+import CoreRenderState from "../../tree/core/CoreRenderState";
+import C2dCoreRenderState from "./C2dCoreRenderState";
 
 export default class C2dCoreRenderExecutor extends CoreRenderExecutor<C2dCoreRenderState> {
     private _mainRenderTexture = this.context.stage.getCanvas() as C2dRenderTexture;
@@ -35,12 +35,12 @@ export default class C2dCoreRenderExecutor extends CoreRenderExecutor<C2dCoreRen
             } else {
                 context.fillStyle = ColorUtils.getRgbaStringFromArray(clearColor);
                 // Do not use fillRect because it produces artifacts.
-                context.globalCompositeOperation = 'copy';
+                context.globalCompositeOperation = "copy";
                 context.beginPath();
                 context.rect(0, 0, renderTexture.width, renderTexture.height);
                 context.closePath();
                 context.fill();
-                context.globalCompositeOperation = 'source-over';
+                context.globalCompositeOperation = "source-over";
             }
         }
     }

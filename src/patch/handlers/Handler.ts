@@ -1,5 +1,5 @@
-import Patcher from '../Patcher';
-import { Constructor } from '../../util/types';
+import Patcher from "../Patcher";
+import { Constructor } from "../../util/types";
 
 export default class Handler {
     private readonly sourceType: Constructor<any>;

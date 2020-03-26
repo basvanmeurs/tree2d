@@ -1,6 +1,6 @@
-import Texture, { TextureSourceLoader } from '../tree/Texture';
-import Utils from '../tree/Utils';
-import ColorUtils from '../tree/ColorUtils';
+import Texture, { TextureSourceLoader } from "../tree/Texture";
+import Utils from "../tree/Utils";
+import ColorUtils from "../tree/ColorUtils";
 
 export type ShadowRectOptions = { w: number; h: number; radius: number[]; blur: number; margin: number };
 
@@ -22,12 +22,12 @@ export default class ShadowRectTexture extends Texture {
 
     protected _getLookupId() {
         const { w, h, radius, blur, margin } = this._options!;
-        return 'shadow' + [w, h, blur, margin].concat(radius).join(',');
+        return "shadow" + [w, h, blur, margin].concat(radius).join(",");
     }
 
     protected _getSourceLoader(): TextureSourceLoader {
         const options = Utils.clone(this._options);
-        return cb => {
+        return (cb) => {
             const canvas = this.stage.platform.getDrawingCanvas();
             ShadowRectTexture.drawOnCanvas(canvas, options);
             cb(undefined, { source: canvas });
@@ -37,7 +37,7 @@ export default class ShadowRectTexture extends Texture {
     private static drawOnCanvas(canvas: HTMLCanvasElement, options: ShadowRectOptions) {
         const { w, h, radius, blur, margin } = options;
 
-        const context = canvas.getContext('2d')!;
+        const context = canvas.getContext("2d")!;
         context.imageSmoothingEnabled = true;
 
         canvas.width = w + margin * 2;

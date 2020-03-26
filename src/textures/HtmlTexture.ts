@@ -1,4 +1,4 @@
-import Texture, { TextureSourceCallback, TextureSourceLoader } from '../tree/Texture';
+import Texture, { TextureSourceCallback, TextureSourceLoader } from "../tree/Texture";
 
 export default class HtmlTexture extends Texture {
     private _htmlElement?: HTMLElement;
@@ -29,8 +29,8 @@ export default class HtmlTexture extends Texture {
         if (!v) {
             this.htmlElement = undefined;
         } else {
-            const d = document.createElement('div');
-            d.innerHTML = '<div>' + v + '</div>';
+            const d = document.createElement("div");
+            d.innerHTML = "<div>" + v + "</div>";
             if (d.firstElementChild) {
                 this.htmlElement = d.firstElementChild as HTMLElement;
             }
@@ -38,7 +38,7 @@ export default class HtmlTexture extends Texture {
     }
 
     get html() {
-        return this._htmlElement ? this._htmlElement.innerHTML : '';
+        return this._htmlElement ? this._htmlElement.innerHTML : "";
     }
 
     protected _getIsValid() {
@@ -46,7 +46,7 @@ export default class HtmlTexture extends Texture {
     }
 
     protected _getLookupId() {
-        return this._scale + ':' + this.html;
+        return this._scale + ":" + this.html;
     }
 
     _getSourceLoader(): TextureSourceLoader {
@@ -55,7 +55,7 @@ export default class HtmlTexture extends Texture {
         return (cb: TextureSourceCallback) => {
             const html2canvas: any = (window as any).html2canvas;
             if (!(window as any).html2canvas) {
-                return cb(new Error('Please include html2canvas (https://html2canvas.hertzen.com/)'));
+                return cb(new Error("Please include html2canvas (https://html2canvas.hertzen.com/)"));
             }
 
             const area = HtmlTexture.getPreloadArea();
@@ -65,7 +65,7 @@ export default class HtmlTexture extends Texture {
                 .then((canvas: HTMLCanvasElement) => {
                     area.removeChild(htmlElement);
                     if (canvas.height === 0) {
-                        return cb(new Error('Canvas height is 0'));
+                        return cb(new Error("Canvas height is 0"));
                     }
                     cb(undefined, { source: canvas, width: canvas.width, height: canvas.height });
                 })
@@ -78,17 +78,17 @@ export default class HtmlTexture extends Texture {
     static getPreloadArea() {
         if (!this._preloadArea) {
             // Preload area must be included in document body and must be visible to trigger html element rendering.
-            this._preloadArea = document.createElement('div');
+            this._preloadArea = document.createElement("div");
             if (this._preloadArea.attachShadow) {
                 // Use a shadow DOM if possible to prevent styling from interfering.
-                this._preloadArea.attachShadow({ mode: 'closed' });
+                this._preloadArea.attachShadow({ mode: "closed" });
             }
-            this._preloadArea.style.opacity = '0';
-            this._preloadArea.style.pointerEvents = 'none';
-            this._preloadArea.style.position = 'fixed';
-            this._preloadArea.style.display = 'block';
-            this._preloadArea.style.top = '100vh';
-            this._preloadArea.style.overflow = 'hidden';
+            this._preloadArea.style.opacity = "0";
+            this._preloadArea.style.pointerEvents = "none";
+            this._preloadArea.style.position = "fixed";
+            this._preloadArea.style.display = "block";
+            this._preloadArea.style.top = "100vh";
+            this._preloadArea.style.overflow = "hidden";
             document.body.appendChild(this._preloadArea);
         }
         return this._preloadArea;

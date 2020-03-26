@@ -1,5 +1,5 @@
-import handlers from './handlers/handlers';
-import { Constructor } from '../util/types';
+import handlers from "./handlers/handlers";
+import { Constructor } from "../util/types";
 
 export default class Patcher {
     static createObject<T>(settings: any, defaultType: Constructor<T> | undefined, ...cargs: any[]): T {
@@ -8,7 +8,7 @@ export default class Patcher {
             object = new settings.type(...cargs);
         } else {
             if (!defaultType) {
-                throw new Error('No default type specified');
+                throw new Error("No default type specified");
             }
             object = new defaultType(...cargs);
         }
@@ -37,12 +37,12 @@ export default class Patcher {
     }
 
     static patchSimpleObjectProperty(obj: any, name: string, value: any) {
-        if (name !== 'type') {
+        if (name !== "type") {
             obj[name] = value;
         }
     }
 
     static getHandler(obj: any, prop: string) {
-        return handlers.find(handler => handler.matches(obj, prop));
+        return handlers.find((handler) => handler.matches(obj, prop));
     }
 }

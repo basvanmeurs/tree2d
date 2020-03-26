@@ -1,7 +1,7 @@
-import ColorUtils from '../../../tree/ColorUtils';
-import DefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import ColorUtils from "../../../tree/ColorUtils";
+import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class OutlineShader extends DefaultShader {
     private _width: number = 5;
@@ -47,17 +47,17 @@ export default class OutlineShader extends DefaultShader {
     setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         const gl = this.gl;
-        this._setUniform('color', new Float32Array(this._color), gl.uniform4fv);
+        this._setUniform("color", new Float32Array(this._color), gl.uniform4fv);
     }
 
     enableAttribs() {
         super.enableAttribs();
-        this.gl.enableVertexAttribArray(this._attrib('aCorner'));
+        this.gl.enableVertexAttribArray(this._attrib("aCorner"));
     }
 
     disableAttribs() {
         super.disableAttribs();
-        this.gl.disableVertexAttribArray(this._attrib('aCorner'));
+        this.gl.disableVertexAttribArray(this._attrib("aCorner"));
     }
 
     setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
@@ -95,7 +95,7 @@ export default class OutlineShader extends DefaultShader {
     beforeDraw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
         gl.vertexAttribPointer(
-            this._attrib('aCorner'),
+            this._attrib("aCorner"),
             2,
             gl.FLOAT,
             false,

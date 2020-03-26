@@ -1,5 +1,5 @@
-import NativeTexture from '../NativeTexture';
-import C2dRenderTexture from './C2dRenderTexture';
+import NativeTexture from "../NativeTexture";
+import C2dRenderTexture from "./C2dRenderTexture";
 
 type CacheEntry = {
     tx: C2dRenderTexture | undefined;

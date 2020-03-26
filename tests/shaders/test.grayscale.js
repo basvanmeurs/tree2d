@@ -1,4 +1,4 @@
-describe('Shaders', function() {
+describe("Shaders", function () {
     this.timeout(0);
 
     let stageGL;
@@ -7,16 +7,16 @@ describe('Shaders', function() {
     before(() => {
         const template = {
             children: {
-                Image: { src: './example.png', shader: { type: tree2d.shaders.GrayscaleShader, amount: 1 } },
+                Image: { src: "./example.png", shader: { type: tree2d.shaders.GrayscaleShader, amount: 1 } },
             },
         };
 
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = 500;
         canvas.height = 100;
         stageGL = new tree2d.Stage(canvas, {});
 
-        const canvas2 = document.createElement('canvas');
+        const canvas2 = document.createElement("canvas");
         canvas2.width = 500;
         canvas2.height = 100;
         stage2D = new tree2d.Stage(canvas2, { canvas2d: true });
@@ -28,16 +28,16 @@ describe('Shaders', function() {
         document.body.appendChild(stage2D.getCanvas());
     });
 
-    describe('Image texture (WebGL)', function() {
-        it('Should be gray', function() {
-            const shader = stageGL.root.getByRef('Image').shader;
+    describe("Image texture (WebGL)", function () {
+        it("Should be gray", function () {
+            const shader = stageGL.root.getByRef("Image").shader;
             chai.assert(shader instanceof tree2d.shaders.GrayscaleShader);
         });
     });
 
-    describe('Image texture (C2D)', function() {
-        it('Should be gray', function() {
-            const shader = stage2D.root.getByRef('Image').shader;
+    describe("Image texture (C2D)", function () {
+        it("Should be gray", function () {
+            const shader = stage2D.root.getByRef("Image").shader;
             chai.assert(shader instanceof tree2d.shaders.c2d.C2dGrayscaleShader);
         });
     });

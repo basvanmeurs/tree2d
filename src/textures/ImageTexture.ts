@@ -1,4 +1,4 @@
-import Texture, { TextureSourceLoader } from '../tree/Texture';
+import Texture, { TextureSourceLoader } from "../tree/Texture";
 
 export default class ImageTexture extends Texture {
     private _src?: string;
@@ -38,7 +38,7 @@ export default class ImageTexture extends Texture {
         const src = this._src!;
         const hasAlpha = this._hasAlpha;
 
-        return cb => {
+        return (cb) => {
             return this.stage.platform.loadSrcTexture({ src, hasAlpha }, cb);
         };
     }

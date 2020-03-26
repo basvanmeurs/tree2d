@@ -1,6 +1,6 @@
-import Texture, { TextureSourceLoader } from '../tree/Texture';
-import Utils from '../tree/Utils';
-import ColorUtils from '../tree/ColorUtils';
+import Texture, { TextureSourceLoader } from "../tree/Texture";
+import Utils from "../tree/Utils";
+import ColorUtils from "../tree/ColorUtils";
 
 export type RoundRectOptions = {
     w: number;
@@ -30,12 +30,12 @@ export default class RoundRectTexture extends Texture {
 
     protected _getLookupId() {
         const { w, h, radius, strokeWidth, strokeColor, fill, fillColor } = this._options!;
-        return 'rect' + [w, h, strokeWidth, strokeColor, fill ? 1 : 0, fillColor].concat(radius).join(',');
+        return "rect" + [w, h, strokeWidth, strokeColor, fill ? 1 : 0, fillColor].concat(radius).join(",");
     }
 
     protected _getSourceLoader(): TextureSourceLoader {
         const options = Utils.clone(this._options);
-        return cb => {
+        return (cb) => {
             const canvas = this.stage.platform.getDrawingCanvas();
             RoundRectTexture.drawOnCanvas(canvas, options);
             cb(undefined, { source: canvas });
@@ -45,7 +45,7 @@ export default class RoundRectTexture extends Texture {
     private static drawOnCanvas(canvas: HTMLCanvasElement, options: RoundRectOptions) {
         const { w, h, radius, strokeColor, strokeWidth = 0, fill = true, fillColor } = options;
 
-        const context = canvas.getContext('2d')!;
+        const context = canvas.getContext("2d")!;
         context.imageSmoothingEnabled = true;
 
         canvas.width = w + strokeWidth + 2;
@@ -70,7 +70,7 @@ export default class RoundRectTexture extends Texture {
             if (Utils.isNumber(fillColor)) {
                 context.fillStyle = ColorUtils.getRgbaString(fillColor);
             } else {
-                context.fillStyle = 'white';
+                context.fillStyle = "white";
             }
             context.fill();
         }
@@ -79,7 +79,7 @@ export default class RoundRectTexture extends Texture {
             if (Utils.isNumber(strokeColor)) {
                 context.strokeStyle = ColorUtils.getRgbaString(strokeColor);
             } else {
-                context.strokeStyle = 'white';
+                context.strokeStyle = "white";
             }
             context.lineWidth = strokeWidth;
             context.stroke();

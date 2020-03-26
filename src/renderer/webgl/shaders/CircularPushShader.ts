@@ -1,7 +1,7 @@
-import Utils from '../../../tree/Utils';
-import DefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import Utils from "../../../tree/Utils";
+import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class CircularPushShader extends DefaultShader {
     private _inputValue: number = 0;
@@ -83,7 +83,7 @@ export default class CircularPushShader extends DefaultShader {
 
     set buckets(v: number) {
         if (v > 100) {
-            console.warn('CircularPushShader: supports max 100 buckets');
+            console.warn("CircularPushShader: supports max 100 buckets");
             v = 100;
         }
 
@@ -146,13 +146,13 @@ export default class CircularPushShader extends DefaultShader {
 
     setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
-        this._setUniform('aspectRatio', this._aspectRatio, this.gl.uniform1f);
-        this._setUniform('offsetX', this._offsetX, this.gl.uniform1f);
-        this._setUniform('offsetY', this._offsetY, this.gl.uniform1f);
-        this._setUniform('amount', this._amount, this.gl.uniform1f);
-        this._setUniform('offset', this._offset, this.gl.uniform1f);
-        this._setUniform('buckets', this._buckets, this.gl.uniform1f);
-        this._setUniform('uValueSampler', 1, this.gl.uniform1i);
+        this._setUniform("aspectRatio", this._aspectRatio, this.gl.uniform1f);
+        this._setUniform("offsetX", this._offsetX, this.gl.uniform1f);
+        this._setUniform("offsetY", this._offsetY, this.gl.uniform1f);
+        this._setUniform("amount", this._amount, this.gl.uniform1f);
+        this._setUniform("offset", this._offset, this.gl.uniform1f);
+        this._setUniform("buckets", this._buckets, this.gl.uniform1f);
+        this._setUniform("uValueSampler", 1, this.gl.uniform1i);
     }
 
     useDefault() {

@@ -1,4 +1,4 @@
-import Texture, { TextureSourceCallback, TextureSourceLoader } from '../../tree/Texture';
+import Texture, { TextureSourceCallback, TextureSourceLoader } from "../../tree/Texture";
 
 export default class TextTexture extends Texture {
     private settings: Partial<TextSettings> = {};
@@ -14,7 +14,7 @@ export default class TextTexture extends Texture {
 
     set text(v) {
         if (this.settings.text !== v) {
-            this.settings.text = '' + v;
+            this.settings.text = "" + v;
             this._changed();
         }
     }
@@ -323,20 +323,20 @@ export default class TextTexture extends Texture {
 
     static getHash(obj: any): string {
         if (Array.isArray(obj)) {
-            return obj.map(o => TextTexture.getHash(o)).join(',');
+            return obj.map((o) => TextTexture.getHash(o)).join(",");
         } else if (Utils.isObjectLiteral(obj)) {
             const parts = [];
             for (const [key, value] of Object.entries(obj)) {
-                parts.push(key + '=' + TextTexture.getHash(value));
+                parts.push(key + "=" + TextTexture.getHash(value));
             }
-            return parts.join('|');
+            return parts.join("|");
         } else {
-            return '' + obj;
+            return "" + obj;
         }
     }
 
     _getLookupId() {
-        const id = 'TX$' + TextTexture.getHash(this.settings) + '|' + this.pixelRatio;
+        const id = "TX$" + TextTexture.getHash(this.settings) + "|" + this.pixelRatio;
         return id;
     }
 
@@ -361,7 +361,7 @@ export default class TextTexture extends Texture {
             if (p) {
                 p.then(() => {
                     respond();
-                }).catch(err => {
+                }).catch((err) => {
                     cb(err);
                 });
             } else {
@@ -383,7 +383,7 @@ export default class TextTexture extends Texture {
     }
 }
 
-import TextTextureRenderer from './TextTextureRenderer';
-import { TextSettings } from './TextSettings';
-import Utils from '../../tree/Utils';
-import Stage from '../../tree/Stage';
+import TextTextureRenderer from "./TextTextureRenderer";
+import { TextSettings } from "./TextSettings";
+import Utils from "../../tree/Utils";
+import Stage from "../../tree/Stage";

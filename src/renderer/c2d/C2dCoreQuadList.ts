@@ -1,5 +1,5 @@
-import CoreQuadList from '../../tree/core/CoreQuadList';
-import ElementCoreContext from '../../tree/core/ElementCoreContext';
+import CoreQuadList from "../../tree/core/CoreQuadList";
+import ElementCoreContext from "../../tree/core/ElementCoreContext";
 
 export default class C2dCoreQuadList extends CoreQuadList {
     private renderContexts: ElementCoreContext[] = [];

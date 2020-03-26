@@ -1,7 +1,7 @@
-import NoiseTexture from '../../../textures/NoiseTexture';
-import DefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import NoiseTexture from "../../../textures/NoiseTexture";
+import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 /**
  * This shader can be used to fix a problem that is known as 'gradient banding'.
@@ -87,7 +87,7 @@ export default class DitheringShader extends DefaultShader {
     beforeDraw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
         gl.vertexAttribPointer(
-            this._attrib('aNoiseTextureCoord'),
+            this._attrib("aNoiseTextureCoord"),
             2,
             gl.FLOAT,
             false,
@@ -107,20 +107,20 @@ export default class DitheringShader extends DefaultShader {
 
     setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
-        this._setUniform('uNoiseSampler', 1, this.gl.uniform1i);
-        this._setUniform('graining', 2 * this._graining, this.gl.uniform1f);
+        this._setUniform("uNoiseSampler", 1, this.gl.uniform1i);
+        this._setUniform("graining", 2 * this._graining, this.gl.uniform1f);
     }
 
     enableAttribs() {
         super.enableAttribs();
         const gl = this.gl;
-        gl.enableVertexAttribArray(this._attrib('aNoiseTextureCoord'));
+        gl.enableVertexAttribArray(this._attrib("aNoiseTextureCoord"));
     }
 
     disableAttribs() {
         super.disableAttribs();
         const gl = this.gl;
-        gl.disableVertexAttribArray(this._attrib('aNoiseTextureCoord'));
+        gl.disableVertexAttribArray(this._attrib("aNoiseTextureCoord"));
     }
 
     useDefault() {

@@ -1,5 +1,5 @@
-import Stage from './Stage';
-import Element from './Element';
+import Stage from "./Stage";
+import Element from "./Element";
 
 export default class Texture {
     private manager = this.stage.textureManager;
@@ -126,7 +126,7 @@ export default class Texture {
             this._applyResizeMode();
         }
 
-        this.elements.forEach(element => {
+        this.elements.forEach((element) => {
             if (element.active) {
                 element.onTextureSourceLoaded();
             }
@@ -172,7 +172,7 @@ export default class Texture {
      * to stop fetching an image when it is no longer in element, for example.
      */
     protected _getSourceLoader(): TextureSourceLoader {
-        throw new Error('Texture.generate must be implemented.');
+        throw new Error("Texture.generate must be implemented.");
     }
 
     get isValid() {
@@ -267,7 +267,7 @@ export default class Texture {
                         this._applyResizeMode();
                     }
 
-                    this.elements.forEach(element => {
+                    this.elements.forEach((element) => {
                         if (element.active) {
                             element.setDisplayedTexture(this);
                         }
@@ -275,7 +275,7 @@ export default class Texture {
                 } else {
                     const loadError = newSource.loadError;
                     if (loadError) {
-                        this.elements.forEach(element => {
+                        this.elements.forEach((element) => {
                             if (element.active) {
                                 element.onTextureSourceLoadError(loadError);
                             }
@@ -283,7 +283,7 @@ export default class Texture {
                     }
                 }
             } else {
-                this.elements.forEach(element => {
+                this.elements.forEach((element) => {
                     if (element.active) {
                         element.setDisplayedTexture(undefined);
                     }
@@ -335,9 +335,9 @@ export default class Texture {
     }
 
     private _applyResizeMode() {
-        if (this._resizeMode!.type === 'cover') {
+        if (this._resizeMode!.type === "cover") {
             this._applyResizeCover();
-        } else if (this._resizeMode!.type === 'contain') {
+        } else if (this._resizeMode!.type === "contain") {
             this._applyResizeContain();
         }
         this._updatePixelRatio();
@@ -414,7 +414,7 @@ export default class Texture {
     private _updateClipping() {
         this.clipping = !!(this._x || this._y || this._w || this._h);
 
-        this.elements.forEach(element => {
+        this.elements.forEach((element) => {
             // Ignore if not the currently displayed texture.
             if (element.displayedTexture === this) {
                 element.onDisplayedTextureClippingChanged();
@@ -423,7 +423,7 @@ export default class Texture {
     }
 
     private _updatePixelRatio() {
-        this.elements.forEach(element => {
+        this.elements.forEach((element) => {
             // Ignore if not the currently displayed texture.
             if (element.displayedTexture === this) {
                 element.onPixelRatioChanged();
@@ -433,12 +433,12 @@ export default class Texture {
 
     getNonDefaults(): any {
         const nonDefaults: Record<string, any> = {};
-        nonDefaults['type'] = this.constructor.name;
-        if (this.x !== 0) nonDefaults['x'] = this.x;
-        if (this.y !== 0) nonDefaults['y'] = this.y;
-        if (this.w !== 0) nonDefaults['w'] = this.w;
-        if (this.h !== 0) nonDefaults['h'] = this.h;
-        if (this.pixelRatio !== 1) nonDefaults['pixelRatio'] = this.pixelRatio;
+        nonDefaults["type"] = this.constructor.name;
+        if (this.x !== 0) nonDefaults["x"] = this.x;
+        if (this.y !== 0) nonDefaults["y"] = this.y;
+        if (this.w !== 0) nonDefaults["w"] = this.w;
+        if (this.h !== 0) nonDefaults["h"] = this.h;
+        if (this.pixelRatio !== 1) nonDefaults["pixelRatio"] = this.pixelRatio;
         return nonDefaults;
     }
 
@@ -547,7 +547,7 @@ export default class Texture {
 }
 
 export type ResizeMode = {
-    type: 'cover' | 'contain';
+    type: "cover" | "contain";
     w: number;
     h: number;
     x: number;
@@ -577,5 +577,5 @@ export type TextureSourceOptions = {
     };
 };
 
-import TextureSource from './TextureSource';
-import { WebGLNativeTexture } from '../renderer/webgl/WebGLNativeTexture';
+import TextureSource from "./TextureSource";
+import { WebGLNativeTexture } from "../renderer/webgl/WebGLNativeTexture";

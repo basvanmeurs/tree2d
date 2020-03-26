@@ -1,14 +1,14 @@
 export default class Utils {
     static isFunction(value: any): value is (...args: any) => any {
-        return typeof value === 'function';
+        return typeof value === "function";
     }
 
     static isNumber(value: any): value is number {
-        return typeof value === 'number';
+        return typeof value === "number";
     }
 
     static isInteger(value: any): value is number {
-        return typeof value === 'number' && value % 1 === 0;
+        return typeof value === "number" && value % 1 === 0;
     }
 
     static isBoolean(value: any): value is boolean {
@@ -16,7 +16,7 @@ export default class Utils {
     }
 
     static isString(value: any): value is string {
-        return typeof value === 'string';
+        return typeof value === "string";
     }
 
     static clone(v: any) {
@@ -46,16 +46,16 @@ export default class Utils {
 
     static isObject(value: any) {
         const type = typeof value;
-        return !!value && (type === 'object' || type === 'function');
+        return !!value && (type === "object" || type === "function");
     }
 
     static isPlainObject(value: any) {
         const type = typeof value;
-        return !!value && type === 'object';
+        return !!value && type === "object";
     }
 
     static isObjectLiteral(value: any) {
-        return typeof value === 'object' && value && value.constructor === Object;
+        return typeof value === "object" && value && value.constructor === Object;
     }
 
     static getArrayIndex(index: number, arr: any[]) {
@@ -146,7 +146,7 @@ export default class Utils {
 
     static setToArray<T>(s: Set<T>): T[] {
         const result = new Array<T>();
-        s.forEach(value => {
+        s.forEach((value) => {
             result.push(value);
         });
         return result;

@@ -1,41 +1,41 @@
-import WebGLShader from '../WebGLShader';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import WebGLShader from "../WebGLShader";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class DefaultShader extends WebGLShader {
     enableAttribs() {
         // Enables the attribs in the shader program.
         const gl = this.gl;
-        gl.vertexAttribPointer(this._attrib('aVertexPosition'), 2, gl.FLOAT, false, 20, 0);
-        gl.enableVertexAttribArray(this._attrib('aVertexPosition'));
+        gl.vertexAttribPointer(this._attrib("aVertexPosition"), 2, gl.FLOAT, false, 20, 0);
+        gl.enableVertexAttribArray(this._attrib("aVertexPosition"));
 
-        if (this._attrib('aTextureCoord') !== -1) {
-            gl.vertexAttribPointer(this._attrib('aTextureCoord'), 2, gl.FLOAT, false, 20, 2 * 4);
-            gl.enableVertexAttribArray(this._attrib('aTextureCoord'));
+        if (this._attrib("aTextureCoord") !== -1) {
+            gl.vertexAttribPointer(this._attrib("aTextureCoord"), 2, gl.FLOAT, false, 20, 2 * 4);
+            gl.enableVertexAttribArray(this._attrib("aTextureCoord"));
         }
 
-        if (this._attrib('aColor') !== -1) {
+        if (this._attrib("aColor") !== -1) {
             // Some shaders may ignore the color.
-            gl.vertexAttribPointer(this._attrib('aColor'), 4, gl.UNSIGNED_BYTE, true, 20, 4 * 4);
-            gl.enableVertexAttribArray(this._attrib('aColor'));
+            gl.vertexAttribPointer(this._attrib("aColor"), 4, gl.UNSIGNED_BYTE, true, 20, 4 * 4);
+            gl.enableVertexAttribArray(this._attrib("aColor"));
         }
     }
 
     disableAttribs() {
         // Disables the attribs in the shader program.
         const gl = this.gl;
-        gl.disableVertexAttribArray(this._attrib('aVertexPosition'));
+        gl.disableVertexAttribArray(this._attrib("aVertexPosition"));
 
-        if (this._attrib('aTextureCoord') !== -1) {
-            gl.disableVertexAttribArray(this._attrib('aTextureCoord'));
+        if (this._attrib("aTextureCoord") !== -1) {
+            gl.disableVertexAttribArray(this._attrib("aTextureCoord"));
         }
 
-        if (this._attrib('aColor') !== -1) {
-            gl.disableVertexAttribArray(this._attrib('aColor'));
+        if (this._attrib("aColor") !== -1) {
+            gl.disableVertexAttribArray(this._attrib("aColor"));
         }
     }
 
     setupUniforms(operation: WebGLCoreQuadOperation) {
-        this._setUniform('projection', this._getProjection(operation), this.gl.uniform2fv);
+        this._setUniform("projection", this._getProjection(operation), this.gl.uniform2fv);
     }
 
     draw(operation: WebGLCoreQuadOperation) {

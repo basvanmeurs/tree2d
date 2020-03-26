@@ -1,7 +1,7 @@
 /**
  * Base functionality for shader setup/destroy.
  */
-import { GLFunction } from './WebGLShader';
+import { GLFunction } from "./WebGLShader";
 
 export default class WebGLShaderProgram {
     private _program?: WebGLProgram;
@@ -31,13 +31,13 @@ export default class WebGLShaderProgram {
 
         // if linking fails, then log and cleanup
         if (!gl.getProgramParameter(this._program, gl.LINK_STATUS)) {
-            console.error('Error: Could not initialize shader.');
-            console.error('gl.VALIDATE_STATUS', gl.getProgramParameter(this._program, gl.VALIDATE_STATUS));
-            console.error('gl.getError()', gl.getError());
+            console.error("Error: Could not initialize shader.");
+            console.error("gl.VALIDATE_STATUS", gl.getProgramParameter(this._program, gl.VALIDATE_STATUS));
+            console.error("gl.getError()", gl.getError());
 
             // if there is a program info log, log it
-            if (gl.getProgramInfoLog(this._program) !== '') {
-                console.warn('Warning: gl.getProgramInfoLog()', gl.getProgramInfoLog(this._program));
+            if (gl.getProgramInfoLog(this._program) !== "") {
+                console.warn("Warning: gl.getProgramInfoLog()", gl.getProgramInfoLog(this._program));
             }
 
             gl.deleteProgram(this._program);
@@ -58,16 +58,16 @@ export default class WebGLShaderProgram {
         if (!this.gl.getShaderParameter(shader!, this.gl.COMPILE_STATUS)) {
             console.log(
                 this.constructor.name,
-                'Type: ' + (type === this.gl.VERTEX_SHADER ? 'vertex shader' : 'fragment shader'),
+                "Type: " + (type === this.gl.VERTEX_SHADER ? "vertex shader" : "fragment shader"),
             );
             console.log(this.gl.getShaderInfoLog(shader!));
             let idx = 0;
             console.log(
-                '========== source ==========\n' +
+                "========== source ==========\n" +
                     src
-                        .split('\n')
-                        .map(line => '' + ++idx + ': ' + line)
-                        .join('\n'),
+                        .split("\n")
+                        .map((line) => "" + ++idx + ": " + line)
+                        .join("\n"),
             );
             return null;
         }

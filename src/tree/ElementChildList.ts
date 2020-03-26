@@ -2,8 +2,8 @@
  * Manages the list of children for an element.
  */
 
-import ObjectList from './ObjectList';
-import Element from './Element';
+import ObjectList from "./ObjectList";
+import Element from "./Element";
 
 const gc = (i: Element) => i.core;
 

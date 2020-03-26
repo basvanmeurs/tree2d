@@ -1,10 +1,10 @@
-import C2dShader from '../C2dShader';
-import ColorUtils from '../../../tree/ColorUtils';
-import C2dRenderer from '../C2dRenderer';
-import C2dCoreQuadOperation from '../C2dCoreQuadOperation';
-import C2dRenderTexture from '../C2dRenderTexture';
-import ElementCore from '../../../tree/core/ElementCore';
-import { C2dNativeTexture } from '../C2dNativeTexture';
+import C2dShader from "../C2dShader";
+import ColorUtils from "../../../tree/ColorUtils";
+import C2dRenderer from "../C2dRenderer";
+import C2dCoreQuadOperation from "../C2dCoreQuadOperation";
+import C2dRenderTexture from "../C2dRenderTexture";
+import ElementCore from "../../../tree/core/ElementCore";
+import { C2dNativeTexture } from "../C2dNativeTexture";
 
 export default class DefaultShader extends C2dShader {
     private _rectangleTexture = this.context.stage.rectangleTexture.source!.nativeTexture;
@@ -37,7 +37,7 @@ export default class DefaultShader extends C2dShader {
             if (rect) {
                 // Check for gradient.
                 if (white) {
-                    context.fillStyle = 'white';
+                    context.fillStyle = "white";
                 } else {
                     this._setColorGradient(context, elementCore);
                 }
@@ -92,7 +92,7 @@ export default class DefaultShader extends C2dShader {
                     const tintTexture = this._tintManager.getTintTexture(tx, rgb);
 
                     // Actually draw result.
-                    context.fillStyle = 'white';
+                    context.fillStyle = "white";
                     context.drawImage(
                         tintTexture as any,
                         sourceX,
@@ -105,7 +105,7 @@ export default class DefaultShader extends C2dShader {
                         elementCore.getLayoutH(),
                     );
                 } else {
-                    context.fillStyle = 'white';
+                    context.fillStyle = "white";
                     context.drawImage(
                         tx as any,
                         sourceX,

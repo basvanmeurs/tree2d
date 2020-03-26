@@ -1,8 +1,8 @@
 export default function createWorker() {
     const code = `(${createWorkerServer.toString()})()`;
-    const blob = new Blob([code.replace('"use strict";', '')]); // firefox adds "use strict"; to any function which might block worker execution so knock it off
+    const blob = new Blob([code.replace('"use strict";', "")]); // firefox adds "use strict"; to any function which might block worker execution so knock it off
     const blobURL = ((window.URL ? URL : window.webkitURL).createObjectURL as any)(blob, {
-        type: 'application/javascript; charset=utf-8',
+        type: "application/javascript; charset=utf-8",
     });
     return new Worker(blobURL);
 }
@@ -18,7 +18,7 @@ function createWorkerServer() {
         private relativeBase?: string;
 
         constructor() {
-            onmessage = e => {
+            onmessage = (e) => {
                 this._receiveMessage(e);
             };
         }
@@ -28,16 +28,16 @@ function createWorkerServer() {
         }
 
         _receiveMessage(e: any) {
-            if (e.data.type === 'config') {
+            if (e.data.type === "config") {
                 this.config = e.data.config;
 
                 const base = this.config.path;
-                const parts = base.split('/');
+                const parts = base.split("/");
                 parts.pop();
-                this.relativeBase = parts.join('/') + '/';
-            } else if (e.data.type === 'add') {
+                this.relativeBase = parts.join("/") + "/";
+            } else if (e.data.type === "add") {
                 this.add(e.data.id, e.data.src);
-            } else if (e.data.type === 'cancel') {
+            } else if (e.data.type === "cancel") {
                 this.cancel(e.data.id);
             }
         }
@@ -48,9 +48,9 @@ function createWorkerServer() {
                 src = this.relativeBase + src;
             }
 
-            if (src.substr(0, 2) === '//') {
+            if (src.substr(0, 2) === "//") {
                 // This doesn't work for image workers.
-                src = 'http:' + src;
+                src = "http:" + src;
             }
 
             const item = new ImageWorkerServerItem(id, src);
@@ -76,7 +76,7 @@ function createWorkerServer() {
             const { imageBitmap, hasAlphaChannel } = info;
             (postMessage as any)(
                 {
-                    type: 'data',
+                    type: "data",
                     id: item.id,
                     info: {
                         imageBitmap,
@@ -91,7 +91,7 @@ function createWorkerServer() {
         error(item: ImageWorkerServerItem, info: any) {
             const { type, message } = info;
             (postMessage as any)({
-                type: 'error',
+                type: "error",
                 id: item.id,
                 info: {
                     type,
@@ -116,14 +116,14 @@ function createWorkerServer() {
 
         start() {
             this.xhr = new XMLHttpRequest();
-            this.xhr.open('GET', this.src, true);
-            this.xhr.responseType = 'blob';
+            this.xhr.open("GET", this.src, true);
+            this.xhr.responseType = "blob";
 
-            this.xhr.onerror = oEvent => {
-                this.error('connection', 'Connection error');
+            this.xhr.onerror = (oEvent) => {
+                this.error("connection", "Connection error");
             };
 
-            this.xhr.onload = oEvent => {
+            this.xhr.onload = (oEvent) => {
                 const blob = this.xhr!.response;
                 this.mimeType = blob.type;
 
@@ -135,9 +135,9 @@ function createWorkerServer() {
 
         private createImageBitmap(blob: any) {
             (createImageBitmap as any)(blob, {
-                premultiplyAlpha: 'premultiply',
-                colorSpaceConversion: 'none',
-                imageOrientation: 'none',
+                premultiplyAlpha: "premultiply",
+                colorSpaceConversion: "none",
+                imageOrientation: "none",
             })
                 .then((imageBitmap: ImageBitmap) => {
                     this.finish({
@@ -146,12 +146,12 @@ function createWorkerServer() {
                     });
                 })
                 .catch(() => {
-                    this.error('parse', 'Error parsing image data');
+                    this.error("parse", "Error parsing image data");
                 });
         }
 
         private hasAlphaChannel() {
-            return this.mimeType && this.mimeType.indexOf('image/png') !== -1;
+            return this.mimeType && this.mimeType.indexOf("image/png") !== -1;
         }
 
         cancel() {

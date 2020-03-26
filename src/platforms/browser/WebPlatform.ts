@@ -1,7 +1,7 @@
-import ImageWorker from './imageWorker/ImageWorker';
-import Stage from '../../tree/Stage';
-import { TextureDrawableSource, TextureSourceOptions } from '../../tree/Texture';
-import TextureSource from '../../tree/TextureSource';
+import ImageWorker from "./imageWorker/ImageWorker";
+import Stage from "../../tree/Stage";
+import { TextureDrawableSource, TextureSourceOptions } from "../../tree/Texture";
+import TextureSource from "../../tree/TextureSource";
 
 /**
  * Platform-specific functionality.
@@ -27,12 +27,12 @@ export default class WebPlatform {
                 canvas.width = 1;
                 canvas.height = 1;
                 (window.createImageBitmap as any)(canvas, {
-                    premultiplyAlpha: 'premultiply',
-                    colorSpaceConversion: 'none',
-                    imageOrientation: 'none',
+                    premultiplyAlpha: "premultiply",
+                    colorSpaceConversion: "none",
+                    imageOrientation: "none",
                 })
                     .then(() => {
-                        console.log('Using image worker!');
+                        console.log("Using image worker!");
                         this._imageWorker = new ImageWorker();
                     })
                     .catch(() => {
@@ -108,7 +108,7 @@ export default class WebPlatform {
     loadSrcTexture(info: { src: string; hasAlpha: boolean }, cb: (err: Error | undefined, result?: any) => void) {
         const { src, hasAlpha } = info;
         let cancelCb;
-        const isPng = src.indexOf('.png') >= 0;
+        const isPng = src.indexOf(".png") >= 0;
         if (this._imageWorker) {
             // WPE-specific image parser.
             const image = this._imageWorker.create(src);
@@ -128,14 +128,14 @@ export default class WebPlatform {
             };
         } else {
             const image = new Image();
-            if (!(src.substr(0, 5) === 'data:')) {
+            if (!(src.substr(0, 5) === "data:")) {
                 // Base64.
-                image.crossOrigin = 'Anonymous';
+                image.crossOrigin = "Anonymous";
             }
             image.onerror = (err: string | Event) => {
                 // Ignore error message when cancelled.
                 if (image.src) {
-                    return cb(new Error('Image loading error: ' + err));
+                    return cb(new Error("Image loading error: " + err));
                 }
             };
             image.onload = () => {
@@ -150,7 +150,7 @@ export default class WebPlatform {
             cancelCb = () => {
                 image.onerror = null;
                 image.onload = null;
-                image.removeAttribute('src');
+                image.removeAttribute("src");
             };
         }
 
@@ -168,10 +168,10 @@ export default class WebPlatform {
             preserveDrawingBuffer: false,
         };
 
-        const gl = (canvas.getContext('webgl', opts) ||
-            canvas.getContext('experimental-webgl', opts)) as WebGLRenderingContext;
+        const gl = (canvas.getContext("webgl", opts) ||
+            canvas.getContext("experimental-webgl", opts)) as WebGLRenderingContext;
         if (!gl) {
-            throw new Error('This browser does not support webGL.');
+            throw new Error("This browser does not support webGL.");
         }
 
         return gl;
@@ -180,9 +180,9 @@ export default class WebPlatform {
     createCanvasContext() {
         const canvas = this.stage.canvas;
 
-        const c2d = canvas.getContext('2d');
+        const c2d = canvas.getContext("2d");
         if (!c2d) {
-            throw new Error('This browser does not support 2d canvas.');
+            throw new Error("This browser does not support 2d canvas.");
         }
 
         return c2d;
@@ -194,7 +194,7 @@ export default class WebPlatform {
 
     getDrawingCanvas() {
         // We can't reuse this canvas because textures may load async.
-        return document.createElement('canvas');
+        return document.createElement("canvas");
     }
 
     getTextureOptionsForDrawingCanvas(canvas: HTMLCanvasElement) {

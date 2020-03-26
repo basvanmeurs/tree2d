@@ -1,7 +1,7 @@
-import WebGLDefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
-import C2dGrayscaleShader from '../../c2d/shaders/GrayscaleShader';
+import WebGLDefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import C2dGrayscaleShader from "../../c2d/shaders/GrayscaleShader";
 
 export default class GrayscaleShader extends WebGLDefaultShader {
     private _amount: number = 1;
@@ -29,7 +29,7 @@ export default class GrayscaleShader extends WebGLDefaultShader {
 
     setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
-        this._setUniform('amount', this._amount, this.gl.uniform1f);
+        this._setUniform("amount", this._amount, this.gl.uniform1f);
     }
 }
 

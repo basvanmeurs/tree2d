@@ -4,9 +4,9 @@
  * Copyright Bas van Meurs, 2020
  */
 
-import Patcher from '../patch/Patcher';
-import WebGLRenderer from '../renderer/webgl/WebGLRenderer';
-import C2dRenderer from '../renderer/c2d/C2dRenderer';
+import Patcher from "../patch/Patcher";
+import WebGLRenderer from "../renderer/webgl/WebGLRenderer";
+import C2dRenderer from "../renderer/c2d/C2dRenderer";
 
 export type StageOptions = {
     clearColor: number | null;
@@ -70,7 +70,7 @@ export default class Stage {
 
         this.gpuPixelsMemory = options.gpuPixelsMemory || 32e6;
         this.bufferMemory = options.bufferMemory || 4e6;
-        this.defaultFontFace = options.defaultFontFace || ['sans-serif'];
+        this.defaultFontFace = options.defaultFontFace || ["sans-serif"];
         this.fixedTimestep = options.fixedTimestep || 0;
         this.useImageWorker = options.useImageWorker === undefined || options.useImageWorker;
         this.autostart = options.autostart || true;
@@ -85,7 +85,7 @@ export default class Stage {
         this.platform.init();
 
         if (this.canvas2d) {
-            console.log('Using canvas2d renderer');
+            console.log("Using canvas2d renderer");
             this.c2d = this.platform.createCanvasContext();
             this.gl = undefined as any;
             this._renderer = new C2dRenderer(this) as any;
@@ -214,7 +214,7 @@ export default class Stage {
         }
 
         if (this._updateTextures.size) {
-            this._updateTextures.forEach(texture => {
+            this._updateTextures.forEach((texture) => {
                 texture._performUpdateSource();
             });
             this._updateTextures = new Set();
@@ -306,7 +306,7 @@ export default class Stage {
             this.renderer.gc(aggressive);
 
             console.log(
-                `GC${aggressive ? '[aggressive]' : ''}! Frame ${this._lastGcFrame} Freed ${(
+                `GC${aggressive ? "[aggressive]" : ""}! Frame ${this._lastGcFrame} Freed ${(
                     (memoryUsageBefore - this._usedMemory) /
                     1e6
                 ).toFixed(2)}MP from GPU memory. Remaining: ${(this._usedMemory / 1e6).toFixed(2)}MP`,
@@ -385,16 +385,16 @@ export default class Stage {
         const results: ElementCore[] = [];
         this.root.core.update();
         this.root.core.gatherElementsAtCoordinates(x, y, results);
-        return results.map(core => core.element).reverse();
+        return results.map((core) => core.element).reverse();
     }
 }
 
-import Element from './Element';
-import ColorUtils from './ColorUtils';
-import TextureManager from './TextureManager';
-import CoreContext from './core/CoreContext';
-import RectangleTexture from '../textures/RectangleTexture';
-import WebPlatform from '../platforms/browser/WebPlatform';
-import Renderer from '../renderer/Renderer';
-import Texture from './Texture';
-import ElementCore from './core/ElementCore';
+import Element from "./Element";
+import ColorUtils from "./ColorUtils";
+import TextureManager from "./TextureManager";
+import CoreContext from "./core/CoreContext";
+import RectangleTexture from "../textures/RectangleTexture";
+import WebPlatform from "../platforms/browser/WebPlatform";
+import Renderer from "../renderer/Renderer";
+import Texture from "./Texture";
+import ElementCore from "./core/ElementCore";

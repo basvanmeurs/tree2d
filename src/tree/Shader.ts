@@ -1,8 +1,8 @@
-import CoreContext from './core/CoreContext';
-import ElementCore from './core/ElementCore';
-import WebGLShader from '../renderer/webgl/WebGLShader';
-import { Constructor } from '../util/types';
-import C2dShader from '../renderer/c2d/C2dShader';
+import CoreContext from "./core/CoreContext";
+import ElementCore from "./core/ElementCore";
+import WebGLShader from "../renderer/webgl/WebGLShader";
+import { Constructor } from "../util/types";
+import C2dShader from "../renderer/c2d/C2dShader";
 
 export default class Shader {
     protected context: CoreContext;
@@ -34,7 +34,7 @@ export default class Shader {
     }
 
     redraw() {
-        this._elements.forEach(elementCore => {
+        this._elements.forEach((elementCore) => {
             elementCore.setHasRenderUpdates(2);
         });
     }

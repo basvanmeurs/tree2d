@@ -1,11 +1,11 @@
-import ColorUtils from '../../tree/ColorUtils';
-import Stage from '../../tree/Stage';
-import { TextSettings } from './TextSettings';
+import ColorUtils from "../../tree/ColorUtils";
+import Stage from "../../tree/Stage";
+import { TextSettings } from "./TextSettings";
 
 type LinesInfo = { lines: string[]; lineWidths: number[]; maxWidth: number };
 
 export default class TextTextureRenderer {
-    private _context = this.canvas.getContext('2d')!;
+    private _context = this.canvas.getContext("2d")!;
     public renderInfo: any;
 
     constructor(
@@ -23,10 +23,10 @@ export default class TextTextureRenderer {
     }
 
     private _getFontSetting() {
-        const fontStyle = this.settings.fontStyle || 'normal';
+        const fontStyle = this.settings.fontStyle || "normal";
         const fontSize = (this.settings.fontSize || 40) * this.pixelRatio;
         const fontFaces = this._getFontFaces();
-        return `${fontStyle} ${fontSize}px ${fontFaces.join(',')}`;
+        return `${fontStyle} ${fontSize}px ${fontFaces.join(",")}`;
     }
 
     private _getFontFaces() {
@@ -36,8 +36,8 @@ export default class TextTextureRenderer {
         }
 
         if (fontFace) {
-            return fontFace.map(fontFaceName => {
-                if (fontFaceName === 'serif' || fontFaceName === 'sans-serif') {
+            return fontFace.map((fontFaceName) => {
+                if (fontFaceName === "serif" || fontFaceName === "sans-serif") {
                     return fontFaceName;
                 } else {
                     return `"${fontFaceName}"`;
@@ -57,13 +57,13 @@ export default class TextTextureRenderer {
                     // Use a promise that waits for loading.
                     return documentFonts
                         .load(fontSetting, this.settings.text)
-                        .catch(err => {
+                        .catch((err) => {
                             // Just load the fallback font.
-                            console.warn('Font load error', err, fontSetting);
+                            console.warn("Font load error", err, fontSetting);
                         })
                         .then(() => {
                             if (!documentFonts.check(fontSetting, this.settings.text)) {
-                                console.warn('Font not found', fontSetting);
+                                console.warn("Font not found", fontSetting);
                             }
                         });
                 }
@@ -102,8 +102,8 @@ export default class TextTextureRenderer {
         } = this.settings;
 
         const {
-            text = '',
-            textAlign = 'left',
+            text = "",
+            textAlign = "left",
             maxLines = 0,
             textColor = 0xffffffff,
             shadow = false,
@@ -137,7 +137,7 @@ export default class TextTextureRenderer {
             lines = usedLines;
         } else {
             renderInfo.moreTextLines = false;
-            renderInfo.remainingText = '';
+            renderInfo.remainingText = "";
         }
 
         // calculate text width
@@ -198,9 +198,9 @@ export default class TextTextureRenderer {
             linePositionX = 0;
             linePositionY = i * lineHeight + offsetY;
 
-            if (textAlign === 'right') {
+            if (textAlign === "right") {
                 linePositionX += innerWidth - lineWidths[i];
-            } else if (textAlign === 'center') {
+            } else if (textAlign === "center") {
                 linePositionX += (innerWidth - lineWidths[i]) / 2;
             }
 
@@ -241,12 +241,12 @@ export default class TextTextureRenderer {
         const lines: string[] = [];
         const lineWidths: number[] = [];
         let maxWidth = 0;
-        const spaceWidth = wordWrapWidth ? this._context.measureText(' ').width : 0;
-        lineItems.forEach(lineItem => {
+        const spaceWidth = wordWrapWidth ? this._context.measureText(" ").width : 0;
+        lineItems.forEach((lineItem) => {
             if (wordWrapWidth) {
-                let result = '';
+                let result = "";
                 let lineWidth = 0;
-                const words = lineItem.split(' ');
+                const words = lineItem.split(" ");
                 const n = words.length;
                 for (let j = 0; j < n; j++) {
                     const wordWidth = this._context.measureText(words[j]).width;
@@ -259,7 +259,7 @@ export default class TextTextureRenderer {
                         result = words[j];
                     } else {
                         if (result) {
-                            result += ' ';
+                            result += " ";
                         }
                         result += words[j];
                         lineWidth += wordWidth + spaceWidth;
@@ -287,8 +287,8 @@ function getDocumentFonts(): FontFaceSet | undefined {
 }
 
 type CSSOMString = string;
-type FontFaceLoadStatus = 'unloaded' | 'loading' | 'loaded' | 'error';
-type FontFaceSetStatus = 'loading' | 'loaded';
+type FontFaceLoadStatus = "unloaded" | "loading" | "loaded" | "error";
+type FontFaceSetStatus = "loading" | "loaded";
 
 interface FontFace {
     family: CSSOMString;

@@ -1,5 +1,5 @@
-import Element from './Element';
-import Utils from './Utils';
+import Element from "./Element";
+import Utils from "./Utils";
 
 export interface ListType {
     ref: string | undefined;
@@ -52,7 +52,7 @@ export default class ObjectList<T extends ListType> {
                 this.onAdd(item, index);
             }
         } else {
-            throw new Error('addAt: The index ' + index + ' is out of bounds ' + this._items.length);
+            throw new Error("addAt: The index " + index + " is out of bounds " + this._items.length);
         }
     }
 
@@ -60,11 +60,11 @@ export default class ObjectList<T extends ListType> {
         if (item.ref) {
             const existingItem = this.getByRef(item.ref);
             if (!existingItem) {
-                throw new Error('replaceByRef: no item found with reference: ' + item.ref);
+                throw new Error("replaceByRef: no item found with reference: " + item.ref);
             }
             this.replace(item, existingItem);
         } else {
-            throw new Error('replaceByRef: no ref specified in item');
+            throw new Error("replaceByRef: no ref specified in item");
         }
         this.addAt(item, this._items.length);
     }
@@ -72,7 +72,7 @@ export default class ObjectList<T extends ListType> {
     replace(item: T, prevItem: T) {
         const index = this.getIndex(prevItem);
         if (index === -1) {
-            throw new Error('replace: The previous item does not exist');
+            throw new Error("replace: The previous item does not exist");
         }
         this.setAt(item, index);
     }
@@ -109,7 +109,7 @@ export default class ObjectList<T extends ListType> {
                 this.onSet(item, index, prevItem);
             }
         } else {
-            throw new Error('setAt: The index ' + index + ' is out of bounds ' + this._items.length);
+            throw new Error("setAt: The index " + index + " is out of bounds " + this._items.length);
         }
     }
 

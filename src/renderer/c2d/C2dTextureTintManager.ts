@@ -1,7 +1,7 @@
-import Stage from '../../tree/Stage';
-import C2dTintCache from './C2dTintCache';
-import { C2dNativeTexture } from './C2dNativeTexture';
-import C2dRenderTexture from './C2dRenderTexture';
+import Stage from "../../tree/Stage";
+import C2dTintCache from "./C2dTintCache";
+import { C2dNativeTexture } from "./C2dNativeTexture";
+import C2dRenderTexture from "./C2dRenderTexture";
 
 export default class C2dTextureTintManager {
     private _usedMemory: number = 0;
@@ -56,12 +56,12 @@ export default class C2dTextureTintManager {
                 target.context.clearRect(0, 0, target.w, target.h);
             } else {
                 // Allocate new.
-                target = document.createElement('canvas') as C2dRenderTexture;
+                target = document.createElement("canvas") as C2dRenderTexture;
                 target.w = nativeTexture.w;
                 target.h = nativeTexture.h;
                 target.width = nativeTexture.width as number;
                 target.height = nativeTexture.height as number;
-                target.context = target.getContext('2d')!;
+                target.context = target.getContext("2d")!;
             }
 
             this._tintTexture(target, nativeTexture, color);
@@ -80,16 +80,16 @@ export default class C2dTextureTintManager {
     _tintTexture(target: C2dRenderTexture, source: C2dNativeTexture, color: number) {
         let col = color.toString(16);
         while (col.length < 6) {
-            col = '0' + col;
+            col = "0" + col;
         }
-        target.context.fillStyle = '#' + col;
-        target.context.globalCompositeOperation = 'copy';
+        target.context.fillStyle = "#" + col;
+        target.context.globalCompositeOperation = "copy";
         target.context.fillRect(0, 0, source.w, source.h);
-        target.context.globalCompositeOperation = 'multiply';
+        target.context.globalCompositeOperation = "multiply";
         target.context.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.w, target.h);
 
         // Alpha-mix the texture.
-        target.context.globalCompositeOperation = 'destination-in';
+        target.context.globalCompositeOperation = "destination-in";
         target.context.drawImage(source, 0, 0, source.w, source.h, 0, 0, target.w, target.h);
     }
 
@@ -107,7 +107,7 @@ export default class C2dTextureTintManager {
     gc(aggressive: boolean = false) {
         const frame = this.stage.frameCounter;
         let delta = 0;
-        this._cachedNativeTextures.forEach(texture => {
+        this._cachedNativeTextures.forEach((texture) => {
             const cache = this._getCache(texture);
             const before = cache.memoryUsage;
             cache.cleanup(frame);

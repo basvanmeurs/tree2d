@@ -1,5 +1,5 @@
-import NativeTexture from '../../renderer/NativeTexture';
-import ElementCore from './ElementCore';
+import NativeTexture from "../../renderer/NativeTexture";
+import ElementCore from "./ElementCore";
 
 export default class CoreQuadList {
     private quadTextures: NativeTexture[] = [];

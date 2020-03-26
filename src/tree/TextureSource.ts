@@ -1,5 +1,5 @@
-import TextureManager from './TextureManager';
-import Element from './Element';
+import TextureManager from "./TextureManager";
+import Element from "./Element";
 
 export default class TextureSource {
     private id: number = TextureSource.id++;
@@ -81,8 +81,8 @@ export default class TextureSource {
     }
 
     forEachEnabledElement(cb: (element: Element) => void) {
-        this.textures.forEach(texture => {
-            texture.getElements().forEach(element => cb(element));
+        this.textures.forEach((texture) => {
+            texture.getElements().forEach((element) => cb(element));
         });
     }
 
@@ -91,8 +91,8 @@ export default class TextureSource {
     }
 
     forEachActiveElement(cb: (element: Element) => void) {
-        this.textures.forEach(texture => {
-            texture.getElements().forEach(element => {
+        this.textures.forEach((texture) => {
+            texture.getElements().forEach((element) => {
                 if (element.active) {
                     cb(element);
                 }
@@ -226,7 +226,7 @@ export default class TextureSource {
 
     private onLoad() {
         if (this.isUsed()) {
-            this.textures.forEach(texture => {
+            this.textures.forEach((texture) => {
                 texture.onLoad();
             });
         }
@@ -241,13 +241,13 @@ export default class TextureSource {
             this._nativeTexture.updateFrame = this.stage.frameCounter;
         }
 
-        this.forEachActiveElement(element => {
+        this.forEachActiveElement((element) => {
             element.forceRenderUpdate();
         });
     }
 
     forceUpdateRenderCoords() {
-        this.forEachActiveElement(element => {
+        this.forEachActiveElement((element) => {
             element.updateTextureCoords();
         });
     }
@@ -271,22 +271,22 @@ export default class TextureSource {
         this.h = h;
 
         if (!prevNativeTexture && newNativeTexture) {
-            this.forEachActiveElement(element => element.onTextureSourceLoaded());
+            this.forEachActiveElement((element) => element.onTextureSourceLoaded());
         }
 
         if (!newNativeTexture) {
-            this.forEachActiveElement(element => element.setDisplayedTexture(undefined));
+            this.forEachActiveElement((element) => element.setDisplayedTexture(undefined));
         }
 
         // Dimensions may be changed.
-        this.forEachEnabledElement(element => element._updateTextureDimensions());
+        this.forEachEnabledElement((element) => element._updateTextureDimensions());
     }
 
     onError(e: Error) {
         this._loadError = e;
         this.loadingSince = 0;
-        console.error('texture load error', e, this.lookupId);
-        this.forEachActiveElement(element => element.onTextureSourceLoadError(e));
+        console.error("texture load error", e, this.lookupId);
+        this.forEachActiveElement((element) => element.onTextureSourceLoadError(e));
     }
 
     free() {
@@ -305,6 +305,6 @@ export default class TextureSource {
     }
 }
 
-import Texture, { TextureSourceLoader, TextureSourceOptions } from './Texture';
-import Stage from './Stage';
-import NativeTexture from '../renderer/NativeTexture';
+import Texture, { TextureSourceLoader, TextureSourceOptions } from "./Texture";
+import Stage from "./Stage";
+import NativeTexture from "../renderer/NativeTexture";

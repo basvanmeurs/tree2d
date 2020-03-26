@@ -1,6 +1,6 @@
-import DefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class PixelateShader extends DefaultShader {
     private _size = new Float32Array([4, 4]);
@@ -44,7 +44,7 @@ export default class PixelateShader extends DefaultShader {
     setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
         const gl = this.gl;
-        this._setUniform('size', new Float32Array(this._size), gl.uniform2fv);
+        this._setUniform("size", new Float32Array(this._size), gl.uniform2fv);
     }
 
     getExtraAttribBytesPerVertex() {
@@ -53,12 +53,12 @@ export default class PixelateShader extends DefaultShader {
 
     enableAttribs() {
         super.enableAttribs();
-        this.gl.enableVertexAttribArray(this._attrib('aTextureRes'));
+        this.gl.enableVertexAttribArray(this._attrib("aTextureRes"));
     }
 
     disableAttribs() {
         super.disableAttribs();
-        this.gl.disableVertexAttribArray(this._attrib('aTextureRes'));
+        this.gl.disableVertexAttribArray(this._attrib("aTextureRes"));
     }
 
     setExtraAttribsInBuffer(operation: WebGLCoreQuadOperation) {
@@ -86,7 +86,7 @@ export default class PixelateShader extends DefaultShader {
     beforeDraw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
         gl.vertexAttribPointer(
-            this._attrib('aTextureRes'),
+            this._attrib("aTextureRes"),
             2,
             gl.FLOAT,
             false,

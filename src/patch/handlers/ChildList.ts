@@ -1,7 +1,7 @@
-import Element from '../../tree/Element';
-import ElementChildList from '../../tree/ElementChildList';
-import Utils from '../../tree/Utils';
-import Patcher from '../Patcher';
+import Element from "../../tree/Element";
+import ElementChildList from "../../tree/ElementChildList";
+import Utils from "../../tree/Utils";
+import Patcher from "../Patcher";
 
 export class ChildList {
     private element: Element;

@@ -1,6 +1,6 @@
-import DefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class RoundedRectangleShader extends DefaultShader {
     private _radius: number = 1;
@@ -26,9 +26,9 @@ export default class RoundedRectangleShader extends DefaultShader {
         const owner = operation.shaderOwner;
 
         const pixelRatio = this.context.stage.getPixelRatio();
-        this._setUniform('radius', (this._radius + 0.5) * pixelRatio, this.gl.uniform1f);
+        this._setUniform("radius", (this._radius + 0.5) * pixelRatio, this.gl.uniform1f);
         this._setUniform(
-            'resolution',
+            "resolution",
             new Float32Array([owner.getLayoutW() * pixelRatio, owner.getLayoutH() * pixelRatio]),
             this.gl.uniform2fv,
         );

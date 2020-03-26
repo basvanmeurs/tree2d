@@ -1,9 +1,9 @@
-import WebGLShaderProgram from './WebGLShaderProgram';
-import Shader from '../../tree/Shader';
-import CoreContext from '../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from './WebGLCoreQuadOperation';
-import WebGLRenderer from './WebGLRenderer';
-import { Constructor } from '../../util/types';
+import WebGLShaderProgram from "./WebGLShaderProgram";
+import Shader from "../../tree/Shader";
+import CoreContext from "../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
+import WebGLRenderer from "./WebGLRenderer";
+import { Constructor } from "../../util/types";
 
 export type GLFunction = (location: WebGLUniformLocation | null, ...args: any[]) => void;
 

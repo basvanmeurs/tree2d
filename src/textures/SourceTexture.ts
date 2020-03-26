@@ -1,5 +1,5 @@
-import Texture from '../tree/Texture';
-import TextureSource from '../tree/TextureSource';
+import Texture from "../tree/Texture";
+import TextureSource from "../tree/TextureSource";
 
 export default class SourceTexture extends Texture {
     private _textureSource?: TextureSource;

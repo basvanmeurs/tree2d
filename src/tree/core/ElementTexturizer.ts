@@ -1,9 +1,9 @@
-import TextureSource from '../TextureSource';
-import Element from '../Element';
-import ElementCore from './ElementCore';
-import CoreContext from './CoreContext';
-import RenderTexture from '../../renderer/RenderTexture';
-import NativeTexture from '../../renderer/NativeTexture';
+import TextureSource from "../TextureSource";
+import Element from "../Element";
+import ElementCore from "./ElementCore";
+import CoreContext from "./CoreContext";
+import RenderTexture from "../../renderer/RenderTexture";
+import NativeTexture from "../../renderer/NativeTexture";
 
 export default class ElementTexturizer {
     private _element: Element = this._core.element;
@@ -82,7 +82,7 @@ export default class ElementTexturizer {
             }
 
             // Texture will be updated: all elements using the source need to be updated as well.
-            this._resultTextureSource.forEachEnabledElement(element => {
+            this._resultTextureSource.forEachEnabledElement((element) => {
                 element._updateTextureDimensions();
                 element.core.setHasRenderUpdates(3);
             });

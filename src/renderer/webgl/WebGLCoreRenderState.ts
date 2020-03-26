@@ -1,10 +1,10 @@
-import CoreRenderState from '../../tree/core/CoreRenderState';
-import NativeTexture from '../NativeTexture';
-import WebGLCoreQuadList from './WebGLCoreQuadList';
-import ColorUtils from '../../tree/ColorUtils';
-import { RenderTextureInfo } from '../../tree/core/RenderTextureInfo';
-import WebGLCoreQuadOperation from './WebGLCoreQuadOperation';
-import ElementCore from '../../tree/core/ElementCore';
+import CoreRenderState from "../../tree/core/CoreRenderState";
+import NativeTexture from "../NativeTexture";
+import WebGLCoreQuadList from "./WebGLCoreQuadList";
+import ColorUtils from "../../tree/ColorUtils";
+import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
+import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
+import ElementCore from "../../tree/core/ElementCore";
 
 export default class WebGLCoreRenderState extends CoreRenderState<WebGLCoreQuadList, WebGLCoreQuadOperation> {
     isRenderTextureReusable(renderTextureInfo: RenderTextureInfo): boolean {

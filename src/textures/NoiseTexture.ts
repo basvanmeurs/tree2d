@@ -1,13 +1,13 @@
-import Texture, { TextureSourceLoader } from '../tree/Texture';
+import Texture, { TextureSourceLoader } from "../tree/Texture";
 
 export default class NoiseTexture extends Texture {
     protected _getLookupId() {
-        return '__noise';
+        return "__noise";
     }
 
     protected _getSourceLoader(): TextureSourceLoader {
         const gl = this.stage.gl;
-        return cb => {
+        return (cb) => {
             const noise = new Uint8Array(128 * 128 * 4);
             for (let i = 0; i < 128 * 128 * 4; i += 4) {
                 const v = Math.floor(Math.random() * 256);

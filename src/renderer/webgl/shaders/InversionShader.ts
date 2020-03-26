@@ -1,6 +1,6 @@
-import DefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class InversionShader extends DefaultShader {
     private _amount: number = 1;
@@ -24,7 +24,7 @@ export default class InversionShader extends DefaultShader {
 
     setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
-        this._setUniform('amount', this._amount, this.gl.uniform1f);
+        this._setUniform("amount", this._amount, this.gl.uniform1f);
     }
 }
 

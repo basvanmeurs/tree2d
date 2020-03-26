@@ -1,4 +1,4 @@
-import CoreQuadList from '../../tree/core/CoreQuadList';
+import CoreQuadList from "../../tree/core/CoreQuadList";
 
 export default class WebGLCoreQuadList extends CoreQuadList {
     // Allocate a fairly big chunk of memory that should be enough to support ~100000 (default) quads.
@@ -38,20 +38,20 @@ export default class WebGLCoreQuadList extends CoreQuadList {
         const uints = this.uints;
         const lines = [];
         for (let i = 1; i <= this.length; i++) {
-            let str = 'entry ' + i + ': ';
+            let str = "entry " + i + ": ";
             for (let j = 0; j < 4; j++) {
                 const b = i * 20 + j * 4;
                 str +=
                     floats[b] +
-                    ',' +
+                    "," +
                     floats[b + 1] +
-                    ':' +
+                    ":" +
                     floats[b + 2] +
-                    ',' +
+                    "," +
                     floats[b + 3] +
-                    '[' +
+                    "[" +
                     uints[b + 4].toString(16) +
-                    '] ';
+                    "] ";
             }
             lines.push(str);
         }

@@ -1,6 +1,6 @@
-import TextureSource from './TextureSource';
-import Stage from './Stage';
-import { TextureSourceLoader, TextureSourceOptions } from './Texture';
+import TextureSource from "./TextureSource";
+import Stage from "./Stage";
+import { TextureSourceLoader, TextureSourceOptions } from "./Texture";
 
 export default class TextureManager {
     // The currently used amount of texture memory.

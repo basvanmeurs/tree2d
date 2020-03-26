@@ -1,6 +1,6 @@
-import Shader from '../../tree/Shader';
-import C2dCoreQuadOperation from './C2dCoreQuadOperation';
-import C2dRenderTexture from './C2dRenderTexture';
+import Shader from "../../tree/Shader";
+import C2dCoreQuadOperation from "./C2dCoreQuadOperation";
+import C2dRenderTexture from "./C2dRenderTexture";
 
 export default class C2dShader extends Shader {
     beforeDraw(operation: C2dCoreQuadOperation, target: C2dRenderTexture) {}

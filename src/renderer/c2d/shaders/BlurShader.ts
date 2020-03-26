@@ -1,4 +1,4 @@
-import DefaultShader from './DefaultShader';
+import DefaultShader from "./DefaultShader";
 
 export default class BlurShader extends DefaultShader {
     private _kernelRadius: number = 1;
@@ -17,10 +17,10 @@ export default class BlurShader extends DefaultShader {
     }
 
     _beforeDrawEl(info: any) {
-        info.target.context.filter = 'blur(' + this._kernelRadius + 'px)';
+        info.target.context.filter = "blur(" + this._kernelRadius + "px)";
     }
 
     _afterDrawEl(info: any) {
-        info.target.context.filter = 'none';
+        info.target.context.filter = "none";
     }
 }

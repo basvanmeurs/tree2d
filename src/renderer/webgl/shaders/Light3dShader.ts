@@ -1,6 +1,6 @@
-import DefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class Light3dShader extends DefaultShader {
     private _strength: number = 0.5;
@@ -38,15 +38,15 @@ export default class Light3dShader extends DefaultShader {
         const rz = -Math.atan2(vr.renderContext.tc, vr.renderContext.ta);
 
         const gl = this.gl;
-        this._setUniform('pivot', new Float32Array([coords[0], coords[1], this._pivotZ]), gl.uniform3fv);
-        this._setUniform('rot', new Float32Array([this._rx, this._ry, rz]), gl.uniform3fv);
+        this._setUniform("pivot", new Float32Array([coords[0], coords[1], this._pivotZ]), gl.uniform3fv);
+        this._setUniform("rot", new Float32Array([this._rx, this._ry, rz]), gl.uniform3fv);
 
-        this._setUniform('z', this._z, gl.uniform1f);
-        this._setUniform('lightY', this.lightY, gl.uniform1f);
-        this._setUniform('lightZ', this.lightZ, gl.uniform1f);
-        this._setUniform('strength', this._strength, gl.uniform1f);
-        this._setUniform('ambient', this._ambient, gl.uniform1f);
-        this._setUniform('fudge', this._fudge, gl.uniform1f);
+        this._setUniform("z", this._z, gl.uniform1f);
+        this._setUniform("lightY", this.lightY, gl.uniform1f);
+        this._setUniform("lightZ", this.lightZ, gl.uniform1f);
+        this._setUniform("strength", this._strength, gl.uniform1f);
+        this._setUniform("ambient", this._ambient, gl.uniform1f);
+        this._setUniform("fudge", this._fudge, gl.uniform1f);
     }
 
     set strength(v) {

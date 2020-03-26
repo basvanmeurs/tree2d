@@ -1,6 +1,6 @@
-import DefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLCoreQuadOperation from '../WebGLCoreQuadOperation';
+import DefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class LinearBlurShader extends DefaultShader {
     private _direction: Float32Array = new Float32Array([1, 0]);
@@ -43,12 +43,12 @@ export default class LinearBlurShader extends DefaultShader {
 
     setupUniforms(operation: WebGLCoreQuadOperation) {
         super.setupUniforms(operation);
-        this._setUniform('direction', this._direction, this.gl.uniform2fv);
-        this._setUniform('kernelRadius', this._kernelRadius, this.gl.uniform1i);
+        this._setUniform("direction", this._direction, this.gl.uniform2fv);
+        this._setUniform("kernelRadius", this._kernelRadius, this.gl.uniform1i);
 
         const w = operation.getRenderWidth();
         const h = operation.getRenderHeight();
-        this._setUniform('resolution', new Float32Array([w, h]), this.gl.uniform2fv);
+        this._setUniform("resolution", new Float32Array([w, h]), this.gl.uniform2fv);
     }
 }
 

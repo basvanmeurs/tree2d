@@ -1,5 +1,5 @@
-import Element from './Element';
-import Texture from './Texture';
+import Element from "./Element";
+import Texture from "./Texture";
 
 export default class ElementListeners {
     public onSetup?: ElementEventCallback;

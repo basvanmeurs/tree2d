@@ -1,6 +1,6 @@
-import C2dDefaultShader from './DefaultShader';
-import CoreContext from '../../../tree/core/CoreContext';
-import WebGLGrayscaleShader from '../../webgl/shaders/GrayscaleShader';
+import C2dDefaultShader from "./DefaultShader";
+import CoreContext from "../../../tree/core/CoreContext";
+import WebGLGrayscaleShader from "../../webgl/shaders/GrayscaleShader";
 
 export default class GrayscaleShader extends C2dDefaultShader {
     private _amount: number = 1;
@@ -27,10 +27,10 @@ export default class GrayscaleShader extends C2dDefaultShader {
     }
 
     _beforeDrawEl(obj: any) {
-        obj.target.context.filter = 'grayscale(' + this._amount + ')';
+        obj.target.context.filter = "grayscale(" + this._amount + ")";
     }
 
     _afterDrawEl(obj: any) {
-        obj.target.context.filter = 'none';
+        obj.target.context.filter = "none";
     }
 }

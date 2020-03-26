@@ -1,4 +1,4 @@
-import NativeTexture from './NativeTexture';
+import NativeTexture from "./NativeTexture";
 
 export default interface RenderTexture extends NativeTexture {
     _id: number;

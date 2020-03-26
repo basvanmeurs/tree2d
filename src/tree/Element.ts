@@ -4,10 +4,10 @@
  * Copyright Bas van Meurs, 2020
  */
 
-import ElementCore, { FunctionH, FunctionW, FunctionX, FunctionY } from './core/ElementCore';
+import ElementCore, { FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
 
-import Utils from './Utils';
-import Shader from './Shader';
+import Utils from "./Utils";
+import Shader from "./Shader";
 
 class Element {
     private static id: number = 1;
@@ -100,7 +100,7 @@ class Element {
         this._updateEnabledFlag();
 
         if (this.isRoot && parent) {
-            this._throwError('Root should not be added as a child! Results are unspecified!');
+            this._throwError("Root should not be added as a child! Results are unspecified!");
         }
     }
 
@@ -659,19 +659,19 @@ class Element {
     }
 
     getLocationString(): string {
-        const i = this._parent ? this._parent._children.getIndex(this) : 'R';
-        let str = this._parent ? this._parent.getLocationString() : '';
+        const i = this._parent ? this._parent._children.getIndex(this) : "R";
+        let str = this._parent ? this._parent.getLocationString() : "";
         if (this.ref) {
-            str += ':[' + i + ']' + this.ref;
+            str += ":[" + i + "]" + this.ref;
         } else {
-            str += ':[' + i + ']#' + this.id;
+            str += ":[" + i + "]#" + this.id;
         }
         return str;
     }
 
     toString() {
         const obj = this.getSettings();
-        return Element.getPrettyString(obj, '');
+        return Element.getPrettyString(obj, "");
     }
 
     static getPrettyString(obj: any, indent: string) {
@@ -679,36 +679,36 @@ class Element {
         delete obj.children;
 
         // Convert singular json settings object.
-        const colorKeys = ['color', 'colorUl', 'colorUr', 'colorBl', 'colorBr'];
+        const colorKeys = ["color", "colorUl", "colorUr", "colorBl", "colorBr"];
         let str = JSON.stringify(obj, (k: string, v: number): string | number => {
             if (colorKeys.indexOf(k) !== -1) {
-                return 'COLOR[' + v.toString(16) + ']';
+                return "COLOR[" + v.toString(16) + "]";
             }
             return v;
         });
-        str = str.replace(/"COLOR\[([a-f0-9]{1,8})\]"/g, '0x$1');
+        str = str.replace(/"COLOR\[([a-f0-9]{1,8})\]"/g, "0x$1");
 
         if (children) {
-            let childStr = '';
+            let childStr = "";
             if (Utils.isObjectLiteral(children)) {
                 const refs = Object.keys(children);
-                childStr = '';
+                childStr = "";
                 for (let i = 0, n = refs.length; i < n; i++) {
                     childStr += `\n${indent}  "${refs[i]}":`;
                     delete children[refs[i]].ref;
-                    childStr += Element.getPrettyString(children[refs[i]], indent + '  ') + (i < n - 1 ? ',' : '');
+                    childStr += Element.getPrettyString(children[refs[i]], indent + "  ") + (i < n - 1 ? "," : "");
                 }
-                const isEmpty = str === '{}';
-                str = str.substr(0, str.length - 1) + (isEmpty ? '' : ',') + childStr + '\n' + indent + '}';
+                const isEmpty = str === "{}";
+                str = str.substr(0, str.length - 1) + (isEmpty ? "" : ",") + childStr + "\n" + indent + "}";
             } else {
                 const n = children.length;
-                childStr = '[';
+                childStr = "[";
                 for (let i = 0; i < n; i++) {
-                    childStr += Element.getPrettyString(children[i], indent + '  ') + (i < n - 1 ? ',' : '') + '\n';
+                    childStr += Element.getPrettyString(children[i], indent + "  ") + (i < n - 1 ? "," : "") + "\n";
                 }
-                childStr += indent + ']}';
-                const isEmpty = str === '{}';
-                str = str.substr(0, str.length - 1) + (isEmpty ? '' : ',') + '"children":\n' + indent + childStr + '}';
+                childStr += indent + "]}";
+                const isEmpty = str === "{}";
+                str = str.substr(0, str.length - 1) + (isEmpty ? "" : ",") + '"children":\n' + indent + childStr + "}";
             }
         }
 
@@ -731,7 +731,7 @@ class Element {
 
                 if (!missing) {
                     settings.children = {};
-                    childArray.forEach(child => {
+                    childArray.forEach((child) => {
                         settings.children[child.ref] = child;
                     });
                 } else {
@@ -851,7 +851,7 @@ class Element {
     set boundsMargin(v: number[] | undefined) {
         if (!Array.isArray(v) && v !== undefined) {
             throw new Error(
-                'boundsMargin should be an array of left-top-right-bottom values or undefined (inherit margin)',
+                "boundsMargin should be an array of left-top-right-bottom values or undefined (inherit margin)",
             );
         }
         this._core.boundsMargin = v;
@@ -1115,7 +1115,7 @@ class Element {
 
     get childList() {
         if (!this._allowChildrenAccess()) {
-            this._throwError('Direct access to children is not allowed in ' + this.getLocationString());
+            this._throwError("Direct access to children is not allowed in " + this.getLocationString());
         }
         return this._children;
     }
@@ -1163,7 +1163,7 @@ class Element {
             this.texture.mw = v;
             this._updateTextureDimensions();
         } else {
-            this._throwError('Set mw after setting a texture.');
+            this._throwError("Set mw after setting a texture.");
         }
     }
 
@@ -1176,7 +1176,7 @@ class Element {
             this.texture.mh = v;
             this._updateTextureDimensions();
         } else {
-            this._throwError('Set mh after setting a texture.');
+            this._throwError("Set mh after setting a texture.");
         }
     }
 
@@ -1300,7 +1300,7 @@ class Element {
     }
 
     _throwError(message: string) {
-        throw new Error(this.constructor.name + ' (' + this.getLocationString() + '): ' + message);
+        throw new Error(this.constructor.name + " (" + this.getLocationString() + "): " + message);
     }
 
     private get _flex() {
@@ -1504,18 +1504,18 @@ class Element {
     }
 }
 
-import Texture from './Texture';
-import ImageTexture from '../textures/ImageTexture';
-import TextTexture from '../textures/text/TextTexture';
-import ElementChildList from './ElementChildList';
-import Stage from './Stage';
-import ElementTexturizer from './core/ElementTexturizer';
+import Texture from "./Texture";
+import ImageTexture from "../textures/ImageTexture";
+import TextTexture from "../textures/text/TextTexture";
+import ElementChildList from "./ElementChildList";
+import Stage from "./Stage";
+import ElementTexturizer from "./core/ElementTexturizer";
 import ElementListeners, {
     ElementEventCallback,
     ElementResizeEventCallback,
     ElementTextureErrorEventCallback,
     ElementTextureEventCallback,
-} from './ElementListeners';
-import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from 'flexbox.js/dist/FlexContainer';
+} from "./ElementListeners";
+import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from "flexbox.js/dist/FlexContainer";
 
 export default Element;

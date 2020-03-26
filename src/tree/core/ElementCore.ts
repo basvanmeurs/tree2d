@@ -1,4 +1,4 @@
-import Element from '../Element';
+import Element from "../Element";
 
 export default class ElementCore implements FlexSubject {
     private _element: Element;
@@ -1034,7 +1034,7 @@ export default class ElementCore implements FlexSubject {
         if (prevZContext && prevZContext._zContextUsage > 0) {
             // Transfer from upper z context to this z context.
             const results = this._getZIndexedDescs();
-            results.forEach(c => {
+            results.forEach((c) => {
                 if (this.isAncestorOf(c) && c._zIndex !== 0) {
                     c.setZParent(this);
                 }
@@ -1072,7 +1072,7 @@ export default class ElementCore implements FlexSubject {
                 this.sortZIndexedChildren();
             }
 
-            this._zIndexedChildren!.slice().forEach(c => {
+            this._zIndexedChildren!.slice().forEach((c) => {
                 if (c._zIndex !== 0) {
                     c.setZParent(newZParent);
                 }
@@ -2428,16 +2428,16 @@ export type FunctionY = (parentH: number) => number;
 export type FunctionW = (parentW: number) => number;
 export type FunctionH = (parentH: number) => number;
 
-import ElementTexturizer from './ElementTexturizer';
-import Utils from '../Utils';
-import CoreContext from './CoreContext';
-import TextureSource from '../TextureSource';
-import CoreRenderState from './CoreRenderState';
-import Shader from '../Shader';
-import ElementCoreContext from './ElementCoreContext';
-import { RenderTextureInfo } from './RenderTextureInfo';
-import { ElementEventCallback } from '../ElementListeners';
-import FlexSubject from 'flexbox.js/dist/FlexSubject';
-import FlexNode from 'flexbox.js/dist/FlexNode';
-import FlexContainer from 'flexbox.js/dist/FlexContainer';
-import FlexItem from 'flexbox.js/dist/FlexItem';
+import ElementTexturizer from "./ElementTexturizer";
+import Utils from "../Utils";
+import CoreContext from "./CoreContext";
+import TextureSource from "../TextureSource";
+import CoreRenderState from "./CoreRenderState";
+import Shader from "../Shader";
+import ElementCoreContext from "./ElementCoreContext";
+import { RenderTextureInfo } from "./RenderTextureInfo";
+import { ElementEventCallback } from "../ElementListeners";
+import FlexSubject from "flexbox.js/dist/FlexSubject";
+import FlexNode from "flexbox.js/dist/FlexNode";
+import FlexContainer from "flexbox.js/dist/FlexContainer";
+import FlexItem from "flexbox.js/dist/FlexItem";
