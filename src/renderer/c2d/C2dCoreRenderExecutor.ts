@@ -68,14 +68,14 @@ export default class C2dCoreRenderExecutor extends CoreRenderExecutor<C2dCoreRen
             // We can't reset clipping alone so we need to restore the full context.
             this._restoreContext();
 
-            const precision = this.context.stage.getRenderPrecision();
+            const pixelRatio = this.context.stage.getPixelRatio();
             if (area) {
                 context.beginPath();
                 context.rect(
-                    Math.round(area[0] * precision),
-                    Math.round(area[1] * precision),
-                    Math.round(area[2] * precision),
-                    Math.round(area[3] * precision),
+                    Math.round(area[0] * pixelRatio),
+                    Math.round(area[1] * pixelRatio),
+                    Math.round(area[2] * pixelRatio),
+                    Math.round(area[3] * pixelRatio),
                 );
                 context.closePath();
                 context.clip();

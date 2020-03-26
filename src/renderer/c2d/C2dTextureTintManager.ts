@@ -59,6 +59,8 @@ export default class C2dTextureTintManager {
                 target = document.createElement('canvas') as C2dRenderTexture;
                 target.w = nativeTexture.w;
                 target.h = nativeTexture.h;
+                target.width = nativeTexture.width as number;
+                target.height = nativeTexture.height as number;
                 target.context = target.getContext('2d')!;
             }
 

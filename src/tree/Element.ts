@@ -565,7 +565,7 @@ class Element {
         this.updateTextureCoords();
     }
 
-    onPrecisionChanged(): void {
+    onPixelRatioChanged(): void {
         this._updateTextureDimensions();
     }
 

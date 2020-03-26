@@ -5,7 +5,7 @@ export default class TextTexture extends Texture {
 
     constructor(stage: Stage) {
         super(stage);
-        this.precision = this.stage.precision;
+        this.pixelRatio = this.stage.pixelRatio;
     }
 
     get text() {
@@ -305,14 +305,14 @@ export default class TextTexture extends Texture {
         }
     }
 
-    get precision() {
-        return super.precision;
+    get pixelRatio() {
+        return super.pixelRatio;
     }
 
-    set precision(v) {
-        // We actually draw differently when the precision changes.
-        if (this.precision !== v) {
-            super.precision = v;
+    set pixelRatio(v) {
+        // We actually draw differently when the pixel ratio changes.
+        if (this.pixelRatio !== v) {
+            super.pixelRatio = v;
             this._changed();
         }
     }
@@ -336,7 +336,7 @@ export default class TextTexture extends Texture {
     }
 
     _getLookupId() {
-        const id = 'TX$' + TextTexture.getHash(this.settings) + '|' + this.precision;
+        const id = 'TX$' + TextTexture.getHash(this.settings) + '|' + this.pixelRatio;
         return id;
     }
 
@@ -345,7 +345,7 @@ export default class TextTexture extends Texture {
 
         return (cb: TextureSourceCallback) => {
             const canvas = this.stage.platform.getDrawingCanvas();
-            const renderer = new TextTextureRenderer(this.stage, canvas, args, this.precision);
+            const renderer = new TextTextureRenderer(this.stage, canvas, args, this.pixelRatio);
             const p = renderer.draw();
 
             const respond = () => {

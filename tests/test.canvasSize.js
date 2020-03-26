@@ -3,9 +3,9 @@ describe('canvas size', () => {
     let stage, root, element;
     before(() => {
         const canvas = document.createElement('canvas');
-        canvas.width = 900;
-        canvas.height = 900;
-        stage = new tree2d.Stage(canvas, { clearColor: 0xffff0000, autostart: false });
+        canvas.style.width = '900px';
+        canvas.style.height = '900px';
+        stage = new tree2d.Stage(canvas, { clearColor: 0xffff0000, autostart: false, pixelRatio: 1 });
         root = stage.root;
         document.body.appendChild(stage.getCanvas());
     });
@@ -48,8 +48,8 @@ describe('canvas size', () => {
 
     describe('change', () => {
         before(() => {
-            stage.getCanvas().width = 300;
-            stage.getCanvas().height = 300;
+            stage.getCanvas().style.width = '300px';
+            stage.getCanvas().style.height = '300px';
             stage.drawFrame();
         });
 

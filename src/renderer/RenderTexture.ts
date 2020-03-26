@@ -5,5 +5,5 @@ export default interface RenderTexture extends NativeTexture {
     f: number;
     ow: number;
     oh: number;
-    precision: number;
+    pixelRatio: number;
 }

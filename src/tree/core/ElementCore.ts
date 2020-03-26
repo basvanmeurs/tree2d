@@ -2336,6 +2336,91 @@ export default class ElementCore implements FlexSubject {
     getLayoutH() {
         return this._h;
     }
+
+    private convertWorldCoordsToLocal(worldX: number, worldY: number): number[] {
+        const wc = this._worldContext;
+        worldX = worldX - wc.px;
+        worldY = worldY - wc.py;
+        if (wc.isSquare()) {
+            return [worldX / wc.ta, worldY / wc.td];
+        } else {
+            // Solve linear system of equations by substitution.
+            const tcTa = wc.tc / wc.ta;
+            const iy = (worldY - tcTa * worldX) * (wc.td - wc.tb * tcTa);
+            const ix = (worldY - wc.td * iy) / wc.tc;
+            return [ix, iy];
+        }
+    }
+
+    private isCoordsWithinElement(worldX: number, worldY: number) {
+        // Make coords relative to world context.
+        const [x, y] = this.convertWorldCoordsToLocal(worldX, worldY);
+
+        return x >= 0 && y >= 0 && x < this._w && y < this._h;
+    }
+
+    private getCoordinatesOrigin(): ElementCore {
+        const parent = this._parent!;
+        if (!parent) {
+            return this;
+        } else if (parent._useRenderToTexture) {
+            return parent;
+        } else {
+            return parent.getCoordinatesOrigin();
+        }
+    }
+
+    /**
+     * @pre element core must be up-to-date (update method called).
+     */
+    gatherElementsAtCoordinates(worldX: number, worldY: number, results: ElementCore[]) {
+        let withinBounds = false;
+
+        if (!this._renderContext.alpha) {
+            return;
+        }
+
+        // Make coords relative to world context.
+        withinBounds = this.isCoordsWithinElement(worldX, worldY);
+
+        if (withinBounds && this.zIndex !== 0) {
+            // We must make sure that the not yet visited ancestors do not clip out this texture.
+            // renderToTexture is no problem as it creates a new z context so must already be checked.
+            // clipping is a possible problem, so we must check the scissor.
+            const s = this._scissor;
+            if (s) {
+                const renderRoot = this.getCoordinatesOrigin();
+                const [rx, ry] = renderRoot.convertWorldCoordsToLocal(worldX, worldY);
+
+                if (rx < s[0] || ry < s[1] || rx >= s[0] + s[2] || ry >= s[1] + s[3]) {
+                    withinBounds = false;
+                }
+            }
+        }
+
+        if (withinBounds) {
+            results.push(this);
+        }
+
+        // When the render context is not square, clipping is ignored while rendering.
+        const useClipping = this._useRenderToTexture || (this._clipping && this._renderContext.isSquare());
+        const mustRecurse = withinBounds || !useClipping;
+
+        if (this._children && mustRecurse) {
+            if (this._zContextUsage) {
+                for (let i = 0, n = this._zIndexedChildren!.length; i < n; i++) {
+                    this._zIndexedChildren![i].gatherElementsAtCoordinates(worldX, worldY, results);
+                }
+            } else {
+                for (let i = 0, n = this._children.length; i < n; i++) {
+                    if (this._children[i]._zIndex === 0) {
+                        // If zIndex is set, this item already belongs to a zIndexedChildren array in one of the ancestors.
+                        this._children[i].gatherElementsAtCoordinates(worldX, worldY, results);
+                    }
+                }
+            }
+        }
+    }
 }
 
 export type FunctionX = (parentW: number) => number;

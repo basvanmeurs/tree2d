@@ -171,17 +171,17 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCor
             gl.disable(gl.SCISSOR_TEST);
         } else {
             gl.enable(gl.SCISSOR_TEST);
-            const precision = this.context.stage.getRenderPrecision();
+            const pixelRatio = this.context.stage.getPixelRatio();
             let y = area[1];
             if (this._renderTexture === undefined) {
                 // Flip, for the main framebuffer the coordinates are inversed.
                 y = this.context.stage.coordsHeight - (area[1] + area[3]);
             }
             gl.scissor(
-                Math.round(area[0] * precision),
-                Math.round(y * precision),
-                Math.round(area[2] * precision),
-                Math.round(area[3] * precision),
+                Math.round(area[0] * pixelRatio),
+                Math.round(y * pixelRatio),
+                Math.round(area[2] * pixelRatio),
+                Math.round(area[3] * pixelRatio),
             );
         }
     }

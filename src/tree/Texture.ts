@@ -30,7 +30,7 @@ export default class Texture {
     private _h: number = 0;
 
     // Render precision (0.5 = fuzzy, 1 = normal, 2 = sharp even when scaled twice, etc.).
-    private _precision: number = 1;
+    private _pixelRatio: number = 1;
 
     /**
      * The (maximum) expected texture source dimensions. Used for within bounds determination while texture is not yet loaded.
@@ -340,7 +340,7 @@ export default class Texture {
         } else if (this._resizeMode!.type === 'contain') {
             this._applyResizeContain();
         }
-        this._updatePrecision();
+        this._updatePixelRatio();
         this._updateClipping();
     }
 
@@ -351,15 +351,15 @@ export default class Texture {
         const scaleY = resizeMode.h / source.h;
         const scale = Math.max(scaleX, scaleY);
         if (!scale) return;
-        this._precision = 1 / scale;
+        this._pixelRatio = 1 / scale;
         if (scaleX && scaleX < scale) {
-            const desiredSize = this._precision * resizeMode.w;
+            const desiredSize = this._pixelRatio * resizeMode.w;
             const choppedOffPixels = source.w - desiredSize;
             this._x = choppedOffPixels * resizeMode.x;
             this._w = source.w - choppedOffPixels;
         }
         if (scaleY && scaleY < scale) {
-            const desiredSize = this._precision * resizeMode.h;
+            const desiredSize = this._pixelRatio * resizeMode.h;
             const choppedOffPixels = source.h - desiredSize;
             this._y = choppedOffPixels * resizeMode.y;
             this._h = source.h - choppedOffPixels;
@@ -376,16 +376,16 @@ export default class Texture {
             scale = scaleY;
         }
         if (!scale) return;
-        this._precision = 1 / scale;
+        this._pixelRatio = 1 / scale;
     }
 
     enableClipping(x: number, y: number, w: number, h: number) {
         this._clearResizeMode();
 
-        x *= this._precision;
-        y *= this._precision;
-        w *= this._precision;
-        h *= this._precision;
+        x *= this._pixelRatio;
+        y *= this._pixelRatio;
+        w *= this._pixelRatio;
+        h *= this._pixelRatio;
         if (this._x !== x || this._y !== y || this._w !== w || this._h !== h) {
             this._x = x;
             this._y = y;
@@ -422,11 +422,11 @@ export default class Texture {
         });
     }
 
-    private _updatePrecision() {
+    private _updatePixelRatio() {
         this.elements.forEach(element => {
             // Ignore if not the currently displayed texture.
             if (element.displayedTexture === this) {
-                element.onPrecisionChanged();
+                element.onPixelRatioChanged();
             }
         });
     }
@@ -438,7 +438,7 @@ export default class Texture {
         if (this.y !== 0) nonDefaults['y'] = this.y;
         if (this.w !== 0) nonDefaults['w'] = this.w;
         if (this.h !== 0) nonDefaults['h'] = this.h;
-        if (this.precision !== 1) nonDefaults['precision'] = this.precision;
+        if (this.pixelRatio !== 1) nonDefaults['pixelRatio'] = this.pixelRatio;
         return nonDefaults;
     }
 
@@ -459,12 +459,12 @@ export default class Texture {
     }
 
     get x() {
-        return this._x / this._precision;
+        return this._x / this._pixelRatio;
     }
 
     set x(v) {
         this._clearResizeMode();
-        v = v * this._precision;
+        v = v * this._pixelRatio;
         if (this._x !== v) {
             this._x = v;
             this._updateClipping();
@@ -472,12 +472,12 @@ export default class Texture {
     }
 
     get y() {
-        return this._y / this._precision;
+        return this._y / this._pixelRatio;
     }
 
     set y(v) {
         this._clearResizeMode();
-        v = v * this._precision;
+        v = v * this._pixelRatio;
         if (this._y !== v) {
             this._y = v;
             this._updateClipping();
@@ -485,12 +485,12 @@ export default class Texture {
     }
 
     get w() {
-        return this._w / this._precision;
+        return this._w / this._pixelRatio;
     }
 
     set w(v) {
         this._clearResizeMode();
-        v = v * this._precision;
+        v = v * this._pixelRatio;
         if (this._w !== v) {
             this._w = v;
             this._updateClipping();
@@ -498,27 +498,27 @@ export default class Texture {
     }
 
     get h() {
-        return this._h / this._precision;
+        return this._h / this._pixelRatio;
     }
 
     set h(v) {
         this._clearResizeMode();
-        v = v * this._precision;
+        v = v * this._pixelRatio;
         if (this._h !== v) {
             this._h = v;
             this._updateClipping();
         }
     }
 
-    get precision() {
-        return this._precision;
+    get pixelRatio() {
+        return this._pixelRatio;
     }
 
-    set precision(v) {
+    set pixelRatio(v) {
         this._clearResizeMode();
-        if (this._precision !== v) {
-            this._precision = v;
-            this._updatePrecision();
+        if (this._pixelRatio !== v) {
+            this._pixelRatio = v;
+            this._updatePixelRatio();
         }
     }
 
@@ -533,7 +533,7 @@ export default class Texture {
         }
 
         // If dimensions are unknown (texture not yet loaded), use maximum width as a fallback as render width to allow proper bounds checking.
-        return (this._w || (this._source ? this._source.getRenderWidth() - this._x : 0)) / this._precision;
+        return (this._w || (this._source ? this._source.getRenderWidth() - this._x : 0)) / this._pixelRatio;
     }
 
     getRenderHeight() {
@@ -542,7 +542,7 @@ export default class Texture {
             return 0;
         }
 
-        return (this._h || (this._source ? this._source.getRenderHeight() - this._y : 0)) / this._precision;
+        return (this._h || (this._source ? this._source.getRenderHeight() - this._y : 0)) / this._pixelRatio;
     }
 }
 

@@ -12,7 +12,7 @@ export default class TextTextureRenderer {
         private stage: Stage,
         private canvas: HTMLCanvasElement,
         private settings: Partial<TextSettings>,
-        private precision: number,
+        private pixelRatio: number,
     ) {}
 
     setFontProperties() {
@@ -24,7 +24,7 @@ export default class TextTextureRenderer {
 
     private _getFontSetting() {
         const fontStyle = this.settings.fontStyle || 'normal';
-        const fontSize = (this.settings.fontSize || 40) * this.precision;
+        const fontSize = (this.settings.fontSize || 40) * this.pixelRatio;
         const fontFaces = this._getFontFaces();
         return `${fontStyle} ${fontSize}px ${fontFaces.join(',')}`;
     }
@@ -88,7 +88,7 @@ export default class TextTextureRenderer {
     private _draw() {
         const renderInfo: any = {};
 
-        const precision = this.precision;
+        const pixelRatio = this.pixelRatio;
 
         let {
             fontSize = 40,
@@ -113,14 +113,14 @@ export default class TextTextureRenderer {
             shadowBlur = 5,
         } = this.settings;
 
-        fontSize = fontSize * precision;
-        lineHeight = lineHeight ? lineHeight * precision : lineHeight;
-        offsetY = offsetY ? offsetY * precision : offsetY;
-        wordWrapWidth = wordWrapWidth * precision;
-        cutSx = cutSx * precision;
-        cutEx = cutEx * precision;
-        cutSy = cutSy * precision;
-        cutEy = cutEy * precision;
+        fontSize = fontSize * pixelRatio;
+        lineHeight = lineHeight ? lineHeight * pixelRatio : lineHeight;
+        offsetY = offsetY ? offsetY * pixelRatio : offsetY;
+        wordWrapWidth = wordWrapWidth * pixelRatio;
+        cutSx = cutSx * pixelRatio;
+        cutEx = cutEx * pixelRatio;
+        cutSy = cutSy * pixelRatio;
+        cutEy = cutEy * pixelRatio;
 
         // Set font properties.
         this.setFontProperties();
@@ -163,7 +163,7 @@ export default class TextTextureRenderer {
         renderInfo.w = width;
         renderInfo.h = height;
         renderInfo.lines = lines;
-        renderInfo.precision = precision;
+        renderInfo.pixelRatio = pixelRatio;
 
         // To prevent canvas errors.
         if (!width) width = 1;
@@ -210,9 +210,9 @@ export default class TextTextureRenderer {
         // Text shadow.
         if (shadow) {
             this._context.shadowColor = ColorUtils.getRgbaString(shadowColor);
-            this._context.shadowOffsetX = shadowOffsetX * precision;
-            this._context.shadowOffsetY = shadowOffsetY * precision;
-            this._context.shadowBlur = shadowBlur * precision;
+            this._context.shadowOffsetX = shadowOffsetX * pixelRatio;
+            this._context.shadowOffsetY = shadowOffsetY * pixelRatio;
+            this._context.shadowBlur = shadowBlur * pixelRatio;
         } else {
             this._context.shadowBlur = 0;
         }

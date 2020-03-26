@@ -55,7 +55,7 @@ describe('textures', function() {
         const canvas = document.createElement('canvas');
         canvas.width = 500;
         canvas.height = 500;
-        stage = new tree2d.Stage(canvas, { clearColor: 0xffff0000, autostart: false });
+        stage = new tree2d.Stage(canvas, { clearColor: 0xffff0000, pixelRatio: 1, autostart: false });
         root = stage.root;
     });
 

@@ -109,7 +109,7 @@ export default class CoreContext {
     }
 
     allocateRenderTexture(w: number, h: number) {
-        const prec = this.stage.getRenderPrecision();
+        const prec = this.stage.getPixelRatio();
         const pw = Math.max(1, Math.round(w * prec));
         const ph = Math.max(1, Math.round(h * prec));
 
@@ -126,7 +126,7 @@ export default class CoreContext {
         }
 
         const renderTexture = this._createRenderTexture(w, h, pw, ph);
-        renderTexture.precision = prec;
+        renderTexture.pixelRatio = prec;
         return renderTexture;
     }
 

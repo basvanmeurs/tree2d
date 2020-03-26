@@ -11,8 +11,8 @@ export default class SourceTexture extends Texture {
     set textureSource(v: TextureSource | undefined) {
         if (v !== this._textureSource) {
             if (v && v.isResultTexture) {
-                // In case of a result texture, automatically inherit the precision.
-                this.precision = this.stage.getRenderPrecision();
+                // In case of a result texture, automatically inherit the pixel ratio.
+                this.pixelRatio = this.stage.getPixelRatio();
             }
             this._textureSource = v;
             this._changed();

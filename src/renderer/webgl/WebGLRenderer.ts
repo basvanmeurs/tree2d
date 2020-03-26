@@ -170,16 +170,16 @@ export default class WebGLRenderer extends Renderer {
         const gl = this.stage.gl;
         gl.bindTexture(gl.TEXTURE_2D, nativeTexture);
         gl.bindFramebuffer(gl.FRAMEBUFFER, (renderTexture as WebGLRenderTexture).framebuffer);
-        const precision = renderTexture.precision;
+        const pixelRatio = renderTexture.pixelRatio;
         gl.copyTexSubImage2D(
             gl.TEXTURE_2D,
             0,
-            precision * (options.sx || 0),
-            precision * (options.sy || 0),
-            precision * (options.x || 0),
-            precision * (options.y || 0),
-            precision * (options.w || renderTexture.ow),
-            precision * (options.h || renderTexture.oh),
+            pixelRatio * (options.sx || 0),
+            pixelRatio * (options.sy || 0),
+            pixelRatio * (options.x || 0),
+            pixelRatio * (options.y || 0),
+            pixelRatio * (options.w || renderTexture.ow),
+            pixelRatio * (options.h || renderTexture.oh),
         );
     }
 

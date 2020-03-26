@@ -16,7 +16,7 @@ export type StageOptions = {
     fixedTimestep: number;
     useImageWorker: boolean;
     autostart: boolean;
-    precision: number;
+    pixelRatio: number;
     canvas2d: boolean;
 };
 
@@ -29,7 +29,7 @@ export default class Stage {
     public readonly fixedTimestep: number;
     public readonly useImageWorker: boolean;
     public readonly autostart: boolean;
-    public readonly precision: number;
+    public readonly pixelRatio: number;
     public readonly canvas2d: boolean;
 
     private _usedMemory: number = 0;
@@ -74,7 +74,7 @@ export default class Stage {
         this.fixedTimestep = options.fixedTimestep || 0;
         this.useImageWorker = options.useImageWorker === undefined || options.useImageWorker;
         this.autostart = options.autostart || true;
-        this.precision = options.precision || 1.0;
+        this.pixelRatio = options.pixelRatio || window.devicePixelRatio || 1;
         this.canvas2d = options.canvas2d === true || !Stage.isWebglSupported();
 
         this.destroyed = false;
@@ -133,11 +133,11 @@ export default class Stage {
     }
 
     get w() {
-        return this.canvas.clientWidth || this.canvas.width;
+        return this.canvas.width;
     }
 
     get h() {
-        return this.canvas.clientHeight || this.canvas.height;
+        return this.canvas.height;
     }
 
     get renderer() {
@@ -173,8 +173,8 @@ export default class Stage {
         return this.canvas;
     }
 
-    getRenderPrecision() {
-        return this.precision;
+    getPixelRatio() {
+        return this.pixelRatio;
     }
 
     // Marks a texture for updating it's source upon the next drawFrame.
@@ -273,11 +273,11 @@ export default class Stage {
     }
 
     get coordsWidth() {
-        return this.w / this.precision;
+        return Math.round(this.w / this.pixelRatio);
     }
 
     get coordsHeight() {
-        return this.h / this.precision;
+        return Math.round(this.h / this.pixelRatio);
     }
 
     addMemoryUsage(delta: number) {
@@ -355,23 +355,37 @@ export default class Stage {
     }
 
     private checkCanvasDimensions() {
-        const newCanvasWidth = this.w;
-        const newCanvasHeight = this.h;
-        const changed = newCanvasWidth !== this.canvasWidth || newCanvasHeight !== this.canvasHeight;
-        this.canvasWidth = newCanvasWidth;
-        this.canvasHeight = newCanvasHeight;
-        if (changed) {
-            this.updateCanvasSize();
+        const isManagedByCss =
+            this.canvas.width !== this.canvas.clientWidth || this.canvas.height !== this.canvas.clientHeight;
+
+        if (isManagedByCss) {
+            const newCanvasWidth = this.canvas.clientWidth * this.pixelRatio || this.canvas.width;
+            const newCanvasHeight = this.canvas.clientHeight * this.pixelRatio || this.canvas.height;
+            const changed = newCanvasWidth !== this.canvasWidth || newCanvasHeight !== this.canvasHeight;
+
+            this.canvasWidth = Math.round(newCanvasWidth);
+            this.canvasHeight = Math.round(newCanvasHeight);
+            if (changed) {
+                this.updateCanvasSize();
+            }
         }
     }
 
     private updateCanvasSize() {
+        // Make sure that the canvas looks 'crisp'.
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
 
         // Reset dimensions.
         this.root.core.setupAsRoot();
         this.renderer.onResizeCanvasSize();
+    }
+
+    getElementsAtCoordinates(x: number, y: number): Element[] {
+        const results: ElementCore[] = [];
+        this.root.core.update();
+        this.root.core.gatherElementsAtCoordinates(x, y, results);
+        return results.map(core => core.element).reverse();
     }
 }
 
@@ -383,3 +397,4 @@ import RectangleTexture from '../textures/RectangleTexture';
 import WebPlatform from '../platforms/browser/WebPlatform';
 import Renderer from '../renderer/Renderer';
 import Texture from './Texture';
+import ElementCore from './core/ElementCore';

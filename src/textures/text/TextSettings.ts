@@ -10,7 +10,7 @@ export type TextSettings = {
     textAlign: CanvasTextAlign;
     offsetY: number;
     maxLines: number;
-    precision: number;
+    pixelRatio: number;
     textColor: number;
     paddingLeft: number;
     paddingRight: number;

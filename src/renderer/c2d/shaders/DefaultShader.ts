@@ -21,14 +21,14 @@ export default class DefaultShader extends C2dShader {
 
             const context = target.context;
 
-            const precision = this.context.stage.getRenderPrecision();
+            const pixelRatio = this.context.stage.getPixelRatio();
             context.setTransform(
-                rc.ta * precision,
-                rc.tc * precision,
-                rc.tb * precision,
-                rc.td * precision,
-                rc.px * precision,
-                rc.py * precision,
+                rc.ta * pixelRatio,
+                rc.tc * pixelRatio,
+                rc.tb * pixelRatio,
+                rc.td * pixelRatio,
+                rc.px * pixelRatio,
+                rc.py * pixelRatio,
             );
 
             const rect = tx === this._rectangleTexture;
