@@ -1,23 +1,11 @@
 {
-    "author": "Planning.nl, Bas van Meurs",
     "name": "tree2d",
+    "description": "A high-performance WebGL UI engine",
     "version": "1.0.0-alpha.9",
-    "license": "apache",
-    "main": "dist/tree2d.js",
-    "module": "index.js",
-    "files": [
-        "index.js",
-        "src/**",
-        "dist/**"
-    ],
-    "scripts": {
-        "test": "echo \"please run tests in browser using tests/test.html\"",
-        "build": "tsc",
-        "lint": "eslint --fix -c .eslintrc.js **/*.ts",
-        "prepare": "npm run build",
-        "prepublishOnly": "npm test",
-        "version": "npm run lint",
-        "bundle": "NODE_ENV=production webpack --config build/webpack.config.js --progress --hide-modules"
+    "author": "Planning.nl, Bas van Meurs",
+    "bugs": {
+        "url": "https://github.com/Planning-nl/tree2d/issues",
+        "email": "support@planning.nl"
     },
     "buildOptions": {
         "name": "tree2d",
@@ -25,23 +13,17 @@
             "global"
         ]
     },
-    "types": "dist/tree2d.d.ts",
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:Planning-nl/tree2d.git"
+    "dependencies": {
+        "flexbox.js": "^1.0.6"
     },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^2.20.0",
-        "@typescript-eslint/parser": "^2.20.0",
+        "@planning.nl/eslint-config": "^1.0.0",
         "chai": "^4.2.0",
         "dotenv": "^8.2.0",
         "eslint": "^6.8.0",
-        "eslint-config-prettier": "^6.10.0",
-        "eslint-plugin-prettier": "^3.1.2",
         "friendly-errors-webpack-plugin": "^1.7.0",
         "happypack": "^5.0.1",
         "mocha": "^6.2.1",
-        "prettier": "^1.19.1",
         "sinon": "^7.5.0",
         "terser-webpack-plugin": "^2.3.5",
         "ts-loader": "^6.2.2",
@@ -51,8 +33,26 @@
         "webpack-cli": "^3.3.11",
         "webpack-merge": "^4.2.2"
     },
-    "dependencies": {
-        "flexbox.js": "^1.0.6"
+    "files": [
+        "index.js",
+        "src/**",
+        "dist/**"
+    ],
+    "homepage": "https://github.com/Planning-nl/tree2d#readme",
+    "keywords": [],
+    "license": "apache",
+    "main": "dist/tree2d.js",
+    "module": "index.js",
+    "repository": "github:Planning-nl/tree2d",
+    "scripts": {
+        "build": "tsc",
+        "bundle": "NODE_ENV=production webpack --config build/webpack.config.js --progress --hide-modules",
+        "lint": "eslint --fix -c .eslintrc.js **/*.ts",
+        "prepare": "npm run build",
+        "prepublishOnly": "npm test",
+        "test": "echo \"please run tests in browser using tests/test.html\"",
+        "version": "npm run lint"
     },
-    "type": "module"
+    "type": "module",
+    "types": "dist/tree2d.d.ts"
 }
