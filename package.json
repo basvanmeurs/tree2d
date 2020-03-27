@@ -1,17 +1,11 @@
 {
     "name": "tree2d",
-    "description": "A high-performance WebGL UI engine",
+    "description": "A high-performance WebGL/canvas2d render tree",
     "version": "1.0.0-alpha.9",
-    "author": "Planning.nl, Bas van Meurs",
+    "author": "Planning.nl, Bas van Meurs, Robbin Baauw",
     "bugs": {
         "url": "https://github.com/Planning-nl/tree2d/issues",
         "email": "support@planning.nl"
-    },
-    "buildOptions": {
-        "name": "tree2d",
-        "formats": [
-            "global"
-        ]
     },
     "dependencies": {
         "flexbox.js": "^1.0.6"
