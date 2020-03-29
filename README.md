@@ -1,10 +1,10 @@
 # Tree2d
 
-Tree2d is a 2d render tree implementation written in typescript.
-It is able to render in a HTML canvas in WebGL mode, with a canvas2d fallback.
+Tree2d is a **HTML canvas 2d render tree implementation** written in typescript. 
 
-Tree2d is a lightweight an alternative to rendering via HTML DOM. Constructing and rendering elements is much faster in
-tree2d than in HTML DOM. Even if you try all of the fancy css transformation performance tricks. 
+Tree2d is a lightweight alternative to rendering via HTML DOM. The main reason to use it instead of HTML DOM is because it is **much faster** than HTML DOM, both in terms of element creation and rendering. Use cases include games and applications with huge amounts of elements.
+
+Tree2d utilizes **WebGL** for high-performance rendering, but can also use **Canvas2D** rendering when WebGL is not available.
 
 ## Features
 Some of the most notable features include:
@@ -26,7 +26,7 @@ Some of the most notable features include:
     * (rounded) rectangles
     * svg
     * custom canvas drawings
-* Flexbox layouting engine
+* *Flexbox* layouting engine
 * Performance & power consumption
     * highly optimized javascript
     * only re-renders on changes
@@ -70,7 +70,28 @@ The changes will be visible automatically upon the next drawn frame.
 ## Elements
 All nodes in a tree2d tree have the same Element type. Each element can be configured with a lot of properties to 
 control its' rendering, layouting and transformation. For a complete list of properties, for now you can refer to
-[Element.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/Element.ts#L11).
- 
-## Input and interactivity
-Working on it.
+[Element.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/Element.ts).
+
+## Motivition
+Tree2d is very similar in features to [PixiJS](https://www.pixijs.com/).
+
+It both supports canvas-based rendering in WebGL or Canvas2D. Both support shaders, textures, alpha and linear transformations.
+
+But Tree2d has one hidden *killer* feature!
+
+Tree2d keeps **track of all changes** and is able to detect which tree branches contain changes. It keeps track whether elements are visible and within the bounding box of the *clipping region*. This enables it to skip coordinate calculation and rendering for invisible, *off-screen* or *stable* (unchanged) branches, giving a performance boost in many cases. Furthermore when there are no changes at all between frames, the canvas rendering can be skipped completely resulting in less power consumption.
+
+Other than performance gains, tracking changes allows Tree2d to automatically load textures when elements are detected to be visible and within visible bounds. Likewise, unloading is performed automatically using a garbage collection mechanism. The developer does not need to load or clean up textures manually.
+
+PixiJS on the other hand is much more simplistic. Although it can skip invisible branches, it does not detect when elements are on- or off-screen. And it does not keep track of changes so does not have the ability to detect when there are no changes. It will simply re-render every frame and recalculate all branches, always.
+
+In PixiJS you need to preload images and other textures manually. Developers tend to forget cleaning up their textures causing memory leaks. In our [Vugel](https://github.com/Planning-nl/vugel) 'virtual dom case' this becomes difficult or impossible (or at least undoable) as you don't have (or shouldn't have) direct access to the elements.
+
+## Scope
+Tree2d does not include interactivity events directly. It is purely a render engine.
+
+However, tree2d does offer a method of obtaining a z-ordered stack of elements at a pair of coordinates:
+```javascript
+Stage.prototype.getElementsAtCoordinates(x: number, y: number): Element[]
+```
+This feature can be used by higher high-level libraries to implement touch events. In fact, it's used by the [Vugel](https://github.com/Planning-nl/vugel) library to implement focus, touch and keypress events.
