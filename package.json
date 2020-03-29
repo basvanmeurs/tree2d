@@ -1,6 +1,6 @@
 {
     "name": "tree2d",
-    "description": "A high-performance WebGL/canvas2d render tree",
+    "description": "HTML canvas 2d render tree",
     "version": "1.0.0-alpha.9",
     "author": "Planning.nl, Bas van Meurs, Robbin Baauw",
     "bugs": {
