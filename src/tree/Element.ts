@@ -9,7 +9,7 @@ import ElementCore, { FunctionH, FunctionW, FunctionX, FunctionY } from "./core/
 import Utils from "./Utils";
 import Shader from "./Shader";
 
-class Element {
+class Element<DATA = any> {
     private static id: number = 1;
 
     public readonly stage: Stage;
@@ -41,6 +41,9 @@ class Element {
     private _childList?: ElementChildList;
 
     private listeners?: ElementListeners;
+
+    // Custom data
+    public data?: DATA;
 
     constructor(stage: Stage) {
         this.stage = stage;

@@ -2434,10 +2434,10 @@ export default class ElementCore implements FlexSubject {
     }
 }
 
-export type ElementCoordinatesInfo = {
+export type ElementCoordinatesInfo<DATA = any> = {
     offsetX: number;
     offsetY: number;
-    element: Element;
+    element: Element<DATA>;
 };
 
 export type FunctionX = (parentW: number) => number;

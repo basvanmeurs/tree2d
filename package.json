@@ -40,6 +40,7 @@
     "repository": "github:Planning-nl/tree2d",
     "scripts": {
         "build": "tsc",
+        "watch_build": "tsc --watch",
         "bundle": "NODE_ENV=production webpack --config build/webpack.config.js --progress --hide-modules",
         "lint": "eslint --fix -c .eslintrc.js **/*.ts",
         "prepare": "npm run build",
