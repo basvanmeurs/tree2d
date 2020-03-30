@@ -10,7 +10,7 @@ describe("test stack", function () {
         canvas.width = 1200;
         canvas.height = 1200;
         document.body.appendChild(canvas);
-        stage = new tree2d.Stage(canvas, { clearColor: 0xff000000, pixelRatio: 1, autostart: false });
+        stage = new tree2d.Stage(canvas, { clearColor: 0xff000000, pixelRatio: 1, autostart: true });
         root = stage.root;
         root.ref = "R";
     });
@@ -94,7 +94,7 @@ describe("test stack", function () {
 
     function getResults(x, y) {
         const elements = stage.getElementsAtStageCoordinates(x, y);
-        return elements.map((result) => [result.element.ref, result.offsetX, result.offsetY]);
+        return elements.map((result) => [result.element.ref, result.offsetX, result.offsetY, result.element]);
     }
 
     describe("coordinate tests", () => {
@@ -106,10 +106,42 @@ describe("test stack", function () {
                         results.map((result) => result[0]),
                         r.map((i) => i[0]),
                     );
-                    root.childList.add(stage.createElement({ rect: true, w: 10, h: 10, mount: 0.5, x, y }));
                     results.forEach((result, index) => {
                         const expected = r[index];
-                        chai.assert.equal(Math.round(result[1]) + "," + Math.round(result[2]), expected[1] + "," + expected[2], "Item: " + result[0]);
+                        const str1 = Math.round(result[1]) + "," + Math.round(result[2]);
+                        const str2 = expected[1] + "," + expected[2];
+
+                        if (str1 !== str2) {
+                            result[3].childList.add(
+                                stage.createElement({
+                                    rect: true,
+                                    w: 8,
+                                    h: 8,
+                                    mount: 0.5,
+                                    color: 0xffff0044,
+                                    x: result[1],
+                                    y: result[2],
+                                    zIndex: 100,
+                                }),
+                            );
+                            result[3].childList.add(
+                                stage.createElement({
+                                    rect: true,
+                                    w: 4,
+                                    h: 4,
+                                    mount: 0.5,
+                                    color: 0xff44ff44,
+                                    x: expected[1],
+                                    y: expected[2],
+                                    zIndex: 100,
+                                }),
+                            );
+                            root.childList.add(
+                                stage.createElement({ rect: true, w: 2, h: 2, mount: 0.5, x, y, zIndex: 100 }),
+                            );
+                            stage.drawFrame();
+                            chai.assert.equal(str1, str2, "Item: " + result[0]);
+                        }
                     });
                 });
             });
@@ -126,16 +158,30 @@ describe("test stack", function () {
             ["E", 109, 270],
             ["A", 618, 170],
         ]);
-        test(750, 400, [
-            ["C", 0, 0],
-            ["B", 0, 0],
-            ["E", 0, 0],
-            ["A", 0, 0]
+        test(751, 395, [
+            ["C", 123, 81],
+            ["B", 23, 31],
+            ["E", 76, 295],
+            ["A", 551, 195],
         ]);
-        test(800, 400, ["D", "C", "B", "E", "A"]);
-        test(850, 410, ["D", "B", "E", "A"]);
-        test(906, 423, ["B", "A"]);
-        test(916, 405, ["A"]);
+        test(800, 400, [
+            ["D", 22, 50],
+            ["C", 172, 70],
+            ["B", 72, 20],
+            ["E", 100, 300],
+            ["A", 600, 200],
+        ]);
+        test(850, 410, [
+            ["D", 72, 44],
+            ["B", 122, 14],
+            ["E", 125, 310],
+            ["A", 650, 210]
+        ]);
+        test(906, 423, [
+            ["B", 179, 9],
+            ["A", 706, 223],
+        ]);
+        test(916, 405, [["A", 716, 205]]);
         test(1015, 460, []);
     });
 });

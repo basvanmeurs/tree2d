@@ -2348,8 +2348,8 @@ export default class ElementCore implements FlexSubject {
         } else {
             // Solve linear system of equations by substitution.
             const tcTa = wc.tc / wc.ta;
-            const iy = (worldY - tcTa * worldX) * (wc.td - wc.tb * tcTa);
-            const ix = (worldY - wc.td * iy) / wc.tc;
+            const iy = (worldY - tcTa * worldX) / (wc.td - wc.tb * tcTa);
+            const ix = (worldX - wc.tb * iy) / wc.ta;
             return [ix, iy];
         }
     }
