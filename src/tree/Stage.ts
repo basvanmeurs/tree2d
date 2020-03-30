@@ -381,11 +381,17 @@ export default class Stage {
         this.renderer.onResizeCanvasSize();
     }
 
-    getElementsAtCoordinates(x: number, y: number): Element[] {
-        const results: ElementCore[] = [];
+    getElementsAtCanvasCoordinates(canvasOffsetX: number, canvasOffsetY: number): ElementCoordinatesInfo[] {
+        const worldX = canvasOffsetX * this.pixelRatio;
+        const worldY = canvasOffsetY * this.pixelRatio;
+        return this.getElementsAtStageCoordinates(worldX, worldY);
+    }
+
+    getElementsAtStageCoordinates(worldX: number, worldY: number): ElementCoordinatesInfo[] {
+        const results: ElementCoordinatesInfo[] = [];
         this.root.core.update();
-        this.root.core.gatherElementsAtCoordinates(x, y, results);
-        return results.map((core) => core.element).reverse();
+        this.root.core.gatherElementsAtCoordinates(worldX, worldY, results);
+        return results.reverse();
     }
 }
 
@@ -397,4 +403,4 @@ import RectangleTexture from "../textures/RectangleTexture";
 import WebPlatform from "../platforms/browser/WebPlatform";
 import Renderer from "../renderer/Renderer";
 import Texture from "./Texture";
-import ElementCore from "./core/ElementCore";
+import ElementCore, { ElementCoordinatesInfo } from "./core/ElementCore";

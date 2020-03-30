@@ -2341,7 +2341,9 @@ export default class ElementCore implements FlexSubject {
         const wc = this._worldContext;
         worldX = worldX - wc.px;
         worldY = worldY - wc.py;
-        if (wc.isSquare()) {
+        if (wc.isIdentity()) {
+            return [worldX, worldY];
+        } else if (wc.isSquare()) {
             return [worldX / wc.ta, worldY / wc.td];
         } else {
             // Solve linear system of equations by substitution.
@@ -2352,11 +2354,8 @@ export default class ElementCore implements FlexSubject {
         }
     }
 
-    private isCoordsWithinElement(worldX: number, worldY: number) {
-        // Make coords relative to world context.
-        const [x, y] = this.convertWorldCoordsToLocal(worldX, worldY);
-
-        return x >= 0 && y >= 0 && x < this._w && y < this._h;
+    private isCoordsWithinElement(localOffsetX: number, localOffsetY: number) {
+        return localOffsetX >= 0 && localOffsetY >= 0 && localOffsetX < this._w && localOffsetY < this._h;
     }
 
     private getCoordinatesOrigin(): ElementCore {
@@ -2370,36 +2369,48 @@ export default class ElementCore implements FlexSubject {
         }
     }
 
+    private isWorldCoordinatesInScissor(worldX: number, worldY: number) {
+        const s = this._scissor;
+        if (s) {
+            const renderRoot = this.getCoordinatesOrigin();
+            const [rx, ry] = renderRoot.convertWorldCoordsToLocal(worldX, worldY);
+
+            if (rx < s[0] || ry < s[1] || rx >= s[0] + s[2] || ry >= s[1] + s[3]) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
     /**
      * @pre element core must be up-to-date (update method called).
      */
-    gatherElementsAtCoordinates(worldX: number, worldY: number, results: ElementCore[]) {
+    gatherElementsAtCoordinates(worldX: number, worldY: number, results: ElementCoordinatesInfo[]) {
         let withinBounds = false;
 
         if (!this._renderContext.alpha) {
             return;
         }
 
+        const [offsetX, offsetY] = this.convertWorldCoordsToLocal(worldX, worldY);
+
         // Make coords relative to world context.
-        withinBounds = this.isCoordsWithinElement(worldX, worldY);
+        withinBounds = this.isCoordsWithinElement(offsetX, offsetY);
 
         if (withinBounds && this.zIndex !== 0) {
             // We must make sure that the not yet visited ancestors do not clip out this texture.
             // renderToTexture is no problem as it creates a new z context so must already be checked.
             // clipping is a possible problem, so we must check the scissor.
-            const s = this._scissor;
-            if (s) {
-                const renderRoot = this.getCoordinatesOrigin();
-                const [rx, ry] = renderRoot.convertWorldCoordsToLocal(worldX, worldY);
-
-                if (rx < s[0] || ry < s[1] || rx >= s[0] + s[2] || ry >= s[1] + s[3]) {
-                    withinBounds = false;
-                }
+            if (!this.isWorldCoordinatesInScissor(worldX, worldY)) {
+                withinBounds = false;
             }
         }
 
         if (withinBounds) {
-            results.push(this);
+            results.push({ offsetX, offsetY, element: this.element });
         }
 
         // When the render context is not square, clipping is ignored while rendering.
@@ -2422,6 +2433,12 @@ export default class ElementCore implements FlexSubject {
         }
     }
 }
+
+export type ElementCoordinatesInfo = {
+    offsetX: number;
+    offsetY: number;
+    element: Element;
+};
 
 export type FunctionX = (parentW: number) => number;
 export type FunctionY = (parentH: number) => number;

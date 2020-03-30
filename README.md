@@ -87,11 +87,11 @@ PixiJS on the other hand is much more simplistic. Although it can skip invisible
 
 In PixiJS you need to preload images and other textures manually. Developers tend to forget cleaning up their textures causing memory leaks. In our [Vugel](https://github.com/Planning-nl/vugel) 'virtual dom case' this becomes difficult or impossible (or at least undoable) as you don't have (or shouldn't have) direct access to the elements.
 
-## Scope
+## Interaction
 Tree2d does not include interactivity events directly. It is purely a render engine.
 
 However, tree2d does offer a method of obtaining a z-ordered stack of elements at a pair of coordinates:
 ```javascript
-Stage.prototype.getElementsAtCoordinates(x: number, y: number): Element[]
+Stage.prototype.getElementsAtCanvasCoordinates(x: number, y: number): Element[]
 ```
 This feature can be used by higher high-level libraries to implement touch events. In fact, it's used by the [Vugel](https://github.com/Planning-nl/vugel) library to implement focus, touch and keypress events.
