@@ -381,16 +381,7 @@ export default class Stage {
         this.renderer.onResizeCanvasSize();
     }
 
-    getElementsAtCanvasCoordinates<DATA = any>(
-        canvasOffsetX: number,
-        canvasOffsetY: number,
-    ): ElementCoordinatesInfo<DATA>[] {
-        const worldX = canvasOffsetX * this.pixelRatio;
-        const worldY = canvasOffsetY * this.pixelRatio;
-        return this.getElementsAtStageCoordinates(worldX, worldY);
-    }
-
-    getElementsAtStageCoordinates<DATA = any>(worldX: number, worldY: number): ElementCoordinatesInfo<DATA>[] {
+    getElementsAtCoordinates<DATA = any>(worldX: number, worldY: number): ElementCoordinatesInfo<DATA>[] {
         const results: ElementCoordinatesInfo[] = [];
         this.root.core.update();
         this.root.core.gatherElementsAtCoordinates(worldX, worldY, results);
