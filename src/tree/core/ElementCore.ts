@@ -1684,6 +1684,8 @@ export default class ElementCore implements FlexSubject {
                             this.element._enableWithinBoundsMargin();
 
                             if (this._recalc) {
+                                this._recalc = savedRecalc | this._recalc;
+
                                 // This element needs to be re-updated now, because we want the dimensions (and other changes) to be updated.
                                 return this.update();
                             }
@@ -2314,11 +2316,12 @@ export default class ElementCore implements FlexSubject {
     }
 
     getSourceW() {
-        return this._sw;
+        // If no source width is specified, the texture width is automatically used.
+        return this._sw || this._tw;
     }
 
     getSourceH() {
-        return this._sh;
+        return this._sh || this._th;
     }
 
     getLayoutX() {
