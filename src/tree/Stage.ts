@@ -273,11 +273,11 @@ export default class Stage {
     }
 
     get coordsWidth() {
-        return Math.round(this.w / this.pixelRatio);
+        return this.canvasWidth / this.pixelRatio;
     }
 
     get coordsHeight() {
-        return Math.round(this.h / this.pixelRatio);
+        return this.canvasHeight / this.pixelRatio;
     }
 
     addMemoryUsage(delta: number) {
@@ -363,8 +363,8 @@ export default class Stage {
             const newCanvasHeight = this.canvas.clientHeight * this.pixelRatio || this.canvas.height;
             const changed = newCanvasWidth !== this.canvasWidth || newCanvasHeight !== this.canvasHeight;
 
-            this.canvasWidth = Math.round(newCanvasWidth);
-            this.canvasHeight = Math.round(newCanvasHeight);
+            this.canvasWidth = newCanvasWidth;
+            this.canvasHeight = newCanvasHeight;
             if (changed) {
                 this.updateCanvasSize();
             }
@@ -373,8 +373,8 @@ export default class Stage {
 
     private updateCanvasSize() {
         // Make sure that the canvas looks 'crisp'.
-        this.canvas.width = this.canvasWidth;
-        this.canvas.height = this.canvasHeight;
+        this.canvas.width = Math.round(this.canvasWidth);
+        this.canvas.height = Math.round(this.canvasHeight);
 
         // Reset dimensions.
         this.root.core.setupAsRoot();
