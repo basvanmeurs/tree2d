@@ -1,4 +1,3 @@
-import ColorUtils from "../../tree/ColorUtils";
 import Stage from "../../tree/Stage";
 import { TextSettings } from "./TextSettings";
 
@@ -11,15 +10,13 @@ export default class TextTextureRenderer {
     constructor(
         private stage: Stage,
         private canvas: HTMLCanvasElement,
+        private text: string,
         private settings: Partial<TextSettings>,
         private pixelRatio: number,
     ) {}
 
     setFontProperties() {
         this._context.font = this._getFontSetting();
-        if (this.settings.textBaseline) {
-            this._context.textBaseline = this.settings.textBaseline;
-        }
     }
 
     private _getFontSetting() {
@@ -53,16 +50,16 @@ export default class TextTextureRenderer {
         if (documentFonts) {
             const fontSetting = this._getFontSetting();
             try {
-                if (!documentFonts.check(fontSetting, this.settings.text)) {
+                if (!documentFonts.check(fontSetting, this.text)) {
                     // Use a promise that waits for loading.
                     return documentFonts
-                        .load(fontSetting, this.settings.text)
+                        .load(fontSetting, this.text)
                         .catch((err) => {
                             // Just load the fallback font.
                             console.warn("Font load error", err, fontSetting);
                         })
                         .then(() => {
-                            if (!documentFonts.check(fontSetting, this.settings.text)) {
+                            if (!documentFonts.check(fontSetting, this.text)) {
                                 console.warn("Font not found", fontSetting);
                             }
                         });
@@ -90,33 +87,11 @@ export default class TextTextureRenderer {
 
         const pixelRatio = this.pixelRatio;
 
-        let {
-            fontSize = 40,
-            wordWrapWidth = 0,
-            lineHeight,
-            offsetY,
-            cutSx = 0,
-            cutEx = 0,
-            cutSy = 0,
-            cutEy = 0,
-        } = this.settings;
+        let { fontSize = 40, cutSx = 0, cutEx = 0, cutSy = 0, cutEy = 0 } = this.settings;
 
-        const {
-            text = "",
-            textAlign = "left",
-            maxLines = 0,
-            textColor = 0xffffffff,
-            shadow = false,
-            shadowColor = 0xff000000,
-            shadowOffsetX = 0,
-            shadowOffsetY = 0,
-            shadowBlur = 5,
-        } = this.settings;
+        const text = this.text;
 
         fontSize = fontSize * pixelRatio;
-        lineHeight = lineHeight ? lineHeight * pixelRatio : lineHeight;
-        offsetY = offsetY ? offsetY * pixelRatio : offsetY;
-        wordWrapWidth = wordWrapWidth * pixelRatio;
         cutSx = cutSx * pixelRatio;
         cutEx = cutEx * pixelRatio;
         cutSy = cutSy * pixelRatio;
@@ -125,44 +100,14 @@ export default class TextTextureRenderer {
         // Set font properties.
         this.setFontProperties();
 
-        // word wrap
-        // preserve original text
-        const linesInfo: LinesInfo = this.wrapText(text, wordWrapWidth);
-        let lines = linesInfo.lines;
+        const sizeInfo = this._context.measureText(text);
+        renderInfo.sizeInfo = sizeInfo;
 
-        if (maxLines && lines.length > maxLines) {
-            const usedLines = lines.slice(0, maxLines);
-            renderInfo.moreTextLines = true;
-            renderInfo.remainingLines = lines.slice(maxLines);
-            lines = usedLines;
-        } else {
-            renderInfo.moreTextLines = false;
-            renderInfo.remainingText = "";
-        }
-
-        // calculate text width
-        const maxLineWidth = linesInfo.maxWidth;
-        const lineWidths = linesInfo.lineWidths;
-
-        renderInfo.lineWidths = lineWidths;
-        renderInfo.maxWidth = maxLineWidth;
-
-        // Auto-set width to max text length.
-        let width = maxLineWidth;
-        const innerWidth = maxLineWidth;
-
-        // calculate text height
-        lineHeight = lineHeight || fontSize;
-
-        if (offsetY === undefined) {
-            offsetY = fontSize;
-        }
-
-        let height = lineHeight * (lines.length - 1) + 0.5 * fontSize + Math.max(lineHeight, fontSize) + offsetY;
+        let width = Math.ceil(sizeInfo.width);
+        let height = Math.ceil(fontSize);
 
         renderInfo.w = width;
         renderInfo.h = height;
-        renderInfo.lines = lines;
         renderInfo.pixelRatio = pixelRatio;
 
         // To prevent canvas errors.
@@ -178,8 +123,8 @@ export default class TextTextureRenderer {
         }
 
         // Add extra margin to prevent issue with clipped text when scaling.
-        this.canvas.width = Math.ceil(width);
-        this.canvas.height = Math.ceil(height);
+        this.canvas.width = width;
+        this.canvas.height = height;
 
         // Canvas context has been reset.
         this.setFontProperties();
@@ -188,97 +133,15 @@ export default class TextTextureRenderer {
             this._context.translate(-cutSx, -cutSy);
         }
 
-        let linePositionX;
-        let linePositionY;
-
-        const drawLines = [];
-
-        // Draw lines line by line.
-        for (let i = 0, n = lines.length; i < n; i++) {
-            linePositionX = 0;
-            linePositionY = i * lineHeight + offsetY;
-
-            if (textAlign === "right") {
-                linePositionX += innerWidth - lineWidths[i];
-            } else if (textAlign === "center") {
-                linePositionX += (innerWidth - lineWidths[i]) / 2;
-            }
-
-            drawLines.push({ text: lines[i], x: linePositionX, y: linePositionY, w: lineWidths[i] });
-        }
-
-        // Text shadow.
-        if (shadow) {
-            this._context.shadowColor = ColorUtils.getRgbaString(shadowColor);
-            this._context.shadowOffsetX = shadowOffsetX * pixelRatio;
-            this._context.shadowOffsetY = shadowOffsetY * pixelRatio;
-            this._context.shadowBlur = shadowBlur * pixelRatio;
-        } else {
-            this._context.shadowBlur = 0;
-        }
-
-        this._context.fillStyle = ColorUtils.getRgbaString(textColor);
-        for (let i = 0, n = drawLines.length; i < n; i++) {
-            const drawLine = drawLines[i];
-            this._context.fillText(drawLine.text, drawLine.x, drawLine.y);
-        }
+        this._context.textBaseline = "top";
+        this._context.fillStyle = "white";
+        this._context.fillText(text, 0, 0);
 
         if (cutSx || cutSy) {
             this._context.translate(cutSx, cutSy);
         }
 
         this.renderInfo = renderInfo;
-    }
-
-    /**
-     * Applies newlines to a string to have it optimally fit into the horizontal
-     * bounds set by the Text object's wordWrapWidth property.
-     */
-    private wrapText(text: string, wordWrapWidth: number): LinesInfo {
-        // Greedy wrapping algorithm that will wrap words as the line grows longer.
-        // than its horizontal bounds.
-        const lineItems = text.split(/\r?\n/g);
-        const lines: string[] = [];
-        const lineWidths: number[] = [];
-        let maxWidth = 0;
-        const spaceWidth = wordWrapWidth ? this._context.measureText(" ").width : 0;
-        lineItems.forEach((lineItem) => {
-            if (wordWrapWidth) {
-                let result = "";
-                let lineWidth = 0;
-                const words = lineItem.split(" ");
-                const n = words.length;
-                for (let j = 0; j < n; j++) {
-                    const wordWidth = this._context.measureText(words[j]).width;
-                    const overflow = lineWidth + wordWidth > wordWrapWidth;
-                    if (overflow) {
-                        lines.push(result);
-                        lineWidths.push(lineWidth);
-                        maxWidth = Math.max(maxWidth, lineWidth);
-                        lineWidth = wordWidth + spaceWidth;
-                        result = words[j];
-                    } else {
-                        if (result) {
-                            result += " ";
-                        }
-                        result += words[j];
-                        lineWidth += wordWidth + spaceWidth;
-                    }
-                }
-                if (n) {
-                    lines.push(result);
-                    lineWidths.push(lineWidth);
-                    maxWidth = Math.max(maxWidth, lineWidth);
-                }
-            } else {
-                const line = lineItem;
-                const lineWidth = this._context.measureText(line).width;
-                maxWidth = Math.max(maxWidth, lineWidth);
-                lines.push(line);
-            }
-        });
-
-        return { lines, lineWidths, maxWidth };
     }
 }
 

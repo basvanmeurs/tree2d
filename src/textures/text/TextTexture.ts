@@ -6,19 +6,25 @@ import Stage from "../../tree/Stage";
 
 export default class TextTexture extends Texture {
     private settings: Partial<TextSettings> = {};
+    private _text: string = "";
 
     constructor(stage: Stage) {
         super(stage);
         this.pixelRatio = this.stage.pixelRatio;
     }
 
+    setSettings(settings: Partial<TextSettings>) {
+        this.settings = settings;
+        this._changed();
+    }
+
     get text() {
-        return this.settings.text;
+        return this._text;
     }
 
     set text(v) {
-        if (this.settings.text !== v) {
-            this.settings.text = "" + v;
+        if (this._text !== v) {
+            this._text = v;
             this._changed();
         }
     }
@@ -52,215 +58,6 @@ export default class TextTexture extends Texture {
     set fontFace(v) {
         if (this.settings.fontFace !== v) {
             this.settings.fontFace = v;
-            this._changed();
-        }
-    }
-
-    get wordWrap() {
-        return this.settings.wordWrap;
-    }
-
-    set wordWrap(v) {
-        if (this.settings.wordWrap !== v) {
-            this.settings.wordWrap = v;
-            this._changed();
-        }
-    }
-
-    get wordWrapWidth() {
-        return this.settings.wordWrapWidth;
-    }
-
-    set wordWrapWidth(v) {
-        if (this.settings.wordWrapWidth !== v) {
-            this.settings.wordWrapWidth = v;
-            this._changed();
-        }
-    }
-
-    get lineHeight() {
-        return this.settings.lineHeight;
-    }
-
-    set lineHeight(v) {
-        if (this.settings.lineHeight !== v) {
-            this.settings.lineHeight = v;
-            this._changed();
-        }
-    }
-
-    get textBaseline() {
-        return this.settings.textBaseline;
-    }
-
-    set textBaseline(v) {
-        if (this.settings.textBaseline !== v) {
-            this.settings.textBaseline = v;
-            this._changed();
-        }
-    }
-
-    get textAlign() {
-        return this.settings.textAlign;
-    }
-
-    set textAlign(v) {
-        if (this.settings.textAlign !== v) {
-            this.settings.textAlign = v;
-            this._changed();
-        }
-    }
-
-    get offsetY() {
-        return this.settings.offsetY;
-    }
-
-    set offsetY(v) {
-        if (this.settings.offsetY !== v) {
-            this.settings.offsetY = v;
-            this._changed();
-        }
-    }
-
-    get maxLines() {
-        return this.settings.maxLines;
-    }
-
-    set maxLines(v) {
-        if (this.settings.maxLines !== v) {
-            this.settings.maxLines = v;
-            this._changed();
-        }
-    }
-
-    get textColor() {
-        return this.settings.textColor;
-    }
-
-    set textColor(v) {
-        if (this.settings.textColor !== v) {
-            this.settings.textColor = v;
-            this._changed();
-        }
-    }
-
-    get shadow() {
-        return this.settings.shadow;
-    }
-
-    set shadow(v) {
-        if (this.settings.shadow !== v) {
-            this.settings.shadow = v;
-            this._changed();
-        }
-    }
-
-    get shadowColor() {
-        return this.settings.shadowColor;
-    }
-
-    set shadowColor(v) {
-        if (this.settings.shadowColor !== v) {
-            this.settings.shadowColor = v;
-            this._changed();
-        }
-    }
-
-    get shadowOffsetX() {
-        return this.settings.shadowOffsetX;
-    }
-
-    set shadowOffsetX(v) {
-        if (this.settings.shadowOffsetX !== v) {
-            this.settings.shadowOffsetX = v;
-            this._changed();
-        }
-    }
-
-    get shadowOffsetY() {
-        return this.settings.shadowOffsetY;
-    }
-
-    set shadowOffsetY(v) {
-        if (this.settings.shadowOffsetY !== v) {
-            this.settings.shadowOffsetY = v;
-            this._changed();
-        }
-    }
-
-    get shadowBlur() {
-        return this.settings.shadowBlur;
-    }
-
-    set shadowBlur(v) {
-        if (this.settings.shadowBlur !== v) {
-            this.settings.shadowBlur = v;
-            this._changed();
-        }
-    }
-
-    get highlight() {
-        return this.settings.highlight;
-    }
-
-    set highlight(v) {
-        if (this.settings.highlight !== v) {
-            this.settings.highlight = v;
-            this._changed();
-        }
-    }
-
-    get highlightHeight() {
-        return this.settings.highlightHeight;
-    }
-
-    set highlightHeight(v) {
-        if (this.settings.highlightHeight !== v) {
-            this.settings.highlightHeight = v;
-            this._changed();
-        }
-    }
-
-    get highlightColor() {
-        return this.settings.highlightColor;
-    }
-
-    set highlightColor(v) {
-        if (this.settings.highlightColor !== v) {
-            this.settings.highlightColor = v;
-            this._changed();
-        }
-    }
-
-    get highlightOffset() {
-        return this.settings.highlightOffset;
-    }
-
-    set highlightOffset(v) {
-        if (this.settings.highlightOffset !== v) {
-            this.settings.highlightOffset = v;
-            this._changed();
-        }
-    }
-
-    get highlightPaddingLeft() {
-        return this.settings.highlightPaddingLeft;
-    }
-
-    set highlightPaddingLeft(v) {
-        if (this.settings.highlightPaddingLeft !== v) {
-            this.settings.highlightPaddingLeft = v;
-            this._changed();
-        }
-    }
-
-    get highlightPaddingRight() {
-        return this.settings.highlightPaddingRight;
-    }
-
-    set highlightPaddingRight(v) {
-        if (this.settings.highlightPaddingRight !== v) {
-            this.settings.highlightPaddingRight = v;
             this._changed();
         }
     }
@@ -322,7 +119,7 @@ export default class TextTexture extends Texture {
     }
 
     _getIsValid() {
-        return !!this.text;
+        return !!this._text;
     }
 
     static getHash(obj: any): string {
@@ -340,7 +137,7 @@ export default class TextTexture extends Texture {
     }
 
     _getLookupId() {
-        const id = "TX$" + TextTexture.getHash(this.settings) + "|" + this.pixelRatio;
+        const id = "TX$" + this.text + "|" + TextTexture.getHash(this.settings) + "|" + this.pixelRatio;
         return id;
     }
 
@@ -349,7 +146,7 @@ export default class TextTexture extends Texture {
 
         return (cb: TextureSourceCallback) => {
             const canvas = this.stage.platform.getDrawingCanvas();
-            const renderer = new TextTextureRenderer(this.stage, canvas, args, this.pixelRatio);
+            const renderer = new TextTextureRenderer(this.stage, canvas, this.text, args, this.pixelRatio);
             const p = renderer.draw();
 
             const respond = () => {
