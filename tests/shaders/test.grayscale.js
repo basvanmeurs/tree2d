@@ -7,7 +7,7 @@ describe("Shaders", function () {
     before(() => {
         const template = {
             children: {
-                Image: { src: "./example.png", shader: { type: tree2d.shaders.GrayscaleShader, amount: 1 } },
+                Image: { src: "./example.png", shader: { type: tree2d.GrayscaleShader, amount: 1 } },
             },
         };
 
@@ -31,14 +31,14 @@ describe("Shaders", function () {
     describe("Image texture (WebGL)", function () {
         it("Should be gray", function () {
             const shader = stageGL.root.getByRef("Image").shader;
-            chai.assert(shader instanceof tree2d.shaders.GrayscaleShader);
+            chai.assert(shader instanceof tree2d.GrayscaleShader);
         });
     });
 
     describe("Image texture (C2D)", function () {
         it("Should be gray", function () {
             const shader = stage2D.root.getByRef("Image").shader;
-            chai.assert(shader instanceof tree2d.shaders.c2d.C2dGrayscaleShader);
+            chai.assert(shader instanceof tree2d.C2dGrayscaleShader);
         });
     });
 });

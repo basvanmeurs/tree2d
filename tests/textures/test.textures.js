@@ -32,7 +32,7 @@ describe("textures", function () {
         _getSourceLoader() {
             return (cb) => {
                 const canvas = this.stage.getDrawingCanvas();
-                tree2d.textures.RoundRectTexture.drawOnCanvas(canvas, { w: 100, h: 100, radius: [30, 30, 30, 30] });
+                tree2d.RoundRectTexture.drawOnCanvas(canvas, { w: 100, h: 100, radius: [30, 30, 30, 30] });
                 const opts = Object.assign({}, this.stage.platform.getTextureOptionsForDrawingCanvas(canvas));
                 if (this._async) {
                     this.asyncLoad = () => {
