@@ -18,13 +18,13 @@ export default class ElementCore implements FlexSubject {
     /**
      * Recalc flags in bits.
      */
-    private _recalc: number = 0;
+    private flags: number = 0;
 
     private _parent?: ElementCore;
 
     private _onUpdate?: ElementEventCallback;
 
-    private _pRecalc: number = 0;
+    private updatedFlags: number = 0;
 
     private _worldContext = new ElementCoreContext();
 
@@ -195,7 +195,7 @@ export default class ElementCore implements FlexSubject {
             if (dx) {
                 this._sx = v as number;
                 this._x += dx;
-                this._updateLocalTranslateDelta(dx, 0);
+                this.updateLocalTranslateDelta(dx, 0);
             }
         }
     }
@@ -239,7 +239,7 @@ export default class ElementCore implements FlexSubject {
             if (dy) {
                 this._sy = v as number;
                 this._y += dy;
-                this._updateLocalTranslateDelta(0, dy);
+                this.updateLocalTranslateDelta(0, dy);
             }
         }
     }
@@ -465,7 +465,7 @@ export default class ElementCore implements FlexSubject {
         if (this._alpha !== v) {
             const prev = this._alpha;
             this._alpha = v;
-            this._updateLocalAlpha();
+            this.updateLocalAlpha();
             if ((prev === 0) !== (v === 0)) {
                 this._element._updateEnabledFlag();
             }
@@ -479,7 +479,7 @@ export default class ElementCore implements FlexSubject {
     set visible(v) {
         if (this._visible !== v) {
             this._visible = v;
-            this._updateLocalAlpha();
+            this.updateLocalAlpha();
             this._element._updateEnabledFlag();
 
             if (this.hasFlexLayout()) {
@@ -502,11 +502,11 @@ export default class ElementCore implements FlexSubject {
     }
 
     _updateLocalTranslate() {
-        this._recalcLocalTranslate();
+        this.updateLocalTranslate();
         this._triggerRecalcTranslate();
     }
 
-    _recalcLocalTranslate() {
+    private updateLocalTranslate() {
         const pivotXMul = this._pivotX * this._w;
         const pivotYMul = this._pivotY * this._h;
         let px = this._x - (pivotXMul * this._localTa + pivotYMul * this._localTb) + pivotXMul;
@@ -517,11 +517,11 @@ export default class ElementCore implements FlexSubject {
         this._localPy = py;
     }
 
-    _updateLocalTranslateDelta(dx: number, dy: number) {
+    private updateLocalTranslateDelta(dx: number, dy: number) {
         this._addLocalTranslate(dx, dy);
     }
 
-    _updateLocalAlpha() {
+    private updateLocalAlpha() {
         this._setLocalAlpha(this._visible ? this._alpha : 0);
     }
 
@@ -568,11 +568,12 @@ export default class ElementCore implements FlexSubject {
      *  1: alpha
      *  2: translate
      *  4: transform
+     *  16: dimensions changed
      *  128: becomes visible
      *  256: flex layout updated
      */
-    _setRecalc(type: number) {
-        this._recalc |= type;
+    private setFlag(type: number) {
+        this.flags |= type;
 
         this._setHasUpdates();
 
@@ -610,7 +611,7 @@ export default class ElementCore implements FlexSubject {
                 prevParent.setHasRenderUpdates(3);
             }
 
-            this._setRecalc(1 + 2 + 4);
+            this.setFlag(1 + 2 + 4);
 
             if (this._parent) {
                 // Force parent to propagate hasUpdates flag.
@@ -719,7 +720,7 @@ export default class ElementCore implements FlexSubject {
     }
 
     private _setLocalTransform(a: number, b: number, c: number, d: number) {
-        this._setRecalc(4);
+        this.setFlag(4);
         this._localTa = a;
         this._localTb = b;
         this._localTc = c;
@@ -738,9 +739,9 @@ export default class ElementCore implements FlexSubject {
     private _setLocalAlpha(a: number) {
         if (!this._worldContext.alpha && this._parent && this._parent._worldContext.alpha && a) {
             // Element is becoming visible. We need to force update.
-            this._setRecalc(1 + 128);
+            this.setFlag(1 + 128);
         } else {
-            this._setRecalc(1);
+            this.setFlag(1);
         }
 
         if (a < 1e-14) {
@@ -782,8 +783,6 @@ export default class ElementCore implements FlexSubject {
                     this._h = h;
                 }
 
-                // Due to width/height change: update the translation vector.
-                this._updateLocalTranslate();
                 this.onDimensionsChanged();
             }
         }
@@ -802,14 +801,16 @@ export default class ElementCore implements FlexSubject {
             this._w = w;
             this._h = h;
 
-            // Due to width/height change: update the translation vector.
-            this._updateLocalTranslate();
-
             this.onDimensionsChanged();
         }
     }
 
     private onDimensionsChanged() {
+        // Due to width/height change: update the translation vector.
+        this._updateLocalTranslate();
+
+        this.setFlag(16);
+
         if (this._texturizer) {
             this._texturizer.releaseRenderTexture();
             this._texturizer.updateResultTexture();
@@ -862,7 +863,7 @@ export default class ElementCore implements FlexSubject {
         // When recBoundsMargin is undefined, the defaults are used (100 for all sides).
         this._parent._recBoundsMargin = undefined;
 
-        this._setRecalc(1 + 2 + 4);
+        this.setFlag(1 + 2 + 4);
     }
 
     private isAncestorOf(c: ElementCore) {
@@ -1136,7 +1137,7 @@ export default class ElementCore implements FlexSubject {
 
     set onUpdate(f: ElementEventCallback | undefined) {
         this._onUpdate = f;
-        this._setRecalc(7);
+        this.setFlag(7);
     }
 
     get onUpdate() {
@@ -1145,7 +1146,7 @@ export default class ElementCore implements FlexSubject {
 
     set onAfterUpdate(f: ElementEventCallback | undefined) {
         this._onAfterUpdate = f;
-        this._setRecalc(7);
+        this.setFlag(7);
     }
 
     get onAfterUpdate() {
@@ -1154,7 +1155,7 @@ export default class ElementCore implements FlexSubject {
 
     set onAfterCalcs(f: ElementEventCallback | undefined) {
         this._onAfterCalcs = f;
-        this._setRecalc(7);
+        this.setFlag(7);
     }
 
     get onAfterCalcs() {
@@ -1199,7 +1200,7 @@ export default class ElementCore implements FlexSubject {
 
             // Force update of scissor by updating translate.
             // Alpha must also be updated because the scissor area may have been empty.
-            this._setRecalc(1 + 2);
+            this.setFlag(1 + 2);
         }
     }
 
@@ -1280,7 +1281,7 @@ export default class ElementCore implements FlexSubject {
             this.setHasRenderUpdates(3);
 
             // Make sure that the render coordinates get updated.
-            this._setRecalc(7);
+            this.setFlag(7);
 
             this.render = this._renderAdvanced;
         }
@@ -1299,7 +1300,7 @@ export default class ElementCore implements FlexSubject {
             }
 
             // Make sure that the render coordinates get updated.
-            this._setRecalc(7);
+            this.setFlag(7);
 
             this.setHasRenderUpdates(3);
 
@@ -1379,14 +1380,30 @@ export default class ElementCore implements FlexSubject {
         return this._boundsMargin;
     }
 
+    private hasRelativeDimensionFunctions() {
+        return this._relFuncFlags & 12;
+    }
+
     public update(): void {
-        this._recalc |= this._parent!._pRecalc;
+        if (
+            this.isFlexLayoutRoot() &&
+            this._parent!.updatedFlags & 16 /* parent dimensions changed */ &&
+            this.hasRelativeDimensionFunctions()
+        ) {
+            // Parent width or height has changed while we are using relative dimension functions.
+            // We must force a re-layout as width or height might have been changed, which affects the flexbox layout.
+            // Notice that this edge case only occurs for root flex containers.
+            this.layout.forceLayout();
+        }
+
+        // Inherit flags except of 'dimensions changed'.
+        this.flags |= this._parent!.updatedFlags & 135;
 
         if (this._layout && this._layout.isEnabled()) {
-            if (this._recalc & 256) {
+            if (this.flags & 256) {
                 this._layout.layoutFlexTree();
             }
-        } else if (this._recalc & 2 && this._relFuncFlags) {
+        } else if (this.flags & 2 && this._relFuncFlags) {
             this._applyRelativeDimFuncs();
         }
 
@@ -1406,8 +1423,8 @@ export default class ElementCore implements FlexSubject {
          * - there are (inherited) updates and this branch is visible
          * - this branch becomes invisible (descs may be z-indexed so we must update all alpha values)
          */
-        if (this._hasUpdates || (this._recalc && visible) || (w.alpha && !visible)) {
-            let recalc = this._recalc;
+        if (this._hasUpdates || (this.flags && visible) || (w.alpha && !visible)) {
+            let recalc = this.flags;
 
             // Update world coords/alpha.
             if (recalc & 1) {
@@ -1504,7 +1521,7 @@ export default class ElementCore implements FlexSubject {
             const useRenderToTexture = this._renderToTextureEnabled && this._texturizer!.mustRenderToTexture();
             if (this._useRenderToTexture !== useRenderToTexture) {
                 // Coords must be changed.
-                this._recalc |= 2 + 4;
+                this.flags |= 2 + 4;
 
                 // Scissor may change: force update.
                 recalc |= 2;
@@ -1689,18 +1706,18 @@ export default class ElementCore implements FlexSubject {
                             // sure that the hasUpdates flag of this element is turned on, which blocks it for ancestors.
                             this._hasUpdates = true;
 
-                            const savedRecalc = this._recalc;
-                            this._recalc = 0;
+                            const savedRecalc = this.flags;
+                            this.flags = 0;
                             this.element._enableWithinBoundsMargin();
 
-                            if (this._recalc) {
-                                this._recalc = savedRecalc | this._recalc;
+                            if (this.flags) {
+                                this.flags = savedRecalc | this.flags;
 
                                 // This element needs to be re-updated now, because we want the dimensions (and other changes) to be updated.
                                 return this.update();
                             }
 
-                            this._recalc = savedRecalc;
+                            this.flags = savedRecalc;
                         } else {
                             this.element._disableWithinBoundsMargin();
                         }
@@ -1718,11 +1735,11 @@ export default class ElementCore implements FlexSubject {
                 }
             }
 
-            // Filter out bits that should not be copied to the children (currently all are).
-            this._pRecalc = this._recalc & 135;
+            // Copy inheritable flags (except layout).
+            this.updatedFlags = this.flags & 151;
 
             // Clear flags so that future updates are properly detected.
-            this._recalc = 0;
+            this.flags = 0;
             this._hasUpdates = false;
 
             if (this._outOfBounds < 2) {
@@ -1754,8 +1771,8 @@ export default class ElementCore implements FlexSubject {
                         if (this._children[i]._hasUpdates) {
                             this._children[i].update();
                         } else {
-                            // Make sure we don't lose the 'inherited' updates.
-                            this._children[i]._recalc |= this._pRecalc;
+                            // Make sure we don't lose the 'inherited' updates for the next time.
+                            this._children[i].flags |= this.updatedFlags;
                             this._children[i].updateOutOfBounds();
                         }
                     }
@@ -1808,8 +1825,6 @@ export default class ElementCore implements FlexSubject {
         }
 
         if (changedDims) {
-            // Recalc mount, scale position.
-            this._recalcLocalTranslate();
             this.onDimensionsChanged();
         }
     }
@@ -2257,6 +2272,10 @@ export default class ElementCore implements FlexSubject {
         return this._layout && this._layout.isEnabled();
     }
 
+    private isFlexLayoutRoot() {
+        return this._layout && this._layout.isLayoutRoot();
+    }
+
     getFlexContainer(): FlexContainer | undefined {
         return this.layout.isFlexEnabled() ? this.layout.flex : undefined;
     }
@@ -2266,11 +2285,11 @@ export default class ElementCore implements FlexSubject {
     }
 
     triggerLayout() {
-        this._setRecalc(256);
+        this.setFlag(256);
     }
 
     _triggerRecalcTranslate() {
-        this._setRecalc(2);
+        this.setFlag(2);
     }
 
     public getRenderWidth() {
@@ -2444,6 +2463,10 @@ export default class ElementCore implements FlexSubject {
                 }
             }
         }
+    }
+
+    checkWithinBounds() {
+        this.setFlag(6);
     }
 }
 

@@ -93,7 +93,7 @@ describe("test stack", function () {
     });
 
     function getResults(x, y) {
-        const elements = stage.getElementsAtStageCoordinates(x, y);
+        const elements = stage.getElementsAtCoordinates(x, y);
         return elements.map((result) => [result.element.ref, result.offsetX, result.offsetY, result.element]);
     }
 

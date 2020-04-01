@@ -39,8 +39,7 @@ export default class ElementTexturizer {
         this._renderOffscreen = v;
         this._core.setHasRenderUpdates(1);
 
-        // This enforces rechecking the 'within bounds'.
-        this._core._setRecalc(6);
+        this._core.checkWithinBounds();
     }
 
     get colorize() {
