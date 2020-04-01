@@ -7,7 +7,7 @@ import Shader from "../Shader";
 import ElementCoreContext from "./ElementCoreContext";
 import { RenderTextureInfo } from "./RenderTextureInfo";
 import { ElementEventCallback } from "../ElementListeners";
-import { FlexContainer, FlexItem, FlexNode, FlexSubject } from "flexbox.js";
+import { FlexContainer, FlexItem, FlexNode, FlexSubject } from "flexbox.js/lib";
 import Element from "../Element";
 
 export default class ElementCore implements FlexSubject {

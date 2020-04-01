@@ -22,6 +22,7 @@
         "typescript": "^3.8.2"
     },
     "files": [
+        "lib/**",
         "dist/**"
     ],
     "homepage": "https://github.com/Planning-nl/tree2d#readme",
@@ -33,8 +34,10 @@
     "unpkg": "dist/tree2d.js",
     "repository": "github:Planning-nl/tree2d",
     "scripts": {
-        "build": "NODE_ENV=production webpack --progress --display-error-details",
-        "watch_build": "NODE_ENV=production webpack --watch --progress --display-error-details",
+        "build": "tsc",
+        "watch_build": "tsc --watch",
+        "bundle": "NODE_ENV=production webpack --progress --display-error-details",
+        "watch_bundle": "NODE_ENV=production webpack --watch --progress --display-error-details",
         "lint": "eslint --fix -c .eslintrc.js **/*.ts",
         "prepare": "npm run build",
         "prepublishOnly": "npm test",

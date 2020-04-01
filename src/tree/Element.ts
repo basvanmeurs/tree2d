@@ -17,7 +17,7 @@ import ElementListeners, {
     ElementTextureErrorEventCallback,
     ElementTextureEventCallback,
 } from "./ElementListeners";
-import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from "flexbox.js";
+import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from "flexbox.js/lib";
 
 import Utils from "./Utils";
 import Shader from "./Shader";
