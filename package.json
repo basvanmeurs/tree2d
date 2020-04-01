@@ -12,36 +12,29 @@
     },
     "devDependencies": {
         "@planning.nl/eslint-config": "^1.0.3",
+        "@planning.nl/webpack-config": "^1.0.3",
         "chai": "^4.2.0",
-        "dotenv": "^8.2.0",
         "eslint": "^6.8.0",
-        "friendly-errors-webpack-plugin": "^1.7.0",
-        "happypack": "^5.0.1",
         "mocha": "^6.2.1",
         "sinon": "^7.5.0",
-        "terser-webpack-plugin": "^2.3.5",
         "ts-loader": "^6.2.2",
         "tsd": "^0.11.0",
-        "typescript": "^3.8.2",
-        "webpack": "^4.42.1",
-        "webpack-cli": "^3.3.11",
-        "webpack-merge": "^4.2.2"
+        "typescript": "^3.8.2"
     },
     "files": [
-        "index.js",
-        "src/**",
         "dist/**"
     ],
     "homepage": "https://github.com/Planning-nl/tree2d#readme",
     "keywords": [],
     "license": "apache",
     "main": "dist/tree2d.js",
-    "module": "index.js",
+    "module": "dist/tree2d.js",
+    "jsdelivr": "dist/tree2d.js",
+    "unpkg": "dist/tree2d.js",
     "repository": "github:Planning-nl/tree2d",
     "scripts": {
-        "build": "tsc",
-        "watch_build": "tsc --watch",
-        "bundle": "NODE_ENV=production webpack --config build/webpack.config.js --progress --hide-modules",
+        "build": "NODE_ENV=production webpack --progress --display-error-details",
+        "watch_build": "NODE_ENV=production webpack --watch --progress --display-error-details",
         "lint": "eslint --fix -c .eslintrc.js **/*.ts",
         "prepare": "npm run build",
         "prepublishOnly": "npm test",
@@ -49,5 +42,5 @@
         "version": "npm run lint"
     },
     "type": "module",
-    "types": "dist/tree2d.d.ts"
+    "types": "dist/index.d.ts"
 }

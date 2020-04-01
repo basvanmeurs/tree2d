@@ -1,4 +1,3 @@
-import Utils from "../../../tree/Utils";
 import DefaultShader from "./DefaultShader";
 import CoreContext from "../../../tree/core/CoreContext";
 import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";

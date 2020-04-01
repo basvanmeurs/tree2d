@@ -5,6 +5,19 @@
  */
 
 import ElementCore, { FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
+import Texture from "./Texture";
+import ImageTexture from "../textures/ImageTexture";
+import TextTexture from "../textures/text/TextTexture";
+import ElementChildList from "./ElementChildList";
+import Stage from "./Stage";
+import ElementTexturizer from "./core/ElementTexturizer";
+import ElementListeners, {
+    ElementEventCallback,
+    ElementResizeEventCallback,
+    ElementTextureErrorEventCallback,
+    ElementTextureEventCallback,
+} from "./ElementListeners";
+import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from "flexbox.js";
 
 import Utils from "./Utils";
 import Shader from "./Shader";
@@ -1506,19 +1519,5 @@ class Element<DATA = any> {
         return this._flexItem.maxHeight;
     }
 }
-
-import Texture from "./Texture";
-import ImageTexture from "../textures/ImageTexture";
-import TextTexture from "../textures/text/TextTexture";
-import ElementChildList from "./ElementChildList";
-import Stage from "./Stage";
-import ElementTexturizer from "./core/ElementTexturizer";
-import ElementListeners, {
-    ElementEventCallback,
-    ElementResizeEventCallback,
-    ElementTextureErrorEventCallback,
-    ElementTextureEventCallback,
-} from "./ElementListeners";
-import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from "flexbox.js/dist/FlexContainer";
 
 export default Element;

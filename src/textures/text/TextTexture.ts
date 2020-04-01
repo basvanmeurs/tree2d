@@ -1,4 +1,8 @@
 import Texture, { TextureSourceCallback, TextureSourceLoader } from "../../tree/Texture";
+import TextTextureRenderer from "./TextTextureRenderer";
+import { TextSettings } from "./TextSettings";
+import Utils from "../../tree/Utils";
+import Stage from "../../tree/Stage";
 
 export default class TextTexture extends Texture {
     private settings: Partial<TextSettings> = {};
@@ -382,8 +386,3 @@ export default class TextTexture extends Texture {
         return Utils.clone(this.settings);
     }
 }
-
-import TextTextureRenderer from "./TextTextureRenderer";
-import { TextSettings } from "./TextSettings";
-import Utils from "../../tree/Utils";
-import Stage from "../../tree/Stage";

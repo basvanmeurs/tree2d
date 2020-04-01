@@ -35,7 +35,7 @@ Some of the most notable features include:
 ## Basic usage
 You'd use tree2d by first constructing a `Stage` like this:
 ```javascript
-import Stage from "tree2d/dist/tree/Stage";
+import { Stage } from "tree2d";
 const canvas = document.getElementById('canvas');
 const options = {};
 const stage = new Stage(canvas, options);
