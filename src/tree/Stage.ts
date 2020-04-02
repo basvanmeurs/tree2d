@@ -359,8 +359,9 @@ export default class Stage {
             this.canvas.width !== this.canvas.clientWidth || this.canvas.height !== this.canvas.clientHeight;
 
         if (isManagedByCss) {
-            const newCanvasWidth = this.canvas.clientWidth * this.pixelRatio || this.canvas.width;
-            const newCanvasHeight = this.canvas.clientHeight * this.pixelRatio || this.canvas.height;
+            const rect = this.canvas.getBoundingClientRect();
+            const newCanvasWidth = rect.width * this.pixelRatio || this.canvas.width;
+            const newCanvasHeight = rect.height * this.pixelRatio || this.canvas.height;
             const changed = newCanvasWidth !== this.canvasWidth || newCanvasHeight !== this.canvasHeight;
 
             this.canvasWidth = newCanvasWidth;
