@@ -594,7 +594,7 @@ class Element<DATA = any> {
         } else if (this._texture) {
             // Texture already loaded, but not yet updated (probably because this element is not active).
             w = this._texture.getRenderWidth();
-            h = this._texture.getRenderWidth();
+            h = this._texture.getRenderHeight();
         }
 
         let unknownSize = false;
