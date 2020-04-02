@@ -1,7 +1,7 @@
 {
     "name": "tree2d",
     "description": "HTML canvas 2d render tree",
-    "version": "1.0.0-alpha.9",
+    "version": "1.0.0-alpha.11",
     "author": "Planning.nl, Bas van Meurs, Robbin Baauw",
     "bugs": {
         "url": "https://github.com/Planning-nl/tree2d/issues",
