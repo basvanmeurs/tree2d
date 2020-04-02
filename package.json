@@ -45,5 +45,5 @@
         "version": "npm run lint"
     },
     "type": "module",
-    "types": "dist/index.d.ts"
+    "types": "lib/index.d.ts"
 }
