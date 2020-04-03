@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Speed tests</title>
+    <script src="../dist/tree2d.js"></script>
+    <style>
+        document, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<script>
+    window.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.width = '1000px';
+        canvas.style.height = '1000px';
+        document.body.appendChild(canvas);
+
+
+        const options = {clearColor: 0xFF000000, canvas2d: false, autostart: false};
+        const stage = new tree2d.Stage(canvas, options);
+
+        function addItems() {
+            const newEl = stage.createElement({});
+            for (let i = 0; i < 1000; i++) {
+                const el = new tree2d.Element(stage);
+                el.texture = new tree2d.TextTexture(stage);
+                el.texture.text = "hello";
+                const el2 = new tree2d.Element(stage);
+                el2.rect = true;
+                el2.w = 10;
+                el2.h = 10;
+                el2.color = tree2d.ColorUtils.getArgbNumber([255, 255 * Math.random(), 255 * Math.random(), 255 * Math.random()]);
+                el.childList.add(el2);
+                newEl.childList.add(el);
+            }
+            stage.root.children = [newEl];
+        }
+
+
+        setInterval(() => {
+            console.log(stage.frameCounter)
+            const profile = false;//(stage.frameCounter % 100) == 0;
+            profile && console.profile('add items');
+            addItems();
+            profile && console.profileEnd('add items');
+            profile && console.profile('update & draw');
+            stage.drawFrame();
+            profile && console.profileEnd('update & draw');
+
+            const newEl = stage.root.children[0];
+            profile && console.profile('translate');
+            newEl.x += 1;
+            stage.context.update();
+            profile && console.profileEnd('translate');
+            profile && console.profile('scale');
+            newEl.scale = 1.1;
+            stage.context.update();
+            profile && console.profileEnd('scale');
+            profile && console.profile('redraw');
+            stage.drawFrame();
+            profile && console.profileEnd('redraw');
+        }, 100);
+    };
+</script>
+</body>
+</html>
