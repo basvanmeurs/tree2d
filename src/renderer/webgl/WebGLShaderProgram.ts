@@ -4,7 +4,7 @@
 import { GLFunction } from "./WebGLShader";
 
 export default class WebGLShaderProgram {
-    private _program?: WebGLProgram;
+    private _program?: WebGLProgram = undefined;
     private _uniformLocations: Map<string, WebGLUniformLocation> = new Map();
     private _attributeLocations: Map<string, GLint> = new Map();
     private readonly _currentUniformValues: { [key: string]: any } = {};

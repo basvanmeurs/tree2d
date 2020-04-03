@@ -14,7 +14,7 @@ export default class Texture {
     // The number of enabled elements that are active.
     private _activeCount: number = 0;
 
-    private _source?: TextureSource;
+    private _source?: TextureSource = undefined;
 
     /**
      * A resize mode can be set to cover or contain a certain area.

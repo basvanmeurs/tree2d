@@ -2,17 +2,17 @@ import Element from "./Element";
 import Texture from "./Texture";
 
 export default class ElementListeners {
-    public onSetup?: ElementEventCallback;
-    public onAttach?: ElementEventCallback;
-    public onDetach?: ElementEventCallback;
-    public onActive?: ElementEventCallback;
-    public onInactive?: ElementEventCallback;
-    public onEnabled?: ElementEventCallback;
-    public onDisabled?: ElementEventCallback;
-    public onResize?: ElementResizeEventCallback;
-    public onTextureError?: ElementTextureErrorEventCallback;
-    public onTextureLoaded?: ElementTextureEventCallback;
-    public onTextureUnloaded?: ElementTextureEventCallback;
+    public onSetup?: ElementEventCallback = undefined;
+    public onAttach?: ElementEventCallback = undefined;
+    public onDetach?: ElementEventCallback = undefined;
+    public onActive?: ElementEventCallback = undefined;
+    public onInactive?: ElementEventCallback = undefined;
+    public onEnabled?: ElementEventCallback = undefined;
+    public onDisabled?: ElementEventCallback = undefined;
+    public onResize?: ElementResizeEventCallback = undefined;
+    public onTextureError?: ElementTextureErrorEventCallback = undefined;
+    public onTextureLoaded?: ElementTextureEventCallback = undefined;
+    public onTextureUnloaded?: ElementTextureEventCallback = undefined;
 }
 
 export type ElementEventCallback = (element: Element) => void;

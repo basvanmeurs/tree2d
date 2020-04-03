@@ -17,14 +17,14 @@ export default abstract class CoreRenderState<
     private renderer: Renderer = this.context.stage.renderer;
     public readonly quadList: CoreQuadListType = this.renderer.createCoreQuadList() as CoreQuadListType;
 
-    public renderTextureInfo?: RenderTextureInfo;
+    public renderTextureInfo?: RenderTextureInfo = undefined;
     private scissor?: number[];
-    private shaderOwner?: ElementCore;
-    private specifiedShader?: Shader;
-    private usedShader?: Shader;
+    private shaderOwner?: ElementCore = undefined;
+    private specifiedShader?: Shader = undefined;
+    private usedShader?: Shader = undefined;
     private checkForChanges: boolean = false;
-    private texturizer?: ElementTexturizer;
-    private pendingQuadOperation?: CoreQuadOperationType;
+    private texturizer?: ElementTexturizer = undefined;
+    private pendingQuadOperation?: CoreQuadOperationType = undefined;
 
     // A list of texturizers that should not to be cached - and pending to be released.
     private temporaryTexturizers: ElementTexturizer[] = [];

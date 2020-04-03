@@ -31,7 +31,7 @@ class Element<DATA = any> {
 
     private readonly _core: ElementCore;
 
-    private _ref?: string;
+    private _ref?: string = undefined;
 
     // An element is attached if it is a descendant of the stage root.
     private _attached: boolean = false;
@@ -42,21 +42,21 @@ class Element<DATA = any> {
     // An element is active when it is enabled and it is within bounds.
     private _active: boolean = false;
 
-    private _parent?: Element;
+    private _parent?: Element = undefined;
 
     // The texture that is currently set.
-    private _texture?: Texture;
+    private _texture?: Texture = undefined;
 
     // The currently displayed texture. May differ from this.texture while loading.
-    private _displayedTexture?: Texture;
+    private _displayedTexture?: Texture = undefined;
 
     // Contains the child elements.
-    private _childList?: ElementChildList;
+    private _childList?: ElementChildList = undefined;
 
-    private listeners?: ElementListeners;
+    private listeners?: ElementListeners = undefined;
 
     // Custom data
-    public data?: DATA;
+    public data?: DATA = undefined;
 
     constructor(stage: Stage) {
         this.stage = stage;

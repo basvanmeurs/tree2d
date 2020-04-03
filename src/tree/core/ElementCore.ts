@@ -20,9 +20,9 @@ export default class ElementCore implements FlexSubject {
      */
     private flags: number = 0;
 
-    private _parent?: ElementCore;
+    private _parent?: ElementCore = undefined;
 
-    private _onUpdate?: ElementEventCallback;
+    private _onUpdate?: ElementEventCallback = undefined;
 
     private updatedFlags: number = 0;
 
@@ -32,9 +32,9 @@ export default class ElementCore implements FlexSubject {
 
     private _localAlpha: number = 1;
 
-    private _onAfterCalcs?: ElementEventCallback;
+    private _onAfterCalcs?: ElementEventCallback = undefined;
 
-    private _onAfterUpdate?: ElementEventCallback;
+    private _onAfterUpdate?: ElementEventCallback = undefined;
 
     // All local translation/transform updates: directly propagated from x/y/w/h/scale/whatever.
     private _localPx: number = 0;
@@ -53,24 +53,24 @@ export default class ElementCore implements FlexSubject {
     /**
      * The texture source to be displayed.
      */
-    private _displayedTextureSource?: TextureSource;
+    private _displayedTextureSource?: TextureSource = undefined;
 
     private _zContextUsage: number = 0;
 
-    public _children?: ElementCore[];
+    public _children?: ElementCore[] = undefined;
 
     private _hasRenderUpdates: number = 0;
 
-    private _zIndexedChildren?: ElementCore[];
+    private _zIndexedChildren?: ElementCore[] = undefined;
 
     private _renderContext: ElementCoreContext = this._worldContext;
 
     private renderState: CoreRenderState;
 
-    private _scissor?: number[];
+    private _scissor?: number[] = undefined;
 
     // The ancestor ElementCore that defined the inherited shader. Undefined if none is active (default shader).
-    private _shaderOwner?: ElementCore;
+    private _shaderOwner?: ElementCore = undefined;
 
     // Counter while updating the tree order.
     private _updateTreeOrder: number = 0;
@@ -100,10 +100,10 @@ export default class ElementCore implements FlexSubject {
     // Defines which relative functions are enabled.
     private _relFuncFlags: number = 0;
 
-    private _funcX?: FunctionX;
-    private _funcY?: FunctionY;
-    private _funcW?: FunctionW;
-    private _funcH?: FunctionH;
+    private _funcX?: FunctionX = undefined;
+    private _funcY?: FunctionY = undefined;
+    private _funcW?: FunctionW = undefined;
+    private _funcH?: FunctionH = undefined;
 
     private _scaleX: number = 1;
     private _scaleY: number = 1;
@@ -126,7 +126,7 @@ export default class ElementCore implements FlexSubject {
 
     private _zIndex: number = 0;
     private _forceZIndexContext: boolean = false;
-    private _zParent?: ElementCore;
+    private _zParent?: ElementCore = undefined;
 
     /**
      * Iff true, during next zSort, this element should be 're-sorted' because either:
@@ -136,13 +136,13 @@ export default class ElementCore implements FlexSubject {
      */
     private _zIndexResort: boolean = false;
 
-    private _shader?: Shader;
+    private _shader?: Shader = undefined;
 
     // Element is rendered on another texture.
     private _renderToTextureEnabled: boolean = false;
 
     // Manages the render texture.
-    private _texturizer?: ElementTexturizer;
+    private _texturizer?: ElementTexturizer = undefined;
 
     private _useRenderToTexture: boolean = false;
 
@@ -152,7 +152,7 @@ export default class ElementCore implements FlexSubject {
 
     private _withinBoundsMargin: boolean = false;
 
-    private _viewport?: number[];
+    private _viewport?: number[] = undefined;
 
     // If this element is out of viewport, the branch is also skipped in updating and rendering.
     private _clipbox: boolean = true;
@@ -161,10 +161,10 @@ export default class ElementCore implements FlexSubject {
     public render: () => void = this._renderSimple;
 
     // Flex layouting if enabled.
-    private _layout?: FlexNode;
+    private _layout?: FlexNode = undefined;
 
-    private _stashedTexCoords?: number[];
-    private _stashedColors?: number[];
+    private _stashedTexCoords?: number[] = undefined;
+    private _stashedColors?: number[] = undefined;
 
     constructor(element: Element) {
         this._element = element;
@@ -754,11 +754,12 @@ export default class ElementCore implements FlexSubject {
 
     setTextureDimensions(w: number, h: number, isEstimate: boolean = this._dimsUnknown) {
         // In case of an estimation, the update loop should perform different bound checks.
-        this._tw = w;
-        this._th = h;
         this._dimsUnknown = isEstimate;
-
-        this._updateBaseDimensions();
+        if (this._tw !== w || this._th !== h) {
+            this._tw = w;
+            this._th = h;
+            this._updateBaseDimensions();
+        }
     }
 
     private _updateBaseDimensions() {
@@ -774,12 +775,12 @@ export default class ElementCore implements FlexSubject {
             this.layout.updatedSourceW();
             this.layout.updatedSourceH();
         } else {
-            if ((!this.funcW && this._w !== w) || (!this.funcH && this._h !== h)) {
-                if (!this.funcW) {
+            if ((!this._funcW && this._w !== w) || (!this._funcH && this._h !== h)) {
+                if (!this._funcW) {
                     this._w = w;
                 }
 
-                if (!this.funcH) {
+                if (!this._funcH) {
                     this._h = h;
                 }
 

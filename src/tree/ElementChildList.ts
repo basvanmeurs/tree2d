@@ -21,6 +21,11 @@ export default class ElementChildList extends ObjectList<Element> {
         }
     }
 
+    itemInList(item: Element) {
+        // Performance improvement.
+        return item.parent === this.element;
+    }
+
     protected onAdd(item: Element, index: number) {
         this.connectParent(item);
         this.element.core.addChildAt(index, item.core);

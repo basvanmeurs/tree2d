@@ -10,13 +10,8 @@ export interface ListType {
  * Objects may be patched. Then, they can be referenced using the 'ref' (string) property.
  */
 export default class ObjectList<T extends ListType> {
-    private _items: T[];
-    private _refs: Record<string, T | undefined>;
-
-    constructor() {
-        this._items = [];
-        this._refs = {};
-    }
+    private _items: T[] = [];
+    private _refs: Record<string, T | undefined> = {};
 
     getItems() {
         return this._items;
@@ -31,7 +26,17 @@ export default class ObjectList<T extends ListType> {
     }
 
     add(item: T) {
-        this.addAt(item, this._items.length);
+        if (!this.itemInList(item)) {
+            if (item.ref) {
+                this._refs[item.ref] = item;
+            }
+            this._items.push(item);
+            this.onAdd(item, this._items.length - 1);
+        }
+    }
+
+    itemInList(item: T) {
+        return this.getIndex(item) !== -1;
     }
 
     addAt(item: T, index: number) {
@@ -39,7 +44,7 @@ export default class ObjectList<T extends ListType> {
             let currentIndex = -1;
             currentIndex = this.getIndex(item);
             if (currentIndex === index) {
-                return item;
+                return;
             }
 
             if (currentIndex !== -1) {

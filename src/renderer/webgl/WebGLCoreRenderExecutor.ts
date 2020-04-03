@@ -16,7 +16,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCor
     public projection: Float32Array;
 
     public scissor: number[] | undefined;
-    public currentShaderProgram?: WebGLShader;
+    public currentShaderProgram?: WebGLShader = undefined;
     public readonly gl: WebGLRenderingContext;
 
     constructor(context: CoreContext) {

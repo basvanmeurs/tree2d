@@ -4,7 +4,7 @@ import Utils from "../tree/Utils";
 export type SvgOptions = { w: number; h: number; src: string };
 
 export default class SvgTexture extends Texture {
-    private _options?: SvgOptions;
+    private _options?: SvgOptions = undefined;
 
     set options(options: SvgOptions | undefined) {
         this._options = options;

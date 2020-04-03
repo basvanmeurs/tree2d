@@ -14,8 +14,8 @@ export default function createWorker() {
 function createWorkerServer() {
     class ImageWorkerServer {
         private items = new Map<string, ImageWorkerServerItem>();
-        private config?: any;
-        private relativeBase?: string;
+        private config?: any = undefined;
+        private relativeBase?: string = undefined;
 
         constructor() {
             onmessage = (e) => {
@@ -103,12 +103,12 @@ function createWorkerServer() {
     }
 
     class ImageWorkerServerItem {
-        public onError?: (info: any) => void;
-        public onFinish?: (info: any) => void;
+        public onError?: (info: any) => void = undefined;
+        public onFinish?: (info: any) => void = undefined;
 
-        private xhr?: XMLHttpRequest;
+        private xhr?: XMLHttpRequest = undefined;
 
-        private mimeType?: string;
+        private mimeType?: string = undefined;
 
         private canceled = false;
 

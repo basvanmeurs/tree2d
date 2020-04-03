@@ -17,7 +17,7 @@ export default class CircularPushShader extends DefaultShader {
     private _offsetX: number = 0;
     private _offsetY: number = 0;
 
-    private _valuesTexture?: WebGLTexture;
+    private _valuesTexture?: WebGLTexture = undefined;
     private _values: Uint8Array = new Uint8Array([]);
 
     private _buckets: number = 0;

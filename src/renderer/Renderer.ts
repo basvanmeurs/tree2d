@@ -14,7 +14,7 @@ import CoreQuadOperation from "../tree/core/CoreQuadOperation";
 import RenderTexture from "./RenderTexture";
 
 export default abstract class Renderer {
-    _defaultShader?: Shader;
+    _defaultShader?: Shader = undefined;
 
     constructor(public stage: Stage) {}
 

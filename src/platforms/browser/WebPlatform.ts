@@ -11,7 +11,7 @@ import TextureSource from "../../tree/TextureSource";
 export default class WebPlatform {
     private _looping: boolean = false;
     private _awaitingLoop: boolean = false;
-    private _imageWorker?: ImageWorker;
+    private _imageWorker?: ImageWorker = undefined;
 
     constructor(private stage: Stage) {}
 

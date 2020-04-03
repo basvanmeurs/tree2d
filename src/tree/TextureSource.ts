@@ -13,7 +13,7 @@ export default class TextureSource {
     private _activeTextureCount: number = 0;
 
     // Reuse identifier.
-    public lookupId?: string;
+    public lookupId?: string = undefined;
 
     // If set, this.is called when the texture source is no longer displayed (activeTextureCount becomes 0).
     private _cancelCb?: (ts: TextureSource) => void;
@@ -24,19 +24,19 @@ export default class TextureSource {
     public w: number = 0;
     public h: number = 0;
 
-    public _nativeTexture?: NativeTexture;
+    public _nativeTexture?: NativeTexture = undefined;
 
     // If true, then this.texture source is never freed from memory during garbage collection.
     public permanent: boolean = false;
 
     // Texture-specific rendering info.
-    private renderInfo?: any;
+    private renderInfo?: any = undefined;
 
     // Render-to-texture reuse.
     private _isResultTexture: boolean = !this.loader;
 
     // Contains the load error, if the texture source could previously not be loaded.
-    private _loadError?: Error;
+    private _loadError?: Error = undefined;
 
     constructor(private manager: TextureManager, private loader?: TextureSourceLoader) {}
 

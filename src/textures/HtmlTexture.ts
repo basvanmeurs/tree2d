@@ -1,11 +1,11 @@
 import Texture, { TextureSourceCallback, TextureSourceLoader } from "../tree/Texture";
 
 export default class HtmlTexture extends Texture {
-    private _htmlElement?: HTMLElement;
+    private _htmlElement?: HTMLElement = undefined;
 
     private _scale = 1;
 
-    private static _preloadArea?: HTMLDivElement;
+    private static _preloadArea?: HTMLDivElement = undefined;
 
     set htmlElement(v) {
         this._htmlElement = v;

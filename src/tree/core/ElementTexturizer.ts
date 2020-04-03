@@ -14,9 +14,9 @@ export default class ElementTexturizer {
     public lazy: boolean = false;
 
     private _colorize: boolean = false;
-    private _renderTexture?: RenderTexture;
-    private _reusedTexture?: NativeTexture;
-    private _resultTextureSource?: TextureSource;
+    private _renderTexture?: RenderTexture = undefined;
+    private _reusedTexture?: NativeTexture = undefined;
+    private _resultTextureSource?: TextureSource = undefined;
     private _renderOffscreen: boolean = false;
     public empty: boolean = false;
 

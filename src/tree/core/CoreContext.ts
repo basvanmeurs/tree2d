@@ -7,7 +7,7 @@ import { CopyRenderTextureOptions } from "../../renderer/Renderer";
 import RenderTexture from "../../renderer/RenderTexture";
 
 export default class CoreContext {
-    public root?: ElementCore;
+    public root?: ElementCore = undefined;
     public updateTreeOrder: number = 0;
     public readonly renderState: CoreRenderState = this.stage.renderer.createCoreRenderState(this);
     public readonly renderExecutor: CoreRenderExecutor = this.stage.renderer.createCoreRenderExecutor(this);

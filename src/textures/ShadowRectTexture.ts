@@ -5,7 +5,7 @@ import ColorUtils from "../tree/ColorUtils";
 export type ShadowRectOptions = { w: number; h: number; radius: number[]; blur: number; margin: number };
 
 export default class ShadowRectTexture extends Texture {
-    private _options?: ShadowRectOptions;
+    private _options?: ShadowRectOptions = undefined;
 
     set options(options: ShadowRectOptions | undefined) {
         this._options = options;

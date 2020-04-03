@@ -8,8 +8,8 @@ import { Constructor } from "../../util/types";
 export type GLFunction = (location: WebGLUniformLocation | null, ...args: any[]) => void;
 
 export default class WebGLShader extends Shader {
-    vertexShaderSource?: string;
-    fragmentShaderSource?: string;
+    vertexShaderSource?: string = undefined;
+    fragmentShaderSource?: string = undefined;
 
     private _initialized: boolean;
 

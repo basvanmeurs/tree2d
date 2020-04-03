@@ -31,13 +31,13 @@ describe("canvas size", () => {
 
     describe("initial", () => {
         it("root width and height should be 100%", () => {
-            chai.assert(root.layoutW === 900, "width should be 100%");
-            chai.assert(root.layoutH === 900, "height should be 100%");
+            chai.assert(Math.round(root.layoutW) === 900, "width should be 100%");
+            chai.assert(Math.round(root.layoutH) === 900, "height should be 100%");
         });
 
         it("element width and height should be relative", () => {
-            chai.assert(element.layoutW === 450, "width should be 50%");
-            chai.assert(element.layoutH === 900, "height should be 100%");
+            chai.assert(Math.round(element.layoutW) === 450, "width should be 50%");
+            chai.assert(Math.round(element.layoutH) === 900, "height should be 100%");
         });
 
         it("clipped element should have correct active flag", () => {

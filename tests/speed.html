@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Speed tests</title>
-    <script src="../dist/tree2d.js"></script>
+<!--    <script src="../dist/tree2d.js"></script>-->
+    <script src="../dist/tree2d.min.js"></script>
+<!--    <script src="../dist/web.js"></script>-->
     <style>
         document, body {
             margin: 0;
@@ -22,50 +24,57 @@
         document.body.appendChild(canvas);
 
 
-        const options = {clearColor: 0xFF000000, canvas2d: false, autostart: false};
+        const options = {clearColor: 0xFF000000, pixelRatio: 1, canvas2d: false, autostart: false};
         const stage = new tree2d.Stage(canvas, options);
 
         function addItems() {
             const newEl = stage.createElement({});
             for (let i = 0; i < 1000; i++) {
                 const el = new tree2d.Element(stage);
-                el.texture = new tree2d.TextTexture(stage);
-                el.texture.text = "hello";
+                // el.texture = new tree2d.TextTexture(stage);
+                // el.texture.text = "hello";
                 const el2 = new tree2d.Element(stage);
-                el2.rect = true;
+                // el2.rect = true;
                 el2.w = 10;
                 el2.h = 10;
-                el2.color = tree2d.ColorUtils.getArgbNumber([255, 255 * Math.random(), 255 * Math.random(), 255 * Math.random()]);
+                // el2.color = tree2d.ColorUtils.getArgbNumber([255, 255 * Math.random(), 255 * Math.random(), 255 * Math.random()]);
                 el.childList.add(el2);
                 newEl.childList.add(el);
             }
             stage.root.children = [newEl];
         }
 
-
+        let ctr = 0;
         setInterval(() => {
-            console.log(stage.frameCounter)
+            ctr++;
+            if (ctr === 100) {
+                console.profile('start');
+            }
             const profile = false;//(stage.frameCounter % 100) == 0;
-            profile && console.profile('add items');
+            // profile && console.profile('add items');
             addItems();
-            profile && console.profileEnd('add items');
-            profile && console.profile('update & draw');
+            // profile && console.profileEnd('add items');
+            // profile && console.profile('update & draw');
             stage.drawFrame();
-            profile && console.profileEnd('update & draw');
-
+            // profile && console.profileEnd('update & draw');
+            //
             const newEl = stage.root.children[0];
-            profile && console.profile('translate');
+            // profile && console.profile('translate');
             newEl.x += 1;
             stage.context.update();
-            profile && console.profileEnd('translate');
-            profile && console.profile('scale');
+            // profile && console.profileEnd('translate');
+            // profile && console.profile('scale');
             newEl.scale = 1.1;
             stage.context.update();
-            profile && console.profileEnd('scale');
-            profile && console.profile('redraw');
+            // profile && console.profileEnd('scale');
+            // profile && console.profile('redraw');
             stage.drawFrame();
-            profile && console.profileEnd('redraw');
-        }, 100);
+            // profile && console.profileEnd('redraw');
+            if (ctr === 200) {
+                console.profileEnd('start');
+            }
+        }, 50);
+
     };
 </script>
 </body>

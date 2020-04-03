@@ -1,7 +1,7 @@
 import Texture, { TextureSourceLoader } from "../tree/Texture";
 
 export default class ImageTexture extends Texture {
-    private _src?: string;
+    private _src?: string = undefined;
     private _hasAlpha: boolean = false;
 
     get src() {

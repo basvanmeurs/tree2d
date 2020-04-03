@@ -13,7 +13,7 @@ export type RoundRectOptions = {
 };
 
 export default class RoundRectTexture extends Texture {
-    private _options?: RoundRectOptions;
+    private _options?: RoundRectOptions = undefined;
 
     set options(options: RoundRectOptions | undefined) {
         this._options = options;
