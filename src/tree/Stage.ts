@@ -73,7 +73,7 @@ export default class Stage {
         this.defaultFontFace = options.defaultFontFace || ["sans-serif"];
         this.fixedTimestep = options.fixedTimestep || 0;
         this.useImageWorker = options.useImageWorker === undefined || options.useImageWorker;
-        this.autostart = options.autostart || true;
+        this.autostart = options.autostart !== false;
         this.pixelRatio = options.pixelRatio || window.devicePixelRatio || 1;
         this.canvas2d = options.canvas2d === true || !Stage.isWebglSupported();
 
