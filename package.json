@@ -23,7 +23,8 @@
     },
     "files": [
         "lib/**",
-        "dist/**"
+        "dist/**",
+        "src/**"
     ],
     "homepage": "https://github.com/Planning-nl/tree2d#readme",
     "keywords": [],
@@ -40,6 +41,7 @@
         "watch_bundle": "NODE_ENV=production webpack --watch --progress --display-error-details",
         "lint": "eslint --fix -c .eslintrc.js **/*.ts",
         "prepare": "npm run build",
+        "prepublish": "npm run bundle",
         "prepublishOnly": "npm test",
         "test": "echo \"please run tests in browser using tests/test.html\"",
         "version": "npm run lint"
