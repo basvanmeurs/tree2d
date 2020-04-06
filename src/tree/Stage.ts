@@ -69,7 +69,7 @@ export default class Stage {
         this.canvasHeight = this.h;
 
         this.gpuPixelsMemory = options.gpuPixelsMemory || 32e6;
-        this.bufferMemory = options.bufferMemory || 4e6;
+        this.bufferMemory = options.bufferMemory || 16e6;
         this.defaultFontFace = options.defaultFontFace || ["sans-serif"];
         this.fixedTimestep = options.fixedTimestep || 0;
         this.useImageWorker = options.useImageWorker === undefined || options.useImageWorker;

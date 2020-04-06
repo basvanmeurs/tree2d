@@ -1283,27 +1283,27 @@ class Element<DATA = any> {
         this.texturizer.enabled = v;
     }
 
-    get renderLazy() {
+    get renderToTextureLazy() {
         return this._hasTexturizer() && this.texturizer.lazy;
     }
 
-    set renderLazy(v) {
+    set renderToTextureLazy(v) {
         this.texturizer.lazy = v;
     }
 
-    get renderOffscreen() {
+    get renderToTextureOffscreen() {
         return this._hasTexturizer() && this.texturizer.renderOffscreen;
     }
 
-    set renderOffscreen(v) {
+    set renderToTextureOffscreen(v) {
         this.texturizer.renderOffscreen = v;
     }
 
-    get renderColorize() {
+    get renderToTextureColorize() {
         return this._hasTexturizer() && this.texturizer.colorize;
     }
 
-    set renderColorize(v) {
+    set renderToTextureColorize(v) {
         this.texturizer.colorize = v;
     }
 

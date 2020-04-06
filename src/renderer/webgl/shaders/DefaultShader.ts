@@ -1,5 +1,6 @@
 import WebGLShader from "../WebGLShader";
 import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import WebGLCoreRenderExecutor from "../WebGLCoreRenderExecutor";
 
 export default class DefaultShader extends WebGLShader {
     enableAttribs() {
@@ -40,8 +41,11 @@ export default class DefaultShader extends WebGLShader {
 
     draw(operation: WebGLCoreQuadOperation) {
         const gl = this.gl;
-
         const length = operation.length;
+
+        const renderExecutor = this.context.renderExecutor as WebGLCoreRenderExecutor;
+        const indexType = renderExecutor.quadIndexType;
+        const indexTypeBytes = renderExecutor.quadIndexType === WebGLRenderingContext.UNSIGNED_INT ? 4 : 2;
 
         if (length) {
             let glTexture = operation.getTexture(0);
@@ -50,14 +54,24 @@ export default class DefaultShader extends WebGLShader {
                 const tx = operation.getTexture(i);
                 if (glTexture !== tx) {
                     gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                    gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+                    gl.drawElements(
+                        gl.TRIANGLES,
+                        6 * (i - pos),
+                        indexType,
+                        (pos + operation.index) * 6 * indexTypeBytes,
+                    );
                     glTexture = tx;
                     pos = i;
                 }
             }
             if (pos < length) {
                 gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                gl.drawElements(gl.TRIANGLES, 6 * (length - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+                gl.drawElements(
+                    gl.TRIANGLES,
+                    6 * (length - pos),
+                    indexType,
+                    (pos + operation.index) * 6 * indexTypeBytes,
+                );
             }
         }
     }

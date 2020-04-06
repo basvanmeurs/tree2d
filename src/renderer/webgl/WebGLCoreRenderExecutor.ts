@@ -18,6 +18,8 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCor
     public scissor: number[] | undefined;
     public currentShaderProgram?: WebGLShader = undefined;
     public readonly gl: WebGLRenderingContext;
+    public quadIndexType: typeof WebGLRenderingContext.UNSIGNED_SHORT | typeof WebGLRenderingContext.UNSIGNED_INT =
+        WebGLRenderingContext.UNSIGNED_SHORT;
 
     constructor(context: CoreContext) {
         super(context);
@@ -46,8 +48,15 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCor
 
         const maxQuads = Math.floor(this.renderState.quadList.data.byteLength / 80);
 
-        // Init webgl arrays.
-        const allIndices = new Uint16Array(maxQuads * 6);
+        const indexUintExtension = gl.getExtension("OES_element_index_uint");
+
+        this.quadIndexType = indexUintExtension
+            ? WebGLRenderingContext.UNSIGNED_INT
+            : WebGLRenderingContext.UNSIGNED_SHORT;
+
+        const arrayType = this.quadIndexType === WebGLRenderingContext.UNSIGNED_INT ? Uint32Array : Uint16Array;
+
+        const allIndices = new arrayType(maxQuads * 6);
 
         // fill the indices with the quads to draw.
         for (let i = 0, j = 0; i < maxQuads; i += 6, j += 4) {
