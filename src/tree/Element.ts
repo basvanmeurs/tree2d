@@ -864,17 +864,64 @@ class Element<DATA = any> {
         }
     }
 
-    set boundsMargin(v: number[] | undefined) {
-        if (!Array.isArray(v) && v !== undefined) {
-            throw new Error(
-                "boundsMargin should be an array of left-top-right-bottom values or undefined (inherit margin)",
-            );
+    set boundsMargin(v: number | undefined) {
+        if (v === undefined) {
+            this._core.boundsMargin = undefined;
+        } else {
+            this._core.boundsMargin = [v, v, v, v];
         }
-        this._core.boundsMargin = v;
     }
 
     get boundsMargin() {
-        return this._core.boundsMargin;
+        return this._core.boundsMargin ? this._core.boundsMargin[0] : undefined;
+    }
+
+    set boundsMarginLeft(v: number) {
+        if (!this._core.boundsMargin) {
+            this._core.boundsMargin = [v, 100, 100, 100];
+        } else {
+            this._core.boundsMargin[0] = v;
+        }
+    }
+
+    get boundsMarginLeft() {
+        return this._core.boundsMargin ? this._core.boundsMargin[0] : 100;
+    }
+
+    set boundsMarginTop(v: number) {
+        if (!this._core.boundsMargin) {
+            this._core.boundsMargin = [100, v, 100, 100];
+        } else {
+            this._core.boundsMargin[1] = v;
+        }
+    }
+
+    get boundsMarginTop() {
+        return this._core.boundsMargin ? this._core.boundsMargin[1] : 100;
+    }
+
+    set boundsMarginRight(v: number) {
+        if (!this._core.boundsMargin) {
+            this._core.boundsMargin = [100, 100, v, 100];
+        } else {
+            this._core.boundsMargin[2] = v;
+        }
+    }
+
+    get boundsMarginRight() {
+        return this._core.boundsMargin ? this._core.boundsMargin[2] : 100;
+    }
+
+    set boundsMarginBottom(v: number) {
+        if (!this._core.boundsMargin) {
+            this._core.boundsMargin = [100, 100, 100, v];
+        } else {
+            this._core.boundsMargin[3] = v;
+        }
+    }
+
+    get boundsMarginBottom() {
+        return this._core.boundsMargin ? this._core.boundsMargin[3] : 100;
     }
 
     get x(): number | FunctionX {
@@ -1160,20 +1207,6 @@ class Element<DATA = any> {
         return this._parent;
     }
 
-    get src() {
-        if (this.texture && this.texture instanceof ImageTexture) {
-            return this.texture.src;
-        } else {
-            return undefined;
-        }
-    }
-
-    set src(v) {
-        const texture = new ImageTexture(this.stage);
-        texture.src = v;
-        this.texture = texture;
-    }
-
     set mw(v: number) {
         if (this.texture) {
             this.texture.mw = v;
@@ -1198,32 +1231,6 @@ class Element<DATA = any> {
 
     get mh() {
         return this.texture ? this.texture.mh : 0;
-    }
-
-    get rect() {
-        return this.texture === this.stage.rectangleTexture;
-    }
-
-    set rect(v) {
-        if (v) {
-            this.texture = this.stage.rectangleTexture;
-        } else {
-            this.texture = undefined;
-        }
-    }
-
-    enableTextTexture() {
-        if (!this.texture || !(this.texture instanceof TextTexture)) {
-            this.texture = new TextTexture(this.stage) as any;
-
-            if (this.texture && !this.texture.w && !this.texture.h) {
-                // Inherit dimensions from element.
-                // This allows userland to set dimensions of the Element and then later specify the text.
-                this.texture.w = this.core.getSourceW();
-                this.texture.h = this.core.getSourceH();
-            }
-        }
-        return this.texture;
     }
 
     set onUpdate(f: ElementEventCallback | undefined) {

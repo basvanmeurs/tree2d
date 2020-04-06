@@ -1772,7 +1772,7 @@ export default class ElementCore implements FlexSubject {
                         if (this._children[i]._hasUpdates) {
                             this._children[i].update();
                         } else {
-                            // Make sure we don't lose the 'inherited' updates for the next time.
+                            // Make sure we don't lose the 'inherited' updates when they become active again.
                             this._children[i].flags |= this.updatedFlags;
                             this._children[i].updateOutOfBounds();
                         }
