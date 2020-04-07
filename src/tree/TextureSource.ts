@@ -48,6 +48,10 @@ export default class TextureSource {
         return this._loadError;
     }
 
+    getRenderInfo(): any {
+        return this.renderInfo;
+    }
+
     addTexture(v: Texture) {
         if (!this.textures.has(v)) {
             this.textures.add(v);
