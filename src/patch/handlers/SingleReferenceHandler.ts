@@ -1,6 +1,7 @@
 import Handler from "./Handler";
 import Patcher from "../Patcher";
 import { Constructor } from "../../util/types";
+import Utils from "../../tree/Utils";
 type CArgsGetter = (obj: any) => any[];
 
 export class SingleReferenceHandler extends Handler {
@@ -22,15 +23,19 @@ export class SingleReferenceHandler extends Handler {
         const value = obj[this.name];
         if (!settings) {
             obj[this.name] = undefined;
-        } else if (settings.type && (!value || value.type !== settings.type)) {
-            const cargs = this.getCArgs(obj);
-            obj[this.name] = Patcher.createObject(settings, this.type, ...cargs);
-        } else {
-            if (value) {
-                Patcher.patchObject(value, settings);
+        } else if (Utils.isObjectLiteral(settings)) {
+            if (settings.type && (!value || value.type !== settings.type)) {
+                const cargs = this.getCArgs(obj);
+                obj[this.name] = Patcher.createObject(settings, this.type, ...cargs);
             } else {
-                obj[this.name] = undefined;
+                if (value) {
+                    Patcher.patchObject(value, settings);
+                } else {
+                    obj[this.name] = undefined;
+                }
             }
+        } else {
+            obj[this.name] = settings;
         }
     }
 }

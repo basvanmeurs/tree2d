@@ -20,7 +20,7 @@ describe("canvas size", () => {
             children: {
                 Item: {
                     x: 400,
-                    src: "./example.png",
+                    texture: {type: tree2d.ImageTexture, src: "./example.png"},
                 },
             },
         });

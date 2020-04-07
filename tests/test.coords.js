@@ -21,13 +21,13 @@ describe("test stack", function () {
             y: 200,
             w: 800,
             h: 800,
-            rect: true,
+            texture: stage.rectangleTexture,
             color: 0xffff0000,
             clipping: true,
             ref: "A",
             children: {
                 I: {
-                    rect: true,
+                    texture: stage.rectangleTexture,
                     w: 900,
                     h: 900,
                     alpha: 0,
@@ -35,7 +35,7 @@ describe("test stack", function () {
                     y: 0,
                 },
                 B: {
-                    rect: true,
+                    texture: stage.rectangleTexture,
                     renderToTexture: true,
                     color: 0xff00ff00,
                     w: 300,
@@ -47,7 +47,7 @@ describe("test stack", function () {
                     rotation: 0.1 * Math.PI,
                     children: {
                         C: {
-                            rect: true,
+                            texture: stage.rectangleTexture,
                             color: 0xff0000ff,
                             alpha: 0.8,
                             x: -100,
@@ -56,7 +56,7 @@ describe("test stack", function () {
                             h: 200,
                             children: {
                                 D: {
-                                    rect: true,
+                                    texture: stage.rectangleTexture,
                                     color: 0xffff00ff,
                                     alpha: 0.8,
                                     x: (w) => w - 50,
@@ -69,7 +69,7 @@ describe("test stack", function () {
                     },
                 },
                 E: {
-                    rect: true,
+                    texture: stage.rectangleTexture,
                     color: 0xff00ffff,
                     alpha: 0.8,
                     x: 400,
@@ -114,7 +114,7 @@ describe("test stack", function () {
                         if (str1 !== str2) {
                             result[3].childList.add(
                                 stage.createElement({
-                                    rect: true,
+                                    texture: stage.rectangleTexture,
                                     w: 8,
                                     h: 8,
                                     mount: 0.5,
@@ -126,7 +126,7 @@ describe("test stack", function () {
                             );
                             result[3].childList.add(
                                 stage.createElement({
-                                    rect: true,
+                                    texture: stage.rectangleTexture,
                                     w: 4,
                                     h: 4,
                                     mount: 0.5,
@@ -137,7 +137,15 @@ describe("test stack", function () {
                                 }),
                             );
                             root.childList.add(
-                                stage.createElement({ rect: true, w: 2, h: 2, mount: 0.5, x, y, zIndex: 100 }),
+                                stage.createElement({
+                                    texture: stage.rectangleTexture,
+                                    w: 2,
+                                    h: 2,
+                                    mount: 0.5,
+                                    x,
+                                    y,
+                                    zIndex: 100,
+                                }),
                             );
                             stage.drawFrame();
                             chai.assert.equal(str1, str2, "Item: " + result[0]);
@@ -175,7 +183,7 @@ describe("test stack", function () {
             ["D", 72, 44],
             ["B", 122, 14],
             ["E", 125, 310],
-            ["A", 650, 210]
+            ["A", 650, 210],
         ]);
         test(906, 423, [
             ["B", 179, 9],
