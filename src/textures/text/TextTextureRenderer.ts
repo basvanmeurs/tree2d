@@ -1,8 +1,6 @@
 import Stage from "../../tree/Stage";
 import { TextSettings } from "./TextSettings";
 
-type LinesInfo = { lines: string[]; lineWidths: number[]; maxWidth: number };
-
 export default class TextTextureRenderer {
     private _context = this.canvas.getContext("2d")!;
     public renderInfo: any;
@@ -20,10 +18,11 @@ export default class TextTextureRenderer {
     }
 
     private _getFontSetting() {
+        const fontWeight = (this.settings.fontWeight || 400);
         const fontStyle = this.settings.fontStyle || "normal";
         const fontSize = (this.settings.fontSize || 40) * this.pixelRatio;
         const fontFaces = this._getFontFaces();
-        return `${fontStyle} ${fontSize}px ${fontFaces.join(",")}`;
+        return `${fontStyle} ${fontWeight} ${fontSize}px ${fontFaces.join(",")}`;
     }
 
     private _getFontFaces() {

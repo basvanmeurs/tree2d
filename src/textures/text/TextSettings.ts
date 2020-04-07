@@ -1,4 +1,5 @@
 export type TextSettings = {
+    fontWeight: number;
     fontStyle: string;
     fontSize: number;
     fontFace: string[];

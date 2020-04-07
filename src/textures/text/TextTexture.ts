@@ -29,6 +29,17 @@ export default class TextTexture extends Texture {
         }
     }
 
+    get fontWeight() {
+        return this.settings.fontWeight;
+    }
+
+    set fontWeight(v) {
+        if (this.settings.fontWeight !== v) {
+            this.settings.fontWeight = v;
+            this._changed();
+        }
+    }
+
     get fontStyle() {
         return this.settings.fontStyle;
     }
