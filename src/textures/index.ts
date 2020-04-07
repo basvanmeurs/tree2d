@@ -6,6 +6,7 @@ import HtmlTexture from "./HtmlTexture";
 import RoundRectTexture from "./RoundRectTexture";
 import SourceTexture from "./SourceTexture";
 import SvgTexture from "./SvgTexture";
+import DrawingTexture from "./DrawingTexture";
 
 export {
     SvgTexture,
@@ -16,4 +17,5 @@ export {
     HtmlTexture,
     RoundRectTexture,
     SourceTexture,
+    DrawingTexture,
 };
