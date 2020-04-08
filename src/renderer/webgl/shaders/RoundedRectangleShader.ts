@@ -3,7 +3,7 @@ import CoreContext from "../../../tree/core/CoreContext";
 import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
 
 export default class RoundedRectangleShader extends DefaultShader {
-    private _radius: number = 1;
+    private _radius: number = 0;
 
     constructor(context: CoreContext) {
         super(context);
