@@ -74,7 +74,7 @@ export default class Stage {
         this.fixedTimestep = options.fixedTimestep || 0;
         this.useImageWorker = options.useImageWorker === undefined || options.useImageWorker;
         this.autostart = options.autostart !== false;
-        this.pixelRatio = options.pixelRatio || window.devicePixelRatio || 1;
+        this.pixelRatio = options.pixelRatio || this.getDefaultPixelRatio() || 1;
         this.canvas2d = options.canvas2d === true || !Stage.isWebglSupported();
 
         this.destroyed = false;
@@ -387,6 +387,17 @@ export default class Stage {
         this.root.core.update();
         this.root.core.gatherElementsAtCoordinates(worldX, worldY, results);
         return results.reverse();
+    }
+
+    private getDefaultPixelRatio() {
+        // Fractional pixel ratios (except for 1.5) might produce artifacts so we skip them by default.
+        if (window.devicePixelRatio >= 2) {
+            return 2;
+        } else if (window.devicePixelRatio > 1) {
+            return 1.5;
+        } else {
+            return 1;
+        }
     }
 }
 

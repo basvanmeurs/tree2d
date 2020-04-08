@@ -133,23 +133,8 @@ export default class TextTexture extends Texture {
         return !!this._text;
     }
 
-    static getHash(obj: any): string {
-        if (Array.isArray(obj)) {
-            return obj.map((o) => TextTexture.getHash(o)).join(",");
-        } else if (Utils.isObjectLiteral(obj)) {
-            const parts = [];
-            for (const [key, value] of Object.entries(obj)) {
-                parts.push(key + "=" + TextTexture.getHash(value));
-            }
-            return parts.join("|");
-        } else {
-            return "" + obj;
-        }
-    }
-
     _getLookupId() {
-        const id = "TX$" + this.text + "|" + TextTexture.getHash(this.settings) + "|" + this.pixelRatio;
-        return id;
+        return "TX$" + this.text + "|" + Texture.getLookupIdFromSettings(this.settings) + "|" + this.pixelRatio;
     }
 
     protected _getSourceLoader(): TextureSourceLoader {

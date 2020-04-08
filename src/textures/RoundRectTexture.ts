@@ -1,6 +1,7 @@
 import Texture, { TextureSourceLoader } from "../tree/Texture";
 import Utils from "../tree/Utils";
 import ColorUtils from "../tree/ColorUtils";
+import Stage from "../tree/Stage";
 
 export type RoundRectOptions = {
     w: number;
@@ -19,6 +20,11 @@ export type RoundRectOptions = {
 export default class RoundRectTexture extends Texture {
     private _options?: Partial<RoundRectOptions> = undefined;
 
+    constructor(stage: Stage) {
+        super(stage);
+        this.pixelRatio = this.stage.pixelRatio;
+    }
+
     set options(options: Partial<RoundRectOptions> | undefined) {
         this._options = options;
         this._changed();
@@ -33,62 +39,39 @@ export default class RoundRectTexture extends Texture {
     }
 
     protected _getLookupId() {
-        const {
-            w,
-            h,
-            radius,
-            strokeWidth,
-            strokeColor,
-            fill,
-            fillColor,
-            shadowBlur,
-            shadowColor,
-            shadowOffsetX,
-            shadowOffsetY,
-        } = this._options!;
-        return (
-            "rect" +
-            [
-                w,
-                h,
-                strokeWidth,
-                strokeColor,
-                fill ? 1 : 0,
-                fillColor,
-                shadowBlur,
-                shadowColor,
-                shadowOffsetX,
-                shadowOffsetY,
-            ]
-                .concat(radius)
-                .map((v: any) => (v === undefined ? "" : "" + v))
-                .join(",")
-        );
+        return "RC$" + Texture.getLookupIdFromSettings(this._options!) + "|" + this.pixelRatio;
     }
 
     protected _getSourceLoader(): TextureSourceLoader {
         const options = Utils.clone(this._options);
+        const pixelRatio = this.pixelRatio;
         return (cb) => {
             const canvas = this.stage.platform.getDrawingCanvas();
-            const renderInfo = RoundRectTexture.drawOnCanvas(canvas, options);
+            const renderInfo = RoundRectTexture.drawOnCanvas(canvas, options, pixelRatio);
             cb(undefined, { source: canvas, renderInfo });
         };
     }
 
-    private static drawOnCanvas(canvas: HTMLCanvasElement, options: RoundRectOptions): any {
-        const {
+    private static drawOnCanvas(canvas: HTMLCanvasElement, options: RoundRectOptions, pixelRatio: number): any {
+        let {
             w,
             h,
             radius = [0, 0, 0, 0],
-            strokeColor,
             strokeWidth = 0,
-            fill = true,
-            fillColor = 0xffffffff,
             shadowBlur = 0,
-            shadowColor = 0xffffffff,
             shadowOffsetX = 0,
             shadowOffsetY = 0,
         } = options;
+
+        const { strokeColor, fill = true, fillColor = 0xffffffff, shadowColor = 0xffffffff } = options;
+
+        w *= pixelRatio;
+        h *= pixelRatio;
+        radius = radius.map((r: number) => r * pixelRatio);
+        strokeWidth *= pixelRatio;
+        shadowBlur *= pixelRatio;
+        shadowOffsetX *= pixelRatio;
+        shadowOffsetY *= pixelRatio;
 
         const context = canvas.getContext("2d")!;
         context.imageSmoothingEnabled = true;
@@ -129,7 +112,7 @@ export default class RoundRectTexture extends Texture {
             context.fill();
         }
 
-        return { offsetX: x, offsetY: y };
+        return { offsetX: x / pixelRatio, offsetY: y / pixelRatio };
     }
 
     private static convertToCanvasColor(c: number | string): string {

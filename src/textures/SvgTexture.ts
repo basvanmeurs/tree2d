@@ -1,10 +1,16 @@
 import Texture, { TextureSourceLoader } from "../tree/Texture";
 import Utils from "../tree/Utils";
+import Stage from "../tree/Stage";
 
 export type SvgOptions = { w: number; h: number; src: string };
 
 export default class SvgTexture extends Texture {
     private _options?: SvgOptions = undefined;
+
+    constructor(stage: Stage) {
+        super(stage);
+        this.pixelRatio = this.stage.pixelRatio;
+    }
 
     set options(options: SvgOptions | undefined) {
         this._options = options;
@@ -16,12 +22,12 @@ export default class SvgTexture extends Texture {
     }
 
     protected _getIsValid() {
-        return !!this._options;
+        return !!this._options && !!this._options.src && !!this._options.w && !!this._options.h;
     }
 
     protected _getLookupId() {
         const { w, h, src } = this._options!;
-        return "svg" + [w, h, src].join(",");
+        return "svg" + [w, h, src].join(",") + "|" + this.pixelRatio;
     }
 
     protected _getSourceLoader(): TextureSourceLoader {
@@ -33,8 +39,10 @@ export default class SvgTexture extends Texture {
 
             const img = new Image();
             img.onload = () => {
-                canvas.width = options.w;
-                canvas.height = options.h;
+                const w = options.w * this.pixelRatio;
+                const h = options.h * this.pixelRatio;
+                canvas.width = w;
+                canvas.height = h;
                 context.drawImage(img, 0, 0, canvas.width, canvas.height);
                 cb(undefined, { source: canvas });
             };

@@ -544,6 +544,22 @@ export default class Texture {
 
         return (this._h || (this._source ? this._source.getRenderHeight() - this._y : 0)) / this._pixelRatio;
     }
+
+    static getLookupIdFromSettings(obj: object): string {
+        if (Array.isArray(obj)) {
+            return obj.map((o) => this.getLookupIdFromSettings(o)).join(",");
+        } else if (Utils.isObjectLiteral(obj)) {
+            const parts = [];
+            for (const [key, value] of Object.entries(obj)) {
+                parts.push(key + "=" + this.getLookupIdFromSettings(value));
+            }
+            return parts.join("|");
+        } else if (obj === undefined) {
+            return "";
+        } else {
+            return "" + obj;
+        }
+    }
 }
 
 export type ResizeMode = {
@@ -579,3 +595,4 @@ export type TextureSourceOptions = {
 
 import TextureSource from "./TextureSource";
 import { WebGLNativeTexture } from "../renderer/webgl/WebGLNativeTexture";
+import Utils from "./Utils";
