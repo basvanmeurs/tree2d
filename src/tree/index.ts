@@ -8,6 +8,7 @@ import Stage from "./Stage";
 import Texture from "./Texture";
 import TextureManager from "./TextureManager";
 import TextureSource from "./TextureSource";
+import StageOptions from "./StageOptions";
 
 export { ElementCoordinatesInfo, FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
 
@@ -19,6 +20,7 @@ export {
     ObjectList,
     Shader,
     Stage,
+    StageOptions,
     Texture,
     TextureManager,
     TextureSource,

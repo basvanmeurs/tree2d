@@ -1,6 +1,15 @@
 import Texture, { TextureSourceLoader, TextureSourceOptions } from "../tree/Texture";
 
-export type DrawingResult = Omit<TextureSourceOptions, "source">;
+export type DrawingResult = {
+    permanent?: boolean;
+    renderInfo?: any;
+    texParams?: Record<GLenum, GLenum>;
+    texOptions?: {
+        format?: number;
+        internalFormat?: number;
+        type?: GLenum;
+    };
+};
 export type DrawingFunction = (
     context: CanvasRenderingContext2D,
     w: number,
