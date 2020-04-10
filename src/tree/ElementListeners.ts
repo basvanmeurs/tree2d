@@ -15,7 +15,7 @@ export default class ElementListeners {
     public onTextureUnloaded?: ElementTextureEventCallback = undefined;
 }
 
-export type ElementEventCallback = (element: Element) => void;
-export type ElementResizeEventCallback = (element: Element, w: number, h: number) => void;
-export type ElementTextureEventCallback = (element: Element, texture: Texture) => void;
-export type ElementTextureErrorEventCallback = (element: Element, texture: Texture, error: Error) => void;
+export type ElementEventCallback = (e: { element: Element }) => void;
+export type ElementResizeEventCallback = (e: { element: Element; w: number; h: number }) => void;
+export type ElementTextureEventCallback = (e: { element: Element; texture: Texture }) => void;
+export type ElementTextureErrorEventCallback = (e: { element: Element; texture: Texture; error: Error }) => void;

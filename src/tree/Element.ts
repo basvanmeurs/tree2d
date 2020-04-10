@@ -271,7 +271,7 @@ class Element<DATA = any> {
 
     protected _onSetup(): void {
         if (this.listeners && this.listeners.onSetup) {
-            this.listeners.onSetup(this);
+            this.listeners.onSetup({ element: this });
         }
     }
 
@@ -285,7 +285,7 @@ class Element<DATA = any> {
 
     protected _onAttach(): void {
         if (this.listeners && this.listeners.onAttach) {
-            this.listeners.onAttach(this);
+            this.listeners.onAttach({ element: this });
         }
     }
 
@@ -299,7 +299,7 @@ class Element<DATA = any> {
 
     protected _onDetach(): void {
         if (this.listeners && this.listeners.onDetach) {
-            this.listeners.onDetach(this);
+            this.listeners.onDetach({ element: this });
         }
     }
 
@@ -313,7 +313,7 @@ class Element<DATA = any> {
 
     protected _onEnabled(): void {
         if (this.listeners && this.listeners.onEnabled) {
-            this.listeners.onEnabled(this);
+            this.listeners.onEnabled({ element: this });
         }
     }
 
@@ -327,7 +327,7 @@ class Element<DATA = any> {
 
     protected _onDisabled(): void {
         if (this.listeners && this.listeners.onDisabled) {
-            this.listeners.onDisabled(this);
+            this.listeners.onDisabled({ element: this });
         }
     }
 
@@ -341,7 +341,7 @@ class Element<DATA = any> {
 
     protected _onActive(): void {
         if (this.listeners && this.listeners.onActive) {
-            this.listeners.onActive(this);
+            this.listeners.onActive({ element: this });
         }
     }
 
@@ -355,7 +355,7 @@ class Element<DATA = any> {
 
     protected _onInactive(): void {
         if (this.listeners && this.listeners.onInactive) {
-            this.listeners.onInactive(this);
+            this.listeners.onInactive({ element: this });
         }
     }
 
@@ -369,7 +369,7 @@ class Element<DATA = any> {
 
     protected _onTextureError(loadError: Error, texture: Texture): void {
         if (this.listeners && this.listeners.onTextureError) {
-            this.listeners.onTextureError(this, texture, loadError);
+            this.listeners.onTextureError({ element: this, texture, error: loadError });
         }
     }
 
@@ -383,7 +383,7 @@ class Element<DATA = any> {
 
     protected _onTextureLoaded(texture: Texture): void {
         if (this.listeners && this.listeners.onTextureLoaded) {
-            this.listeners.onTextureLoaded(this, texture);
+            this.listeners.onTextureLoaded({ element: this, texture });
         }
     }
 
@@ -397,7 +397,7 @@ class Element<DATA = any> {
 
     protected _onTextureUnloaded(texture: Texture): void {
         if (this.listeners && this.listeners.onTextureUnloaded) {
-            this.listeners.onTextureUnloaded(this, texture);
+            this.listeners.onTextureUnloaded({ element: this, texture });
         }
     }
 
@@ -411,7 +411,7 @@ class Element<DATA = any> {
 
     public _onResize(w: number, h: number): void {
         if (this.listeners && this.listeners.onResize) {
-            this.listeners.onResize(this, w, h);
+            this.listeners.onResize({ element: this, w, h });
         }
     }
 

@@ -1411,7 +1411,7 @@ export default class ElementCore implements FlexSubject {
         if (this._onUpdate) {
             // Block all 'upwards' updates when changing things in this branch.
             this._hasUpdates = true;
-            this._onUpdate(this.element);
+            this._onUpdate({ element: this.element });
         }
 
         const pw = this._parent!._worldContext;
@@ -1602,7 +1602,7 @@ export default class ElementCore implements FlexSubject {
             }
 
             if (this._onAfterCalcs) {
-                this._onAfterCalcs(this.element);
+                this._onAfterCalcs({ element: this.element });
                 // After calcs may change render coords, scissor and/or recBoundsMargin.
 
                 // Recalculate bbox.
@@ -1781,7 +1781,7 @@ export default class ElementCore implements FlexSubject {
             }
 
             if (this._onAfterUpdate) {
-                this._onAfterUpdate(this.element);
+                this._onAfterUpdate({ element: this.element });
             }
         } else {
             if (this.context.updateTreeOrder === -1 || this._updateTreeOrder >= this.context.updateTreeOrder) {
