@@ -16,13 +16,6 @@ export default class Texture {
 
     private _source?: TextureSource = undefined;
 
-    /**
-     * A resize mode can be set to cover or contain a certain area.
-     * It will reset the texture clipping settings.
-     * Vice versa, when manual texture clipping is performed, the resizeMode is reset.
-     */
-    private _resizeMode?: ResizeMode = undefined;
-
     // Texture clipping coordinates.
     private _x: number = 0;
     private _y: number = 0;
@@ -122,10 +115,6 @@ export default class Texture {
     }
 
     onLoad() {
-        if (this._resizeMode) {
-            this._applyResizeMode();
-        }
-
         this.elements.forEach((element) => {
             if (element.active) {
                 element.onTextureSourceLoaded();
@@ -142,10 +131,6 @@ export default class Texture {
             const reusable = this._getReusableTextureSource();
             if (reusable && reusable.isLoaded() && reusable !== source) {
                 this._replaceTextureSource(reusable);
-            }
-        } else {
-            if (this._resizeMode) {
-                this._applyResizeMode();
             }
         }
     }
@@ -262,11 +247,6 @@ export default class Texture {
         if (this.isUsed()) {
             if (newSource) {
                 if (newSource.isLoaded()) {
-                    // Apply resizeMode
-                    if (this._resizeMode) {
-                        this._applyResizeMode();
-                    }
-
                     this.elements.forEach((element) => {
                         if (element.active) {
                             element.setDisplayedTexture(this);
@@ -315,73 +295,7 @@ export default class Texture {
         }
     }
 
-    set resizeMode(resizeMode: ResizeMode | undefined) {
-        if (resizeMode) {
-            this._resizeMode = resizeMode;
-            if (this.isLoaded()) {
-                this._applyResizeMode();
-            }
-        } else {
-            this.disableClipping();
-        }
-    }
-
-    get resizeMode(): ResizeMode | undefined {
-        return this._resizeMode;
-    }
-
-    private _clearResizeMode() {
-        this._resizeMode = undefined;
-    }
-
-    private _applyResizeMode() {
-        if (this._resizeMode!.type === "cover") {
-            this._applyResizeCover();
-        } else if (this._resizeMode!.type === "contain") {
-            this._applyResizeContain();
-        }
-        this._updatePixelRatio();
-        this._updateClipping();
-    }
-
-    private _applyResizeCover() {
-        const resizeMode = this._resizeMode!;
-        const source = this._source!;
-        const scaleX = resizeMode.w / source.w;
-        const scaleY = resizeMode.h / source.h;
-        const scale = Math.max(scaleX, scaleY);
-        if (!scale) return;
-        this._pixelRatio = 1 / scale;
-        if (scaleX && scaleX < scale) {
-            const desiredSize = this._pixelRatio * resizeMode.w;
-            const choppedOffPixels = source.w - desiredSize;
-            this._x = choppedOffPixels * resizeMode.x;
-            this._w = source.w - choppedOffPixels;
-        }
-        if (scaleY && scaleY < scale) {
-            const desiredSize = this._pixelRatio * resizeMode.h;
-            const choppedOffPixels = source.h - desiredSize;
-            this._y = choppedOffPixels * resizeMode.y;
-            this._h = source.h - choppedOffPixels;
-        }
-    }
-
-    private _applyResizeContain() {
-        const resizeMode = this._resizeMode!;
-        const source = this._source!;
-        const scaleX = resizeMode.w / source.w;
-        const scaleY = resizeMode.h / source.h;
-        let scale = scaleX;
-        if (!scale || scaleY < scale) {
-            scale = scaleY;
-        }
-        if (!scale) return;
-        this._pixelRatio = 1 / scale;
-    }
-
     enableClipping(x: number, y: number, w: number, h: number) {
-        this._clearResizeMode();
-
         x *= this._pixelRatio;
         y *= this._pixelRatio;
         w *= this._pixelRatio;
@@ -397,8 +311,6 @@ export default class Texture {
     }
 
     disableClipping() {
-        this._clearResizeMode();
-
         this._x = 0;
         this._y = 0;
         this._w = 0;
@@ -463,7 +375,6 @@ export default class Texture {
     }
 
     set x(v) {
-        this._clearResizeMode();
         v = v * this._pixelRatio;
         if (this._x !== v) {
             this._x = v;
@@ -476,7 +387,6 @@ export default class Texture {
     }
 
     set y(v) {
-        this._clearResizeMode();
         v = v * this._pixelRatio;
         if (this._y !== v) {
             this._y = v;
@@ -489,7 +399,6 @@ export default class Texture {
     }
 
     set w(v) {
-        this._clearResizeMode();
         v = v * this._pixelRatio;
         if (this._w !== v) {
             this._w = v;
@@ -502,7 +411,6 @@ export default class Texture {
     }
 
     set h(v) {
-        this._clearResizeMode();
         v = v * this._pixelRatio;
         if (this._h !== v) {
             this._h = v;
@@ -515,7 +423,6 @@ export default class Texture {
     }
 
     set pixelRatio(v) {
-        this._clearResizeMode();
         if (this._pixelRatio !== v) {
             this._pixelRatio = v;
             this._updatePixelRatio();
@@ -562,14 +469,6 @@ export default class Texture {
     }
 }
 
-export type ResizeMode = {
-    type: "cover" | "contain";
-    w: number;
-    h: number;
-    x: number;
-    y: number;
-};
-
 export type TextureSourceLoader = (
     cb: TextureSourceCallback,
     textureSource: TextureSource,
@@ -594,5 +493,4 @@ export type TextureSourceOptions = {
 };
 
 import TextureSource from "./TextureSource";
-import { WebGLNativeTexture } from "../renderer/webgl/WebGLNativeTexture";
 import Utils from "./Utils";
