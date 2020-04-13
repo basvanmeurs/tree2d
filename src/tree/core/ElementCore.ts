@@ -568,7 +568,6 @@ export default class ElementCore implements FlexSubject {
      *  1: alpha
      *  2: translate
      *  4: transform
-     *  16: dimensions changed
      *  128: becomes visible
      *  256: flex layout updated
      */
@@ -809,8 +808,6 @@ export default class ElementCore implements FlexSubject {
     private onDimensionsChanged() {
         // Due to width/height change: update the translation vector.
         this._updateLocalTranslate();
-
-        this.setFlag(16);
 
         if (this._texturizer) {
             this._texturizer.releaseRenderTexture();
@@ -1386,22 +1383,12 @@ export default class ElementCore implements FlexSubject {
     }
 
     public update(): void {
-        if (
-            this.isFlexLayoutRoot() &&
-            this._parent!.updatedFlags & 16 /* parent dimensions changed */ &&
-            this.hasRelativeDimensionFunctions()
-        ) {
-            // Parent width or height has changed while we are using relative dimension functions.
-            // We must force a re-layout as width or height might have been changed, which affects the flexbox layout.
-            // Notice that this edge case only occurs for root flex containers.
-            this.layout.forceLayout();
-        }
-
-        // Inherit flags except of 'dimensions changed'.
+        // Inherit flags.
         this.flags |= this._parent!.updatedFlags & 135;
 
         if (this._layout && this._layout.isEnabled()) {
-            if (this.flags & 256) {
+            const relativeDimsFlexRoot = this.isFlexLayoutRoot() && this.hasRelativeDimensionFunctions();
+            if (this.flags & 256 || relativeDimsFlexRoot) {
                 this._layout.layoutFlexTree();
             }
         } else if (this.flags & 2 && this._relFuncFlags) {
