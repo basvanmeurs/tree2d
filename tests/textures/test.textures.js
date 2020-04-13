@@ -32,7 +32,7 @@ describe("textures", function () {
         _getSourceLoader() {
             return (cb) => {
                 const canvas = this.stage.getDrawingCanvas();
-                tree2d.RoundRectTexture.drawOnCanvas(canvas, { w: 100, h: 100, radius: [30, 30, 30, 30] });
+                tree2d.RoundRectTexture.drawOnCanvas(canvas, { w: 100, h: 100, radius: [30, 30, 30, 30] }, 1);
                 const opts = Object.assign({}, this.stage.platform.getTextureOptionsForDrawingCanvas(canvas));
                 if (this._async) {
                     this.asyncLoad = () => {
@@ -232,120 +232,6 @@ describe("textures", function () {
                     return this._src;
                 }
             }
-
-            /* FIXME: use chai-spies instead of prototype manipulation,
-               chai needs to be added as node package first */
-            const wrapped = TestTexture.prototype._applyResizeMode;
-            let applyCalls = 0;
-            before(() => {
-                TestTexture.prototype._applyResizeMode = function () {
-                    applyCalls += 1;
-                    wrapped.apply(this);
-                };
-            });
-            after(() => {
-                TestTexture.prototype._applyResizeMode = wrapped;
-            });
-
-            it("should apply resize mode for newly created texture with existing source", () => {
-                const element = stage.createElement({
-                    children: {
-                        Item: {
-                            x: 550,
-                            visible: true,
-                            texture: {
-                                type: TestTexture,
-                                resizeMode: { type: "cover", w: 200, h: 200, clipY: 0 },
-                                lookupId: 1,
-                            },
-                        },
-                    },
-                });
-                root.children = [element];
-                const item = element.getByRef("Item");
-                const sourceId = item.texture.source.id;
-
-                stage.drawFrame();
-                chai.assert(item.texture.source.isLoaded(), "texture loaded");
-
-                tree2d.Patcher.patchObject(element.getByRef("Item"), {
-                    texture: {
-                        type: TestTexture,
-                        resizeMode: { type: "cover", w: 100, h: 100, clipY: 0 },
-                        lookupId: 1,
-                    },
-                });
-                chai.assert(item.texture._resizeMode.w === 100);
-                chai.assert(item.texture._resizeMode.h === 100);
-                chai.assert(item.texture.source.id === sourceId, "sources should be the same");
-                chai.assert(applyCalls === 2, "applyResizeMode apply should have been called for new texture");
-            });
-
-            it("should apply resizeMode for an invalid texture (that was never loaded) with existing source", () => {
-                const imageSrc = "someImage";
-
-                const element = stage.createElement({
-                    children: {
-                        Item: { x: 200, visible: true, w: 100, h: 100, texture: { type: ImageTexture, src: imageSrc } },
-                        Item2: {
-                            x: 10,
-                            visible: true,
-                            w: 150,
-                            h: 150,
-                            children: {
-                                Contain: {
-                                    x: 100,
-                                    y: 100,
-                                    mount: 0.5,
-                                    texture: {
-                                        type: ImageTexture,
-                                        src: "",
-                                        resizeMode: { type: "contain", w: 50, h: 50 },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
-
-                root.children = [element];
-                const container = element.getByRef("Item2").getByRef("Contain");
-
-                // Stub _applyResizeMode call on the second ImageTexture
-                const texture = container.texture;
-                texture._applyResizeMode = sinon.spy(texture._applyResizeMode);
-
-                return new Promise((resolve) => {
-                    const Item1TxLoaded = () => {
-                        element.getByRef("Item").onTextureLoaded = undefined;
-
-                        setTimeout(() => {
-                            // Patch Item2 with same texture as Item
-                            tree2d.Patcher.patchObject(container, { texture: { src: imageSrc } });
-                            stage.drawFrame();
-                        });
-                    };
-
-                    const Item2TxLoaded = () => {
-                        container.onTextureLoaded = undefined;
-                        chai.assert(texture.isValid);
-                        chai.assert(texture._applyResizeMode.called, "_applyResizeMode was never called");
-                        resolve();
-                    };
-
-                    // Wait for first texture loading
-                    element.getByRef("Item").onTextureLoaded = Item1TxLoaded;
-                    // Wait for second texture loading
-                    container.onTextureLoaded = Item2TxLoaded;
-
-                    stage.drawFrame();
-
-                    chai.assert(
-                        !texture.isValid,
-                        "Tested behaviour should start with a non loaded texture / non valid",
-                    );
-                });
-            });
         });
     });
 
