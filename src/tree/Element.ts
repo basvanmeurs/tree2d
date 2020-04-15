@@ -1169,6 +1169,14 @@ class Element<DATA = any> {
         this._core.clipbox = v;
     }
 
+    get skipInLayout() {
+        return this._core.skipInLayout;
+    }
+
+    set skipInLayout(v: boolean) {
+        this._core.skipInLayout = v;
+    }
+
     get _children(): ElementChildList {
         if (!this._childList) {
             this._childList = new ElementChildList(this);

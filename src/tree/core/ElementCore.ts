@@ -1781,15 +1781,16 @@ export default class ElementCore implements FlexSubject {
     }
 
     _applyRelativeDimFuncs() {
+        const layoutParent = this.getLayoutParent()!;
         if (this._relFuncFlags & 1) {
-            const x = this._funcX!(this._parent!._w);
+            const x = this._funcX!(layoutParent._w);
             if (x !== this._x) {
                 this._localPx += x - this._x;
                 this._x = x;
             }
         }
         if (this._relFuncFlags & 2) {
-            const y = this._funcY!(this._parent!._h);
+            const y = this._funcY!(layoutParent._h);
             if (y !== this._y) {
                 this._localPy += y - this._y;
                 this._y = y;
@@ -1798,14 +1799,14 @@ export default class ElementCore implements FlexSubject {
 
         let changedDims = false;
         if (this._relFuncFlags & 4) {
-            const w = this._funcW!(this._parent!._w);
+            const w = this._funcW!(layoutParent._w);
             if (w !== this._w) {
                 this._w = w;
                 changedDims = true;
             }
         }
         if (this._relFuncFlags & 8) {
-            const h = this._funcH!(this._parent!._h);
+            const h = this._funcH!(layoutParent._h);
             if (h !== this._h) {
                 this._h = h;
                 changedDims = true;
@@ -1815,6 +1816,16 @@ export default class ElementCore implements FlexSubject {
         if (changedDims) {
             this.onDimensionsChanged();
         }
+    }
+
+    private getLayoutParent() {
+        let current: ElementCore = this.getParent()!;
+        while (current.skipInLayout) {
+            const parent = current.getParent();
+            if (!parent) return current;
+            current = parent;
+        }
+        return current;
     }
 
     updateOutOfBounds() {
@@ -2225,9 +2236,25 @@ export default class ElementCore implements FlexSubject {
         return [w.px + w.ta * relX + w.tb * relY, w.py + w.tc * relX + w.td * relY];
     }
 
+    get skipInLayout(): boolean {
+        return this._layout ? this._layout.skip : false;
+    }
+
+    set skipInLayout(v: boolean) {
+        if (this.skipInLayout !== v) {
+            // Force an update as absolute layout may be affected (on itself or on layout children).
+            this._triggerRecalcTranslate();
+            this.layout.skip = v;
+        }
+    }
+
     get layout(): FlexNode {
         this._ensureLayout();
         return this._layout!;
+    }
+
+    hasLayout(): boolean {
+        return !!this._layout;
     }
 
     getLayout(): FlexNode {
