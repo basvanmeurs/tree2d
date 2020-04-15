@@ -601,7 +601,7 @@ export default class ElementCore implements FlexSubject {
             this._parent = parent;
 
             // Notify flex layout engine.
-            if (this._layout || (parent && parent.isFlexContainer())) {
+            if (this._layout || FlexNode.getActiveLayoutNode(parent)?.isFlexEnabled()) {
                 this.layout.setParent(prevParent, parent);
             }
 
@@ -2259,14 +2259,6 @@ export default class ElementCore implements FlexSubject {
 
     getLayout(): FlexNode {
         return this.layout;
-    }
-
-    isFlexItem() {
-        return !!this._layout && this._layout.isFlexItemEnabled();
-    }
-
-    isFlexContainer() {
-        return !!this._layout && this._layout.isFlexEnabled();
     }
 
     enableFlexLayout() {
