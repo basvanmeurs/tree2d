@@ -355,27 +355,26 @@ export default class Texture {
     }
 
     get px() {
-        return this._x;
+        return this._x * this._pixelRatio;
     }
 
     get py() {
-        return this._y;
+        return this._y * this._pixelRatio;
     }
 
     get pw() {
-        return this._w;
+        return this._w * this._pixelRatio;
     }
 
     get ph() {
-        return this._h;
+        return this._h * this._pixelRatio;
     }
 
     get x() {
-        return this._x / this._pixelRatio;
+        return this._x;
     }
 
     set x(v) {
-        v = v * this._pixelRatio;
         if (this._x !== v) {
             this._x = v;
             this._updateClipping();
@@ -383,11 +382,10 @@ export default class Texture {
     }
 
     get y() {
-        return this._y / this._pixelRatio;
+        return this._y;
     }
 
     set y(v) {
-        v = v * this._pixelRatio;
         if (this._y !== v) {
             this._y = v;
             this._updateClipping();
@@ -395,11 +393,10 @@ export default class Texture {
     }
 
     get w() {
-        return this._w / this._pixelRatio;
+        return this._w;
     }
 
-    set w(v) {
-        v = v * this._pixelRatio;
+    set w(v: number) {
         if (this._w !== v) {
             this._w = v;
             this._updateClipping();
@@ -407,11 +404,10 @@ export default class Texture {
     }
 
     get h() {
-        return this._h / this._pixelRatio;
+        return this._h;
     }
 
-    set h(v) {
-        v = v * this._pixelRatio;
+    set h(v: number) {
         if (this._h !== v) {
             this._h = v;
             this._updateClipping();
