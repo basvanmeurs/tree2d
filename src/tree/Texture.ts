@@ -435,17 +435,41 @@ export default class Texture {
             return 0;
         }
 
-        // If dimensions are unknown (texture not yet loaded), use maximum width as a fallback as render width to allow proper bounds checking.
-        return (this._w || (this._source ? this._source.getRenderWidth() - this._x : 0)) / this._pixelRatio;
+        let w = this._w;
+        if (this._source) {
+            // Max out to edge of source texture.
+            const sourceW = this._source.getRenderWidth() / this._pixelRatio;
+            if (w) {
+                w = Math.min(sourceW, w);
+            } else {
+                w = sourceW;
+            }
+            w -= this._x;
+        } else {
+            w = 0;
+        }
+        return w;
     }
 
     getRenderHeight() {
         if (!this.isAutosizeTexture()) {
-            // In case of the rectangle texture, we'd prefer to not cause a 1x1 w,h as it would interfere with flex layout fit-to-contents.
             return 0;
         }
 
-        return (this._h || (this._source ? this._source.getRenderHeight() - this._y : 0)) / this._pixelRatio;
+        let h = this._h;
+        if (this._source) {
+            // Max out to edge of source texture.
+            const sourceH = this._source.getRenderHeight() / this._pixelRatio;
+            if (h) {
+                h = Math.min(sourceH, h);
+            } else {
+                h = sourceH;
+            }
+            h -= this._y;
+        } else {
+            h = 0;
+        }
+        return h;
     }
 
     static getLookupIdFromSettings(obj: object): string {
