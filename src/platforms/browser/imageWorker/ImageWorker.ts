@@ -21,7 +21,7 @@ export default class ImageWorker {
                     } else {
                         this.error(
                             item,
-                            new Error(`Image loading error type ${e.data.info.type.type}: ${e.data.info.type.message}`),
+                            new Error(`Image loading error type ${e.data.info.type}: ${e.data.info.message}`),
                         );
                     }
                 }
