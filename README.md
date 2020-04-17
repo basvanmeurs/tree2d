@@ -6,6 +6,8 @@ Tree2d is a lightweight alternative to rendering via HTML DOM. The main reason t
 
 Tree2d utilizes **WebGL** for high-performance rendering, but can also use **Canvas2D** rendering when WebGL is not available.
 
+Tree2d is a fork and typescript rewrite of the [Lightning](https://github.com/WebPlatformForEmbedded/Lightning) framework.
+
 ## Features
 Some of the most notable features include:
 * Linear transformations
