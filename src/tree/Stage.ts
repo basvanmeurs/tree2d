@@ -59,13 +59,10 @@ export default class Stage {
     private onFrameStart?: () => void;
     private onUpdate?: () => void;
     private onFrameEnd?: () => void;
-    private canvasWidth: number;
-    private canvasHeight: number;
+    private canvasWidth: number = 0;
+    private canvasHeight: number = 0;
 
     constructor(public readonly canvas: HTMLCanvasElement, options: Partial<StageOptions> = {}) {
-        this.canvasWidth = this.w;
-        this.canvasHeight = this.h;
-
         this.gpuPixelsMemory = options.gpuPixelsMemory || 32e6;
         this.bufferMemory = options.bufferMemory || 16e6;
         this.defaultFontFace = options.defaultFontFace || ["sans-serif"];
@@ -110,7 +107,7 @@ export default class Stage {
 
         this.processClearColorOption(options.clearColor);
 
-        this.updateCanvasSize();
+        this.checkCanvasDimensions();
 
         if (this.autostart) {
             this.platform.startLoop();
@@ -353,20 +350,27 @@ export default class Stage {
     }
 
     private checkCanvasDimensions() {
-        const isManagedByCss =
-            this.canvas.width !== this.canvas.clientWidth || this.canvas.height !== this.canvas.clientHeight;
+        const rect = this.canvas.getBoundingClientRect();
 
-        if (isManagedByCss) {
-            const rect = this.canvas.getBoundingClientRect();
+        let changed = false;
+
+        // Prevent resize recursion in dynamic layouts (flexbox etc).
+        // Notice that when you would like to use dynamic resize, you should wrap the canvas element in a dynamically
+        // resized div, and absolutely position the canvas in it with 100% width and height.
+        if (Math.round(rect.width) !== Math.round(this.canvasWidth)) {
             const newCanvasWidth = rect.width * this.pixelRatio || this.canvas.width;
-            const newCanvasHeight = rect.height * this.pixelRatio || this.canvas.height;
-            const changed = newCanvasWidth !== this.canvasWidth || newCanvasHeight !== this.canvasHeight;
-
+            changed = changed || newCanvasWidth !== this.canvasWidth;
             this.canvasWidth = newCanvasWidth;
+        }
+
+        if (Math.round(rect.height) !== Math.round(this.canvasHeight)) {
+            const newCanvasHeight = rect.height * this.pixelRatio || this.canvas.height;
+            changed = changed || newCanvasHeight !== this.canvasHeight;
             this.canvasHeight = newCanvasHeight;
-            if (changed) {
-                this.updateCanvasSize();
-            }
+        }
+
+        if (changed) {
+            this.updateCanvasSize();
         }
     }
 
