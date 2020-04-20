@@ -51,7 +51,7 @@ const stage = new tree2d.Stage(canvas, options);
 ```
 
 While constructing this stage, you must pass the HTML canvas to render the tree on. You can also supply options as 
-specified in [Stage.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/Stage.ts#L11). 
+specified in [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts#L11). 
 
 You can then start to add elements to this stage:
 ```javascript
@@ -94,6 +94,6 @@ Tree2d does not include interactivity events directly. It is purely a render eng
 
 However, tree2d does offer a method of obtaining a z-ordered stack of elements at a pair of coordinates:
 ```javascript
-Stage.prototype.getElementsAtCanvasCoordinates(x: number, y: number): Element[]
+Stage.prototype.getElementsAtCoordinates(x: number, y: number): Element[]
 ```
 This feature can be used by higher high-level libraries to implement touch events. In fact, it's used by the [Vugel](https://github.com/Planning-nl/vugel) library to implement focus, touch and keypress events.
