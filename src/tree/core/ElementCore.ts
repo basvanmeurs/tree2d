@@ -2376,7 +2376,7 @@ export default class ElementCore implements FlexSubject {
         return this._h;
     }
 
-    private convertWorldCoordsToLocal(worldX: number, worldY: number): number[] {
+    convertWorldCoordsToLocal(worldX: number, worldY: number): number[] {
         const wc = this._worldContext;
         worldX = worldX - wc.px;
         worldY = worldY - wc.py;
@@ -2393,7 +2393,7 @@ export default class ElementCore implements FlexSubject {
         }
     }
 
-    private isCoordsWithinElement(localOffsetX: number, localOffsetY: number) {
+    public isCoordsWithinElement(localOffsetX: number, localOffsetY: number) {
         return localOffsetX >= 0 && localOffsetY >= 0 && localOffsetX < this._w && localOffsetY < this._h;
     }
 
