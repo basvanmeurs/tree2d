@@ -865,7 +865,7 @@ export default class ElementCore implements FlexSubject {
     }
 
     private isAncestorOf(c: ElementCore) {
-        let p: ElementCore | undefined = this as ElementCore;
+        let p: ElementCore | undefined = c as ElementCore;
 
         while (true) {
             p = p!._parent;
