@@ -10,11 +10,14 @@ export type DrawingResult = {
         type?: GLenum;
     };
 };
-export type DrawingFunction = (
-    context: CanvasRenderingContext2D,
-    w: number,
-    h: number,
-) => DrawingResult | Promise<DrawingResult>;
+
+export type DrawingFunctionOptions = {
+    context: CanvasRenderingContext2D;
+    w: number;
+    h: number;
+};
+
+export type DrawingFunction = (options: DrawingFunctionOptions) => DrawingResult | Promise<DrawingResult>;
 
 export default class DrawingTexture extends Texture {
     private _drawingFunction?: DrawingFunction = undefined;
@@ -58,7 +61,7 @@ export default class DrawingTexture extends Texture {
 
             let result;
             try {
-                result = this._drawingFunction!(context, this._canvasWidth, this._canvasHeight);
+                result = this._drawingFunction!({ context, w: this._canvasWidth, h: this._canvasHeight });
             } catch (e) {
                 if (e instanceof Error) {
                     cb(e);
