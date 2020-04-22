@@ -1,11 +1,11 @@
-import TextureSource from "../TextureSource";
-import Element from "../Element";
-import ElementCore from "./ElementCore";
-import CoreContext from "./CoreContext";
-import RenderTexture from "../../renderer/RenderTexture";
-import NativeTexture from "../../renderer/NativeTexture";
+import { TextureSource } from "../TextureSource";
+import { Element } from "../Element";
+import { ElementCore } from "./ElementCore";
+import { CoreContext } from "./CoreContext";
+import { RenderTexture } from "../../renderer/RenderTexture";
+import { NativeTexture } from "../../renderer/NativeTexture";
 
-export default class ElementTexturizer {
+export class ElementTexturizer {
     private _element: Element = this._core.element;
     private context: CoreContext = this._core.context;
     private _enabled: boolean = false;

@@ -1,14 +1,14 @@
 {
     "name": "tree2d",
     "description": "HTML canvas 2d render tree",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "author": "Planning.nl, Bas van Meurs, Robbin Baauw",
     "bugs": {
         "url": "https://github.com/Planning-nl/tree2d/issues",
         "email": "support@planning.nl"
     },
     "dependencies": {
-        "flexbox.js": "^1.0.11"
+        "flexbox.js": "^1.0.12"
     },
     "devDependencies": {
         "@planning.nl/eslint-config": "^1.0.3",
@@ -29,10 +29,11 @@
     "homepage": "https://github.com/Planning-nl/tree2d#readme",
     "keywords": [],
     "license": "apache",
-    "main": "dist/tree2d.js",
-    "module": "dist/tree2d.js",
+    "main": "lib/index.js",
+    "module": "lib/index.js",
     "jsdelivr": "dist/tree2d.js",
     "unpkg": "dist/tree2d.js",
+    "browser": "dist/tree2d.js",
     "repository": "github:Planning-nl/tree2d",
     "scripts": {
         "build": "tsc",

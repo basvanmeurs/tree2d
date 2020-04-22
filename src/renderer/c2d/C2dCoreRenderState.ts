@@ -1,10 +1,10 @@
-import CoreRenderState from "../../tree/core/CoreRenderState";
-import NativeTexture from "../NativeTexture";
+import { CoreRenderState } from "../../tree/core/CoreRenderState";
+import { NativeTexture } from "../NativeTexture";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
-import ElementCore from "../../tree/core/ElementCore";
-import C2dCoreQuadList from "./C2dCoreQuadList";
+import { ElementCore } from "../../tree/core/ElementCore";
+import { C2dCoreQuadList } from "./C2dCoreQuadList";
 
-export default class C2dCoreRenderState extends CoreRenderState<C2dCoreQuadList> {
+export class C2dCoreRenderState extends CoreRenderState<C2dCoreQuadList> {
     isRenderTextureReusable(renderTextureInfo: RenderTextureInfo): boolean {
         return false;
     }

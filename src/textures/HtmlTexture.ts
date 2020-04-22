@@ -1,6 +1,6 @@
-import Texture, { TextureSourceCallback, TextureSourceLoader } from "../tree/Texture";
+import { Texture, TextureSourceCallback, TextureSourceLoader } from "../tree/Texture";
 
-export default class HtmlTexture extends Texture {
+export class HtmlTexture extends Texture {
     private _htmlElement?: HTMLElement = undefined;
 
     private _scale = 1;

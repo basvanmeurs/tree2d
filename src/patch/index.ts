@@ -1,3 +1,1 @@
-import Patcher from "./Patcher";
-
-export { Patcher };
+export * from "./Patcher";

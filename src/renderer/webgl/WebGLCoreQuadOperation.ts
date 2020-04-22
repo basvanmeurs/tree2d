@@ -1,13 +1,13 @@
-import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
-import CoreContext from "../../tree/core/CoreContext";
-import ElementCore from "../../tree/core/ElementCore";
+import { CoreQuadOperation } from "../../tree/core/CoreQuadOperation";
+import { CoreContext } from "../../tree/core/CoreContext";
+import { ElementCore } from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
-import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
-import WebGLShader from "./WebGLShader";
-import WebGLCoreQuadList from "./WebGLCoreQuadList";
-import WebGLRenderTexture from "./WebGLRenderTexture";
+import { WebGLCoreRenderExecutor } from "./WebGLCoreRenderExecutor";
+import { WebGLShader } from "./WebGLShader";
+import { WebGLCoreQuadList } from "./WebGLCoreQuadList";
+import { WebGLRenderTexture } from "./WebGLRenderTexture";
 
-export default class WebGLCoreQuadOperation extends CoreQuadOperation {
+export class WebGLCoreQuadOperation extends CoreQuadOperation {
     extraAttribsDataByteOffset: number;
 
     constructor(

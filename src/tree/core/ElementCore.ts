@@ -1,16 +1,16 @@
-import ElementTexturizer from "./ElementTexturizer";
-import Utils from "../Utils";
-import CoreContext from "./CoreContext";
-import TextureSource from "../TextureSource";
-import CoreRenderState from "./CoreRenderState";
-import Shader from "../Shader";
-import ElementCoreContext from "./ElementCoreContext";
+import { ElementTexturizer } from "./ElementTexturizer";
+import { Utils } from "../Utils";
+import { CoreContext } from "./CoreContext";
+import { TextureSource } from "../TextureSource";
+import { CoreRenderState } from "./CoreRenderState";
+import { Shader } from "../Shader";
+import { ElementCoreContext } from "./ElementCoreContext";
 import { RenderTextureInfo } from "./RenderTextureInfo";
 import { ElementEventCallback } from "../ElementListeners";
-import { FlexContainer, FlexItem, FlexNode, FlexSubject } from "flexbox.js/lib";
-import Element from "../Element";
+import { FlexContainer, FlexItem, FlexNode, FlexSubject } from "flexbox.js";
+import { Element } from "../Element";
 
-export default class ElementCore implements FlexSubject {
+export class ElementCore implements FlexSubject {
     private _element: Element;
 
     public readonly context: CoreContext;

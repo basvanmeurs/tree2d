@@ -1,7 +1,7 @@
-import Texture, { TextureSourceLoader } from "../tree/Texture";
-import Utils from "../tree/Utils";
-import ColorUtils from "../tree/ColorUtils";
-import Stage from "../tree/Stage";
+import { Texture, TextureSourceLoader } from "../tree/Texture";
+import { Utils } from "../tree/Utils";
+import { ColorUtils } from "../tree/ColorUtils";
+import { Stage } from "../tree/Stage";
 
 export type RoundRectOptions = {
     w: number;
@@ -17,7 +17,7 @@ export type RoundRectOptions = {
     shadowOffsetY: number;
 };
 
-export default class RoundRectTexture extends Texture {
+export class RoundRectTexture extends Texture {
     private _options?: Partial<RoundRectOptions> = undefined;
 
     constructor(stage: Stage) {

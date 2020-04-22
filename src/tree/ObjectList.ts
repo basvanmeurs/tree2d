@@ -1,5 +1,5 @@
-import Element from "./Element";
-import Utils from "./Utils";
+import { Element } from "./Element";
+import { Utils } from "./Utils";
 
 export interface ListType {
     ref: string | undefined;
@@ -9,7 +9,7 @@ export interface ListType {
  * Manages a list of objects.
  * Objects may be patched. Then, they can be referenced using the 'ref' (string) property.
  */
-export default class ObjectList<T extends ListType> {
+export class ObjectList<T extends ListType> {
     private _items: T[] = [];
     private _refs: Record<string, T | undefined> = {};
 

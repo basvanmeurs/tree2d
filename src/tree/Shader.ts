@@ -1,10 +1,10 @@
-import CoreContext from "./core/CoreContext";
-import ElementCore from "./core/ElementCore";
-import WebGLShader from "../renderer/webgl/WebGLShader";
+import { CoreContext } from "./core/CoreContext";
+import { ElementCore } from "./core/ElementCore";
+import { WebGLShader } from "../renderer/webgl/WebGLShader";
 import { Constructor } from "../util/types";
-import C2dShader from "../renderer/c2d/C2dShader";
+import { C2dShader } from "../renderer/c2d/C2dShader";
 
-export default class Shader {
+export class Shader {
     // The (enabled) elements that use this shader.
     private _elements = new Set<ElementCore>();
 

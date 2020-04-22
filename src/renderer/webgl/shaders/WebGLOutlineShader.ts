@@ -1,9 +1,9 @@
-import ColorUtils from "../../../tree/ColorUtils";
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { ColorUtils } from "../../../tree/ColorUtils";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { CoreContext } from "../../../tree/core/CoreContext";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
-export default class OutlineShader extends DefaultShader {
+export class WebGLOutlineShader extends WebGLDefaultShader {
     private _width: number = 5;
     private _col: number = 0xffffffff;
     private _color: number[] = [1, 1, 1, 1];
@@ -109,7 +109,7 @@ export default class OutlineShader extends DefaultShader {
     }
 }
 
-OutlineShader.prototype.vertexShaderSource = `
+WebGLOutlineShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -130,7 +130,7 @@ OutlineShader.prototype.vertexShaderSource = `
     }
 `;
 
-OutlineShader.prototype.fragmentShaderSource = `
+WebGLOutlineShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

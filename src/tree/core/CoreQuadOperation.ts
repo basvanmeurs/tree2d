@@ -1,9 +1,9 @@
-import CoreContext from "./CoreContext";
-import Shader from "../Shader";
-import ElementCore from "./ElementCore";
+import { CoreContext } from "./CoreContext";
+import { Shader } from "../Shader";
+import { ElementCore } from "./ElementCore";
 import { RenderTextureInfo } from "./RenderTextureInfo";
 
-export default class CoreQuadOperation {
+export class CoreQuadOperation {
     public length: number = 0;
 
     constructor(

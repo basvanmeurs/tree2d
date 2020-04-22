@@ -2,12 +2,12 @@
  * Manages the list of children for an element.
  */
 
-import ObjectList from "./ObjectList";
-import Element from "./Element";
+import { ObjectList } from "./ObjectList";
+import { Element } from "./Element";
 
 const gc = (i: Element) => i.core;
 
-export default class ElementChildList extends ObjectList<Element> {
+export class ElementChildList extends ObjectList<Element> {
     constructor(private readonly element: Element) {
         super();
     }

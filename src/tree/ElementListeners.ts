@@ -1,7 +1,7 @@
-import Element from "./Element";
-import Texture from "./Texture";
+import { Element } from "./Element";
+import { Texture } from "./Texture";
 
-export default class ElementListeners {
+export class ElementListeners {
     public onSetup?: ElementEventCallback = undefined;
     public onAttach?: ElementEventCallback = undefined;
     public onDetach?: ElementEventCallback = undefined;

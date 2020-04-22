@@ -1,4 +1,4 @@
-import Texture, { TextureSourceLoader, TextureSourceOptions } from "../tree/Texture";
+import { Texture, TextureSourceLoader, TextureSourceOptions } from "../tree/Texture";
 
 export type DrawingResult = {
     permanent?: boolean;
@@ -19,7 +19,7 @@ export type DrawingFunctionOptions = {
 
 export type DrawingFunction = (options: DrawingFunctionOptions) => DrawingResult | Promise<DrawingResult>;
 
-export default class DrawingTexture extends Texture {
+export class DrawingTexture extends Texture {
     private _drawingFunction?: DrawingFunction = undefined;
     private _canvasWidth: number = 0;
     private _canvasHeight: number = 0;

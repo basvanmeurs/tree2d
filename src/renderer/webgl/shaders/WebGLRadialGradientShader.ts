@@ -1,8 +1,8 @@
-import DefaultShader from "./DefaultShader";
-import ColorUtils from "../../../tree/ColorUtils";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { ColorUtils } from "../../../tree/ColorUtils";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
-export default class RadialGradientShader extends DefaultShader {
+export class WebGLRadialGradientShader extends WebGLDefaultShader {
     private _x: number = 0;
     private _y: number = 0;
 
@@ -96,7 +96,7 @@ export default class RadialGradientShader extends DefaultShader {
     }
 }
 
-RadialGradientShader.prototype.vertexShaderSource = `
+WebGLRadialGradientShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -119,7 +119,7 @@ RadialGradientShader.prototype.vertexShaderSource = `
     }
 `;
 
-RadialGradientShader.prototype.fragmentShaderSource = `
+WebGLRadialGradientShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

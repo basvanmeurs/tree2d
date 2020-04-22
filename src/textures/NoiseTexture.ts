@@ -1,6 +1,6 @@
-import Texture, { TextureSourceLoader } from "../tree/Texture";
+import { Texture, TextureSourceLoader } from "../tree/Texture";
 
-export default class NoiseTexture extends Texture {
+export class NoiseTexture extends Texture {
     protected _getLookupId() {
         return "__noise";
     }

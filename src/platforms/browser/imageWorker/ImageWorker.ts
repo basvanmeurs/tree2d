@@ -1,7 +1,7 @@
-import createWorker from "./createWorker";
+import { createWorker } from "./createWorker";
 import { ImageWorkerImage } from "./ImageWorkerImage";
 
-export default class ImageWorker {
+export class ImageWorker {
     private _items = new Map<number, ImageWorkerImage>();
     private _id: number = 0;
     private _worker: Worker;

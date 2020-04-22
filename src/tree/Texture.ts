@@ -1,7 +1,7 @@
-import Stage from "./Stage";
-import Element from "./Element";
+import { Stage } from "./Stage";
+import { Element } from "./Element";
 
-export default class Texture {
+export class Texture {
     private manager = this.stage.textureManager;
 
     private id: number = Texture.id++;
@@ -512,5 +512,5 @@ export type TextureSourceOptions = {
     };
 };
 
-import TextureSource from "./TextureSource";
-import Utils from "./Utils";
+import { TextureSource } from "./TextureSource";
+import { Utils } from "./Utils";

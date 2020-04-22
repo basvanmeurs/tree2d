@@ -1,28 +1,26 @@
-import C2dCoreQuadList from "./C2dCoreQuadList";
-import C2dCoreQuadOperation from "./C2dCoreQuadOperation";
-import C2dCoreRenderExecutor from "./C2dCoreRenderExecutor";
-import CoreRenderState from "../../tree/core/CoreRenderState";
-import DefaultShader from "./shaders/DefaultShader";
-import C2dShader from "./C2dShader";
-import Renderer, { CopyRenderTextureOptions } from "../Renderer";
-import TextureTintManager from "./C2dTextureTintManager";
-import Stage from "../../tree/Stage";
-import RenderTexture from "../RenderTexture";
-import C2dTextureTintManager from "./C2dTextureTintManager";
-import CoreContext from "../../tree/core/CoreContext";
-import Shader from "../../tree/Shader";
+import { C2dCoreQuadList } from "./C2dCoreQuadList";
+import { C2dCoreQuadOperation } from "./C2dCoreQuadOperation";
+import { C2dCoreRenderExecutor } from "./C2dCoreRenderExecutor";
+import { C2dDefaultShader } from "./shaders/C2dDefaultShader";
+import { C2dShader } from "./C2dShader";
+import { Renderer, CopyRenderTextureOptions } from "../Renderer";
+import { C2dTextureTintManager } from "./C2dTextureTintManager";
+import { Stage } from "../../tree/Stage";
+import { RenderTexture } from "../RenderTexture";
+import { CoreContext } from "../../tree/core/CoreContext";
+import { Shader } from "../../tree/Shader";
 import { Constructor } from "../../util/types";
-import ElementCore from "../../tree/core/ElementCore";
+import { ElementCore } from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
-import C2dCoreRenderState from "./C2dCoreRenderState";
-import TextureSource from "../../tree/TextureSource";
+import { C2dCoreRenderState } from "./C2dCoreRenderState";
+import { TextureSource } from "../../tree/TextureSource";
 import { TextureSourceOptions } from "../../tree/Texture";
-import NativeTexture from "../NativeTexture";
+import { NativeTexture } from "../NativeTexture";
 import { C2dNativeTexture } from "./C2dNativeTexture";
-import C2dRenderTexture from "./C2dRenderTexture";
+import { C2dRenderTexture } from "./C2dRenderTexture";
 
-export default class C2dRenderer extends Renderer {
-    public readonly tintManager: C2dTextureTintManager = new TextureTintManager(this.stage);
+export class C2dRenderer extends Renderer {
+    public readonly tintManager: C2dTextureTintManager = new C2dTextureTintManager(this.stage);
 
     constructor(stage: Stage) {
         super(stage);
@@ -35,7 +33,7 @@ export default class C2dRenderer extends Renderer {
     }
 
     _createDefaultShader(context: CoreContext): Shader {
-        return new DefaultShader(context);
+        return new C2dDefaultShader(context);
     }
 
     _getShaderBaseType(): Constructor<Shader> {

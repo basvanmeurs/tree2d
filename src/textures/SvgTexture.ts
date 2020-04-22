@@ -1,10 +1,10 @@
-import Texture, { TextureSourceLoader } from "../tree/Texture";
-import Utils from "../tree/Utils";
-import Stage from "../tree/Stage";
+import { Texture, TextureSourceLoader } from "../tree/Texture";
+import { Utils } from "../tree/Utils";
+import { Stage } from "../tree/Stage";
 
 export type SvgOptions = { w: number; h: number; src: string };
 
-export default class SvgTexture extends Texture {
+export class SvgTexture extends Texture {
     private _options?: SvgOptions = undefined;
 
     constructor(stage: Stage) {

@@ -1,8 +1,8 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { CoreContext } from "../../../tree/core/CoreContext";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
-export default class LinearBlurShader extends DefaultShader {
+export class WebGLLinearBlurShader extends WebGLDefaultShader {
     private _direction: Float32Array = new Float32Array([1, 0]);
     private _kernelRadius: number = 1;
 
@@ -52,7 +52,7 @@ export default class LinearBlurShader extends DefaultShader {
     }
 }
 
-LinearBlurShader.prototype.fragmentShaderSource = `
+WebGLLinearBlurShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

@@ -1,14 +1,14 @@
-import ImageWorker from "./imageWorker/ImageWorker";
-import Stage from "../../tree/Stage";
+import { ImageWorker } from "./imageWorker/ImageWorker";
+import { Stage } from "../../tree/Stage";
 import { TextureDrawableSource, TextureSourceOptions } from "../../tree/Texture";
-import TextureSource from "../../tree/TextureSource";
+import { TextureSource } from "../../tree/TextureSource";
 
 /**
  * Platform-specific functionality.
  * Copyright Metrological, 2017
  * Copyright Bas van Meurs, 2020
  */
-export default class WebPlatform {
+export class WebPlatform {
     private _looping: boolean = false;
     private _awaitingLoop: boolean = false;
     private _imageWorker?: ImageWorker = undefined;

@@ -1,19 +1,19 @@
-import Stage from "../tree/Stage";
-import CoreContext from "../tree/core/CoreContext";
-import Shader from "../tree/Shader";
+import { Stage } from "../tree/Stage";
+import { CoreContext } from "../tree/core/CoreContext";
+import { Shader } from "../tree/Shader";
 import { Constructor } from "../util/types";
 import { TextureSourceOptions } from "../tree/Texture";
-import TextureSource from "../tree/TextureSource";
-import NativeTexture from "./NativeTexture";
-import CoreRenderState from "../tree/core/CoreRenderState";
-import CoreRenderExecutor from "../tree/core/CoreRenderExecutor";
-import CoreQuadList from "../tree/core/CoreQuadList";
+import { TextureSource } from "../tree/TextureSource";
+import { NativeTexture } from "./NativeTexture";
+import { CoreRenderState } from "../tree/core/CoreRenderState";
+import { CoreRenderExecutor } from "../tree/core/CoreRenderExecutor";
+import { CoreQuadList } from "../tree/core/CoreQuadList";
 import { RenderTextureInfo } from "../tree/core/RenderTextureInfo";
-import ElementCore from "../tree/core/ElementCore";
-import CoreQuadOperation from "../tree/core/CoreQuadOperation";
-import RenderTexture from "./RenderTexture";
+import { ElementCore } from "../tree/core/ElementCore";
+import { CoreQuadOperation } from "../tree/core/CoreQuadOperation";
+import { RenderTexture } from "./RenderTexture";
 
-export default abstract class Renderer {
+export abstract class Renderer {
     _defaultShader?: Shader = undefined;
 
     constructor(public stage: Stage) {}

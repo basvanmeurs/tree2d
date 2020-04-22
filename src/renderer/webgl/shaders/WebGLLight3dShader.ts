@@ -1,8 +1,8 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { CoreContext } from "../../../tree/core/CoreContext";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
-export default class Light3dShader extends DefaultShader {
+export class WebGLLight3dShader extends WebGLDefaultShader {
     private _strength: number = 0.5;
     private _ambient: number = 0.5;
     private _fudge: number = 0.4;
@@ -153,7 +153,7 @@ export default class Light3dShader extends DefaultShader {
     }
 }
 
-Light3dShader.prototype.vertexShaderSource = `
+WebGLLight3dShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -222,7 +222,7 @@ Light3dShader.prototype.vertexShaderSource = `
     }
 `;
 
-Light3dShader.prototype.fragmentShaderSource = `
+WebGLLight3dShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

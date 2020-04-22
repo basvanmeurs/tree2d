@@ -1,4 +1,4 @@
-export default class ElementCoreContext {
+export class ElementCoreContext {
     public alpha: number = 1;
     public px: number = 0;
     public py: number = 0;

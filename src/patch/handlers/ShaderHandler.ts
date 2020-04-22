@@ -1,6 +1,6 @@
 import { SingleReferenceHandler } from "./SingleReferenceHandler";
-import Element from "../../tree/Element";
-import Shader from "../../tree/Shader";
+import { Element } from "../../tree/Element";
+import { Shader } from "../../tree/Shader";
 import { Constructor } from "../../util/types";
 
 export class ShaderHandler extends SingleReferenceHandler {

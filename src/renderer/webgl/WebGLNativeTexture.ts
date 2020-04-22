@@ -1,4 +1,4 @@
-import NativeTexture from "../NativeTexture";
+import { NativeTexture } from "../NativeTexture";
 
 export type WebGLNativeTexture = WebGLTexture &
     NativeTexture & {

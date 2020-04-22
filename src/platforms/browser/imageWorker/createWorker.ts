@@ -1,4 +1,4 @@
-export default function createWorker() {
+export function createWorker() {
     const code = `(${createWorkerServer.toString()})()`;
     const blob = new Blob([code.replace('"use strict";', "")]); // firefox adds "use strict"; to any function which might block worker execution so knock it off
     const blobURL = ((window.URL ? URL : window.webkitURL).createObjectURL as any)(blob, {

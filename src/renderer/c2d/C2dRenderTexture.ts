@@ -1,6 +1,6 @@
-import RenderTexture from "../RenderTexture";
+import { RenderTexture } from "../RenderTexture";
 
-export default interface C2dRenderTexture extends RenderTexture, HTMLCanvasElement {
+export interface C2dRenderTexture extends RenderTexture, HTMLCanvasElement {
     context: CanvasRenderingContext2DWithInfo;
 }
 

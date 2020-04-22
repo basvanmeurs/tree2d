@@ -1,8 +1,8 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { CoreContext } from "../../../tree/core/CoreContext";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
-export default class PixelateShader extends DefaultShader {
+export class WebGLPixelateShader extends WebGLDefaultShader {
     private _size = new Float32Array([4, 4]);
 
     constructor(context: CoreContext) {
@@ -96,7 +96,7 @@ export default class PixelateShader extends DefaultShader {
     }
 }
 
-PixelateShader.prototype.vertexShaderSource = `
+WebGLPixelateShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -117,7 +117,7 @@ PixelateShader.prototype.vertexShaderSource = `
     }
 `;
 
-PixelateShader.prototype.fragmentShaderSource = `
+WebGLPixelateShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

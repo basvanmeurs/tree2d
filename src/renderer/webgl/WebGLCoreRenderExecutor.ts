@@ -1,14 +1,14 @@
-import CoreRenderExecutor from "../../tree/core/CoreRenderExecutor";
-import CoreContext from "../../tree/core/CoreContext";
-import CoreQuadOperation from "../../tree/core/CoreQuadOperation";
-import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
-import WebGLShader from "./WebGLShader";
-import WebGLCoreQuadList from "./WebGLCoreQuadList";
-import RenderTexture from "../RenderTexture";
-import WebGLRenderTexture from "./WebGLRenderTexture";
-import WebGLCoreRenderState from "./WebGLCoreRenderState";
+import { CoreRenderExecutor } from "../../tree/core/CoreRenderExecutor";
+import { CoreContext } from "../../tree/core/CoreContext";
+import { CoreQuadOperation } from "../../tree/core/CoreQuadOperation";
+import { WebGLCoreQuadOperation } from "./WebGLCoreQuadOperation";
+import { WebGLShader } from "./WebGLShader";
+import { WebGLCoreQuadList } from "./WebGLCoreQuadList";
+import { RenderTexture } from "../RenderTexture";
+import { WebGLRenderTexture } from "./WebGLRenderTexture";
+import { WebGLCoreRenderState } from "./WebGLCoreRenderState";
 
-export default class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderState> {
+export class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderState> {
     public readonly attribsBuffer: WebGLBuffer;
     public readonly quadsBuffer: WebGLBuffer;
 

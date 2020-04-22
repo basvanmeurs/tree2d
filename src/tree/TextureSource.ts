@@ -1,7 +1,7 @@
-import TextureManager from "./TextureManager";
-import Element from "./Element";
+import { TextureManager } from "./TextureManager";
+import { Element } from "./Element";
 
-export default class TextureSource {
+export class TextureSource {
     private id: number = TextureSource.id++;
 
     private static id = 0;
@@ -309,6 +309,6 @@ export default class TextureSource {
     }
 }
 
-import Texture, { TextureSourceLoader, TextureSourceOptions } from "./Texture";
-import Stage from "./Stage";
-import NativeTexture from "../renderer/NativeTexture";
+import { Texture, TextureSourceLoader, TextureSourceOptions } from "./Texture";
+import { Stage } from "./Stage";
+import { NativeTexture } from "../renderer/NativeTexture";

@@ -1,7 +1,8 @@
-import Handler from "./Handler";
-import Patcher from "../Patcher";
+import { Handler } from "./Handler";
+import { Patcher } from "../Patcher";
 import { Constructor } from "../../util/types";
-import Utils from "../../tree/Utils";
+import { Utils } from "../../tree/Utils";
+
 type CArgsGetter = (obj: any) => any[];
 
 export class SingleReferenceHandler extends Handler {

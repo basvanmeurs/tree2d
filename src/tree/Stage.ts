@@ -4,21 +4,21 @@
  * Copyright Bas van Meurs, 2020
  */
 
-import Patcher from "../patch/Patcher";
-import WebGLRenderer from "../renderer/webgl/WebGLRenderer";
-import C2dRenderer from "../renderer/c2d/C2dRenderer";
-import Element from "./Element";
-import ColorUtils from "./ColorUtils";
-import TextureManager from "./TextureManager";
-import CoreContext from "./core/CoreContext";
-import RectangleTexture from "../textures/RectangleTexture";
-import WebPlatform from "../platforms/browser/WebPlatform";
-import Renderer from "../renderer/Renderer";
-import Texture from "./Texture";
+import { Patcher } from "../patch/Patcher";
+import { WebGLRenderer } from "../renderer/webgl/WebGLRenderer";
+import { C2dRenderer } from "../renderer/c2d/C2dRenderer";
+import { Element } from "./Element";
+import { ColorUtils } from "./ColorUtils";
+import { TextureManager } from "./TextureManager";
+import { CoreContext } from "./core/CoreContext";
+import { RectangleTexture } from "../textures/RectangleTexture";
+import { WebPlatform } from "../platforms/browser/WebPlatform";
+import { Renderer } from "../renderer/Renderer";
+import { Texture } from "./Texture";
 import { ElementCoordinatesInfo } from "./core/ElementCore";
-import StageOptions from "./StageOptions";
+import { StageOptions } from "./StageOptions";
 
-export default class Stage {
+export class Stage {
     private destroyed = false;
 
     public readonly gpuPixelsMemory: number;

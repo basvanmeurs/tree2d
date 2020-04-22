@@ -1,8 +1,8 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { CoreContext } from "../../../tree/core/CoreContext";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
-export default class InversionShader extends DefaultShader {
+export class WebGLInversionShader extends WebGLDefaultShader {
     private _amount: number = 1;
 
     constructor(context: CoreContext) {
@@ -28,7 +28,7 @@ export default class InversionShader extends DefaultShader {
     }
 }
 
-InversionShader.prototype.fragmentShaderSource = `
+WebGLInversionShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

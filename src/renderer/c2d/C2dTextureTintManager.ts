@@ -1,9 +1,9 @@
-import Stage from "../../tree/Stage";
-import C2dTintCache from "./C2dTintCache";
+import { Stage } from "../../tree/Stage";
+import { C2dTintCache } from "./C2dTintCache";
 import { C2dNativeTexture } from "./C2dNativeTexture";
-import C2dRenderTexture from "./C2dRenderTexture";
+import { C2dRenderTexture } from "./C2dRenderTexture";
 
-export default class C2dTextureTintManager {
+export class C2dTextureTintManager {
     private _usedMemory: number = 0;
     private _cachedNativeTextures = new Set<C2dNativeTexture>();
 

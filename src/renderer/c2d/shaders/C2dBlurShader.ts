@@ -1,6 +1,6 @@
-import DefaultShader from "./DefaultShader";
+import { C2dDefaultShader } from "./C2dDefaultShader";
 
-export default class BlurShader extends DefaultShader {
+export class C2dBlurShader extends C2dDefaultShader {
     private _kernelRadius: number = 1;
 
     get kernelRadius() {

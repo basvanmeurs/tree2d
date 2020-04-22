@@ -1,4 +1,4 @@
-export default interface StageOptions {
+export interface StageOptions {
     clearColor: number | null;
     gpuPixelsMemory: number;
     bufferMemory: number;

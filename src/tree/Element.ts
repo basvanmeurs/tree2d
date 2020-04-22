@@ -4,25 +4,24 @@
  * Copyright Bas van Meurs, 2020
  */
 
-import ElementCore, { FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
-import Texture from "./Texture";
-import ImageTexture from "../textures/ImageTexture";
-import TextTexture from "../textures/text/TextTexture";
-import ElementChildList from "./ElementChildList";
-import Stage from "./Stage";
-import ElementTexturizer from "./core/ElementTexturizer";
-import ElementListeners, {
+import { ElementCore, FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
+import { Texture } from "./Texture";
+import { ElementChildList } from "./ElementChildList";
+import { Stage } from "./Stage";
+import { ElementTexturizer } from "./core/ElementTexturizer";
+import {
+    ElementListeners,
     ElementEventCallback,
     ElementResizeEventCallback,
     ElementTextureErrorEventCallback,
     ElementTextureEventCallback,
 } from "./ElementListeners";
-import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from "flexbox.js/lib";
+import { AlignContentMode, AlignItemsMode, FlexDirection, JustifyContentMode } from "flexbox.js";
 
-import Utils from "./Utils";
-import Shader from "./Shader";
+import { Utils } from "./Utils";
+import { Shader } from "./Shader";
 
-class Element<DATA = any> {
+export class Element<DATA = any> {
     private static id: number = 1;
 
     public readonly stage: Stage;
@@ -1534,5 +1533,3 @@ class Element<DATA = any> {
         return this._flexItem.maxHeight;
     }
 }
-
-export default Element;

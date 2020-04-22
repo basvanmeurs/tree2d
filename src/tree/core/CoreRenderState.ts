@@ -1,14 +1,14 @@
-import CoreContext from "./CoreContext";
-import CoreQuadOperation from "./CoreQuadOperation";
-import Shader from "../Shader";
-import Renderer from "../../renderer/Renderer";
-import CoreQuadList from "./CoreQuadList";
+import { CoreContext } from "./CoreContext";
+import { CoreQuadOperation } from "./CoreQuadOperation";
+import { Shader } from "../Shader";
+import { Renderer } from "../../renderer/Renderer";
+import { CoreQuadList } from "./CoreQuadList";
 import { RenderTextureInfo } from "./RenderTextureInfo";
-import ElementCore from "./ElementCore";
-import NativeTexture from "../../renderer/NativeTexture";
-import ElementTexturizer from "./ElementTexturizer";
+import { ElementCore } from "./ElementCore";
+import { NativeTexture } from "../../renderer/NativeTexture";
+import { ElementTexturizer } from "./ElementTexturizer";
 
-export default abstract class CoreRenderState<
+export abstract class CoreRenderState<
     CoreQuadListType extends CoreQuadList = CoreQuadList,
     CoreQuadOperationType extends CoreQuadOperation = CoreQuadOperation
 > {

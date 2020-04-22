@@ -1,8 +1,8 @@
-import C2dDefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLGrayscaleShader from "../../webgl/shaders/GrayscaleShader";
+import { C2dDefaultShader } from "./C2dDefaultShader";
+import { CoreContext } from "../../../tree/core/CoreContext";
+import { WebGLGrayscaleShader } from "../../webgl/shaders/WebGLGrayscaleShader";
 
-export default class GrayscaleShader extends C2dDefaultShader {
+export class C2dGrayscaleShader extends C2dDefaultShader {
     private _amount: number = 1;
 
     constructor(context: CoreContext) {

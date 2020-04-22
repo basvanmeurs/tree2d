@@ -1,4 +1,4 @@
-import ImageWorker from "./ImageWorker";
+import { ImageWorker } from "./ImageWorker";
 
 export class ImageWorkerImage {
     private _onError?: (error: Error) => void;

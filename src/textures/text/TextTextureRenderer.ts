@@ -1,7 +1,7 @@
-import Stage from "../../tree/Stage";
+import { Stage } from "../../tree/Stage";
 import { TextSettings } from "./TextSettings";
 
-export default class TextTextureRenderer {
+export class TextTextureRenderer {
     private _context = this.canvas.getContext("2d")!;
     public renderInfo: any;
 

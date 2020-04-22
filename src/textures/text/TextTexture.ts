@@ -1,10 +1,10 @@
-import Texture, { TextureSourceCallback, TextureSourceLoader } from "../../tree/Texture";
-import TextTextureRenderer from "./TextTextureRenderer";
+import { Texture, TextureSourceCallback, TextureSourceLoader } from "../../tree/Texture";
+import { TextTextureRenderer } from "./TextTextureRenderer";
 import { TextSettings } from "./TextSettings";
-import Utils from "../../tree/Utils";
-import Stage from "../../tree/Stage";
+import { Utils } from "../../tree/Utils";
+import { Stage } from "../../tree/Stage";
 
-export default class TextTexture extends Texture {
+export class TextTexture extends Texture {
     private settings: Partial<TextSettings> = {};
     private _text: string = "";
 

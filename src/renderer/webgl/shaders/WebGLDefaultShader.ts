@@ -1,8 +1,8 @@
-import WebGLShader from "../WebGLShader";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
-import WebGLCoreRenderExecutor from "../WebGLCoreRenderExecutor";
+import { WebGLShader } from "../WebGLShader";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
+import { WebGLCoreRenderExecutor } from "../WebGLCoreRenderExecutor";
 
-export default class DefaultShader extends WebGLShader {
+export class WebGLDefaultShader extends WebGLShader {
     enableAttribs() {
         // Enables the attribs in the shader program.
         const gl = this.gl;
@@ -77,7 +77,7 @@ export default class DefaultShader extends WebGLShader {
     }
 }
 
-DefaultShader.prototype.vertexShaderSource = `
+WebGLDefaultShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -95,7 +95,7 @@ DefaultShader.prototype.vertexShaderSource = `
     }
 `;
 
-DefaultShader.prototype.fragmentShaderSource = `
+WebGLDefaultShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

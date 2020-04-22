@@ -1,8 +1,8 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { CoreContext } from "../../../tree/core/CoreContext";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
-export default class RadialFilterShader extends DefaultShader {
+export class WebGLRadialFilterShader extends WebGLDefaultShader {
     private _radius: number = 0;
     private _cutoff: number = 1;
 
@@ -40,7 +40,7 @@ export default class RadialFilterShader extends DefaultShader {
     }
 }
 
-RadialFilterShader.prototype.vertexShaderSource = `
+WebGLRadialFilterShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -60,7 +60,7 @@ RadialFilterShader.prototype.vertexShaderSource = `
     }
 `;
 
-RadialFilterShader.prototype.fragmentShaderSource = `
+WebGLRadialFilterShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

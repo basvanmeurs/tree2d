@@ -1,13 +1,13 @@
-import WebGLShaderProgram from "./WebGLShaderProgram";
-import Shader from "../../tree/Shader";
-import CoreContext from "../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
-import WebGLRenderer from "./WebGLRenderer";
+import { WebGLShaderProgram } from "./WebGLShaderProgram";
+import { Shader } from "../../tree/Shader";
+import { CoreContext } from "../../tree/core/CoreContext";
+import { WebGLCoreQuadOperation } from "./WebGLCoreQuadOperation";
+import { WebGLRenderer } from "./WebGLRenderer";
 import { Constructor } from "../../util/types";
 
 export type GLFunction = (location: WebGLUniformLocation | null, ...args: any[]) => void;
 
-export default class WebGLShader extends Shader {
+export class WebGLShader extends Shader {
     vertexShaderSource?: string = undefined;
     fragmentShaderSource?: string = undefined;
 

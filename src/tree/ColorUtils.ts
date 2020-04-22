@@ -1,4 +1,4 @@
-export default class ColorUtils {
+export class ColorUtils {
     static rgb(r: number, g: number, b: number) {
         return (r << 16) + (g << 8) + b + 255 * 16777216;
     }

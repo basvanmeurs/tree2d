@@ -1,5 +1,5 @@
-import NativeTexture from "../../renderer/NativeTexture";
-import RenderTexture from "../../renderer/RenderTexture";
+import { NativeTexture } from "../../renderer/NativeTexture";
+import { RenderTexture } from "../../renderer/RenderTexture";
 
 export interface RenderTextureInfo {
     renderTexture?: RenderTexture;

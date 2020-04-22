@@ -1,6 +1,6 @@
-import Texture, { TextureSourceLoader } from "../tree/Texture";
+import { Texture, TextureSourceLoader } from "../tree/Texture";
 
-export default class ImageTexture extends Texture {
+export class ImageTexture extends Texture {
     private _src?: string = undefined;
     private _hasAlpha: boolean = false;
 

@@ -1,4 +1,4 @@
-export default class Utils {
+export class Utils {
     static isFunction(value: any): value is (...args: any) => any {
         return typeof value === "function";
     }

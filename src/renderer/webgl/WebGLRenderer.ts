@@ -1,26 +1,26 @@
-import Utils from "../../tree/Utils";
-import WebGLCoreQuadList from "./WebGLCoreQuadList";
-import WebGLCoreQuadOperation from "./WebGLCoreQuadOperation";
-import WebGLCoreRenderExecutor from "./WebGLCoreRenderExecutor";
-import CoreRenderState from "../../tree/core/CoreRenderState";
-import DefaultShader from "./shaders/DefaultShader";
-import WebGLShader from "./WebGLShader";
-import Renderer, { CopyRenderTextureOptions } from "../Renderer";
-import TextureSource from "../../tree/TextureSource";
-import CoreContext from "../../tree/core/CoreContext";
-import Shader from "../../tree/Shader";
+import { Utils } from "../../tree/Utils";
+import { WebGLCoreQuadList } from "./WebGLCoreQuadList";
+import { WebGLCoreQuadOperation } from "./WebGLCoreQuadOperation";
+import { WebGLCoreRenderExecutor } from "./WebGLCoreRenderExecutor";
+import { CoreRenderState } from "../../tree/core/CoreRenderState";
+import { WebGLDefaultShader } from "./shaders/WebGLDefaultShader";
+import { WebGLShader } from "./WebGLShader";
+import { Renderer, CopyRenderTextureOptions } from "../Renderer";
+import { TextureSource } from "../../tree/TextureSource";
+import { CoreContext } from "../../tree/core/CoreContext";
+import { Shader } from "../../tree/Shader";
 import { Constructor } from "../../util/types";
-import ElementCore from "../../tree/core/ElementCore";
+import { ElementCore } from "../../tree/core/ElementCore";
 import { RenderTextureInfo } from "../../tree/core/RenderTextureInfo";
-import WebGLShaderProgram from "./WebGLShaderProgram";
+import { WebGLShaderProgram } from "./WebGLShaderProgram";
 import { TextureSourceOptions } from "../../tree/Texture";
-import NativeTexture from "../NativeTexture";
-import WebGLRenderTexture from "./WebGLRenderTexture";
+import { NativeTexture } from "../NativeTexture";
+import { WebGLRenderTexture } from "./WebGLRenderTexture";
 import { WebGLNativeTexture } from "./WebGLNativeTexture";
-import WebGLCoreRenderState from "./WebGLCoreRenderState";
-import RenderTexture from "../RenderTexture";
+import { WebGLCoreRenderState } from "./WebGLCoreRenderState";
+import { RenderTexture } from "../RenderTexture";
 
-export default class WebGLRenderer extends Renderer {
+export class WebGLRenderer extends Renderer {
     private shaderPrograms = new Map<Constructor<WebGLShader>, WebGLShaderProgram>();
 
     destroy() {
@@ -28,7 +28,7 @@ export default class WebGLRenderer extends Renderer {
     }
 
     _createDefaultShader(context: CoreContext) {
-        return new DefaultShader(context);
+        return new WebGLDefaultShader(context);
     }
 
     _getShaderBaseType() {

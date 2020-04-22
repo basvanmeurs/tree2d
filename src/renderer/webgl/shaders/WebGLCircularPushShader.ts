@@ -1,8 +1,8 @@
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { CoreContext } from "../../../tree/core/CoreContext";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
-export default class CircularPushShader extends DefaultShader {
+export class WebGLCircularPushShader extends WebGLDefaultShader {
     private _inputValue: number = 0;
 
     private _maxDerivative: number = 0.01;
@@ -185,7 +185,7 @@ export default class CircularPushShader extends DefaultShader {
     }
 }
 
-CircularPushShader.prototype.vertexShaderSource = `
+WebGLCircularPushShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -211,7 +211,7 @@ CircularPushShader.prototype.vertexShaderSource = `
     }
 `;
 
-CircularPushShader.prototype.fragmentShaderSource = `
+WebGLCircularPushShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

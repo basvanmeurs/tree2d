@@ -1,11 +1,11 @@
-import CoreRenderExecutor from "../../tree/core/CoreRenderExecutor";
-import ColorUtils from "../../tree/ColorUtils";
-import C2dCoreQuadOperation from "./C2dCoreQuadOperation";
-import C2dRenderTexture from "./C2dRenderTexture";
-import CoreRenderState from "../../tree/core/CoreRenderState";
-import C2dCoreRenderState from "./C2dCoreRenderState";
+import { CoreRenderExecutor } from "../../tree/core/CoreRenderExecutor";
+import { ColorUtils } from "../../tree/ColorUtils";
+import { C2dCoreQuadOperation } from "./C2dCoreQuadOperation";
+import { C2dRenderTexture } from "./C2dRenderTexture";
+import { CoreRenderState } from "../../tree/core/CoreRenderState";
+import { C2dCoreRenderState } from "./C2dCoreRenderState";
 
-export default class C2dCoreRenderExecutor extends CoreRenderExecutor<C2dCoreRenderState> {
+export class C2dCoreRenderExecutor extends CoreRenderExecutor<C2dCoreRenderState> {
     private _mainRenderTexture = this.context.stage.getCanvas() as C2dRenderTexture;
 
     protected _renderQuadOperation(op: C2dCoreQuadOperation) {

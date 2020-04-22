@@ -1,5 +1,5 @@
-import NativeTexture from "../NativeTexture";
-import C2dRenderTexture from "./C2dRenderTexture";
+import { NativeTexture } from "../NativeTexture";
+import { C2dRenderTexture } from "./C2dRenderTexture";
 
 type CacheEntry = {
     tx: C2dRenderTexture | undefined;
@@ -7,7 +7,7 @@ type CacheEntry = {
     u: number;
 };
 
-export default class C2dTintCache {
+export class C2dTintCache {
     private _colors = new Map<number, CacheEntry>();
     private _blancoTextures: C2dRenderTexture[] = [];
     private _lastCleanupFrame: number = 0;

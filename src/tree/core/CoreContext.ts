@@ -1,12 +1,12 @@
-import Stage from "../Stage";
-import ElementCore from "./ElementCore";
-import CoreRenderState from "./CoreRenderState";
-import CoreRenderExecutor from "./CoreRenderExecutor";
-import NativeTexture from "../../renderer/NativeTexture";
+import { Stage } from "../Stage";
+import { ElementCore } from "./ElementCore";
+import { CoreRenderState } from "./CoreRenderState";
+import { CoreRenderExecutor } from "./CoreRenderExecutor";
+import { NativeTexture } from "../../renderer/NativeTexture";
 import { CopyRenderTextureOptions } from "../../renderer/Renderer";
-import RenderTexture from "../../renderer/RenderTexture";
+import { RenderTexture } from "../../renderer/RenderTexture";
 
-export default class CoreContext {
+export class CoreContext {
     public root?: ElementCore = undefined;
     public updateTreeOrder: number = 0;
     public readonly renderState: CoreRenderState = this.stage.renderer.createCoreRenderState(this);

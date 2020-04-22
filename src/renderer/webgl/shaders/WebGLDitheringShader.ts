@@ -1,12 +1,11 @@
-import NoiseTexture from "../../../textures/NoiseTexture";
-import DefaultShader from "./DefaultShader";
-import CoreContext from "../../../tree/core/CoreContext";
-import WebGLCoreQuadOperation from "../WebGLCoreQuadOperation";
+import { NoiseTexture } from "../../../textures/NoiseTexture";
+import { WebGLDefaultShader } from "./WebGLDefaultShader";
+import { WebGLCoreQuadOperation } from "../WebGLCoreQuadOperation";
 
 /**
  * This shader can be used to fix a problem that is known as 'gradient banding'.
  */
-export default class DitheringShader extends DefaultShader {
+export class WebGLDitheringShader extends WebGLDefaultShader {
     private _noiseTexture: NoiseTexture = new NoiseTexture(this.context.stage);
     private _graining: number = 1 / 256;
     private _random: boolean = false;
@@ -134,7 +133,7 @@ export default class DitheringShader extends DefaultShader {
     }
 }
 
-DitheringShader.prototype.vertexShaderSource = `
+WebGLDitheringShader.prototype.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -155,7 +154,7 @@ DitheringShader.prototype.vertexShaderSource = `
     }
 `;
 
-DitheringShader.prototype.fragmentShaderSource = `
+WebGLDitheringShader.prototype.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif

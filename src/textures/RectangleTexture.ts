@@ -1,6 +1,6 @@
-import Texture, { TextureSourceLoader } from "../tree/Texture";
+import { Texture, TextureSourceLoader } from "../tree/Texture";
 
-export default class RectangleTexture extends Texture {
+export class RectangleTexture extends Texture {
     protected _getLookupId() {
         return "__whitepix";
     }

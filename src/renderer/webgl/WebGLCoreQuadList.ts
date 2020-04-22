@@ -1,6 +1,6 @@
-import CoreQuadList from "../../tree/core/CoreQuadList";
+import { CoreQuadList } from "../../tree/core/CoreQuadList";
 
-export default class WebGLCoreQuadList extends CoreQuadList {
+export class WebGLCoreQuadList extends CoreQuadList {
     // Allocate a fairly big chunk of memory that should be enough to support ~100000 (default) quads.
     public data: ArrayBuffer;
     public floats: Float32Array;
