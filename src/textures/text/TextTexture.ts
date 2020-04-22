@@ -2,7 +2,7 @@ import { Texture, TextureSourceCallback, TextureSourceLoader } from "../../tree/
 import { TextTextureRenderer } from "./TextTextureRenderer";
 import { TextSettings } from "./TextSettings";
 import { Utils } from "../../tree/Utils";
-import { Stage } from "../../tree/Stage";
+import { Stage } from "../../tree";
 
 export class TextTexture extends Texture {
     private settings: Partial<TextSettings> = {};

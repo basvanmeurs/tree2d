@@ -23,7 +23,6 @@
     },
     "files": [
         "lib/**",
-        "dist/**",
         "src/**"
     ],
     "homepage": "https://github.com/Planning-nl/tree2d#readme",
@@ -33,7 +32,6 @@
     "module": "lib/index.js",
     "jsdelivr": "dist/tree2d.js",
     "unpkg": "dist/tree2d.js",
-    "browser": "dist/tree2d.js",
     "repository": "github:Planning-nl/tree2d",
     "scripts": {
         "build": "tsc",
