@@ -1,5 +1,5 @@
 export interface StageOptions {
-    clearColor: number | null;
+    clearColor: number | string | null;
     gpuPixelsMemory: number;
     bufferMemory: number;
     defaultFontFace: string[];

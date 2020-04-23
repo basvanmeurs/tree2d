@@ -4,14 +4,14 @@
  * Copyright Bas van Meurs, 2020
  */
 
-import { Patcher } from "../patch/Patcher";
+import { Patcher } from "../patch";
 import { WebGLRenderer } from "../renderer/webgl/WebGLRenderer";
 import { C2dRenderer } from "../renderer/c2d/C2dRenderer";
 import { Element } from "./Element";
 import { ColorUtils } from "./ColorUtils";
 import { TextureManager } from "./TextureManager";
 import { CoreContext } from "./core/CoreContext";
-import { RectangleTexture } from "../textures/RectangleTexture";
+import { RectangleTexture } from "../textures";
 import { WebPlatform } from "../platforms/browser/WebPlatform";
 import { Renderer } from "../renderer/Renderer";
 import { Texture } from "./Texture";
@@ -114,7 +114,7 @@ export class Stage {
         }
     }
 
-    private processClearColorOption(option: number | null | undefined) {
+    private processClearColorOption(option: number | string | null | undefined) {
         switch (option) {
             case null:
                 this.setClearColor(null);
@@ -123,7 +123,7 @@ export class Stage {
                 this.setClearColor([0, 0, 0, 0]);
                 break;
             default:
-                this.setClearColor(ColorUtils.getRgbaComponentsNormalized(option));
+                this.setClearColor(ColorUtils.getRgbaComponentsNormalized(ColorUtils.getArgbFromAny(option)));
         }
     }
 
