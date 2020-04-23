@@ -18,7 +18,7 @@ export class TextTextureRenderer {
     }
 
     private _getFontSetting() {
-        const fontWeight = (this.settings.fontWeight || 400);
+        const fontWeight = this.settings.fontWeight || 400;
         const fontStyle = this.settings.fontStyle || "normal";
         const fontSize = (this.settings.fontSize || 40) * this.pixelRatio;
         const fontFaces = this._getFontFaces();

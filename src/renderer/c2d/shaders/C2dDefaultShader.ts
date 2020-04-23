@@ -173,7 +173,11 @@ export class C2dDefaultShader extends C2dShader {
         }
     }
 
-    _beforeDrawEl(info: any) {}
+    _beforeDrawEl(info: any) {
+        // Noop
+    }
 
-    _afterDrawEl(info: any) {}
+    _afterDrawEl(info: any) {
+        // Noop
+    }
 }

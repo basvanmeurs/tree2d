@@ -18,7 +18,9 @@ export abstract class Renderer {
 
     constructor(public stage: Stage) {}
 
-    gc(aggressive: boolean): void {}
+    gc(aggressive: boolean): void {
+        // Noop
+    }
 
     abstract destroy(): void;
 

@@ -9,7 +9,9 @@ export class C2dCoreRenderState extends CoreRenderState<C2dCoreQuadList> {
         return false;
     }
 
-    finishRenderState(): void {}
+    finishRenderState(): void {
+        // Noop
+    }
 
     addQuad(texture: NativeTexture, elementCore: ElementCore) {
         const index = this.length;

@@ -99,9 +99,13 @@ export class WebGLShader extends Shader {
         // All settings changed in beforeUsage should be reset here.
     }
 
-    enableAttribs() {}
+    enableAttribs() {
+        // Noop
+    }
 
-    disableAttribs() {}
+    disableAttribs() {
+        // Noop
+    }
 
     getExtraAttribBytesPerVertex() {
         return 0;
@@ -130,11 +134,17 @@ export class WebGLShader extends Shader {
         return this._getProjection(operation)[1] < 0;
     }
 
-    beforeDraw(operation: WebGLCoreQuadOperation) {}
+    beforeDraw(operation: WebGLCoreQuadOperation) {
+        // Noop
+    }
 
-    draw(operation: WebGLCoreQuadOperation) {}
+    draw(operation: WebGLCoreQuadOperation) {
+        // Noop
+    }
 
-    afterDraw(operation: WebGLCoreQuadOperation) {}
+    afterDraw(operation: WebGLCoreQuadOperation) {
+        // Noop
+    }
 
     cleanup() {
         this._initialized = false;

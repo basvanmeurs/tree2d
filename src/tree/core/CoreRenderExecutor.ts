@@ -12,7 +12,9 @@ export class CoreRenderExecutor<CoreRenderStateType extends CoreRenderState = Co
         this.renderState = context.renderState as CoreRenderStateType;
     }
 
-    destroy() {}
+    destroy() {
+        // Noop
+    }
 
     protected _reset() {
         this._bindRenderTexture(undefined);
@@ -43,7 +45,9 @@ export class CoreRenderExecutor<CoreRenderStateType extends CoreRenderState = Co
         this._execQuadOperation(quadOperation);
     }
 
-    protected _setupQuadOperation(quadOperation: CoreQuadOperation) {}
+    protected _setupQuadOperation(quadOperation: CoreQuadOperation) {
+        // Noop
+    }
 
     protected _execQuadOperation(op: CoreQuadOperation) {
         // Set render texture.
@@ -65,13 +69,19 @@ export class CoreRenderExecutor<CoreRenderStateType extends CoreRenderState = Co
         this._renderQuadOperation(op);
     }
 
-    protected _renderQuadOperation(op: CoreQuadOperation) {}
+    protected _renderQuadOperation(op: CoreQuadOperation) {
+        // Noop
+    }
 
     protected _bindRenderTexture(renderTexture: RenderTexture | undefined) {
         this._renderTexture = renderTexture;
     }
 
-    protected _clearRenderTexture() {}
+    protected _clearRenderTexture() {
+        // Noop
+    }
 
-    protected _setScissor(area: number[] | undefined) {}
+    protected _setScissor(area: number[] | undefined) {
+        // Noop
+    }
 }

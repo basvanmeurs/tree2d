@@ -218,13 +218,23 @@ export class ObjectList<T extends ListType> {
         this.onSync([], [], items);
     }
 
-    protected onAdd(item: T, index: number) {}
+    protected onAdd(item: T, index: number) {
+        // Noop
+    }
 
-    protected onRemove(item: T, index: number) {}
+    protected onRemove(item: T, index: number) {
+        // Noop
+    }
 
-    protected onSync(removed: T[], added: T[], order: T[]) {}
+    protected onSync(removed: T[], added: T[], order: T[]) {
+        // Noop
+    }
 
-    protected onSet(item: T, index: number, prevItem: T) {}
+    protected onSet(item: T, index: number, prevItem: T) {
+        // Noop
+    }
 
-    protected onMove(item: T, fromIndex: number, toIndex: number) {}
+    protected onMove(item: T, fromIndex: number, toIndex: number) {
+        // Noop
+    }
 }
