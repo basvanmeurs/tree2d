@@ -1,4 +1,6 @@
-# Tree2d
+# Tree2d 
+[![Build Status](https://img.shields.io/travis/Planning-nl/tree2d/master.svg)](https://travis-ci.org/Planning-nl/tree2d) 
+[![NPM Version](https://img.shields.io/npm/v/tree2d)](https://www.npmjs.com/package/tree2d)
 
 Tree2d is a **HTML canvas 2d render tree implementation** written in typescript. 
 
