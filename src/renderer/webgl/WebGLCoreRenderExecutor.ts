@@ -1,9 +1,7 @@
 import { CoreRenderExecutor } from "../../tree/core/CoreRenderExecutor";
 import { CoreContext } from "../../tree/core/CoreContext";
-import { CoreQuadOperation } from "../../tree/core/CoreQuadOperation";
 import { WebGLCoreQuadOperation } from "./WebGLCoreQuadOperation";
 import { WebGLShader } from "./WebGLShader";
-import { WebGLCoreQuadList } from "./WebGLCoreQuadList";
 import { RenderTexture } from "../RenderTexture";
 import { WebGLRenderTexture } from "./WebGLRenderTexture";
 import { WebGLCoreRenderState } from "./WebGLCoreRenderState";
@@ -59,7 +57,7 @@ export class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderS
         const allIndices = new arrayType(maxQuads * 6);
 
         // fill the indices with the quads to draw.
-        for (let i = 0, j = 0; i < maxQuads; i += 6, j += 4) {
+        for (let i = 0, j = 0; i < maxQuads * 6; i += 6, j += 4) {
             allIndices[i] = j;
             allIndices[i + 1] = j + 1;
             allIndices[i + 2] = j + 2;
