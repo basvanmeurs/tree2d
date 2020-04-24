@@ -10,7 +10,7 @@ import { TextureManager } from "./TextureManager";
 import { TextureSource } from "./TextureSource";
 import { StageOptions } from "./StageOptions";
 
-export { ElementCoordinatesInfo, FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
+export { ElementCoordinatesInfo, RelativeFunction } from "./core/ElementCore";
 
 export {
     ColorUtils,

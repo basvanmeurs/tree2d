@@ -1,12 +1,10 @@
-describe("test stack", function () {
+describe("test coords", function () {
     this.enableTimeouts(false);
 
     let stage, root, element;
     let A, B, C, D, E;
     before(() => {
         const canvas = document.createElement("canvas");
-        // canvas.style.width = '923px';
-        // canvas.style.height = '923px';
         canvas.width = 1200;
         canvas.height = 1200;
         document.body.appendChild(canvas);
@@ -59,7 +57,7 @@ describe("test stack", function () {
                                     texture: stage.rectangleTexture,
                                     color: 0xffff00ff,
                                     alpha: 0.8,
-                                    x: (w) => w - 50,
+                                    funcX: (w) => w - 50,
                                     w: 100,
                                     h: 80,
                                     y: 20,
@@ -102,10 +100,6 @@ describe("test stack", function () {
             describe(`(${x},${y})`, () => {
                 it("[" + r.join(",") + "]", () => {
                     const results = getResults(x, y);
-                    chai.assert.deepEqual(
-                        results.map((result) => result[0]),
-                        r.map((i) => i[0]),
-                    );
                     results.forEach((result, index) => {
                         const expected = r[index];
                         const str1 = Math.round(result[1]) + "," + Math.round(result[2]);
@@ -151,6 +145,11 @@ describe("test stack", function () {
                             chai.assert.equal(str1, str2, "Item: " + result[0]);
                         }
                     });
+                    chai.assert.deepEqual(
+                        results.map((result) => result[0]),
+                        r.map((i) => i[0]),
+                    );
+
                 });
             });
         }

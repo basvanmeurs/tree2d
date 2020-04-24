@@ -59,8 +59,8 @@ export class Stage {
     private onFrameStart?: () => void;
     private onUpdate?: () => void;
     private onFrameEnd?: () => void;
-    private canvasWidth: number = 0;
-    private canvasHeight: number = 0;
+    private canvasWidth: number = -1;
+    private canvasHeight: number = -1;
 
     constructor(public readonly canvas: HTMLCanvasElement, options: Partial<StageOptions> = {}) {
         this.gpuPixelsMemory = options.gpuPixelsMemory || 32e6;
@@ -357,14 +357,16 @@ export class Stage {
         // Prevent resize recursion in dynamic layouts (flexbox etc).
         // Notice that when you would like to use dynamic resize, you should wrap the canvas element in a dynamically
         // resized div, and absolutely position the canvas in it with 100% width and height.
-        if (Math.round(rect.width) !== Math.round(this.canvasWidth)) {
-            const newCanvasWidth = rect.width * this.pixelRatio || this.canvas.width;
+        const cssWidth = rect.width || this.canvas.width;
+        if (Math.round(cssWidth) !== Math.round(this.canvasWidth)) {
+            const newCanvasWidth = cssWidth * this.pixelRatio;
             changed = changed || newCanvasWidth !== this.canvasWidth;
             this.canvasWidth = newCanvasWidth;
         }
 
-        if (Math.round(rect.height) !== Math.round(this.canvasHeight)) {
-            const newCanvasHeight = rect.height * this.pixelRatio || this.canvas.height;
+        const cssHeight = rect.height || this.canvas.height;
+        if (Math.round(cssHeight) !== Math.round(this.canvasHeight)) {
+            const newCanvasHeight = cssHeight * this.pixelRatio;
             changed = changed || newCanvasHeight !== this.canvasHeight;
             this.canvasHeight = newCanvasHeight;
         }

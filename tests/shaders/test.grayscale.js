@@ -9,7 +9,7 @@ describe("Shaders", function () {
             children: {
                 Image: {
                     texture: { type: tree2d.ImageTexture, src: "./example.png" },
-                    shader: { type: tree2d.GrayscaleShader, amount: 1 },
+                    shader: { type: tree2d.WebGLGrayscaleShader, amount: 1 },
                 },
             },
         };
@@ -34,7 +34,7 @@ describe("Shaders", function () {
     describe("Image texture (WebGL)", function () {
         it("Should be gray", function () {
             const shader = stageGL.root.getByRef("Image").shader;
-            chai.assert(shader instanceof tree2d.GrayscaleShader);
+            chai.assert(shader instanceof tree2d.WebGLGrayscaleShader);
         });
     });
 

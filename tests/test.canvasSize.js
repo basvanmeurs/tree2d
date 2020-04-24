@@ -11,11 +11,11 @@ describe("canvas size", () => {
     });
 
     before(() => {
-        root.w = (w) => w;
-        root.h = (h) => h;
+        root.funcW = (w) => w;
+        root.funcH = (h) => h;
         element = stage.createElement({
-            w: (w) => w * 0.5,
-            h: (h) => h,
+            funcW: (w) => w * 0.5,
+            funcH: (h) => h,
             clipping: true,
             children: {
                 Item: {

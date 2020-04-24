@@ -4,7 +4,7 @@
  * Copyright Bas van Meurs, 2020
  */
 
-import { ElementCore, FunctionH, FunctionW, FunctionX, FunctionY } from "./core/ElementCore";
+import { ElementCore, RelativeFunction } from "./core/ElementCore";
 import { Texture } from "./Texture";
 import { ElementChildList } from "./ElementChildList";
 import { Stage } from "./Stage";
@@ -923,36 +923,68 @@ export class Element<DATA = any> {
         return this._core.boundsMargin ? this._core.boundsMargin[3] : 100;
     }
 
-    get x(): number | FunctionX {
+    get x() {
         return this._core.x;
     }
 
-    set x(v: number | FunctionX) {
+    set x(v: number) {
         this._core.x = v;
     }
 
-    get y(): number | FunctionY {
+    get funcX() {
+        return this._core.funcX;
+    }
+
+    set funcX(v: RelativeFunction | undefined) {
+        this._core.funcX = v;
+    }
+
+    get y() {
         return this._core.y;
     }
 
-    set y(v: number | FunctionY) {
+    set y(v: number) {
         this._core.y = v;
     }
 
-    get w(): number | FunctionW {
+    get funcY() {
+        return this._core.funcY;
+    }
+
+    set funcY(v: RelativeFunction | undefined) {
+        this._core.funcY = v;
+    }
+
+    get w() {
         return this._core.w;
     }
 
-    set w(v) {
+    set w(v: number) {
         this._core.w = v;
     }
 
-    get h(): number | FunctionH {
+    get funcW() {
+        return this._core.funcW;
+    }
+
+    set funcW(v: RelativeFunction | undefined) {
+        this._core.funcW = v;
+    }
+
+    get h() {
         return this._core.h;
     }
 
-    set h(v) {
+    set h(v: number) {
         this._core.h = v;
+    }
+
+    get funcH() {
+        return this._core.funcH;
+    }
+
+    set funcH(v: RelativeFunction | undefined) {
+        this._core.funcH = v;
     }
 
     get scaleX() {

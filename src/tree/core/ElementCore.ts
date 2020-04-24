@@ -100,10 +100,10 @@ export class ElementCore implements FlexSubject {
     // Defines which relative functions are enabled.
     private _relFuncFlags: number = 0;
 
-    private _funcX?: FunctionX = undefined;
-    private _funcY?: FunctionY = undefined;
-    private _funcW?: FunctionW = undefined;
-    private _funcH?: FunctionH = undefined;
+    private _funcX?: RelativeFunction = undefined;
+    private _funcY?: RelativeFunction = undefined;
+    private _funcW?: RelativeFunction = undefined;
+    private _funcH?: RelativeFunction = undefined;
 
     private _scaleX: number = 1;
     private _scaleY: number = 1;
@@ -178,22 +178,15 @@ export class ElementCore implements FlexSubject {
         return this._renderContext;
     }
 
-    get x(): number | FunctionX {
-        if (this._funcX) {
-            return this._funcX;
-        } else {
-            return this._sx;
-        }
+    get x() {
+        return this._sx;
     }
 
-    set x(v: number | FunctionX) {
-        if (Utils.isFunction(v)) {
-            this.funcX = v as FunctionX;
-        } else {
-            this._disableFuncX();
-            const dx = (v as number) - this._sx;
-            if (dx) {
-                this._sx = v as number;
+    set x(v: number) {
+        const dx = (v as number) - this._sx;
+        if (dx) {
+            this._sx = v as number;
+            if (!this._funcX) {
                 this._x += dx;
                 this.updateLocalTranslateDelta(dx, 0);
             }
@@ -201,14 +194,17 @@ export class ElementCore implements FlexSubject {
     }
 
     get funcX() {
-        return this._relFuncFlags & 1 ? this._funcX : undefined;
+        return this._funcX;
     }
 
-    set funcX(v) {
+    set funcX(v: RelativeFunction | undefined) {
         if (this._funcX !== v) {
-            this._relFuncFlags |= 1;
-            this._funcX = v;
-            this._x = 0;
+            if (v) {
+                this._relFuncFlags |= 1;
+                this._funcX = v;
+            } else {
+                this._disableFuncX();
+            }
             if (this.hasFlexLayout()) {
                 this.layout.forceLayout();
             } else {
@@ -222,22 +218,15 @@ export class ElementCore implements FlexSubject {
         this._funcX = undefined;
     }
 
-    get y(): number | FunctionY {
-        if (this._funcY) {
-            return this._funcY;
-        } else {
-            return this._sy;
-        }
+    get y() {
+        return this._sy;
     }
 
-    set y(v: number | FunctionY) {
-        if (Utils.isFunction(v)) {
-            this.funcY = v as FunctionY;
-        } else {
-            this._disableFuncY();
-            const dy = (v as number) - this._sy;
-            if (dy) {
-                this._sy = v as number;
+    set y(v: number) {
+        const dy = (v as number) - this._sy;
+        if (dy) {
+            this._sy = v as number;
+            if (!this._funcY) {
                 this._y += dy;
                 this.updateLocalTranslateDelta(0, dy);
             }
@@ -245,14 +234,17 @@ export class ElementCore implements FlexSubject {
     }
 
     get funcY() {
-        return this._relFuncFlags & 2 ? this._funcY : undefined;
+        return this._funcY;
     }
 
-    set funcY(v) {
+    set funcY(v: RelativeFunction | undefined) {
         if (this._funcY !== v) {
-            this._relFuncFlags |= 2;
-            this._funcY = v;
-            this._y = 0;
+            if (v) {
+                this._relFuncFlags |= 2;
+                this._funcY = v;
+            } else {
+                this._disableFuncY();
+            }
             if (this.hasFlexLayout()) {
                 this.layout.forceLayout();
             } else {
@@ -266,23 +258,14 @@ export class ElementCore implements FlexSubject {
         this._funcY = undefined;
     }
 
-    get w(): number | FunctionW {
-        if (this._funcW) {
-            return this._funcW;
-        } else {
-            return this._sw;
-        }
+    get w() {
+        return this._sw;
     }
 
-    set w(v: number | FunctionW) {
-        if (Utils.isFunction(v)) {
-            this.funcW = v as FunctionW;
-        } else {
-            this._disableFuncW();
-            if (this._sw !== v) {
-                this._sw = v as number;
-                this._updateBaseDimensions();
-            }
+    set w(v: number) {
+        if (this._sw !== v) {
+            this._sw = v as number;
+            this._updateBaseDimensions();
         }
     }
 
@@ -292,9 +275,12 @@ export class ElementCore implements FlexSubject {
 
     set funcW(v) {
         if (this._funcW !== v) {
-            this._relFuncFlags |= 4;
-            this._funcW = v;
-            this._sw = 0;
+            if (v) {
+                this._relFuncFlags |= 4;
+                this._funcW = v;
+            } else {
+                this._disableFuncW();
+            }
             this._updateBaseDimensions();
         }
     }
@@ -304,23 +290,14 @@ export class ElementCore implements FlexSubject {
         this._funcW = undefined;
     }
 
-    get h(): number | FunctionH {
-        if (this._funcH) {
-            return this._funcH;
-        } else {
-            return this._sh;
-        }
+    get h() {
+        return this._sh;
     }
 
-    set h(v: number | FunctionH) {
-        if (Utils.isFunction(v)) {
-            this.funcH = v as FunctionH;
-        } else {
-            this._disableFuncH();
-            if (this._sh !== v) {
-                this._sh = v as number;
-                this._updateBaseDimensions();
-            }
+    set h(v: number) {
+        if (this._sh !== v) {
+            this._sh = v as number;
+            this._updateBaseDimensions();
         }
     }
 
@@ -330,9 +307,12 @@ export class ElementCore implements FlexSubject {
 
     set funcH(v) {
         if (this._funcH !== v) {
-            this._relFuncFlags |= 8;
-            this._funcH = v;
-            this._sh = 0;
+            if (v) {
+                this._relFuncFlags |= 8;
+                this._funcH = v;
+            } else {
+                this._disableFuncH();
+            }
             this._updateBaseDimensions();
         }
     }
@@ -1544,9 +1524,9 @@ export class ElementCore implements FlexSubject {
                 ey = r.py + r.td * bboxH;
             }
 
-            if (this._dimsUnknown && (rComplex || this._localTa < 1 || this._localTb < 1)) {
+            if (this._dimsUnknown && (rComplex || this._localTa < 1 || this._localTd < 1)) {
                 // If we are dealing with a non-identity matrix, we must extend the bbox so that withinBounds and
-                //  scissors will include the complete range of (positive) dimensions up to ,lh.
+                //  scissors will include the complete range of (positive) dimensions.
                 const nx = this._x * pr.ta + this._y * pr.tb + pr.px;
                 const ny = this._x * pr.tc + this._y * pr.td + pr.py;
                 if (nx < sx) sx = nx;
@@ -1783,14 +1763,14 @@ export class ElementCore implements FlexSubject {
     _applyRelativeDimFuncs() {
         const layoutParent = this.getLayoutParent()!;
         if (this._relFuncFlags & 1) {
-            const x = this._funcX!(layoutParent._w);
+            const x = this._funcX!(layoutParent._w, layoutParent._h);
             if (x !== this._x) {
                 this._localPx += x - this._x;
                 this._x = x;
             }
         }
         if (this._relFuncFlags & 2) {
-            const y = this._funcY!(layoutParent._h);
+            const y = this._funcY!(layoutParent._w, layoutParent._h);
             if (y !== this._y) {
                 this._localPy += y - this._y;
                 this._y = y;
@@ -1799,14 +1779,14 @@ export class ElementCore implements FlexSubject {
 
         let changedDims = false;
         if (this._relFuncFlags & 4) {
-            const w = this._funcW!(layoutParent._w);
+            const w = this._funcW!(layoutParent._w, layoutParent._h);
             if (w !== this._w) {
                 this._w = w;
                 changedDims = true;
             }
         }
         if (this._relFuncFlags & 8) {
-            const h = this._funcH!(layoutParent._h);
+            const h = this._funcH!(layoutParent._w, layoutParent._h);
             if (h !== this._h) {
                 this._h = h;
                 changedDims = true;
@@ -2483,7 +2463,4 @@ export type ElementCoordinatesInfo<DATA = any> = {
     element: Element<DATA>;
 };
 
-export type FunctionX = (parentW: number) => number;
-export type FunctionY = (parentH: number) => number;
-export type FunctionW = (parentW: number) => number;
-export type FunctionH = (parentH: number) => number;
+export type RelativeFunction = (parentW: number, parentH: number) => number;
