@@ -1223,10 +1223,6 @@ export class Element<DATA = any> {
         return this._childList && this._childList.length > 0;
     }
 
-    _allowChildrenAccess() {
-        return true;
-    }
-
     get children() {
         return this.childList.getItems();
     }
