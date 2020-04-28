@@ -91,8 +91,6 @@ export class ChildList {
             return;
         }
 
-        const items = this.c.getItems();
-
         let refs;
         const newItems = [];
         for (let i = 0, n = array.length; i < n; i++) {

@@ -5,7 +5,7 @@
 import { ObjectList } from "./ObjectList";
 import { Element } from "./Element";
 
-const gc = (i: Element) => i.core;
+const getCore = (i: Element) => i.core;
 
 export class ElementChildList extends ObjectList<Element> {
     constructor(private readonly element: Element) {
@@ -43,7 +43,7 @@ export class ElementChildList extends ObjectList<Element> {
         for (let i = 0, n = added.length; i < n; i++) {
             this.connectParent(added[i]);
         }
-        this.element.core.syncChildren(removed.map(gc), added.map(gc), order.map(gc));
+        this.element.core.syncChildren(removed.map(getCore), added.map(getCore), order.map(getCore));
     }
 
     protected onSet(item: Element, index: number, prevItem: Element) {

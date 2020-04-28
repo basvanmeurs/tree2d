@@ -673,7 +673,7 @@ export class Element<DATA = any> {
         return this._core.getCornerPoints();
     }
 
-    getByRef(ref: string) {
+    getByRef(ref: string): Element | undefined {
         return this.childList.getByRef(ref);
     }
 
@@ -1212,7 +1212,7 @@ export class Element<DATA = any> {
         this._core.skipInLayout = v;
     }
 
-    get childList() {
+    get childList(): ElementChildList {
         if (!this._childList) {
             this._childList = new ElementChildList(this);
         }
