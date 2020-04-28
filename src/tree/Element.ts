@@ -74,7 +74,7 @@ export class Element<DATA = any> {
         if (this._ref !== ref) {
             if (this._ref !== undefined) {
                 if (this._parent !== undefined) {
-                    this._parent._children.clearRef(this._ref);
+                    this._parent.childList.clearRef(this._ref);
                 }
             }
 
@@ -82,7 +82,7 @@ export class Element<DATA = any> {
 
             if (this._ref) {
                 if (this._parent) {
-                    this._parent._children.setRef(this._ref, this);
+                    this._parent.childList.setRef(this._ref, this);
                 }
             }
         }
@@ -152,12 +152,14 @@ export class Element<DATA = any> {
                 this._onSetup();
             }
 
-            const children = this._children.getItems();
-            if (children) {
-                const m = children.length;
-                if (m > 0) {
-                    for (let i = 0; i < m; i++) {
-                        children[i]._updateAttachedFlag();
+            if (this._childList) {
+                const children = this._childList.getItems();
+                if (children) {
+                    const m = children.length;
+                    if (m > 0) {
+                        for (let i = 0; i < m; i++) {
+                            children[i]._updateAttachedFlag();
+                        }
                     }
                 }
             }
@@ -181,12 +183,14 @@ export class Element<DATA = any> {
                 this._unsetEnabledFlag();
             }
 
-            const children = this._children.getItems();
-            if (children) {
-                const m = children.length;
-                if (m > 0) {
-                    for (let i = 0; i < m; i++) {
-                        children[i]._updateEnabledFlag();
+            if (this._childList) {
+                const children = this._childList.getItems();
+                if (children) {
+                    const m = children.length;
+                    if (m > 0) {
+                        for (let i = 0; i < m; i++) {
+                            children[i]._updateEnabledFlag();
+                        }
                     }
                 }
             }
@@ -674,7 +678,7 @@ export class Element<DATA = any> {
     }
 
     getLocationString(): string {
-        const i = this._parent ? this._parent._children.getIndex(this) : "R";
+        const i = this._parent ? this._parent.childList.getIndex(this) : "R";
         let str = this._parent ? this._parent.getLocationString() : "";
         if (this.ref) {
             str += ":[" + i + "]" + this.ref;
@@ -733,7 +737,7 @@ export class Element<DATA = any> {
     getSettings(): any {
         const settings = this.getNonDefaults();
 
-        const children = this._children.getItems();
+        const children = this.childList.getItems();
         if (children) {
             const n = children.length;
             if (n) {
@@ -1208,22 +1212,15 @@ export class Element<DATA = any> {
         this._core.skipInLayout = v;
     }
 
-    get _children(): ElementChildList {
+    get childList() {
         if (!this._childList) {
             this._childList = new ElementChildList(this);
         }
         return this._childList;
     }
 
-    get childList() {
-        if (!this._allowChildrenAccess()) {
-            this._throwError("Direct access to children is not allowed in " + this.getLocationString());
-        }
-        return this._children;
-    }
-
     hasChildren() {
-        return this._allowChildrenAccess() && this._childList && this._childList.length > 0;
+        return this._childList && this._childList.length > 0;
     }
 
     _allowChildrenAccess() {
