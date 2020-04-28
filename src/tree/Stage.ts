@@ -96,7 +96,6 @@ export class Stage {
 
         // Preload rectangle texture.
         this.rectangleTexture = new RectangleTexture(this);
-        this.rectangleTexture.load();
 
         this.context = new CoreContext(this);
 
