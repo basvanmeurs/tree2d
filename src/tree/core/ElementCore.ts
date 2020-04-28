@@ -157,7 +157,7 @@ export class ElementCore implements FlexSubject {
     // If this element is out of viewport, the branch is also skipped in updating and rendering.
     private _clipbox: boolean = true;
 
-    // The render function. _renderComplex is only used if necessary.
+    // The render function. _renderAdvanced is only used if necessary.
     public render: () => void = this._renderSimple;
 
     // Flex layouting if enabled.
