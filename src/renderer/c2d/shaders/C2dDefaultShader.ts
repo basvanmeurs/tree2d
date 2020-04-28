@@ -7,7 +7,7 @@ import { ElementCore } from "../../../tree/core/ElementCore";
 import { C2dNativeTexture } from "../C2dNativeTexture";
 
 export class C2dDefaultShader extends C2dShader {
-    private _rectangleTexture = this.context.stage.rectangleTexture.source!.nativeTexture;
+    private _rectangleTexture = this.context.stage.rectangleTexture.getUpdatedSource()!.nativeTexture;
     private _tintManager = (this.context.stage.renderer as C2dRenderer).tintManager;
 
     draw(operation: C2dCoreQuadOperation, target: C2dRenderTexture) {

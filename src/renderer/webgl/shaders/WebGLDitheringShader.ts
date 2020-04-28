@@ -94,7 +94,7 @@ export class WebGLDitheringShader extends WebGLDefaultShader {
             this.getVertexAttribPointerOffset(operation),
         );
 
-        const glTexture = this._noiseTexture.source!.nativeTexture!;
+        const glTexture = this._noiseTexture.getUpdatedSource()!.nativeTexture!;
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
         gl.activeTexture(gl.TEXTURE0);

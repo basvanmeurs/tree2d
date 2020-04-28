@@ -40,7 +40,11 @@ export class Texture {
 
     constructor(protected stage: Stage) {}
 
-    get source(): TextureSource | undefined {
+    private get source(): TextureSource | undefined {
+        return this.getUpdatedSource();
+    }
+
+    getUpdatedSource(): TextureSource | undefined {
         if (this._mustUpdate || this.stage.hasUpdateTexture(this)) {
             this._performUpdateSource(true);
             this.stage.removeUpdateTexture(this);
@@ -101,7 +105,7 @@ export class Texture {
     }
 
     decActiveCount() {
-        const source = this.source; // Force updating the source.
+        const source = this.getUpdatedSource(); // Force updating the source.
         this._activeCount--;
         if (!this._activeCount) {
             this.becomesUnused();
@@ -109,9 +113,8 @@ export class Texture {
     }
 
     becomesUsed() {
-        if (this.source) {
-            this.source.incActiveTextureCount();
-        }
+        const source = this.getUpdatedSource();
+        source?.incActiveTextureCount();
     }
 
     onLoad() {
@@ -226,21 +229,19 @@ export class Texture {
 
         this._source = newSource;
 
-        if (this.elements.size) {
-            if (oldSource) {
-                if (this._activeCount) {
-                    oldSource.decActiveTextureCount();
-                }
-
-                oldSource.removeTexture(this);
+        if (oldSource) {
+            if (this._activeCount) {
+                oldSource.decActiveTextureCount();
             }
 
-            if (newSource) {
-                // Must happen before setDisplayedTexture to ensure sprite map texcoords are used.
-                newSource.addTexture(this);
-                if (this._activeCount) {
-                    newSource.incActiveTextureCount();
-                }
+            oldSource.removeTexture(this);
+        }
+
+        if (newSource) {
+            // Must happen before setDisplayedTexture to ensure sprite map texcoords are used.
+            newSource.addTexture(this);
+            if (this._activeCount) {
+                newSource.incActiveTextureCount();
             }
         }
 
