@@ -641,7 +641,11 @@ export class ElementCore implements FlexSubject {
 
     addChildAt(index: number, child: ElementCore) {
         if (!this._children) this._children = [];
-        this._children.splice(index, 0, child);
+        if (this._children.length === index) {
+            this._children.push(child);
+        } else {
+            this._children.splice(index, 0, child);
+        }
         child.setParent(this);
     }
 
