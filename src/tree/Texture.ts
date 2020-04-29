@@ -296,30 +296,6 @@ export class Texture {
         }
     }
 
-    enableClipping(x: number, y: number, w: number, h: number) {
-        x *= this._pixelRatio;
-        y *= this._pixelRatio;
-        w *= this._pixelRatio;
-        h *= this._pixelRatio;
-        if (this._x !== x || this._y !== y || this._w !== w || this._h !== h) {
-            this._x = x;
-            this._y = y;
-            this._w = w;
-            this._h = h;
-
-            this._updateClipping();
-        }
-    }
-
-    disableClipping() {
-        this._x = 0;
-        this._y = 0;
-        this._w = 0;
-        this._h = 0;
-
-        this._updateClipping();
-    }
-
     hasClipping() {
         return this.clipping;
     }
