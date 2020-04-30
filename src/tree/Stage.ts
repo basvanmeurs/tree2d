@@ -61,6 +61,7 @@ export class Stage {
     private onFrameEnd?: () => void;
     private canvasWidth: number = -1;
     private canvasHeight: number = -1;
+    private idsMap = new Map<string, Element[]>();
 
     constructor(public readonly canvas: HTMLCanvasElement, options: Partial<StageOptions> = {}) {
         this.gpuPixelsMemory = options.gpuPixelsMemory || 32e6;
@@ -401,5 +402,29 @@ export class Stage {
         } else {
             return 1;
         }
+    }
+
+    addId(id: string, element: Element) {
+        let elements = this.idsMap.get(id);
+        if (!elements) {
+            elements = [];
+            this.idsMap.set(id, elements);
+        }
+        elements.push(element);
+    }
+
+    removeId(id: string, element: Element) {
+        const elements = this.idsMap.get(id);
+        if (elements) {
+            this.idsMap.set(
+                id,
+                elements.filter((el) => el !== element),
+            );
+        }
+    }
+
+    getById(id: string): Element | undefined {
+        const elements = this.idsMap.get(id);
+        return elements ? elements[0] : undefined;
     }
 }

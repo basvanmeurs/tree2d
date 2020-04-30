@@ -22,13 +22,11 @@ import { Utils } from "./Utils";
 import { Shader } from "./Shader";
 
 export class Element<DATA = any> {
-    private static id: number = 1;
-
     public readonly stage: Stage;
 
-    private readonly id: number = Element.id++;
-
     private readonly _core: ElementCore;
+
+    private _id?: string = undefined;
 
     private _ref?: string = undefined;
 
@@ -68,6 +66,24 @@ export class Element<DATA = any> {
             this.listeners = new ElementListeners();
         }
         return this.listeners;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    set id(id: string | undefined) {
+        const prevId = this._id;
+        this._id = id;
+
+        if (this._attached) {
+            if (prevId) {
+                this.stage.removeId(prevId, this);
+            }
+            if (id) {
+                this.stage.addId(id, this);
+            }
+        }
     }
 
     set ref(ref: string | undefined) {
@@ -287,6 +303,9 @@ export class Element<DATA = any> {
     }
 
     protected _onAttach(): void {
+        if (this._id) {
+            this.stage.addId(this._id, this);
+        }
         if (this.listeners && this.listeners.onAttach) {
             this.listeners.onAttach({ element: this });
         }
@@ -303,6 +322,9 @@ export class Element<DATA = any> {
     protected _onDetach(): void {
         if (this.listeners && this.listeners.onDetach) {
             this.listeners.onDetach({ element: this });
+        }
+        if (this._id) {
+            this.stage.removeId(this._id, this);
         }
     }
 
