@@ -26,4 +26,6 @@ export {
     TextureSource,
 };
 
+export { CoreContext } from "./core/CoreContext";
+
 export * from "./ElementListeners";
