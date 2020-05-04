@@ -63,7 +63,7 @@ export class RoundRectTexture extends Texture {
             shadowOffsetY = 0,
         } = options;
 
-        const { strokeColor, fill = true, fillColor = 0xffffffff, shadowColor = 0xffffffff } = options;
+        const { strokeColor = 0xffffffff, fill = true, fillColor = 0xffffffff, shadowColor = 0xffffffff } = options;
 
         w *= pixelRatio;
         h *= pixelRatio;
