@@ -704,8 +704,10 @@ export class Element<DATA = any> {
         let str = this._parent ? this._parent.getLocationString() : "";
         if (this.ref) {
             str += ":[" + i + "]" + this.ref;
-        } else {
+        } else if (this.id) {
             str += ":[" + i + "]#" + this.id;
+        } else {
+            str += ":[" + i + "]";
         }
         return str;
     }
