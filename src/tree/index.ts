@@ -29,3 +29,5 @@ export {
 export { CoreContext } from "./core/CoreContext";
 
 export * from "./ElementListeners";
+
+export { Utils } from "./Utils";
