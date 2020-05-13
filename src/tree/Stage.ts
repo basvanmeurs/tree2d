@@ -394,14 +394,7 @@ export class Stage {
     }
 
     private getDefaultPixelRatio() {
-        // Fractional pixel ratios (except for 1.5) might produce artifacts so we skip them by default.
-        if (window.devicePixelRatio >= 2) {
-            return 2;
-        } else if (window.devicePixelRatio > 1) {
-            return 1.5;
-        } else {
-            return 1;
-        }
+        return Math.min(window.devicePixelRatio, 2);
     }
 
     addId(id: string, element: Element) {
