@@ -37,7 +37,7 @@ export class CoreContext {
         return this.getRootParent().hasRenderUpdates();
     }
 
-    _clearRenderUpdatesFlag() {
+    private clearRenderUpdatesFlag() {
         this.getRootParent().clearHasRenderUpdates();
     }
 
@@ -49,10 +49,13 @@ export class CoreContext {
         this._render();
     }
 
-    update() {
-        // We must clear flag before the update loop, because update events may trigger new render updates.
-        this._clearRenderUpdatesFlag();
+    updateAndRender() {
+        this.clearRenderUpdatesFlag();
+        this.update();
+        this.render();
+    }
 
+    update() {
         this._update();
 
         // Due to the boundsVisibility flag feature (and onAfterUpdate hook), it is possible that other elements were

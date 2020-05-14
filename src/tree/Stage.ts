@@ -223,8 +223,7 @@ export class Stage {
 
         if (changes) {
             this._updatingFrame = true;
-            this.context.update();
-            this.context.render();
+            this.context.updateAndRender();
             this._updatingFrame = false;
         }
 
