@@ -420,4 +420,12 @@ export class Stage {
         const elements = this.idsMap.get(id);
         return elements ? elements[0] : undefined;
     }
+
+    getMaxTextureSize(): number {
+        if (this.gl) {
+            return this.gl.getParameter(this.gl.MAX_TEXTURE_SIZE);
+        } else {
+            return 2048;
+        }
+    }
 }
