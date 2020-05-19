@@ -184,7 +184,7 @@ export class ObjectList<T extends ListType> {
         this._refs[ref] = child;
     }
 
-    setItems(newItems: T[]) {
+    setItems(newItems: T[]): T[][] {
         const prevItems = this._items;
         this._items = newItems;
 
@@ -210,6 +210,8 @@ export class ObjectList<T extends ListType> {
         }
 
         this.onSync(removed, added, newItems);
+
+        return [removed, added];
     }
 
     sort(f: (a: T, b: T) => number) {
