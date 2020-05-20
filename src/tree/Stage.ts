@@ -109,6 +109,8 @@ export class Stage {
 
         this.checkCanvasDimensions();
 
+        this.observeCanvasDimensions();
+
         if (this.autostart) {
             this.platform.startLoop();
         }
@@ -193,7 +195,7 @@ export class Stage {
     }
 
     drawFrame() {
-        this.checkCanvasDimensions();
+        //this.checkCanvasDimensions();
 
         this.startTime = this.currentTime;
         this.currentTime = this.platform.getHrTime();
@@ -425,6 +427,16 @@ export class Stage {
             return this.gl.getParameter(this.gl.MAX_TEXTURE_SIZE);
         } else {
             return 2048;
+        }
+    }
+
+    private observeCanvasDimensions() {
+        const hasResizeObserverSupport = !!(window as any).ResizeObserver;
+        if (hasResizeObserverSupport) {
+            const viewportResizeObserver = new (window as any).ResizeObserver(() => {
+                this.checkCanvasDimensions();
+            });
+            viewportResizeObserver.observe(this.canvas);
         }
     }
 }
