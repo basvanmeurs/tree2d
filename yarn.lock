@@ -1822,10 +1822,10 @@ flatted@^2.0.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-2.0.2.tgz#4575b21e2bcee7434aa9be662f4b7b5f9c2b5138"
   integrity sha512-r5wGx7YeOwNWNlCA0wQ86zKyDLMQr+/RB8xy74M4hTphfmjlijTSSXGuH8rnvKZnfT9i+75zmd8jcKdMR4O6jA==
 
-flexbox.js@^1.0.14:
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/flexbox.js/-/flexbox.js-1.0.14.tgz#17f2c2e9dbe45c1dec38a3a03b3f1398faa30a94"
-  integrity sha512-Axir47iqlnkBaKHIxEr4qYyo9MoUMKgBNu2dvX5h8UQ8tVVGHMbQChNoFx9g9fbd+yxhtaP5Z+xNqxPpFbRKqg==
+flexbox.js@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/flexbox.js/-/flexbox.js-1.0.15.tgz#3c543ad09b98503ce0797de8443cbfc775d2bbc3"
+  integrity sha512-KiIYSCxrDEKSkl/lID8uWCBteSoTiiy50tkuXfNB+HQHP0BqbcX4+s0JZi99xLsde8WOTVtlbgaSTAUzUacLhA==
 
 flush-write-stream@^1.0.0:
   version "1.1.1"
