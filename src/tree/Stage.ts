@@ -195,8 +195,6 @@ export class Stage {
     }
 
     drawFrame() {
-        //this.checkCanvasDimensions();
-
         this.startTime = this.currentTime;
         this.currentTime = this.platform.getHrTime();
 
