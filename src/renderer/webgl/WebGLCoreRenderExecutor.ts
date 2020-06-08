@@ -18,6 +18,7 @@ export class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderS
     public readonly gl: WebGLRenderingContext;
     public quadIndexType: typeof WebGLRenderingContext.UNSIGNED_SHORT | typeof WebGLRenderingContext.UNSIGNED_INT =
         WebGLRenderingContext.UNSIGNED_SHORT;
+    private canvasHeight: number = this.context.stage.canvas.height;
 
     constructor(context: CoreContext) {
         super(context);
@@ -33,8 +34,9 @@ export class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderS
         this.init();
     }
 
-    updateProjectionVector() {
+    onResizeCanvas() {
         this.projection = this.getProjectionVector();
+        this.canvasHeight = this.context.stage.canvas.height;
     }
 
     private getProjectionVector() {
@@ -179,17 +181,21 @@ export class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderS
         } else {
             gl.enable(gl.SCISSOR_TEST);
             const pixelRatio = this.context.stage.getPixelRatio();
-            let y = area[1];
+            const sy = area[1] * pixelRatio;
+            const ey = (area[1] + area[3]) * pixelRatio;
+            let y, h;
             if (this._renderTexture === undefined) {
                 // Flip, for the main framebuffer the coordinates are inversed.
-                y = this.context.stage.coordsHeight - (area[1] + area[3]);
+                // Round 0.5 to 0 instead of to 1.
+                const roundedSy = -Math.round(-sy);
+                const roundedEy = -Math.round(-ey);
+                y = this.canvasHeight - roundedEy;
+                h = roundedEy - roundedSy;
+            } else {
+                y = Math.round(sy);
+                h = Math.round(ey) - y;
             }
-            gl.scissor(
-                Math.round(area[0] * pixelRatio),
-                Math.round(y * pixelRatio),
-                Math.round(area[2] * pixelRatio),
-                Math.round(area[3] * pixelRatio),
-            );
+            gl.scissor(Math.round(area[0] * pixelRatio), y, Math.round(area[2] * pixelRatio), h);
         }
     }
 }

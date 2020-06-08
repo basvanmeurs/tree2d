@@ -274,6 +274,10 @@ export class Stage {
         return this.canvasHeight / this.pixelRatio;
     }
 
+    getCanvasHeight() {
+        return this.canvasHeight;
+    }
+
     addMemoryUsage(delta: number) {
         this._usedMemory += delta;
         if (this._lastGcFrame !== this.frameCounter) {

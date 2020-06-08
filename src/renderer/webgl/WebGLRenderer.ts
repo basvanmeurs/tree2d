@@ -192,7 +192,7 @@ export class WebGLRenderer extends Renderer {
     }
 
     onResizeCanvasSize() {
-        (this.stage.context.renderExecutor as WebGLCoreRenderExecutor).updateProjectionVector();
+        (this.stage.context.renderExecutor as WebGLCoreRenderExecutor).onResizeCanvas();
     }
 }
 
