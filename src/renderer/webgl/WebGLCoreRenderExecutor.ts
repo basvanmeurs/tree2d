@@ -195,7 +195,19 @@ export class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderS
                 y = Math.round(sy);
                 h = Math.round(ey) - y;
             }
+
+            /**
+             We should map the stage coordinate to a raster coordinate in the same way as is done in the
+             WebGLDefaultShader.
+
+             Ideally, we should even simulate GLSL low-precision rounding (errors) to make sure that drawn textures and
+             scissors are mapped to the same position. Else we might experience unexpected pixel gaps at very specific
+             coordinates that are near to pixel rounding boundaries.
+
+             Unfortunately we have not been able to simulate the GLSL behavior exactly.
+             */
             gl.scissor(Math.round(area[0] * pixelRatio), y, Math.round(area[2] * pixelRatio), h);
         }
     }
+
 }
