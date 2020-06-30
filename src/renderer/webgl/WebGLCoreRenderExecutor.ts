@@ -181,33 +181,29 @@ export class WebGLCoreRenderExecutor extends CoreRenderExecutor<WebGLCoreRenderS
         } else {
             gl.enable(gl.SCISSOR_TEST);
             const pixelRatio = this.context.stage.getPixelRatio();
-            const sy = area[1] * pixelRatio;
-            const ey = (area[1] + area[3]) * pixelRatio;
-            let y, h;
-            if (this._renderTexture === undefined) {
-                // Flip, for the main framebuffer the coordinates are inversed.
-                // Round 0.5 to 0 instead of to 1.
-                const roundedSy = -Math.round(-sy);
-                const roundedEy = -Math.round(-ey);
-                y = this.canvasHeight - roundedEy;
-                h = roundedEy - roundedSy;
-            } else {
-                y = Math.round(sy);
-                h = Math.round(ey) - y;
-            }
 
             /**
              We should map the stage coordinate to a raster coordinate in the same way as is done in the
              WebGLDefaultShader.
 
-             Ideally, we should even simulate GLSL low-precision rounding (errors) to make sure that drawn textures and
-             scissors are mapped to the same position. Else we might experience unexpected pixel gaps at very specific
-             coordinates that are near to pixel rounding boundaries.
+             Ideally, we should even simulate GLSL float 16 (mediump) rounding (errors) to make sure that drawn textures
+             and scissors are mapped to the same position. Else we might experience unexpected pixel gaps at very
+             specific coordinates that are near to pixel rounding boundaries.
 
-             Unfortunately we have not been able to simulate the GLSL behavior exactly.
+             Based on the observations on multiple platforms we concluded that the mapping function was:
+             floor(coordX + 255/512)
+
+             Notice that rounding errors may still occur, and may differ on different platforms.
+             We hope (but are not sure) that the basic rounding algorithm doesn't differ per platform.
              */
-            gl.scissor(Math.round(area[0] * pixelRatio), y, Math.round(area[2] * pixelRatio), h);
+            const sx = Math.floor(area[0] * pixelRatio + 255 / 512);
+            const ex = Math.floor((area[0] + area[2]) * pixelRatio + 255 / 512);
+            const sy = Math.floor(area[1] * pixelRatio + 255 / 512);
+            const ey = Math.floor((area[1] + area[3]) * pixelRatio + 255 / 512);
+
+            // Main render texture is inversed.
+            const y = this._renderTexture ? sy : this.canvasHeight - ey;
+            gl.scissor(sx, y, ex - sx, ey - sy);
         }
     }
-
 }
