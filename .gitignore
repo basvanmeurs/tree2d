@@ -1,4 +1,5 @@
-lib/
+esm/
+cjs/
 
 # We don't need to share config
 .idea
