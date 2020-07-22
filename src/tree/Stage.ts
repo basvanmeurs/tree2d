@@ -387,6 +387,8 @@ export class Stage {
         // Reset dimensions.
         this.root.core.setupAsRoot();
         this.renderer.onResizeCanvasSize();
+
+        this.drawFrame();
     }
 
     getElementsAtCoordinates<DATA = any>(worldX: number, worldY: number): ElementCoordinatesInfo<DATA>[] {
