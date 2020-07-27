@@ -25,7 +25,8 @@
         "cjs/**",
         "esm/**",
         "dist/**",
-        "src/**"
+        "src/**",
+        "types/**"
     ],
     "homepage": "https://github.com/Planning-nl/tree2d#readme",
     "keywords": [],
@@ -50,7 +51,7 @@
         "test": "echo \"please run tests in browser using tests/test.html\"",
         "version": "npm run lint"
     },
-    "types": "dist/index.d.ts",
+    "types": "types/index.d.ts",
     "engines": {
         "node": ">=8.0.0"
     }
