@@ -7,4 +7,5 @@ export type TextSettings = {
     cutEx: number;
     cutSy: number;
     cutEy: number;
+    color: string;
 };
