@@ -87,7 +87,7 @@ export class TextTextureRenderer {
         const pixelRatio = this.pixelRatio;
 
         let { fontSize = 40, cutSx = 0, cutEx = 0, cutSy = 0, cutEy = 0 } = this.settings;
-
+        const { color = "white" } = this.settings;
         const text = this.text;
 
         fontSize = fontSize * pixelRatio;
@@ -133,7 +133,7 @@ export class TextTextureRenderer {
         }
 
         this._context.textBaseline = "top";
-        this._context.fillStyle = "white";
+        this._context.fillStyle = color;
         this._context.fillText(text, 0, 0);
 
         if (cutSx || cutSy) {
