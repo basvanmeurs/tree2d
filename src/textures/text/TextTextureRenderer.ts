@@ -86,8 +86,8 @@ export class TextTextureRenderer {
 
         const pixelRatio = this.pixelRatio;
 
-        let { fontSize = 40, cutSx = 0, cutEx = 0, cutSy = 0, cutEy = 0, color = 'white' } = this.settings;
-
+        let { fontSize = 40, cutSx = 0, cutEx = 0, cutSy = 0, cutEy = 0 } = this.settings;
+        const { color = "white" } = this.settings;
         const text = this.text;
 
         fontSize = fontSize * pixelRatio;
